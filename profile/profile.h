@@ -24,40 +24,26 @@ private:
 public:
 	static void print(void)  noexcept;
 	static void _export(char const* const path)  noexcept;
-	static inline size_t push(char const* const tag) noexcept {
-		if (instance._size + 1 > instance._capacity)
-			instance.reserve(static_cast<int>(instance._capacity * 1.5f));
-		instance._arr[instance._size].tag = tag;
-		instance._arr[instance._size].min = DBL_MAX;
-		instance._arr[instance._size].max = -DBL_MAX;
-		return instance._size++;
-	}
-	inline void clear(void) const noexcept {
-		for (size_t i = 0; i < _size; ++i) {
-			_arr[i].sum = 0;
-			_arr[i].cnt = 0;
-			_arr[i].min = DBL_MAX;
-			_arr[i].max = -DBL_MAX;
+	static void clear(void)  noexcept {
+		for (size_t i = 0; i < instance._size; ++i) {
+			instance._arr[i].sum = 0;
+			instance._arr[i].cnt = 0;
+			instance._arr[i].min = DBL_MAX;
+			instance._arr[i].max = -DBL_MAX;
 		}
 	};
 private:
-	static inline void insert(size_t const idx, char const* const tag, LARGE_INTEGER const* timer)  noexcept {
-		instance._arr[idx].cnt++;
-		double cur = static_cast<double>(timer[1].QuadPart - timer[0].QuadPart) / instance._freq.QuadPart;
-		instance._arr[idx].sum += cur;
-		if (instance._arr[idx].min > cur)
-			instance._arr[idx].min = cur;
-		if (instance._arr[idx].max < cur)
-			instance._arr[idx].max = cur;
+	inline void insert(size_t const idx, char const* const tag, LARGE_INTEGER const* timer) const noexcept {
+		_arr[idx].cnt++;
+		double cur = static_cast<double>(timer[1].QuadPart - timer[0].QuadPart) / _freq.QuadPart;
+		_arr[idx].sum += cur;
+		if (_arr[idx].min > cur)
+			_arr[idx].min = cur;
+		if (_arr[idx].max < cur)
+			_arr[idx].max = cur;
 	};
-	inline void reserve(size_t const capacity) noexcept {
-		_capacity = capacity;
-		profile* arr = _arr;
-		_arr = new profile[capacity];
-		memset(_arr, 0, sizeof(profile) * _capacity);
-		memcpy(_arr, arr, sizeof(profile) * _size < capacity ? _size : capacity);
-		delete[] arr;
-	}
+	size_t push(char const* const tag) noexcept;
+	void reserve(size_t const capacity) noexcept;
 private:
 	static profiler instance;
 	LARGE_INTEGER _freq;
@@ -74,8 +60,10 @@ public:
 	}
 	inline ~profiling_(void) noexcept {
 		QueryPerformanceCounter(_timer + 1);
-		profiler::insert(_idx, _tag, _timer);
+		profiler::instance.insert(_idx, _tag, _timer);
 	};
+public:
+	static size_t push(char const* const tag) noexcept;
 private:
 	size_t const _idx;
 	char const* const _tag;
@@ -83,12 +71,7 @@ private:
 };
 
 #define concat(sour, dest) sour##dest
-#define profiling(tag) profiling_line(tag, __LINE__)
-#define profiling_line(tag, line) \
-static size_t concat(idx, line) = profiler::push(tag); \
+#define profiling(tag) addline(tag, __LINE__)
+#define addline(tag, line) \
+static size_t concat(idx, line) = profiling_::push(tag); \
 profiling_ concat(_profiling,line) {concat(idx,line), tag};
-#undef profiling1
-
-
-
-

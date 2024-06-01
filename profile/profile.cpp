@@ -12,6 +12,7 @@ profiler::profiler(void) noexcept {
 
 profiler::~profiler(void) noexcept {
 	timeEndPeriod(1);
+	delete[] _arr;
 }
 
 void profiler::print(void)  noexcept {
@@ -38,4 +39,26 @@ void profiler::_export(char const* const path)  noexcept {
 	}
 	ofs << "---------------------------\n";
 	ofs.close();
+}
+
+size_t profiler::push(char const* const tag) noexcept {
+	if (_size + 1 > _capacity)
+		instance.reserve(static_cast<int>(_capacity * 1.5f));
+	_arr[instance._size].tag = tag;
+	_arr[instance._size].min = DBL_MAX;
+	_arr[instance._size].max = -DBL_MAX;
+	return instance._size++;
+}
+
+void profiler::reserve(size_t const capacity) noexcept {
+	_capacity = capacity;
+	profile* arr = _arr;
+	_arr = new profile[capacity];
+	memset(_arr, 0, sizeof(profile) * _capacity);
+	memcpy(_arr, arr, sizeof(profile) * _size < capacity ? _size : capacity);
+	delete[] arr;
+}
+
+size_t profiling_::push(char const* const tag) noexcept {
+	return profiler::instance.push(tag);
 }
