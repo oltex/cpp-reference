@@ -18,6 +18,6 @@ int main(void) {
 		Sleep(10);
 	}
 	profiler::print();
-	profiler::_export("profile.txt");
+	profiler::export_("profile.txt");
 	return 0;
 }

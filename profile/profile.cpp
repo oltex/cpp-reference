@@ -27,7 +27,7 @@ void profiler::print(void)  noexcept {
 	}
 }
 
-void profiler::_export(char const* const path)  noexcept {
+void profiler::export_(char const* const path)  noexcept {
 	std::ofstream ofs(path);
 	ofs << "tag | avg | min | max | cnt\n";
 	ofs << "---------------------------\n";

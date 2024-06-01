@@ -23,7 +23,7 @@ private:
 	~profiler(void) noexcept;
 public:
 	static void print(void)  noexcept;
-	static void _export(char const* const path)  noexcept;
+	static void export_(char const* const path)  noexcept;
 	static void clear(void)  noexcept {
 		for (size_t i = 0; i < instance._size; ++i) {
 			instance._arr[i].sum = 0;
