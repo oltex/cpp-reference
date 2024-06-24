@@ -22,16 +22,9 @@ private:
 	explicit profiler(void) noexcept;
 	~profiler(void) noexcept;
 public:
-	static void print(void)  noexcept;
-	static void export_(char const* const path)  noexcept;
-	static void clear(void)  noexcept {
-		for (size_t i = 0; i < instance._size; ++i) {
-			instance._arr[i].sum = 0;
-			instance._arr[i].cnt = 0;
-			instance._arr[i].min = DBL_MAX;
-			instance._arr[i].max = -DBL_MAX;
-		}
-	};
+	static void print(void) noexcept;
+	static void export_(char const* const path) noexcept;
+	static void clear(void) noexcept;
 private:
 	inline void insert(size_t const idx, char const* const tag, LARGE_INTEGER const* timer) const noexcept {
 		_arr[idx].cnt++;
@@ -73,5 +66,5 @@ private:
 #define concat(sour, dest) sour##dest
 #define profiling(tag) addline(tag, __LINE__)
 #define addline(tag, line) \
-static size_t concat(idx, line) = profiling_::push(tag); \
+static const size_t concat(idx, line) = profiling_::push(tag); \
 profiling_ concat(_profiling,line) {concat(idx,line), tag};

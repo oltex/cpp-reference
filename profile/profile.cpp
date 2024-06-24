@@ -20,9 +20,9 @@ void profiler::print(void)  noexcept {
 	printf("---------------------------\n");
 	for (size_t i = 0; i < instance._size; ++i) {
 		instance._arr[i].avg = instance._arr[i].sum / instance._arr[i].cnt;
-		printf("%s | %f | %f | %f | %d\n", 
-			instance._arr[i].tag, instance._arr[i].avg, 
-			instance._arr[i].min, instance._arr[i].max, 
+		printf("%s | %f | %f | %f | %d\n",
+			instance._arr[i].tag, instance._arr[i].avg,
+			instance._arr[i].min, instance._arr[i].max,
 			instance._arr[i].cnt);
 	}
 }
@@ -33,13 +33,22 @@ void profiler::export_(char const* const path)  noexcept {
 	ofs << "---------------------------\n";
 	for (size_t i = 0; i < instance._size; ++i) {
 		instance._arr[i].avg = instance._arr[i].sum / instance._arr[i].cnt;
-		ofs << instance._arr[i].tag << " | " << instance._arr[i].avg << " | " 
+		ofs << instance._arr[i].tag << " | " << instance._arr[i].avg << " | "
 			<< instance._arr[i].min << " | " << instance._arr[i].max << " | "
 			<< instance._arr[i].cnt << "\n";
 	}
 	ofs << "---------------------------\n";
 	ofs.close();
 }
+
+void profiler::clear(void) noexcept {
+	for (size_t i = 0; i < instance._size; ++i) {
+		instance._arr[i].sum = 0;
+		instance._arr[i].cnt = 0;
+		instance._arr[i].min = DBL_MAX;
+		instance._arr[i].max = -DBL_MAX;
+	}
+};
 
 size_t profiler::push(char const* const tag) noexcept {
 	if (_size + 1 > _capacity)
