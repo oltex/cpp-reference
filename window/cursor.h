@@ -13,24 +13,22 @@ namespace window {
 			return ShowCursor(bShow);
 		};
 	}
-	class registry;
 	class cursor final {
-		friend class registry;
+		friend class cls;
 	public:
 		explicit cursor(void) noexcept = default;
 		~cursor(void) noexcept = default;
 	public:
 		inline auto destroy(void) noexcept -> BOOL {
-			return DestroyCursor(_cursor);
+			return DestroyCursor(_hcursor);
 		}
 		inline void get(void) noexcept {
-			_cursor = GetCursor();
+			_hcursor = GetCursor();
 		}
 		inline void load(HINSTANCE const hInst, LPCWSTR const name, UINT const type, int const cx, int const cy, UINT const fuLoad) noexcept {
-			_cursor = static_cast<HCURSOR>(LoadImageW(hInst, name, type, cx, cy, fuLoad));
-			DWORD a = GetLastError();
+			_hcursor = static_cast<HCURSOR>(LoadImageW(hInst, name, type, cx, cy, fuLoad));
 		};
 	private:
-		HCURSOR _cursor = nullptr;
+		HCURSOR _hcursor = nullptr;
 	};
 }

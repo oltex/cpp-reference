@@ -6,24 +6,54 @@
       <Filter>window</Filter>
     </ClCompile>
     <ClCompile Include="dc.cpp">
-      <Filter>window\device_context</Filter>
+      <Filter>window\dc</Filter>
+    </ClCompile>
+    <ClCompile Include="object.cpp">
+      <Filter>window\object</Filter>
+    </ClCompile>
+    <ClCompile Include="bitmap.cpp">
+      <Filter>window\object\bitmap</Filter>
+    </ClCompile>
+    <ClCompile Include="pen.cpp">
+      <Filter>window\object\pen</Filter>
+    </ClCompile>
+    <ClCompile Include="brush.cpp">
+      <Filter>window\object\brush</Filter>
+    </ClCompile>
+    <ClCompile Include="wnd.cpp">
+      <Filter>window\wnd</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="window">
       <UniqueIdentifier>{4e850af0-c47f-4ab0-b50c-d5c79829e915}</UniqueIdentifier>
     </Filter>
-    <Filter Include="window\icon">
-      <UniqueIdentifier>{7a3aef01-33fb-473b-9b61-606bb9c5fa4f}</UniqueIdentifier>
+    <Filter Include="window\dc">
+      <UniqueIdentifier>{896e9180-4f34-486d-a030-6c35b799d702}</UniqueIdentifier>
     </Filter>
-    <Filter Include="window\cursor">
+    <Filter Include="window\object">
+      <UniqueIdentifier>{4d687117-5062-4792-a253-2f0787c6c786}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="window\object\bitmap">
+      <UniqueIdentifier>{c049c4b5-a72d-481b-9d93-19f98d83dd0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="window\object\pen">
+      <UniqueIdentifier>{caede715-a63b-471e-bce8-59e2a2c337e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="window\object\brush">
+      <UniqueIdentifier>{b64e1178-7ea6-42be-a5f7-2884ae4b0549}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="window\wnd">
+      <UniqueIdentifier>{2403f12e-f914-4dd0-923a-b9b020be5831}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="window\resource">
+      <UniqueIdentifier>{b2bc33ac-cdce-4c2a-aee0-5e1ace6629d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="window\resource\cursor">
       <UniqueIdentifier>{d4536bd8-a328-487b-994d-949eed191476}</UniqueIdentifier>
     </Filter>
-    <Filter Include="window\instance">
-      <UniqueIdentifier>{51998fb8-d00e-4a82-bf08-958d6ebfa2d7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="window\device_context">
-      <UniqueIdentifier>{896e9180-4f34-486d-a030-6c35b799d702}</UniqueIdentifier>
+    <Filter Include="window\resource\icon">
+      <UniqueIdentifier>{7a3aef01-33fb-473b-9b61-606bb9c5fa4f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -31,13 +61,28 @@
       <Filter>window</Filter>
     </ClInclude>
     <ClInclude Include="icon.h">
-      <Filter>window\icon</Filter>
+      <Filter>window\resource\icon</Filter>
     </ClInclude>
     <ClInclude Include="cursor.h">
-      <Filter>window\cursor</Filter>
+      <Filter>window\resource\cursor</Filter>
     </ClInclude>
     <ClInclude Include="dc.h">
-      <Filter>window\device_context</Filter>
+      <Filter>window\dc</Filter>
+    </ClInclude>
+    <ClInclude Include="object.h">
+      <Filter>window\object</Filter>
+    </ClInclude>
+    <ClInclude Include="bitmap.h">
+      <Filter>window\object\bitmap</Filter>
+    </ClInclude>
+    <ClInclude Include="pen.h">
+      <Filter>window\object\pen</Filter>
+    </ClInclude>
+    <ClInclude Include="brush.h">
+      <Filter>window\object\brush</Filter>
+    </ClInclude>
+    <ClInclude Include="wnd.h">
+      <Filter>window\wnd</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

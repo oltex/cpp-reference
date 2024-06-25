@@ -1,6 +1,11 @@
 #pragma once
 #include "icon.h"
 #include "cursor.h"
+#include "wnd.h"
+#include "dc.h"
+#include "bitmap.h"
+#include "brush.h"
+#include "pen.h"
 
 namespace window {
 	inline auto message(void) noexcept -> int {
@@ -13,10 +18,10 @@ namespace window {
 	};
 }
 namespace window {
-	class registry final {
+	class cls final {
 	public:
-		explicit registry(void) noexcept;
-		~registry(void) noexcept = default;
+		explicit cls(void) noexcept;
+		~cls(void) noexcept = default;
 	public:
 		void initialize(void) noexcept;
 		auto register_(void) noexcept -> ATOM;
@@ -37,10 +42,10 @@ namespace window {
 			_wcex.hInstance = instance;
 		}
 		inline void set_icon(window::icon const icon) noexcept {
-			_wcex.hIcon = icon._icon;
+			_wcex.hIcon = icon._hicon;
 		}
 		inline void set_cursor(window::cursor const cursor) noexcept {
-			_wcex.hCursor = cursor._cursor;
+			_wcex.hCursor = cursor._hcursor;
 		}
 		inline void set_background(HBRUSH const hbrBackground) noexcept {
 			_wcex.hbrBackground = hbrBackground;
@@ -52,16 +57,15 @@ namespace window {
 			_wcex.lpszClassName = lpszClassName;
 		};
 		inline void set_icon_small(window::icon const icon) noexcept {
-			_wcex.hIconSm = icon._icon;
+			_wcex.hIconSm = icon._hicon;
 		}
 	private:
 		WNDCLASSEXW _wcex;
 	};
 }
 namespace window {
-	class handle;
 	class creator final {
-		friend handle;
+		friend class wnd;
 	public:
 		struct WNDSTRUCTEXW {
 			DWORD dwExStyle;
@@ -119,32 +123,3 @@ namespace window {
 		WNDSTRUCTEXW _wsex;
 	};
 }
-namespace window {
-	class handle {
-	public:
-		explicit handle(creator const& maker) noexcept;
-		virtual ~handle(void) noexcept;
-	public:
-		inline auto show(int const nCmdShow) const noexcept -> BOOL {
-			return ShowWindow(_wnd, nCmdShow);
-		}
-		inline auto move(int const x, int const y, int const width, int const height) const noexcept -> BOOL {
-			return MoveWindow(_wnd, x, y, width, height, false);
-		}
-		inline auto update(void) const noexcept -> BOOL {
-			return UpdateWindow(_wnd);
-		}
-		inline auto close(void) const noexcept {
-			CloseWindow(_wnd);
-		}
-		inline auto destroy(void) const noexcept -> BOOL {
-			return DestroyWindow(_wnd);
-		}
-	protected:
-		HWND _wnd = nullptr;
-	};
-}
-
-
-
-//static LRESULT CALLBACK procedure(HWND const wnd, UINT const message, WPARAM const wparam, LPARAM const lparam) noexcept;
