@@ -2,9 +2,42 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="window.cpp" />
+    <ClCompile Include="window.cpp">
+      <Filter>window</Filter>
+    </ClCompile>
+    <ClCompile Include="dc.cpp">
+      <Filter>window\device_context</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="window.h" />
+    <Filter Include="window">
+      <UniqueIdentifier>{4e850af0-c47f-4ab0-b50c-d5c79829e915}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="window\icon">
+      <UniqueIdentifier>{7a3aef01-33fb-473b-9b61-606bb9c5fa4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="window\cursor">
+      <UniqueIdentifier>{d4536bd8-a328-487b-994d-949eed191476}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="window\instance">
+      <UniqueIdentifier>{51998fb8-d00e-4a82-bf08-958d6ebfa2d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="window\device_context">
+      <UniqueIdentifier>{896e9180-4f34-486d-a030-6c35b799d702}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="window.h">
+      <Filter>window</Filter>
+    </ClInclude>
+    <ClInclude Include="icon.h">
+      <Filter>window\icon</Filter>
+    </ClInclude>
+    <ClInclude Include="cursor.h">
+      <Filter>window\cursor</Filter>
+    </ClInclude>
+    <ClInclude Include="dc.h">
+      <Filter>window\device_context</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

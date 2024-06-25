@@ -1,85 +1,56 @@
 #include "window.h"
 
-window::~window(void) noexcept {
-	destroy();
+namespace window {
+	registry::registry(void) noexcept {
+		initialize();
+	}
+	void registry::initialize(void) noexcept {
+		memset(&_wcex, 0, sizeof(WNDCLASSEX));
+		_wcex.cbSize = sizeof(WNDCLASSEX);
+		_wcex.lpfnWndProc = DefWindowProcW;
+		_wcex.hbrBackground = 0;// reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1);
+	}
+	auto registry::register_(void) noexcept -> ATOM {
+		return RegisterClassExW(&_wcex);
+	}
 }
 
-auto window::initialize_class(HINSTANCE const instance) noexcept -> WNDCLASSEXW {
-	WNDCLASSEXW wcex;
-	wcex.cbSize = sizeof(WNDCLASSEX);
-	wcex.style = CS_HREDRAW | CS_VREDRAW;
-	wcex.lpfnWndProc = DefWindowProcW;
-	wcex.cbClsExtra = 0;
-	wcex.cbWndExtra = 0;
-	wcex.hInstance = instance;
-	wcex.hIcon = nullptr;
-	wcex.hCursor = LoadCursorW(nullptr, IDC_ARROW);
-	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-	wcex.lpszMenuName = nullptr;
-	wcex.lpszClassName = nullptr;
-	wcex.hIconSm = nullptr;
-	return wcex;
+namespace window {
+	creator::creator(void) noexcept {
+		initialize();
+	}
+	void creator::initialize(void) noexcept {
+		memset(&_wsex, 0, sizeof(WNDSTRUCTEXW));
+	}
 }
 
-auto window::register_class(WNDCLASSEXW const wcex) noexcept -> ATOM {
-	return RegisterClassExW(&wcex);
+namespace window {
+	handle::handle(creator const& creator_) noexcept {
+		_wnd = CreateWindowExW(
+			creator_._wsex.dwExStyle, creator_._wsex.lpClassName, creator_._wsex.lpWindowName, creator_._wsex.dwStyle,
+			creator_._wsex.x, creator_._wsex.y, creator_._wsex.nWidth, creator_._wsex.nHeight, creator_._wsex.hWndParent,
+			creator_._wsex.hMenu, creator_._wsex.hInstance, creator_._wsex.lpParam);
+	}
+	handle::~handle(void) noexcept {
+	}
 }
 
-auto window::initialize_window(HINSTANCE const instance) noexcept -> WNDSTRUCTEXW {
-	WNDSTRUCTEXW wsex;
-	wsex.dwExStyle = 0L;
-	wsex.lpClassName = nullptr;
-	wsex.lpWindowName = nullptr;
-	wsex.dwStyle = WS_OVERLAPPEDWINDOW;
-	wsex.x = 0;
-	wsex.y = 0;
-	wsex.nWidth = CW_USEDEFAULT;
-	wsex.nHeight = 0;
-	wsex.hWndParent = nullptr;
-	wsex.hMenu = nullptr;
-	wsex.hInstance = instance;
-	wsex.lpParam = nullptr;
-	return wsex;
+LRESULT procedure(HWND const wnd, UINT const message, WPARAM const wparam, LPARAM const lparam) noexcept {
+	switch (message)
+	{
+	case WM_PAINT:
+	{
+	    PAINTSTRUCT ps;
+	    HDC hdc = BeginPaint(wnd, &ps);
+	    // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다...
+	    EndPaint(wnd, &ps);
+	}
+	break;
+	case WM_DESTROY:
+	    PostQuitMessage(0);
+	    break;
+	default:
+	    return DefWindowProc(wnd, message, wparam, lparam);
+	}
+	return 0;
 }
-
-void window::create(WNDSTRUCTEXW const wsex) noexcept {
-	_wnd = CreateWindowExW(wsex.dwExStyle, wsex.lpClassName, wsex.lpWindowName, wsex.dwStyle,
-		wsex.x, wsex.y, wsex.nWidth, wsex.nHeight, wsex.hWndParent, wsex.hMenu, wsex.hInstance, wsex.lpParam);
-}
-
-//LRESULT window::procedure(HWND const wnd, UINT const message, WPARAM const wparam, LPARAM const lparam) noexcept {
-	//switch (message)
-	//{
-	//case WM_COMMAND:
-	//{
-	//    int wmId = LOWORD(wparam);
-	//    // 메뉴 선택을 구문 분석합니다:
-	//    switch (wmId)
-	//    {
-	//    case IDM_ABOUT:
-	//        DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-	//        break;
-	//    case IDM_EXIT:
-	//        DestroyWindow(hWnd);
-	//        break;
-	//    default:
-	//        return DefWindowProc(hWnd, message, wparam, lparam);
-	//    }
-	//}
-	//break;
-	//case WM_PAINT:
-	//{
-	//    PAINTSTRUCT ps;
-	//    HDC hdc = BeginPaint(hWnd, &ps);
-	//    // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다...
-	//    EndPaint(hWnd, &ps);
-	//}
-	//break;
-	//case WM_DESTROY:
-	//    PostQuitMessage(0);
-	//    break;
-	//default:
-	//    return DefWindowProc(hWnd, message, wparam, lparam);
-	//}
-//	return 0;
-//}
