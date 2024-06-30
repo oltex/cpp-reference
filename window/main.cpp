@@ -46,10 +46,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
 LRESULT CALLBACK procedure(HWND const hwnd, UINT const message, WPARAM const wparam, LPARAM const lparam) noexcept {
 	switch (message) {
-	case WM_CREATE: {
-
-	}
-				  break;
 	case WM_PAINT: {
 		_dc->pat_blt(0, 0, 100, 100, WHITENESS);
 		pen pen(PS_SOLID, 2, RGB(255, 0, 0));

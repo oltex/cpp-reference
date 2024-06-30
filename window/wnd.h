@@ -40,8 +40,8 @@ namespace window {
 		inline auto set_window_text(LPCWSTR const lpString) const noexcept -> BOOL {
 			return SetWindowTextW(_hwnd, lpString);
 		}
-		inline auto invalidate_rect(RECT const& lpRect, BOOL const bErase) const noexcept -> BOOL {
-			return InvalidateRect(_hwnd, &lpRect, bErase);
+		inline auto invalidate_rect(RECT const* lpRect, BOOL const bErase) const noexcept -> BOOL {
+			return InvalidateRect(_hwnd, lpRect, bErase);
 		}
 	protected:
 		HWND _hwnd = nullptr;
