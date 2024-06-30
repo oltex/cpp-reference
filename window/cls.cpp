@@ -1,4 +1,6 @@
-#include "window.h"
+#include "cls.h"
+#include "cursor.h"
+#include "icon.h"
 
 namespace window {
 	cls::cls(void) noexcept {
@@ -13,13 +15,13 @@ namespace window {
 	auto cls::register_(void) noexcept -> ATOM {
 		return RegisterClassExW(&_wcex);
 	}
-}
-
-namespace window {
-	creator::creator(void) noexcept {
-		initialize();
+	void cls::set_icon(window::icon const& icon) noexcept {
+		_wcex.hIcon = icon._hicon;
 	}
-	void creator::initialize(void) noexcept {
-		memset(&_wsex, 0, sizeof(WNDSTRUCTEXW));
+	void cls::set_cursor(window::cursor const& cursor) noexcept {
+		_wcex.hCursor = cursor._hcursor;
+	}
+	void cls::set_icon_small(window::icon const& icon) noexcept {
+		_wcex.hIconSm = icon._hicon;
 	}
 }

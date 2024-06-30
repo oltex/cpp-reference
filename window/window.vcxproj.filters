@@ -2,9 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="window.cpp">
-      <Filter>window</Filter>
-    </ClCompile>
     <ClCompile Include="dc.cpp">
       <Filter>window\dc</Filter>
     </ClCompile>
@@ -22,6 +19,12 @@
     </ClCompile>
     <ClCompile Include="wnd.cpp">
       <Filter>window\wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="cls.cpp">
+      <Filter>window\wnd\cls</Filter>
+    </ClCompile>
+    <ClCompile Include="sct.cpp">
+      <Filter>window\wnd\sct</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -58,6 +61,12 @@
     <Filter Include="window\object\font">
       <UniqueIdentifier>{233e7bb3-3f97-4dd4-91fd-fbd91bac8475}</UniqueIdentifier>
     </Filter>
+    <Filter Include="window\wnd\cls">
+      <UniqueIdentifier>{01cb1fcb-1565-45c6-944a-b6400da7e940}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="window\wnd\sct">
+      <UniqueIdentifier>{21caff63-c1a5-4167-96ec-2bba07e89598}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="window.h">
@@ -86,6 +95,12 @@
     </ClInclude>
     <ClInclude Include="wnd.h">
       <Filter>window\wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="cls.h">
+      <Filter>window\wnd\cls</Filter>
+    </ClInclude>
+    <ClInclude Include="sct.h">
+      <Filter>window\wnd\sct</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

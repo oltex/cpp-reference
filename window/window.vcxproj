@@ -145,21 +145,24 @@
   <ItemGroup>
     <ClCompile Include="bitmap.cpp" />
     <ClCompile Include="brush.cpp" />
+    <ClCompile Include="cls.cpp" />
     <ClCompile Include="dc.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="object.cpp" />
     <ClCompile Include="pen.cpp" />
-    <ClCompile Include="window.cpp" />
+    <ClCompile Include="sct.cpp" />
     <ClCompile Include="wnd.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bitmap.h" />
     <ClInclude Include="brush.h" />
+    <ClInclude Include="cls.h" />
     <ClInclude Include="cursor.h" />
     <ClInclude Include="dc.h" />
     <ClInclude Include="icon.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="pen.h" />
+    <ClInclude Include="sct.h" />
     <ClInclude Include="window.h" />
     <ClInclude Include="wnd.h" />
   </ItemGroup>

@@ -1,11 +1,11 @@
 #include "wnd.h"
-#include "window.h"
+#include "sct.h"
 
 namespace window {
-	wnd::wnd(creator const& creator_) noexcept {
+	wnd::wnd(sct const& sct_) noexcept {
 		_hwnd = CreateWindowExW(
-			creator_._wsex.dwExStyle, creator_._wsex.lpClassName, creator_._wsex.lpWindowName, creator_._wsex.dwStyle,
-			creator_._wsex.x, creator_._wsex.y, creator_._wsex.nWidth, creator_._wsex.nHeight, creator_._wsex.hWndParent,
-			creator_._wsex.hMenu, creator_._wsex.hInstance, creator_._wsex.lpParam);
+			sct_._wsex.dwExStyle, sct_._wsex.lpClassName, sct_._wsex.lpWindowName, sct_._wsex.dwStyle,
+			sct_._wsex.x, sct_._wsex.y, sct_._wsex.nWidth, sct_._wsex.nHeight, sct_._wsex.hWndParent,
+			sct_._wsex.hMenu, sct_._wsex.hInstance, sct_._wsex.lpParam);
 	}
 }

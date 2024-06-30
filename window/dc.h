@@ -44,6 +44,9 @@ namespace window {
 		inline void line_to(int const x, int const y) const noexcept {
 			LineTo(_hdc, x, y);
 		}
+		inline void rectangle(int const left, int const top, int const right, int const bottom) const noexcept {
+			Rectangle(_hdc, left, top, right, bottom);
+		}
 	private:
 		wnd const* const _wnd = nullptr;
 		HDC _hdc = nullptr;

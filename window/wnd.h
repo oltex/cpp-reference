@@ -2,11 +2,11 @@
 #include <Windows.h>
 
 namespace window {
-	class creator;
+	class sct;
 	class wnd {
 		friend class dc;
 	public:
-		explicit wnd(creator const& maker) noexcept;
+		explicit wnd(sct const& sct_) noexcept;
 		virtual ~wnd(void) noexcept = default;
 	public:
 		inline void screen_to_client(LPPOINT const lpPoint) const noexcept {
