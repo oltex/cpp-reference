@@ -3,8 +3,10 @@
 #include "wnd.h"
 
 namespace window {
-	bitmap::bitmap(dc const& dc_) noexcept {
-		RECT rect = dc_._wnd->get_client_rect();
-		_hgdiobj = CreateCompatibleBitmap(dc_._hdc, rect.right, rect.bottom);
+	bitmap::bitmap(dc const& dc_, int const cx, int const cy) noexcept {
+		_hgdiobj = CreateCompatibleBitmap(dc_._hdc, cx, cy);
+	}
+	bitmap::bitmap(HINSTANCE const hInst, LPCWSTR const name, int const cx, int const cy, UINT const fuLoad) noexcept {
+		_hgdiobj = static_cast<HBITMAP>(LoadImageW(hInst, name, IMAGE_BITMAP, cx, cy, fuLoad));
 	}
 }

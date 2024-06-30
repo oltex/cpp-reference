@@ -55,6 +55,9 @@
     <Filter Include="window\resource\icon">
       <UniqueIdentifier>{7a3aef01-33fb-473b-9b61-606bb9c5fa4f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="window\object\font">
+      <UniqueIdentifier>{233e7bb3-3f97-4dd4-91fd-fbd91bac8475}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="window.h">

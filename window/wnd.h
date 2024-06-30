@@ -9,6 +9,9 @@ namespace window {
 		explicit wnd(creator const& maker) noexcept;
 		virtual ~wnd(void) noexcept = default;
 	public:
+		inline void screen_to_client(LPPOINT const lpPoint) const noexcept {
+			ScreenToClient(_hwnd, lpPoint);
+		}
 		inline auto show(int const nCmdShow) const noexcept -> BOOL {
 			return ShowWindow(_hwnd, nCmdShow);
 		}

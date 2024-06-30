@@ -4,6 +4,7 @@
 namespace window {
 	class wnd;
 	class object;
+	class brush;
 	class dc final {
 		friend class bitmap;
 	public:
@@ -14,6 +15,23 @@ namespace window {
 		~dc(void) noexcept;
 	public:
 		void select_object(object const& object_) noexcept;
+		void fill_rect(RECT const* const rect, window::brush const& brush_) noexcept;
+	public:
+		inline void set_bk_mode(int const mode) const noexcept {
+			SetBkMode(_hdc, mode);
+		}
+		inline void set_text_color(COLORREF const color) const noexcept {
+			SetTextColor(_hdc, color);
+		}
+		inline void draw_text(LPCWSTR const lpchText, int const cchText, LPRECT const lprc, UINT const format) const noexcept {
+			DrawTextW(_hdc, lpchText, cchText, lprc, format);
+		}
+		inline void text_out(int const x, int const y, LPCWSTR const lpString, int const c) const noexcept {
+			TextOutW(_hdc, x, y, lpString, c);
+		}
+		inline void ellipse(int const left, int const top, int const right, int const bottom) const noexcept {
+			Ellipse(_hdc, left, top, right, bottom);
+		}
 		inline void pat_blt(int const x, int const y, int const w, int const h, DWORD const rop) const noexcept {
 			PatBlt(_hdc, x, y, w, h, rop);
 		}

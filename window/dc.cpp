@@ -1,6 +1,7 @@
 #include "dc.h"
 #include "wnd.h"
 #include "object.h"
+#include "brush.h"
 
 namespace window {
 	dc::dc(wnd const& wnd_, flag const flag_) noexcept
@@ -35,5 +36,8 @@ namespace window {
 	}
 	void dc::select_object(object const& object_) noexcept {
 		SelectObject(_hdc, object_._hgdiobj);
+	}
+	void dc::fill_rect(RECT const* const rect, window::brush const& brush_) noexcept {
+		FillRect(_hdc, rect, (HBRUSH)brush_._hgdiobj);
 	}
 }
