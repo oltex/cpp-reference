@@ -5,6 +5,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cache_simulator.h" />
-    <ClInclude Include="singleton.h" />
+    <ClInclude Include="singleton.h">
+      <Filter>design-pattern</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="design-pattern">
+      <UniqueIdentifier>{e5289f38-8160-4b7b-a760-79b6719dce68}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

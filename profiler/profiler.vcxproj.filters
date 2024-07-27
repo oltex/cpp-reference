@@ -25,5 +25,8 @@
     <Filter Include="data-structure">
       <UniqueIdentifier>{5c83712e-f197-47e5-b1a2-78c2d23e8b82}</UniqueIdentifier>
     </Filter>
+    <Filter Include="design-pattern">
+      <UniqueIdentifier>{e1b6a256-b187-4800-a611-33b2283cf1a2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>
