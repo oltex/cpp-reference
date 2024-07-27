@@ -14,7 +14,7 @@ private:
 	};
 	class cache_way final {
 	public:
-		inline explicit cache_way(size_t const size, unsigned long tag) noexcept
+		inline explicit cache_way(size_t const size, unsigned long const tag) noexcept
 			: _size(size), _shift(tag) {
 			_line = (cache_line*)malloc(sizeof(cache_line) * size);
 			memset(_line, 1, sizeof(cache_line) * size);
@@ -25,7 +25,7 @@ private:
 	public:
 		inline void access(void const* const ptr) noexcept {
 			auto tag = (size_t)ptr >> _shift;
-			for (auto i = 0; i < _size; ++i)
+			for (size_t i = 0; i < _size; ++i)
 				if (_line[i]._tag == tag) {
 					select(i);
 					std::cout << "캐시히트" << std::endl;
@@ -67,9 +67,9 @@ private:
 		}
 	private:
 		cache_line* _line;
-		size_t _size;
+		size_t const _size;
 
-		unsigned long _shift;
+		unsigned long const _shift;
 		unsigned short _plru = 0;
 	};
 	class cache_set final {
@@ -78,11 +78,11 @@ private:
 			unsigned long idx, unsigned long tag) noexcept
 			: _size(set), _mask(mask), _shift(idx) {
 			_way = (cache_way*)malloc(sizeof(cache_way) * set);
-			for (auto i = 0; i < set; ++i)
+			for (size_t i = 0; i < set; ++i)
 				new(_way + i) cache_way(way, tag);
 		}
 		inline ~cache_set(void) noexcept {
-			for (auto i = 0; i < _size; ++i)
+			for (size_t i = 0; i < _size; ++i)
 				_way[i].~cache_way();
 			free(_way);
 		}
@@ -93,10 +93,10 @@ private:
 		}
 	private:
 		cache_way* _way;
-		size_t _size;
+		size_t const _size;
 
-		size_t _mask;
-		unsigned long _shift;
+		size_t const _mask;
+		unsigned long const _shift;
 	};
 private:
 	inline explicit cache_simulator(void) noexcept {
@@ -121,7 +121,7 @@ private:
 		delete _set;
 	}
 public:
-	inline void access(void* a) {
+	inline void access(void const* const a) const noexcept {
 		_set->access(a);
 	}
 public:
