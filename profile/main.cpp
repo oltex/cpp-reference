@@ -2,10 +2,14 @@
 #include "profile.h"
 
 int main(void) {
-	{
-		profiling("B");
+	for (auto i = 0; i < 10; ++i) {
+		{
+			profiling("B");
+			for (auto i = 0; i < 1000000; ++i) {
+				int a = 10;
+			}
+		}
 	}
-
 	{
 		profiling("BC");
 	}
