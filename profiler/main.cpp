@@ -4,17 +4,16 @@
 //각각의 프로파일링이 태그를 기점으로 돌아야한다.
 
 int main(void) {
-	//{
-	//	profiling("B");
-	//}
+	auto& profiler = profiler::instance();
 
-	//{
-	//	profiling("BC");
-	//}
+	profiler.start("B");
+	for (auto i = 0; i < 1000000; ++i)
+		int a = 10;
+	profiler.stop("B");
+	profiler.clear("B");
 
-	//{
-	//	profiling("ABC");
-	//}
-	//profiler::print();
+
+	profiler.print();
+	profiler.export_("aa.txt");
 	return 0;
 }

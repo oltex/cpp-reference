@@ -60,7 +60,7 @@ private:
 					_plru &= ~bit;
 				else
 					_plru |= bit;
-				parent = parent * 2 + ( _plru & bit ? 0 : 1);
+				parent = parent * 2 + (_plru & bit ? 0 : 1);
 			}
 
 			return parent - _size;
@@ -74,8 +74,8 @@ private:
 	};
 	class cache_set final {
 	public:
-		inline explicit cache_set(size_t const set, size_t const way, size_t mask,
-			unsigned long idx, unsigned long tag) noexcept
+		inline explicit cache_set(size_t const set, size_t mask, unsigned long idx,
+			size_t const way, unsigned long tag) noexcept
 			: _size(set), _mask(mask), _shift(idx) {
 			_way = (cache_way*)malloc(sizeof(cache_way) * set);
 			for (size_t i = 0; i < set; ++i)
@@ -115,14 +115,14 @@ private:
 		_BitScanReverse(&tag, set);
 		tag += idx;
 
-		_set = new cache_set(set, way, mask, idx, tag);
+		_set = new cache_set(set, mask, idx, way, tag);
 	}
 	inline ~cache_simulator(void) noexcept {
 		delete _set;
 	}
 public:
-	inline void access(void const* const a) const noexcept {
-		_set->access(a);
+	inline void access(void const* const ptr) const noexcept {
+		_set->access(ptr);
 	}
 public:
 	cache_set* _set;

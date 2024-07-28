@@ -146,6 +146,7 @@
     <ClInclude Include="list.h" />
     <ClInclude Include="pair.h" />
     <ClInclude Include="profiler.h" />
+    <ClInclude Include="singleton.h" />
     <ClInclude Include="unordered_map.h" />
     <ClInclude Include="vector.h" />
   </ItemGroup>
