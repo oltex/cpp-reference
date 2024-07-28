@@ -12,7 +12,6 @@ int main(void) {
 	profiler.stop("B");
 	profiler.clear("B");
 
-
 	profiler.print();
 	profiler.export_("aa.txt");
 	return 0;

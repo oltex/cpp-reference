@@ -7,9 +7,14 @@
 #include <Windows.h>
 #include <fstream>
 
-class profiler final : public singleton< profiler> {
-	friend class singleton<profiler>;
+#ifdef dll
+#define declspec_dll _declspec(dllexport)
+#else
+#define declspec_dll _declspec(dllimport)
+#endif
 
+class profiler final : public singleton<profiler> {
+	friend class singleton<profiler>;
 private:
 	struct profile final {
 		LARGE_INTEGER _counter;
@@ -20,11 +25,11 @@ private:
 	};
 private:
 	inline explicit profiler(void) noexcept {
-		//timeBeginPeriod(1);
+		timeBeginPeriod(1);
 		QueryPerformanceFrequency(&_frequency);
 	}
 	inline ~profiler(void) noexcept {
-		//timeEndPeriod(1);
+		timeEndPeriod(1);
 	}
 public:
 	inline void start(char const* const tag) noexcept {
@@ -73,7 +78,6 @@ public:
 	inline void resume(char const* const tag) noexcept {
 		QueryPerformanceCounter(&_profile[tag]._counter);
 	}
-public:
 	inline void clear(char const* const tag) noexcept {
 		auto& pro = _profile[tag];
 		memset(&pro, 0, sizeof(profile));
