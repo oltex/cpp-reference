@@ -33,9 +33,9 @@ private:
 	}
 public:
 	inline void start(char const* const tag) noexcept {
-		auto& profile = _profile[tag];
-		profile._pause.QuadPart = 0;
-		QueryPerformanceCounter(&profile._counter);
+		auto& prof = _profile[tag];
+		prof._pause.QuadPart = 0;
+		QueryPerformanceCounter(&prof._counter);
 	}
 	inline void stop(char const* const tag) const noexcept {
 		LARGE_INTEGER counter;
@@ -44,22 +44,22 @@ public:
 		auto iter = _profile.find(tag);
 		if (iter == _profile.end())
 			return;
-		auto& profile = (*iter)._second;
+		auto& prof = (*iter)._second;
 
-		if (0 == profile._counter.QuadPart)
+		if (0 == prof._counter.QuadPart)
 			return;
-		profile._pause.QuadPart += counter.QuadPart - profile._counter.QuadPart;
-		profile._counter.QuadPart = 0;
+		prof._pause.QuadPart += counter.QuadPart - prof._counter.QuadPart;
+		prof._counter.QuadPart = 0;
 
-		double time = static_cast<double>(profile._pause.QuadPart) / _frequency.QuadPart;
-		profile._pause.QuadPart = 0;
+		double time = static_cast<double>(prof._pause.QuadPart) / _frequency.QuadPart;
+		prof._pause.QuadPart = 0;
 
-		profile._sum += time;
-		if (profile._minimum > time)
-			profile._minimum = time;
-		if (profile._maximum < time)
-			profile._maximum = time;
-		++profile._count;
+		prof._sum += time;
+		if (prof._minimum > time)
+			prof._minimum = time;
+		if (prof._maximum < time)
+			prof._maximum = time;
+		++prof._count;
 	}
 	inline void pause(char const* const tag) const noexcept {
 		LARGE_INTEGER counter;
@@ -68,35 +68,35 @@ public:
 		auto iter = _profile.find(tag);
 		if (iter == _profile.end())
 			return;
-		auto& profile = (*iter)._second;
+		auto& prof = (*iter)._second;
 
-		if (0 == profile._counter.QuadPart)
+		if (0 == prof._counter.QuadPart)
 			return;
-		profile._pause.QuadPart += counter.QuadPart - profile._counter.QuadPart;
-		profile._counter.QuadPart = 0;
+		prof._pause.QuadPart += counter.QuadPart - prof._counter.QuadPart;
+		prof._counter.QuadPart = 0;
 	}
 	inline void resume(char const* const tag) noexcept {
 		QueryPerformanceCounter(&_profile[tag]._counter);
 	}
 	inline void clear(char const* const tag) noexcept {
-		auto& pro = _profile[tag];
-		memset(&pro, 0, sizeof(profile));
-		pro._minimum = DBL_MAX;
-		pro._maximum = -DBL_MAX;
+		auto& prof = _profile[tag];
+		memset(&prof, 0, sizeof(profile));
+		prof._minimum = DBL_MAX;
+		prof._maximum = -DBL_MAX;
 	}
 public:
 	inline void print(void) const noexcept {
 		printf("tag | avg | min | max | sum | cnt\n");
 		printf("---------------------------\n");
 		for (auto& iter : _profile) {
-			auto& pro = iter._second;
+			auto& prof = iter._second;
 			printf("%s | %f | %f | %f | %f | %llu\n",
 				iter._first,
-				pro._sum / pro._count,
-				pro._minimum,
-				pro._maximum,
-				pro._sum,
-				pro._count);
+				prof._sum / prof._count,
+				prof._minimum,
+				prof._maximum,
+				prof._sum,
+				prof._count);
 		}
 	}
 	inline void export_(char const* const path) const noexcept {
@@ -104,13 +104,13 @@ public:
 		ofs << "tag | avg | min | max | sum | cnt\n";
 		ofs << "---------------------------\n";
 		for (auto& iter : _profile) {
-			auto& profile = iter._second;
+			auto& prof = iter._second;
 			ofs << iter._first << " | " <<
-				profile._sum / profile._count << " | " <<
-				profile._minimum << " | " <<
-				profile._maximum << " | " <<
-				profile._sum << " | " <<
-				profile._count << "\n";
+				prof._sum / prof._count << " | " <<
+				prof._minimum << " | " <<
+				prof._maximum << " | " <<
+				prof._sum << " | " <<
+				prof._count << "\n";
 		}
 		ofs << "---------------------------\n";
 		ofs.close();

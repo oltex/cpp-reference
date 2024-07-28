@@ -6,6 +6,40 @@
 
 #include <iostream>
 
+//class tree_plur final {
+//public:
+//	inline void select(size_t const idx) noexcept {
+//		auto parent = (idx - (idx % 2 ? 1 : 0) + _size) / 2;
+//		auto child = idx;
+//		while (parent > 0) {
+//			size_t bit = 1 << (_size - parent - 1);
+//			if (child % 2)
+//				_bit &= ~bit;
+//			else
+//				_bit |= bit;
+//
+//			child = parent;
+//			parent = (child) / 2;
+//		}
+//	}
+//	inline auto replace(void) noexcept -> size_t {
+//		size_t parent = 1;
+//
+//		while (parent < _size) {
+//			size_t bit = 1 << (_size - parent - 1);
+//			if (_bit & bit)
+//				_bit &= ~bit;
+//			else
+//				_bit |= bit;
+//			parent = parent * 2 + (_bit & bit ? 0 : 1);
+//		}
+//
+//		return parent - _size;
+//	}
+//private:
+//	unsigned short _bit;
+//};
+
 class cache_simulator final : public singleton<cache_simulator> {
 	friend class singleton<cache_simulator>;
 private:
