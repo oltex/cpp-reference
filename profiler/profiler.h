@@ -86,21 +86,22 @@ public:
 	}
 public:
 	inline void print(void) const noexcept {
-		printf("tag | avg | min | max | cnt\n");
+		printf("tag | avg | min | max | sum | cnt\n");
 		printf("---------------------------\n");
 		for (auto& iter : _profile) {
-			auto& profile = iter._second;
-			printf("%s | %f | %f | %f | %llu\n",
+			auto& pro = iter._second;
+			printf("%s | %f | %f | %f | %f | %llu\n",
 				iter._first,
-				profile._sum / profile._count,
-				profile._minimum,
-				profile._maximum,
-				profile._count);
+				pro._sum / pro._count,
+				pro._minimum,
+				pro._maximum,
+				pro._sum,
+				pro._count);
 		}
 	}
 	inline void export_(char const* const path) const noexcept {
 		std::ofstream ofs(path);
-		ofs << "tag | avg | min | max | cnt\n";
+		ofs << "tag | avg | min | max | sum | cnt\n";
 		ofs << "---------------------------\n";
 		for (auto& iter : _profile) {
 			auto& profile = iter._second;
@@ -108,6 +109,7 @@ public:
 				profile._sum / profile._count << " | " <<
 				profile._minimum << " | " <<
 				profile._maximum << " | " <<
+				profile._sum << " | " <<
 				profile._count << "\n";
 		}
 		ofs << "---------------------------\n";
