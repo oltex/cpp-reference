@@ -1,17 +1,18 @@
 #include "profiler.h"
 #include <iostream>
 
-//각각의 프로파일링이 태그를 기점으로 돌아야한다.
-
-int main(void) {
+int main(void) noexcept {
 	auto& profiler = profiler::instance();
 
-	for (int i = 0; i < 10000; ++i) {
+	profiler.start("C");
+	for (int i = 0; i < 1000; ++i) {
 		profiler.start("B");
-		for (auto i = 0; i < 1000000; ++i)
+		for (auto i = 0; i < 100000; ++i)
 			int a = 10;
 		profiler.stop("B");
 	}
+	profiler.stop("C");
+
 	//profiler.clear("B");
 
 	profiler.print();

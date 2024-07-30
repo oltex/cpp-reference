@@ -1,56 +1,68 @@
 #pragma once
 #include "singleton.h"
-#include <memory>
+#include "vector.h"
+#include "unordered_map.h"
+
 #include <intrin.h>
 #include <cstdint>
+#include <string>
 
-#include <iostream>
-
-
+#define cache_simulator_access(x) \
+cache_simulator::instance().access(__FILE__, __LINE__, #x, (void*)&x)
 
 class cache_simulator final : public singleton<cache_simulator> {
 	friend class singleton<cache_simulator>;
+	struct cache_key final {
+		char const* const _file;
+		int const _line;
+
+		inline bool operator==(cache_key const& rhs) noexcept {
+			if (_file != rhs._file || _line != rhs._line)
+				return false;
+			return true;
+		}
+	};
+	struct cache_value final {
+		char const* const _identifier;
+		size_t _hit = 0;
+		size_t _miss = 0;
+	};
 private:
-	using cache_line = size_t;
 	class cache_way {
 	public:
-		inline explicit cache_way(size_t const size, unsigned long const tag) noexcept
-			: _size(size), _shift(tag) {
-			_line = (cache_line*)malloc(sizeof(cache_line) * size);
-			memset(_line, 1, sizeof(cache_line) * size);
-		}
-		inline virtual ~cache_way(void) noexcept {
-			free(_line);
-		}
+		inline explicit cache_way(void) noexcept = default;
+		inline virtual ~cache_way(void) noexcept = default;
 	public:
-		inline virtual void access(void const* const ptr) noexcept = 0;
-	protected:
-		cache_line* _line;
-		size_t const _size;
-		unsigned long const _shift;
+		inline virtual bool access(void const* const ptr) noexcept = 0;
 	};
 	class tree_plur final : public cache_way {
+		using cache_line = uintptr_t;
 	public:
-		using cache_way::cache_way;
+		inline explicit tree_plur(size_t const size, unsigned long const shift) noexcept
+			: _shift(shift) {
+			_line.assign(size, 0xffffff);
+		}
+		inline virtual ~tree_plur(void) noexcept = default;
 	public:
-		inline virtual void access(void const* const ptr) noexcept override {
-			auto tag = (size_t)ptr >> _shift;
-			for (size_t i = 0; i < _size; ++i)
+		inline virtual bool access(void const* const address) noexcept override {
+			uintptr_t tag = (uintptr_t)address >> _shift;
+			for (size_t i = 0; i < _line.size(); ++i)
 				if (_line[i] == tag) {
 					select(i);
-					std::cout << "캐시히트" << std::endl;
-					return;
+					return true;
 				}
 			auto idx = replace();
 			_line[idx] = tag;
-			std::cout << "캐시미스" << std::endl;
+			return false;
 		}
 	private:
 		inline void select(size_t const idx) noexcept {
-			auto parent = (idx - (idx % 2 ? 1 : 0) + _size) / 2;
+			auto size = _line.size();
+			auto parent = (idx - (idx % 2 ? 1 : 0) + size) / 2;
 			auto child = idx;
+
 			while (parent > 0) {
-				unsigned short bit = 1 << (_size - parent - 1);
+				unsigned short bit = 1 << (size - parent - 1);
 				if (child % 2)
 					_bit &= ~bit;
 				else
@@ -62,9 +74,10 @@ private:
 		}
 		inline auto replace(void) noexcept -> size_t {
 			size_t parent = 1;
+			auto size = _line.size();
 
-			while (parent < _size) {
-				unsigned short bit = 1 << (_size - parent - 1);
+			while (parent < size) {
+				unsigned short bit = 1 << (size - parent - 1);
 				if (_bit & bit)
 					_bit &= ~bit;
 				else
@@ -72,30 +85,31 @@ private:
 				parent = parent * 2 + (_bit & bit ? 0 : 1);
 			}
 
-			return parent - _size;
+			return parent - size;
 		}
 	private:
+		vector<cache_line> _line;
+		unsigned long const _shift;
 		unsigned short _bit = 0;
 	};
 	class cache_set final {
 		friend class cache_simulator;
 	public:
-		inline explicit cache_set(size_t const set, size_t mask, unsigned long line) noexcept
-			: _size(set), _mask(mask), _shift(line) {
+		inline explicit cache_set(size_t const size, size_t mask, unsigned long shift) noexcept
+			:_mask(mask), _shift(shift) {
+			_way.reserve(size);
 		}
 		inline ~cache_set(void) noexcept {
-			for (size_t i = 0; i < _size; ++i)
-				_way[i].~cache_way();
-			free(_way);
+			for (auto& iter : _way)
+				delete iter;
 		}
 	public:
-		inline void access(void const* const ptr) const noexcept {
-			auto idx = ((size_t)ptr & _mask) >> _shift;
-			_way[idx].access(ptr);
+		inline bool access(void const* const address) const noexcept {
+			auto idx = ((size_t)address & _mask) >> _shift;
+			return _way[idx]->access(address);
 		}
 	private:
-		cache_way* _way;
-		size_t const _size;
+		vector<cache_way*> _way;
 		size_t const _mask;
 		unsigned long const _shift;
 	};
@@ -105,28 +119,50 @@ private:
 		__cpuidex(reg, 0x00000004, 0x00000000);
 
 		size_t set = reg[2] + 1;
+		size_t way = ((reg[1] & 0xffc00000) >> 22) + 1;
 		unsigned long line = (reg[1] & 0xfff) + 1;
 		_BitScanReverse(&line, line);
 		size_t mask = (set - 1) << line;
-		_set = new cache_set(set, mask, line);
-
-		size_t way = ((reg[1] & 0xffc00000) >> 22) + 1;
 		unsigned long tag;
 		_BitScanReverse(&tag, set);
 		tag += line;
-		_set->_way = (tree_plur*)malloc(sizeof(tree_plur) * set);
+
+		_set = new cache_set(set, mask, line);
 		for (size_t i = 0; i < set; ++i)
-			new(_set->_way + i) tree_plur(way, tag);
+			_set->_way.emplace_back(new tree_plur(way, tag));
 	}
 	inline ~cache_simulator(void) noexcept {
 		delete _set;
 	}
 public:
-	inline void access(void const* const ptr) const noexcept {
-		_set->access(ptr);
+	inline void access(char const* const file, int const line, char const* const identifier, void const* const address) noexcept {
+		cache_key key{ file, line };
+
+		auto iter = _result.find(key);
+		if (iter == _result.end())
+			iter = _result.emplace(key, cache_value{ identifier });
+
+		auto& value = (*iter)._second;
+		if (_set->access(address))
+			++value._hit;
+		else
+			++value._miss;
 	}
 public:
+	void print(void) const noexcept {
+		printf("file | line | identifier | hit | miss\n");
+		printf("---------------------------\n");
+		for (auto& iter : _result) {
+			auto& key = iter._first;
+			auto& value = iter._second;
+			printf("%s | %d | %s | %llu | %llu\n",
+				key._file, key._line,
+				value._identifier, value._hit, value._miss);
+		}
+	}
+private:
 	cache_set* _set;
+	unordered_map<cache_key, cache_value> _result;
 };
 
 // (((reg.ebx & 0xffc00000) >> 22) + 1) * (((reg.ebx & 0x3ff000) >> 12) + 1) * ((reg.ebx & 0xfff) + 1) * (reg.ecx + 1);

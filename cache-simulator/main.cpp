@@ -1,41 +1,52 @@
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+
 #include "cache_simulator.h"
 
 #include <iostream>
+#include <string>
 
-//#define STRINGIFY(x) #x
-//#define TOSTRING(x) STRINGIFY(x)
-//
-//
-//#include <iostream>
-//
-//#define STRINGIFY(x) #x
-//#define TOSTRING(x) STRINGIFY(x)
-//
-//int main() {
-//	int myVariable = 42;
-//	std::cout << "The name of the variable is: " << TOSTRING(myVariable) << std::endl;
-//	std::cout << "The value of the variable is: " << myVariable << std::endl;
-//	return 0;
-//}
-
-int main() noexcept {
+void func(void) noexcept {
 	auto& cache = cache_simulator::instance();
-	cache.access((void*)0x0fc0);
-	cache.access((void*)0x1fc0);
-	cache.access((void*)0x2fc0);
-	cache.access((void*)0x3fc0);
-	cache.access((void*)0x4fc0);
-	cache.access((void*)0x5fc0);
-	cache.access((void*)0x6fc0);
-	cache.access((void*)0x7fc0);
+
+	struct my_struct {
+		int a;
+		int b;
+	};
+	my_struct mystr;
+	for (auto i = 0; i < 100; ++i) {
+		cache_simulator_access(mystr.a);
+		cache_simulator_access(mystr.b);
+	}
+
+	//cache.access(__FILE__, __LINE__, "a", (void*)0x0fc0);
+	//cache.access(__FILE__, __LINE__, "b", (void*)0x1fc0);
+	//cache.access(__FILE__, __LINE__, "c", (void*)0x2fc0);
+	//cache.access(__FILE__, __LINE__, "d", (void*)0x3fc0);
+	//cache.access(__FILE__, __LINE__, "e", (void*)0x4fc0);
+	//cache.access(__FILE__, __LINE__, "f", (void*)0x5fc0);
+	//cache.access(__FILE__, __LINE__, "g", (void*)0x6fc0);
+	//cache.access(__FILE__, __LINE__, "h", (void*)0x7fc0);
 
 
-	cache.access((void*)0x0fc0);
-	cache.access((void*)0x1fc0);
-	cache.access((void*)0x0fc0);
+	//cache.access(__FILE__, __LINE__, "a", (void*)0x0fc0);
+	//cache.access(__FILE__, __LINE__, "b", (void*)0x1fc0);
+	//cache.access(__FILE__, __LINE__, "a", (void*)0x0fc0);
 
-	cache.access((void*)0x8fc0);
+	//cache.access(__FILE__, __LINE__, "i", (void*)0x8fc0);
 
-	cache.access((void*)0x3fc0);
+	//cache.access(__FILE__, __LINE__, "e", (void*)0x4fc0);
+
+	cache.print();
+}
+
+void exit(void) noexcept {
+	_CrtDumpMemoryLeaks();
+}
+
+int main(void) noexcept {
+	atexit(exit);
+	func();
 	return 0;
 }
