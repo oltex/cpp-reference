@@ -5,7 +5,7 @@ namespace window {
 	class sct final {
 		friend class wnd;
 	public:
-		struct WNDSTRUCTEXW {
+		struct WNDSTRUCTEXW final {
 			DWORD dwExStyle;
 			LPCWSTR lpClassName;
 			LPCWSTR lpWindowName;

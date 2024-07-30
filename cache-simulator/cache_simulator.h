@@ -7,15 +7,14 @@
 #include <cstdint>
 #include <string>
 
-#define cache_simulator_access(x) \
-cache_simulator::instance().access(__FILE__, __LINE__, #x, (void*)&x)
+#define cache_simulator_access(identifier) \
+cache_simulator::instance().access(__FILE__, __LINE__, #identifier, (void*)&identifier)
 
 class cache_simulator final : public singleton<cache_simulator> {
 	friend class singleton<cache_simulator>;
 	struct cache_key final {
 		char const* const _file;
 		int const _line;
-
 		inline bool operator==(cache_key const& rhs) noexcept {
 			if (_file != rhs._file || _line != rhs._line)
 				return false;

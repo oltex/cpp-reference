@@ -5,8 +5,6 @@ namespace window {
 	class icon final {
 		friend class cls;
 	public:
-		explicit icon(void) noexcept = default;
-	public:
 		inline auto destroy(void) noexcept -> BOOL {
 			return DestroyIcon(_hicon);
 		}

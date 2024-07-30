@@ -6,10 +6,17 @@ namespace window {
 	class cursor;
 	class cls final {
 	public:
-		explicit cls(void) noexcept;
+		inline explicit cls(void) noexcept {
+			initialize();
+		}
 		~cls(void) noexcept = default;
 	public:
-		void initialize(void) noexcept;
+		inline void initialize(void) noexcept {
+			memset(&_wcex, 0, sizeof(WNDCLASSEX));
+			_wcex.cbSize = sizeof(WNDCLASSEX);
+			_wcex.lpfnWndProc = DefWindowProcW;
+			_wcex.hbrBackground = 0;
+		}
 		auto register_(void) noexcept -> ATOM;
 	public:
 		inline void set_style(UINT style) noexcept {
@@ -28,7 +35,7 @@ namespace window {
 			_wcex.hInstance = instance;
 		}
 		void set_icon(window::icon const& icon) noexcept;
-		 void set_cursor(window::cursor const& cursor) noexcept;
+		void set_cursor(window::cursor const& cursor) noexcept;
 		inline void set_background(HBRUSH const hbrBackground) noexcept {
 			_wcex.hbrBackground = hbrBackground;
 		}
