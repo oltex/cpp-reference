@@ -21,26 +21,30 @@ namespace network {
 
 	class address {
 	public:
-		inline explicit address(void) noexcept {
-		}
+		inline explicit address(void) noexcept = default;
 		inline virtual ~address(void) noexcept = default;
+	public:
+		inline auto get_family(void) noexcept -> ADDRESS_FAMILY {
+			return _storage.ss_family;
+		}
 	protected:
-		sockaddr_storage _storage;
+		sockaddr_storage _storage{};
 	};
 
 	class address_ipv4 : protected address {
 	public:
-		inline void set_family(ADDRESS_FAMILY family) noexcept {
+		explicit address_ipv4(void) noexcept {
 			auto& storage = get_stroage();
-			storage.sin_family = family;
+			storage.sin_family = AF_INET;
 		}
+	public:
 		inline void set_port(unsigned short port) noexcept {
 			auto& storage = get_stroage();
 			storage.sin_port = htons(port);
 		}
 		inline void set_address(char const* const address) noexcept {
 			auto& storage = get_stroage();
-			if (1 != inet_pton(storage.sin_family, address, &storage.sin_addr))
+			if (1 != inet_pton(AF_INET, address, &storage.sin_addr))
 				std::cout << GetLastError() << std::endl;
 		}
 	private:
