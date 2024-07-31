@@ -1,7 +1,12 @@
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+
 #include "profiler.h"
+
 #include <iostream>
 
-int main(void) noexcept {
+void func(void) noexcept {
 	auto& profiler = profiler::instance();
 
 	profiler.start("C");
@@ -17,5 +22,14 @@ int main(void) noexcept {
 
 	profiler.print();
 	profiler.export_("aa.txt");
+}
+
+void exit(void) noexcept {
+	_CrtDumpMemoryLeaks();
+}
+
+int main(void) noexcept {
+	atexit(exit);
+	func();
 	return 0;
 }
