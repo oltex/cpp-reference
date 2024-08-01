@@ -1,6 +1,6 @@
 #pragma once
 #pragma comment(lib,"ws2_32.lib")
-#include "address.h"
+#include "storage.h"
 #include "list.h"
 
 #include <WinSock2.h>
@@ -9,29 +9,20 @@
 namespace network {
 	class domain final {
 	public:
-		inline void get_address(wchar_t const* const node_name, wchar_t const* const service_name) noexcept {
+		inline auto get_storage(wchar_t const* const node_name, wchar_t const* const service_name) const noexcept -> list<storage> {
+			list<storage> storage;
+
 			addrinfoW* info;
-			if (0 != GetAddrInfoW(node_name, service_name, nullptr, &info)) {
-				std::cout << GetLastError() << std::endl;
+			if (0 != GetAddrInfoW(node_name, service_name, nullptr, &info))
 				DebugBreak();
+			for (auto iter = info; nullptr != iter; iter = iter->ai_next) {
+				sockaddr_storage addr{};
+				memcpy_s(&addr, sizeof(sockaddr_storage), iter->ai_addr, iter->ai_addrlen);
+				storage.emplace_back(addr);
 			}
+			FreeAddrInfoW(info);
 
-			for (addrinfoW* iter = info; nullptr != iter; iter = iter->ai_next) {
-				
-				switch (iter->ai_family) {
-					case 
-					_address.emplace();
-				}
-				sockaddr_in* socketaddrin = reinterpret_cast<sockaddr_in*>(iter->ai_addr);
-
-				char str[INET_ADDRSTRLEN];
-				if (0 == inet_ntop(socketaddrin->sin_family, &socketaddrin->sin_addr, str, INET_ADDRSTRLEN))
-					std::cout << GetLastError() << std::endl;
-
-				std::cout << str << std::endl;
-			}
+			return storage;
 		}
-	private:
-		list<address> _address;
 	};
 }

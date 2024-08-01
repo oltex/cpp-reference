@@ -146,7 +146,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="address.h" />
+    <ClInclude Include="storage.h" />
     <ClInclude Include="domain.h" />
     <ClInclude Include="list.h" />
     <ClInclude Include="network.h" />

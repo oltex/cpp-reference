@@ -70,7 +70,7 @@ public:
 		for (auto iter = begin; iter != end; ++iter)
 			emplace_back(*iter);
 	}
-	inline explicit list(list<type> const& rhs) noexcept
+	inline list(list<type> const& rhs) noexcept
 		: list(rhs.begin(), rhs.end()) {
 	}
 	inline explicit list(list<type>&& rhs) noexcept
