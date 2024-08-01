@@ -10,8 +10,8 @@
 namespace network {
 	class socket final {
 	public:
-		inline explicit socket(address_family const af, type const type, protocol const protocol) noexcept {
-			_socket = ::socket(static_cast<int>(af), static_cast<int>(type), static_cast<int>(protocol));
+		inline explicit socket(ADDRESS_FAMILY const af, int const type, int const protocol) noexcept {
+			_socket = ::socket(af, type, protocol);
 			if (INVALID_SOCKET == _socket)
 				error();
 		}

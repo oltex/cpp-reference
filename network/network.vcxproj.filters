@@ -7,5 +7,14 @@
     <ClInclude Include="network.h" />
     <ClInclude Include="socket.h" />
     <ClInclude Include="address.h" />
+    <ClInclude Include="domain.h" />
+    <ClInclude Include="list.h">
+      <Filter>data-structure</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="data-structure">
+      <UniqueIdentifier>{9921b480-9573-4fcc-801f-31e7a4059392}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

@@ -13,12 +13,6 @@ namespace network {
 	enum class protocol : int { tcp = IPPROTO_TCP, udp = IPPROTO_UDP };
 	using enum protocol;
 
-	//아 v4설정을 해야지
-	//address<ipv4> a;
-	//a.port
-	//a.address
-	//a.ipv6 불가능
-
 	class address {
 	public:
 		inline explicit address(void) noexcept = default;
@@ -37,10 +31,17 @@ namespace network {
 			auto& storage = get_stroage();
 			storage.sin_family = AF_INET;
 		}
+		explicit address_ipv4(sockaddr_in const storage) {
+			memcpy_s(_storage, storage,
+		}
 	public:
 		inline void set_port(unsigned short port) noexcept {
 			auto& storage = get_stroage();
 			storage.sin_port = htons(port);
+		}
+		inline void set_address(unsigned long address) noexcept {
+			auto& storage = get_stroage();
+			storage.sin_addr.S_un.S_addr = htonl(INADDR_ANY);
 		}
 		inline void set_address(char const* const address) noexcept {
 			auto& storage = get_stroage();
@@ -53,16 +54,3 @@ namespace network {
 		}
 	};
 }
-
-//namespace network {
-//	class address final {
-//	public:
-//		void func(void) {
-//			a.sin_port
-//			b.sin6_flowinfo
-//		}
-//	private:
-//		sockaddr_in a;
-//		sockaddr_in6 b;
-//	};
-//}
