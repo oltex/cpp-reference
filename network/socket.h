@@ -44,6 +44,10 @@ namespace network {
 			if (SOCKET_ERROR == ::connect(_socket, reinterpret_cast<sockaddr*>(&addr), sizeof(sockaddr_in)))
 				DebugBreak();
 		}
+		//inline void set_option(void) const noexcept {
+		//	int opt_val = TRUE;
+		//	setsockopt(_socket, IPPROTO_TCP, TCP_NODELAY, (const char*)&opt_val, sizeof(opt_val));
+		//}
 	public:
 		inline void send(char const* const buf, int const flag) const noexcept {
 			int ret = ::send(_socket, buf, strlen(buf), flag);
