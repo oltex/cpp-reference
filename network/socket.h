@@ -44,22 +44,24 @@ namespace network {
 			if (SOCKET_ERROR == ::connect(_socket, reinterpret_cast<sockaddr*>(&addr), sizeof(sockaddr_in)))
 				DebugBreak();
 		}
+		inline void close(void) const noexcept {
+			closesocket(_socket);
+		}
 		//inline void set_option(void) const noexcept {
 		//	int opt_val = TRUE;
 		//	setsockopt(_socket, IPPROTO_TCP, TCP_NODELAY, (const char*)&opt_val, sizeof(opt_val));
 		//}
 	public:
-		inline void send(char const* const buf, int const flag) const noexcept {
-			int ret = ::send(_socket, buf, strlen(buf), flag);
+		inline void send(char const* const buf, int const len, int const flag) const noexcept {
+			int ret = ::send(_socket, buf, len, flag);
 			if (SOCKET_ERROR == ret)
 				DebugBreak();
 		}
-		inline void recv(char* const buf, int const len, int const flag) const noexcept {
+		inline auto recv(char* const buf, int const len, int const flag) const noexcept -> int {
 			int ret = ::recv(_socket, buf, len, flag);
 			if (SOCKET_ERROR == ret)
 				DebugBreak();
-			else if (0 == ret)
-				return;
+			return ret;
 		}
 	private:
 		SOCKET _socket;

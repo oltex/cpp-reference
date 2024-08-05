@@ -36,10 +36,6 @@ namespace network {
 			storage.sin_family = AF_INET;
 		}
 	public:
-		inline void set_port(unsigned short port) noexcept {
-			auto& storage = get_stroage();
-			storage.sin_port = htons(port);
-		}
 		//inline void set_address(unsigned long address) noexcept {
 		//	auto& storage = get_stroage();
 		//	storage.sin_addr.S_un.S_addr = htonl(INADDR_ANY);
@@ -55,6 +51,14 @@ namespace network {
 			if (0 == inet_ntop(AF_INET, &storage.sin_addr, string, INET_ADDRSTRLEN))
 				DebugBreak();
 			return std::string(string);
+		}
+		inline void set_port(unsigned short port) noexcept {
+			auto& storage = get_stroage();
+			storage.sin_port = htons(port);
+		}
+		inline auto get_port(void) noexcept -> unsigned short {
+			auto& storage = get_stroage();
+			return ntohs(storage.sin_port);
 		}
 	private:
 		inline auto get_stroage(void) noexcept -> sockaddr_in& {
