@@ -40,19 +40,20 @@ namespace network {
 			return socket(sock);
 		}
 		inline void connect(storage& stor) const noexcept {
-			auto addr = reinterpret_cast<sockaddr*>(&stor.get_storage());
+			auto& addr = reinterpret_cast<sockaddr&>(stor.get_storage());
 			if (SOCKET_ERROR == ::connect(_socket, reinterpret_cast<sockaddr*>(&addr), sizeof(sockaddr_in)))
 				DebugBreak();
 		}
 		inline void close(void) const noexcept {
 			closesocket(_socket);
 		}
-		//inline void set_option(void) const noexcept {
-		//	int opt_val = TRUE;
-		//	setsockopt(_socket, IPPROTO_TCP, TCP_NODELAY, (const char*)&opt_val, sizeof(opt_val));
-		//}
 	public:
 		inline void send(char const* const buf, int const len, int const flag) const noexcept {
+			int ret = ::send(_socket, buf, len, flag);
+			if (SOCKET_ERROR == ret)
+				DebugBreak();
+		}
+		inline void sendto(char const* const buf, int const len, int const flag) const noexcept {
 			int ret = ::send(_socket, buf, len, flag);
 			if (SOCKET_ERROR == ret)
 				DebugBreak();
@@ -62,6 +63,17 @@ namespace network {
 			if (SOCKET_ERROR == ret)
 				DebugBreak();
 			return ret;
+		}
+	public:
+		inline void set_tcp_nodelay(int const optval) const noexcept {
+			set_option(IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<char const*>(&optval), sizeof(optval));
+		}
+		inline void set_linger(LINGER linger) const noexcept {
+			set_option(SOL_SOCKET, SO_LINGER, reinterpret_cast<char const*>(&linger), sizeof(linger));
+		}
+		inline void set_option(int const level, int const name, char const* value, int const length) const noexcept {
+			if (SOCKET_ERROR == setsockopt(_socket, level, name, value, length))
+				DebugBreak();
 		}
 	private:
 		SOCKET _socket;
