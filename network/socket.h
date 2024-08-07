@@ -41,7 +41,7 @@ namespace network {
 		}
 		inline void connect(storage& stor) const noexcept {
 			auto& addr = reinterpret_cast<sockaddr&>(stor.get_storage());
-			if (SOCKET_ERROR == ::connect(_socket, reinterpret_cast<sockaddr*>(&addr), sizeof(sockaddr_in)))
+			if (SOCKET_ERROR == ::connect(_socket, &addr, sizeof(sockaddr_in)))
 				DebugBreak();
 		}
 		inline void close(void) const noexcept {
@@ -53,8 +53,9 @@ namespace network {
 			if (SOCKET_ERROR == ret)
 				DebugBreak();
 		}
-		inline void sendto(char const* const buf, int const len, int const flag) const noexcept {
-			int ret = ::send(_socket, buf, len, flag);
+		inline void sendto(char const* const buf, int const len, int const flag, storage& stor) const noexcept {
+			auto& addr = reinterpret_cast<sockaddr&>(stor.get_storage());
+			int ret = ::sendto(_socket, buf, len, flag, &addr, sizeof(sockaddr_in));
 			if (SOCKET_ERROR == ret)
 				DebugBreak();
 		}
