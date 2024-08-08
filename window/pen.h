@@ -4,7 +4,9 @@
 namespace window {
 	class pen final : public object {
 	public:
-		explicit pen(int const iStyle, int const cWidth, COLORREF const color) noexcept;
+		inline explicit pen(int const iStyle, int const cWidth, COLORREF const color) noexcept {
+			_hgdiobj = CreatePen(iStyle, cWidth, color);
+		}
 		virtual ~pen(void) noexcept override = default;
 	};
 }

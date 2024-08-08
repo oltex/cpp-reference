@@ -1,15 +1,17 @@
 #pragma once
+
+#include "icon.h"
+#include "cursor.h"
+
 #include <Windows.h>
 
 namespace window {
-	class icon;
-	class cursor;
 	class cls final {
 	public:
 		inline explicit cls(void) noexcept {
 			initialize();
 		}
-		~cls(void) noexcept = default;
+		inline ~cls(void) noexcept = default;
 	public:
 		inline void initialize(void) noexcept {
 			memset(&_wcex, 0, sizeof(WNDCLASSEX));
@@ -17,7 +19,9 @@ namespace window {
 			_wcex.lpfnWndProc = DefWindowProcW;
 			_wcex.hbrBackground = 0;
 		}
-		auto register_(void) noexcept -> ATOM;
+		inline auto register_(void) const noexcept -> ATOM {
+			return RegisterClassExW(&_wcex);
+		}
 	public:
 		inline void set_style(UINT style) noexcept {
 			_wcex.style = style;
@@ -34,8 +38,12 @@ namespace window {
 		inline void set_instance(HINSTANCE const instance) noexcept {
 			_wcex.hInstance = instance;
 		}
-		void set_icon(window::icon const& icon) noexcept;
-		void set_cursor(window::cursor const& cursor) noexcept;
+		inline void set_icon(icon const& icon) noexcept {
+			_wcex.hIcon = icon._hicon;
+		}
+		inline void set_cursor(cursor const& cursor) noexcept {
+			_wcex.hCursor = cursor._hcursor;
+		}
 		inline void set_background(HBRUSH const hbrBackground) noexcept {
 			_wcex.hbrBackground = hbrBackground;
 		}
@@ -45,8 +53,13 @@ namespace window {
 		inline void set_class_name(LPCWSTR const lpszClassName) noexcept {
 			_wcex.lpszClassName = lpszClassName;
 		};
-		void set_icon_small(window::icon const& icon) noexcept;
+		inline void set_icon_small(icon const& icon) noexcept {
+			_wcex.hIconSm = icon._hicon;
+		}
 	private:
 		WNDCLASSEXW _wcex;
 	};
 }
+
+
+

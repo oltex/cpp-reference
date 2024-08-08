@@ -3,7 +3,6 @@
 
 namespace window {
 	class sct final {
-		friend class wnd;
 	public:
 		struct WNDSTRUCTEXW final {
 			DWORD dwExStyle;
@@ -20,10 +19,20 @@ namespace window {
 			LPVOID lpParam;
 		};
 	public:
-		explicit sct(void) noexcept;
+		inline explicit sct(void) noexcept {
+			initialize();
+		}
 		~sct(void) noexcept = default;
 	public:
-		void initialize(void) noexcept;
+		inline void initialize(void) noexcept {
+			memset(&_wsex, 0, sizeof(WNDSTRUCTEXW));
+		}
+		inline auto create(void) noexcept -> HWND {
+			return CreateWindowExW(
+				_wsex.dwExStyle, _wsex.lpClassName, _wsex.lpWindowName, _wsex.dwStyle,
+				_wsex.x, _wsex.y, _wsex.nWidth, _wsex.nHeight, _wsex.hWndParent,
+				_wsex.hMenu, _wsex.hInstance, _wsex.lpParam);
+		}
 	public:
 		inline void set_extended_style(DWORD const dwExStyle) noexcept {
 			_wsex.dwExStyle = dwExStyle;

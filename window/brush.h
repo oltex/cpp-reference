@@ -4,7 +4,9 @@
 namespace window {
 	class brush final : public object {
 	public:
-		explicit brush(COLORREF const color) noexcept;
+		inline explicit brush(COLORREF const color) noexcept {
+			_hgdiobj = CreateSolidBrush(color);
+		};
 		virtual ~brush(void) noexcept override = default;
 	};
 }

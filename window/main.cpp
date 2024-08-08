@@ -28,7 +28,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 		sct.set_x(CW_USEDEFAULT);
 		sct.set_width(CW_USEDEFAULT);
 
-		_wnd = new wnd(sct);
+		_wnd = new wnd(sct.create());
 	}
 
 	dc get_dc(*_wnd, window::dc::flag::get_dc);

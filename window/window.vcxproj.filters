@@ -11,21 +11,6 @@
     <ClCompile Include="bitmap.cpp">
       <Filter>window\object\bitmap</Filter>
     </ClCompile>
-    <ClCompile Include="pen.cpp">
-      <Filter>window\object\pen</Filter>
-    </ClCompile>
-    <ClCompile Include="brush.cpp">
-      <Filter>window\object\brush</Filter>
-    </ClCompile>
-    <ClCompile Include="wnd.cpp">
-      <Filter>window\wnd</Filter>
-    </ClCompile>
-    <ClCompile Include="cls.cpp">
-      <Filter>window\wnd\cls</Filter>
-    </ClCompile>
-    <ClCompile Include="sct.cpp">
-      <Filter>window\wnd\sct</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="window">
