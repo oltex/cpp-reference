@@ -5,6 +5,7 @@
 #include "network.h"
 #include "socket.h"
 #include "domain.h"
+#include "poll.h"
 
 #include <iostream>
 
@@ -26,6 +27,13 @@ void func(void) noexcept {
 	socket.bind(reinterpret_cast<network::storage&>(storage));
 	socket.listen(SOMAXCONN);
 
+	network::poll poll;
+	poll.push(socket, POLLRDNORM);
+	poll.execute(-1);
+
+	for (auto& iter : poll) {
+
+	}
 
 	system("pause");
 }

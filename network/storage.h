@@ -22,7 +22,7 @@ namespace network {
 			return _storage.ss_family;
 		}
 		inline auto get_address(void) const noexcept -> std::string;
-		inline auto get_storage(void) noexcept -> sockaddr_storage& {
+		inline auto data(void) noexcept -> sockaddr_storage& {
 			return _storage;
 		}
 	protected:

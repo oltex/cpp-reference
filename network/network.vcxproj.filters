@@ -6,9 +6,13 @@
   <ItemGroup>
     <ClInclude Include="network.h" />
     <ClInclude Include="socket.h" />
-    <ClInclude Include="address.h" />
     <ClInclude Include="domain.h" />
     <ClInclude Include="list.h">
+      <Filter>data-structure</Filter>
+    </ClInclude>
+    <ClInclude Include="storage.h" />
+    <ClInclude Include="poll.h" />
+    <ClInclude Include="vector.h">
       <Filter>data-structure</Filter>
     </ClInclude>
   </ItemGroup>

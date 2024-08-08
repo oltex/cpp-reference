@@ -21,7 +21,7 @@ namespace network {
 		}
 	public:
 		inline void bind(storage& stor) const noexcept {
-			auto addr = reinterpret_cast<sockaddr*>(&stor.get_storage());
+			auto addr = reinterpret_cast<sockaddr*>(&stor.data());
 			int len;
 			switch (stor.get_family()) {
 			case AF_INET:
@@ -46,7 +46,7 @@ namespace network {
 			return socket(sock);
 		}
 		inline void connect(storage& stor) const noexcept {
-			auto& addr = reinterpret_cast<sockaddr&>(stor.get_storage());
+			auto& addr = reinterpret_cast<sockaddr&>(stor.data());
 			int len;
 			switch (stor.get_family()) {
 			case AF_INET:
@@ -64,7 +64,7 @@ namespace network {
 			return ::send(_socket, buf, len, flag);
 		}
 		inline auto send_to(char const* const buf, int const len, int const flag, storage& stor) const noexcept -> int {
-			auto& addr = reinterpret_cast<sockaddr&>(stor.get_storage());
+			auto& addr = reinterpret_cast<sockaddr&>(stor.data());
 			return ::sendto(_socket, buf, len, flag, &addr, sizeof(sockaddr_in));
 		}
 		inline auto receive(char* const buf, int const len, int const flag) const noexcept -> int {
@@ -98,6 +98,10 @@ namespace network {
 		inline void set_io_control(long const cmd, unsigned long arg) const noexcept {
 			if (SOCKET_ERROR == ioctlsocket(_socket, cmd, &arg))
 				DebugBreak();
+		}
+	public:
+		inline auto data(void) const noexcept -> SOCKET {
+			return _socket;
 		}
 	private:
 		SOCKET _socket;
