@@ -56,6 +56,10 @@ namespace network {
 			if (SOCKET_ERROR == ::connect(_socket, &addr, len))
 				DebugBreak();
 		}
+		inline void shutdown(int const how) const noexcept {
+			if (SOCKET_ERROR == ::shutdown(_socket, how))
+				DebugBreak();
+		}
 		inline void close(void) const noexcept {
 			closesocket(_socket);
 		}

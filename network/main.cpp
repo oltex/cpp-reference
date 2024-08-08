@@ -10,7 +10,7 @@
 #include <iostream>
 
 void func(void) noexcept {
-	network::network net;
+	network::network network;
 
 	//network::domain domain;
 	//list<network::storage> storage = domain.get_storage(L"www.naver.com", nullptr);
@@ -31,9 +31,9 @@ void func(void) noexcept {
 	poll.push(socket, POLLRDNORM);
 	poll.execute(-1);
 
-	for (auto& iter : poll) {
-
-	}
+	//for (auto& iter : poll) {
+	//	if (iter._revent & POLLRDNORM)
+	//}
 
 	system("pause");
 }
