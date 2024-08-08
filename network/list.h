@@ -139,6 +139,13 @@ public:
 		return iterator{ next };
 	}
 public:
+	inline auto front(void) const noexcept ->type& {
+		return _head->_next->_value;
+	}
+	inline auto back(void) const noexcept ->type& {
+		return _head->_prev->_value;
+	}
+public:
 	inline auto begin(void) const noexcept -> iterator {
 		return iterator(_head->_next);
 	}

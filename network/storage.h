@@ -36,10 +36,10 @@ namespace network {
 			storage.sin_family = AF_INET;
 		}
 	public:
-		//inline void set_address(unsigned long address) noexcept {
-		//	auto& storage = get_stroage();
-		//	storage.sin_addr.S_un.S_addr = htonl(INADDR_ANY);
-		//}
+		inline void set_address(unsigned long address) noexcept {
+			auto& storage = get_stroage();
+			storage.sin_addr.S_un.S_addr = htonl(INADDR_ANY);
+		}
 		inline void set_address(char const* const address) noexcept {
 			auto& storage = get_stroage();
 			if (1 != inet_pton(AF_INET, address, &storage.sin_addr))
