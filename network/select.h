@@ -26,13 +26,15 @@ namespace network {
 			if (type::exception & type)
 				FD_SET(socket.data(), &_exception_set);
 		}
-		inline void execute(char const type, timeval const* const time) noexcept {
-			if (SOCKET_ERROR == ::select(0,
+		inline auto execute(char const type, timeval const* const time) noexcept -> int {
+			int result = ::select(0,
 				type::read & type ? &_read_set : nullptr,
 				type::write & type ? &_write_set : nullptr,
 				type::exception & type ? &_exception_set : nullptr,
-				time))
+				time);
+			if (SOCKET_ERROR == result)
 				DebugBreak();
+			return result;
 		}
 		inline auto is(socket const socket, type const type) const noexcept -> int {
 			switch (type) {
