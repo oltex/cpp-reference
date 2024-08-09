@@ -1,8 +1,6 @@
 #pragma once
 #pragma comment(lib,"ws2_32.lib")
-
 #include "storage.h"
-
 #include <WinSock2.h>
 
 namespace network {

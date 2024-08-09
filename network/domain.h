@@ -2,7 +2,6 @@
 #pragma comment(lib,"ws2_32.lib")
 #include "storage.h"
 #include "list.h"
-
 #include <WinSock2.h>
 #include <WS2tcpip.h>
 
