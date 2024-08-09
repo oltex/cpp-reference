@@ -1,8 +1,6 @@
 #pragma once
-
 #include "icon.h"
 #include "cursor.h"
-
 #include <Windows.h>
 
 namespace window {

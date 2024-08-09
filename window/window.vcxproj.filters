@@ -10,9 +10,6 @@
     <Filter Include="window\object">
       <UniqueIdentifier>{4d687117-5062-4792-a253-2f0787c6c786}</UniqueIdentifier>
     </Filter>
-    <Filter Include="window\wnd">
-      <UniqueIdentifier>{2403f12e-f914-4dd0-923a-b9b020be5831}</UniqueIdentifier>
-    </Filter>
     <Filter Include="window\resource">
       <UniqueIdentifier>{b2bc33ac-cdce-4c2a-aee0-5e1ace6629d4}</UniqueIdentifier>
     </Filter>
@@ -22,25 +19,25 @@
     <Filter Include="window\device_context">
       <UniqueIdentifier>{896e9180-4f34-486d-a030-6c35b799d702}</UniqueIdentifier>
     </Filter>
+    <Filter Include="window\window">
+      <UniqueIdentifier>{2403f12e-f914-4dd0-923a-b9b020be5831}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="window.h">
-      <Filter>window</Filter>
-    </ClInclude>
     <ClInclude Include="device_context.h">
       <Filter>window\device_context</Filter>
     </ClInclude>
     <ClInclude Include="object.h">
       <Filter>window\object</Filter>
     </ClInclude>
-    <ClInclude Include="wnd.h">
-      <Filter>window\wnd</Filter>
+    <ClInclude Include="window.h">
+      <Filter>window\window</Filter>
     </ClInclude>
     <ClInclude Include="sct.h">
-      <Filter>window\wnd</Filter>
+      <Filter>window\window</Filter>
     </ClInclude>
     <ClInclude Include="cls.h">
-      <Filter>window\wnd</Filter>
+      <Filter>window\window</Filter>
     </ClInclude>
     <ClInclude Include="cursor.h">
       <Filter>window\resource</Filter>

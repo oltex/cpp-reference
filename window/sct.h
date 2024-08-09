@@ -1,5 +1,5 @@
 #pragma once
-#include "wnd.h"
+#include "window.h"
 #include <Windows.h>
 
 namespace window {
@@ -28,12 +28,12 @@ namespace window {
 		inline void initialize(void) noexcept {
 			memset(&_wsex, 0, sizeof(WNDSTRUCTEXW));
 		}
-		inline auto create(void) noexcept -> wnd {
+		inline auto create(void) noexcept -> window {
 			HWND hwnd = CreateWindowExW(
 				_wsex.dwExStyle, _wsex.lpClassName, _wsex.lpWindowName, _wsex.dwStyle,
 				_wsex.x, _wsex.y, _wsex.nWidth, _wsex.nHeight, _wsex.hWndParent,
 				_wsex.hMenu, _wsex.hInstance, _wsex.lpParam);
-			return wnd(hwnd);
+			return window(hwnd);
 		}
 	public:
 		inline void set_extended_style(DWORD const dwExStyle) noexcept {
