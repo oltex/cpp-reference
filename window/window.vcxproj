@@ -143,17 +143,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="bitmap.cpp" />
-    <ClCompile Include="dc.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="object.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bitmap.h" />
     <ClInclude Include="brush.h" />
     <ClInclude Include="cls.h" />
     <ClInclude Include="cursor.h" />
-    <ClInclude Include="dc.h" />
+    <ClInclude Include="device_context.h" />
     <ClInclude Include="icon.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="pen.h" />

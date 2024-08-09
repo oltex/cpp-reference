@@ -3,10 +3,15 @@
 
 namespace window {
 	class object {
-		friend class dc;
 	public:
-		explicit object(void) noexcept = default;
-		virtual ~object(void) noexcept;
+		inline explicit object(void) noexcept = default;
+		virtual ~object(void) noexcept {
+			DeleteObject(_hgdiobj);
+		}
+	public:
+		inline auto data(void) const noexcept -> HGDIOBJ {
+			return _hgdiobj;
+		}
 	protected:
 		HGDIOBJ _hgdiobj = nullptr;
 	};

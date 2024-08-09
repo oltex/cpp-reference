@@ -3,7 +3,6 @@
 
 namespace window {
 	class icon final {
-		friend class cls;
 	public:
 		inline auto destroy(void) noexcept -> BOOL {
 			return DestroyIcon(_hicon);
@@ -14,6 +13,10 @@ namespace window {
 		inline void load(HINSTANCE const hInst, LPCWSTR const name, UINT const type, int const cx, int const cy, UINT const fuLoad) noexcept {
 			_hicon = static_cast<HICON>(LoadImageW(hInst, name, type, cx, cy, fuLoad));
 		};
+	public:
+		inline auto data(void) const noexcept -> HICON {
+			return _hicon;
+		}
 	private:
 		HICON _hicon = nullptr;
 	};

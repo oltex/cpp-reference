@@ -3,7 +3,6 @@
 
 namespace window {
 	class cursor final {
-		friend class cls;
 	public:
 		inline auto destroy(void) noexcept -> BOOL {
 			return DestroyCursor(_hcursor);
@@ -23,6 +22,10 @@ namespace window {
 		static inline auto show(BOOL const bShow) noexcept -> int {
 			return ShowCursor(bShow);
 		};
+	public:
+		inline auto data(void) const noexcept -> HCURSOR {
+			return _hcursor;
+		}
 	private:
 		HCURSOR _hcursor = nullptr;
 	};

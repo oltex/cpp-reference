@@ -6,7 +6,7 @@
 #include "cursor.h"
 #include "icon.h"
 
-#include "dc.h"
+#include "device_context.h"
 #include "bitmap.h"
 #include "brush.h"
 #include "pen.h"

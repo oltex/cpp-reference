@@ -1,16 +1,30 @@
 #pragma once
+#include "device_context.h"
 #include <Windows.h>
 
 namespace window {
-	class sct;
 	class wnd {
-		friend class dc;
 	public:
-		inline explicit wnd(HWND const hwnd) noexcept 
+		inline explicit wnd(HWND const hwnd) noexcept
 			: _hwnd(hwnd) {
 		}
-		
 		inline ~wnd(void) noexcept = default;
+	public:
+		inline auto get_device_context(void) const noexcept -> device_context {
+			HDC hdc = GetDC(_hwnd);
+			return device_context(hdc);
+		}
+		inline void release_device_context(device_context& dc) const noexcept {
+			ReleaseDC(_hwnd, dc.data());
+		}
+		inline auto begin_paint(void) const noexcept -> device_context {
+			PAINTSTRUCT paintstruct;
+			HDC hdc = BeginPaint(_hwnd, &paintstruct);
+			return device_context(hdc, paintstruct);
+		}
+		inline void end_paint(device_context& dc) const noexcept {
+			EndPaint(_hwnd, &dc.get_paint_struct());
+		}
 	public:
 		inline void screen_to_client(LPPOINT const lpPoint) const noexcept {
 			ScreenToClient(_hwnd, lpPoint);

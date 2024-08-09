@@ -3,7 +3,7 @@
 
 using namespace window;
 wnd* _wnd;
-dc* _dc;
+device_context* _dc;
 bitmap* _bitmap;
 
 LRESULT CALLBACK procedure(HWND const wnd, UINT const message, WPARAM const wparam, LPARAM const lparam) noexcept;
@@ -31,11 +31,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 		_wnd = new wnd(sct.create());
 	}
 
-	dc get_dc(*_wnd, window::dc::flag::get_dc);
+	device_context dc = _wnd->get_device_context();
 	RECT rect = _wnd->get_client_rect();
 
-	_dc = new window::dc(get_dc);
-	_bitmap = new window::bitmap(get_dc, rect.right, rect.bottom);
+	
+	_dc = new device_context(dc.create_compatible_device_context());
+	_bitmap = new bitmap(dc.create_compatible_bitmap(rect.right, rect.bottom));
 	_dc->select_object(*_bitmap);
 
 	_wnd->show(true);
@@ -54,8 +55,12 @@ LRESULT CALLBACK procedure(HWND const hwnd, UINT const message, WPARAM const wpa
 		_dc->line_to(100, 100);
 		_dc->select_object(*_bitmap);
 
-		dc dc_(*_wnd, window::dc::flag::begin_paint);
-		dc_.bit_blt(0, 0, 100, 100, *_dc, 0, 0, SRCCOPY);
+
+		device_context dc = _wnd->begin_paint();
+
+		dc.bit_blt(0, 0, 100, 100, *_dc, 0, 0, SRCCOPY);
+
+		_wnd->end_paint(dc);
 	}
 				 break;
 	case WM_DESTROY:

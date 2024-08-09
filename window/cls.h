@@ -39,10 +39,10 @@ namespace window {
 			_wcex.hInstance = instance;
 		}
 		inline void set_icon(icon const& icon) noexcept {
-			_wcex.hIcon = icon._hicon;
+			_wcex.hIcon = icon.data();
 		}
 		inline void set_cursor(cursor const& cursor) noexcept {
-			_wcex.hCursor = cursor._hcursor;
+			_wcex.hCursor = cursor.data();
 		}
 		inline void set_background(HBRUSH const hbrBackground) noexcept {
 			_wcex.hbrBackground = hbrBackground;
@@ -54,7 +54,7 @@ namespace window {
 			_wcex.lpszClassName = lpszClassName;
 		};
 		inline void set_icon_small(icon const& icon) noexcept {
-			_wcex.hIconSm = icon._hicon;
+			_wcex.hIconSm = icon.data();
 		}
 	private:
 		WNDCLASSEXW _wcex;
