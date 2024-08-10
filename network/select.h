@@ -18,7 +18,7 @@ namespace network {
 			if (type::exception & type)
 				FD_ZERO(&_read_set);
 		}
-		inline void set(socket const socket, char const type) noexcept {
+		inline void set(socket const& socket, char const type) noexcept {
 			if (type::read & type)
 				FD_SET(socket.data(), &_read_set);
 			if (type::write & type)
@@ -36,7 +36,7 @@ namespace network {
 				DebugBreak();
 			return result;
 		}
-		inline auto is(socket const socket, type const type) const noexcept -> int {
+		inline auto is(socket const& socket, type const type) const noexcept -> int {
 			switch (type) {
 			case read:
 				return FD_ISSET(socket.data(), &_read_set);

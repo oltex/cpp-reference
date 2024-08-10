@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="singleton.h">
+      <Filter>design-pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="window\bitmap.h">
+      <Filter>window</Filter>
+    </ClInclude>
+    <ClInclude Include="window\brush.h">
+      <Filter>window</Filter>
+    </ClInclude>
+    <ClInclude Include="window\cls.h">
+      <Filter>window</Filter>
+    </ClInclude>
+    <ClInclude Include="window\cursor.h">
+      <Filter>window</Filter>
+    </ClInclude>
+    <ClInclude Include="window\device_context.h">
+      <Filter>window</Filter>
+    </ClInclude>
+    <ClInclude Include="window\icon.h">
+      <Filter>window</Filter>
+    </ClInclude>
+    <ClInclude Include="window\object.h">
+      <Filter>window</Filter>
+    </ClInclude>
+    <ClInclude Include="window\pen.h">
+      <Filter>window</Filter>
+    </ClInclude>
+    <ClInclude Include="window\sct.h">
+      <Filter>window</Filter>
+    </ClInclude>
+    <ClInclude Include="window\window.h">
+      <Filter>window</Filter>
+    </ClInclude>
+    <ClInclude Include="graphic.h">
+      <Filter>directx11</Filter>
+    </ClInclude>
+    <ClInclude Include="swap_chain.h">
+      <Filter>directx11</Filter>
+    </ClInclude>
+    <ClInclude Include="depth_stencil_view.h">
+      <Filter>directx11\view</Filter>
+    </ClInclude>
+    <ClInclude Include="render_target_view.h">
+      <Filter>directx11\view</Filter>
+    </ClInclude>
+    <ClInclude Include="view.h">
+      <Filter>directx11\view</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>directx11\resource</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="design-pattern">
+      <UniqueIdentifier>{8900ec48-cfa0-40a3-aa4e-866f8bdf8732}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="window">
+      <UniqueIdentifier>{971d9800-e67d-4d19-a935-a7a42d6789ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="directx11">
+      <UniqueIdentifier>{78d8b6a9-159d-4beb-9381-370fafa8bc5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="directx11\view">
+      <UniqueIdentifier>{4c50e236-4649-4a02-9989-bfc9dbd8a2b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="directx11\resource">
+      <UniqueIdentifier>{28938cbb-c385-402f-a321-fccf8c793a21}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+</Project>
