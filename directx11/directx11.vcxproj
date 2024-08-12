@@ -139,13 +139,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="depth_stencil_view.h" />
     <ClInclude Include="graphic.h" />
-    <ClInclude Include="render_target_view.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="screen.h" />
     <ClInclude Include="singleton.h" />
-    <ClInclude Include="swap_chain.h" />
-    <ClInclude Include="view.h" />
     <ClInclude Include="window\bitmap.h" />
     <ClInclude Include="window\brush.h" />
     <ClInclude Include="window\cls.h" />

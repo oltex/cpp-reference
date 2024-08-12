@@ -29,7 +29,7 @@ namespace network {
 
 	class storage_ipv4 : protected storage {
 	public:
-		explicit storage_ipv4(void) noexcept {
+		inline explicit storage_ipv4(void) noexcept {
 			auto& storage = get_stroage();
 			storage.sin_family = AF_INET;
 		}

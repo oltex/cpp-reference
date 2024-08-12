@@ -37,20 +37,11 @@
     <ClInclude Include="graphic.h">
       <Filter>directx11</Filter>
     </ClInclude>
-    <ClInclude Include="swap_chain.h">
-      <Filter>directx11</Filter>
-    </ClInclude>
-    <ClInclude Include="depth_stencil_view.h">
-      <Filter>directx11\view</Filter>
-    </ClInclude>
-    <ClInclude Include="render_target_view.h">
-      <Filter>directx11\view</Filter>
-    </ClInclude>
-    <ClInclude Include="view.h">
-      <Filter>directx11\view</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>directx11\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="screen.h">
+      <Filter>directx11</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

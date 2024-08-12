@@ -1,5 +1,6 @@
 #pragma once
 #pragma comment(lib,"ws2_32.lib")
+#include "pair.h"
 #include "storage.h"
 #include <WinSock2.h>
 
@@ -13,6 +14,17 @@ namespace network {
 		}
 		inline explicit socket(SOCKET const sock) noexcept
 			: _socket(sock) {
+		}
+		inline explicit socket(socket const& rhs) noexcept = delete;
+		inline socket& operator=(socket const& rhs) noexcept = delete;
+		inline explicit socket(socket&& rhs) noexcept 
+			: _socket(rhs._socket) {
+			rhs._socket = INVALID_SOCKET;
+		}
+		inline socket& operator=(socket&& rhs) noexcept {
+			_socket = rhs._socket;
+			rhs._socket = INVALID_SOCKET;
+			return *this;
 		}
 		inline ~socket(void) noexcept {
 			closesocket(_socket);
@@ -35,13 +47,13 @@ namespace network {
 			if (SOCKET_ERROR == ::listen(_socket, backlog))
 				DebugBreak();
 		}
-		inline auto accept(void) const noexcept -> socket {
-			sockaddr addr;
+		inline auto accept(void) const noexcept -> pair<socket, storage> {
+			sockaddr_storage addr;
 			int len = sizeof(sockaddr_in);
 			SOCKET sock = ::accept(_socket, reinterpret_cast<sockaddr*>(&addr), &len);
 			if (INVALID_SOCKET == sock)
 				DebugBreak();
-			return socket(sock);
+			return pair<socket, storage>(socket(sock), storage(addr));
 		}
 		inline void connect(storage& stor) const noexcept {
 			auto& addr = reinterpret_cast<sockaddr&>(stor.data());

@@ -16,6 +16,9 @@
       <Filter>data-structure</Filter>
     </ClInclude>
     <ClInclude Include="select.h" />
+    <ClInclude Include="pair.h">
+      <Filter>data-structure</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="data-structure">

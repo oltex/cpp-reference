@@ -27,9 +27,9 @@ void func(void) noexcept {
 	socket.bind(reinterpret_cast<network::storage&>(storage));
 	socket.listen(SOMAXCONN);
 
-	network::poll poll;
-	poll.push(socket, POLLRDNORM);
-	poll.execute(-1);
+	//network::poll poll;
+	//poll.push(socket, POLLRDNORM);
+	//poll.execute(-1);
 
 	//for (auto& iter : poll) {
 	//	if (iter._revent & POLLRDNORM)

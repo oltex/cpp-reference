@@ -4,7 +4,6 @@
 
 namespace window {
 	class sct final {
-	public:
 		struct WNDSTRUCTEXW final {
 			DWORD dwExStyle;
 			LPCWSTR lpClassName;
@@ -23,7 +22,7 @@ namespace window {
 		inline explicit sct(void) noexcept {
 			initialize();
 		}
-		~sct(void) noexcept = default;
+		inline ~sct(void) noexcept = default;
 	public:
 		inline void initialize(void) noexcept {
 			memset(&_wsex, 0, sizeof(WNDSTRUCTEXW));

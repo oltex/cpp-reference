@@ -14,6 +14,8 @@ namespace window {
 		inline explicit device_context(HDC const hdc, PAINTSTRUCT const& paint)
 			: _hdc(hdc), _paint(paint) {
 		}
+		inline explicit device_context(device_context const& rhs) noexcept = delete;
+		inline device_context& operator=(device_context const& rhs) noexcept = delete;
 		inline ~device_context(void) noexcept {
 			DeleteDC(_hdc);
 		};

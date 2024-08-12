@@ -5,7 +5,9 @@ namespace window {
 	class object {
 	public:
 		inline explicit object(void) noexcept = default;
-		virtual ~object(void) noexcept {
+		inline explicit object(object const& rhs) noexcept = delete;
+		inline object& operator=(object const& rhs) noexcept = delete;
+		inline virtual ~object(void) noexcept {
 			DeleteObject(_hgdiobj);
 		}
 	public:
