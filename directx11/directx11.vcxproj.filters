@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="singleton.h">
-      <Filter>design-pattern</Filter>
-    </ClInclude>
     <ClInclude Include="window\bitmap.h">
       <Filter>window</Filter>
     </ClInclude>
@@ -37,9 +34,6 @@
     <ClInclude Include="graphic.h">
       <Filter>directx11</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>directx11\resource</Filter>
-    </ClInclude>
     <ClInclude Include="screen.h">
       <Filter>directx11</Filter>
     </ClInclude>
@@ -53,12 +47,6 @@
     </Filter>
     <Filter Include="directx11">
       <UniqueIdentifier>{78d8b6a9-159d-4beb-9381-370fafa8bc5c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="directx11\view">
-      <UniqueIdentifier>{4c50e236-4649-4a02-9989-bfc9dbd8a2b3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="directx11\resource">
-      <UniqueIdentifier>{28938cbb-c385-402f-a321-fccf8c793a21}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

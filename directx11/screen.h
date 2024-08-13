@@ -9,40 +9,43 @@
 namespace engine {
 	class screen final {
 	public:
-		inline explicit screen(graphic& graphic, window::window& window) noexcept {
-			auto& device = graphic.get_device();
-			IDXGIDevice* device_;
-			device.QueryInterface(__uuidof(IDXGIDevice), reinterpret_cast<void**>(&device_));
-			IDXGIAdapter* adapter;
-			device_->GetParent(__uuidof(IDXGIAdapter), reinterpret_cast<void**>(&adapter));
-			IDXGIFactory* factory;
-			adapter->GetParent(__uuidof(IDXGIFactory), reinterpret_cast<void**>(&factory));
-			DXGI_SWAP_CHAIN_DESC swap_chain_desc{};
-			swap_chain_desc.BufferDesc.Width = width;
-			swap_chain_desc.BufferDesc.Height = height;
-			swap_chain_desc.BufferDesc.RefreshRate.Numerator = 60;
-			swap_chain_desc.BufferDesc.RefreshRate.Denominator = 1;
-			swap_chain_desc.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-			swap_chain_desc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-			swap_chain_desc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-			swap_chain_desc.SampleDesc.Quality = 0;
-			swap_chain_desc.SampleDesc.Count = 1;
-			swap_chain_desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-			swap_chain_desc.BufferCount = 1;
-			swap_chain_desc.OutputWindow = window.data();
-			swap_chain_desc.Windowed = true; //전체화면 모드 어떻게 얻는지 확인필요함
-			swap_chain_desc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-			if (S_OK != factory->CreateSwapChain(&device, &swap_chain_desc, &_swap_chain))
-				DebugBreak();
-			factory->Release();
-			adapter->Release();
-			device_->Release();
+		inline explicit screen(window::window& window) noexcept 
+			: _device(graphic::instance().get_device()){
+
+			{	// swap chain
+				IDXGIDevice* device;
+				_device.QueryInterface(__uuidof(IDXGIDevice), reinterpret_cast<void**>(&device));
+				IDXGIAdapter* adapter;
+				device->GetParent(__uuidof(IDXGIAdapter), reinterpret_cast<void**>(&adapter));
+				IDXGIFactory* factory;
+				adapter->GetParent(__uuidof(IDXGIFactory), reinterpret_cast<void**>(&factory));
+				DXGI_SWAP_CHAIN_DESC swap_chain_desc{};
+				swap_chain_desc.BufferDesc.Width = width;
+				swap_chain_desc.BufferDesc.Height = height;
+				swap_chain_desc.BufferDesc.RefreshRate.Numerator = 60;
+				swap_chain_desc.BufferDesc.RefreshRate.Denominator = 1;
+				swap_chain_desc.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+				swap_chain_desc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+				swap_chain_desc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+				swap_chain_desc.SampleDesc.Quality = 0;
+				swap_chain_desc.SampleDesc.Count = 1;
+				swap_chain_desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+				swap_chain_desc.BufferCount = 1;
+				swap_chain_desc.OutputWindow = window.data();
+				swap_chain_desc.Windowed = true; //전체화면 모드 어떻게 얻는지 확인필요함
+				swap_chain_desc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+				if (S_OK != factory->CreateSwapChain(device, &swap_chain_desc, &_swap_chain))
+					DebugBreak();
+				factory->Release();
+				adapter->Release();
+				device->Release();
+			}
 
 			{	//render target view
 				ID3D11Texture2D* texture = nullptr;
 				if (S_OK != _swap_chain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&texture)))
 					DebugBreak();
-				if (S_OK != device.CreateRenderTargetView(texture, nullptr, &_render_target_view))
+				if (S_OK != _device.CreateRenderTargetView(texture, nullptr, &_render_target_view))
 					DebugBreak();
 				texture->Release();
 			}
@@ -61,21 +64,25 @@ namespace engine {
 				texture_desc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 				texture_desc.CPUAccessFlags = 0;
 				texture_desc.MiscFlags = 0;
-				if (S_OK != device.CreateTexture2D(&texture_desc, nullptr, &texture))
+				if (S_OK != _device.CreateTexture2D(&texture_desc, nullptr, &texture))
 					DebugBreak();
-				if (S_OK != device.CreateDepthStencilView(texture, nullptr, &_depth_stencil_view))
+				if (S_OK != _device.CreateDepthStencilView(texture, nullptr, &_depth_stencil_view))
 					DebugBreak();
 				texture->Release();
 			}
 		}
+		inline ~screen(void) noexcept {
+			_swap_chain->Release();
+		}
 	public:
 		inline void set_render_traget(void) noexcept {
-			if (nullptr == m_pContext)
-				return E_FAIL;
 			m_pContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
 			return S_OK;
 		}
 	private:
+		ID3D11Device& _device;
+		ID3D11DeviceContext& _context;
+
 		IDXGISwapChain* _swap_chain;
 		ID3D11RenderTargetView* _render_target_view;
 		ID3D11DepthStencilView* _depth_stencil_view;
