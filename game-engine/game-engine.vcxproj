@@ -142,10 +142,15 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="component.h" />
+    <ClInclude Include="component_manager.h" />
+    <ClInclude Include="data-structure\hash.h" />
     <ClInclude Include="data-structure\list.h" />
     <ClInclude Include="data-structure\map.h" />
     <ClInclude Include="data-structure\pair.h" />
     <ClInclude Include="data-structure\predicate.h" />
+    <ClInclude Include="data-structure\unordered_map.h" />
+    <ClInclude Include="data-structure\vector.h" />
     <ClInclude Include="design-pattern\singleton.h" />
     <ClInclude Include="engine.h" />
     <ClInclude Include="object.h" />

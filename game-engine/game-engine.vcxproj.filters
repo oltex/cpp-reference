@@ -25,6 +25,21 @@
     <ClInclude Include="data-structure\pair.h">
       <Filter>library\data-structure</Filter>
     </ClInclude>
+    <ClInclude Include="component.h">
+      <Filter>engine\component</Filter>
+    </ClInclude>
+    <ClInclude Include="component_manager.h">
+      <Filter>engine\component</Filter>
+    </ClInclude>
+    <ClInclude Include="data-structure\unordered_map.h">
+      <Filter>library\data-structure</Filter>
+    </ClInclude>
+    <ClInclude Include="data-structure\hash.h">
+      <Filter>library\data-structure</Filter>
+    </ClInclude>
+    <ClInclude Include="data-structure\vector.h">
+      <Filter>library\data-structure</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="library">
@@ -41,6 +56,9 @@
     </Filter>
     <Filter Include="library\data-structure">
       <UniqueIdentifier>{771c2d93-6c13-4ab5-be7f-142493c6e631}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\component">
+      <UniqueIdentifier>{1a81e453-9167-434b-ba14-0a3c60dcce21}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
