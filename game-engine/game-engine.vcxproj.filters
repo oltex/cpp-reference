@@ -41,7 +41,10 @@
       <Filter>library\data-structure</Filter>
     </ClInclude>
     <ClInclude Include="timer_manager.h">
-      <Filter>engine\frame</Filter>
+      <Filter>engine\timer</Filter>
+    </ClInclude>
+    <ClInclude Include="timer.h">
+      <Filter>engine\timer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -62,9 +65,6 @@
     </Filter>
     <Filter Include="engine\component">
       <UniqueIdentifier>{1a81e453-9167-434b-ba14-0a3c60dcce21}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="engine\frame">
-      <UniqueIdentifier>{45be5454-0070-4436-bfed-c7fb4c1b519f}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\timer">
       <UniqueIdentifier>{d7768b1d-d6de-4ccf-ac61-eb55d9d88f73}</UniqueIdentifier>
