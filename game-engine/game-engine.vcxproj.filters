@@ -49,6 +49,42 @@
     <ClInclude Include="graphic.h">
       <Filter>engine\graphic</Filter>
     </ClInclude>
+    <ClInclude Include="window\bitmap.h">
+      <Filter>library\window</Filter>
+    </ClInclude>
+    <ClInclude Include="window\brush.h">
+      <Filter>library\window</Filter>
+    </ClInclude>
+    <ClInclude Include="window\cls.h">
+      <Filter>library\window</Filter>
+    </ClInclude>
+    <ClInclude Include="window\cursor.h">
+      <Filter>library\window</Filter>
+    </ClInclude>
+    <ClInclude Include="window\device_context.h">
+      <Filter>library\window</Filter>
+    </ClInclude>
+    <ClInclude Include="window\icon.h">
+      <Filter>library\window</Filter>
+    </ClInclude>
+    <ClInclude Include="window\object.h">
+      <Filter>library\window</Filter>
+    </ClInclude>
+    <ClInclude Include="window\pen.h">
+      <Filter>library\window</Filter>
+    </ClInclude>
+    <ClInclude Include="window\sct.h">
+      <Filter>library\window</Filter>
+    </ClInclude>
+    <ClInclude Include="window\window.h">
+      <Filter>library\window</Filter>
+    </ClInclude>
+    <ClInclude Include="screen.h">
+      <Filter>engine\graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="input_manager.h">
+      <Filter>engine\input</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="library">
@@ -77,6 +113,9 @@
     </Filter>
     <Filter Include="library\window">
       <UniqueIdentifier>{87df505c-6b6b-4f5e-9403-41b83b262493}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\input">
+      <UniqueIdentifier>{5f02737a-cdea-44e9-9dae-322c26fa36d5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -1,8 +1,6 @@
 #pragma once
 #pragma comment(lib,"d3d11.lib")
-
 #include "design-pattern/singleton.h"
-
 #include <d3d11.h>
 
 namespace engine {
