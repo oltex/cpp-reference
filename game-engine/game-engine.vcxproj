@@ -153,6 +153,7 @@
     <ClInclude Include="data-structure\vector.h" />
     <ClInclude Include="design-pattern\singleton.h" />
     <ClInclude Include="engine.h" />
+    <ClInclude Include="timer_manager.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="object_manager.h" />
   </ItemGroup>

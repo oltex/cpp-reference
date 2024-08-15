@@ -19,27 +19,30 @@ namespace engine {
 		inline auto operator=(object_manager&& rhs) noexcept -> object_manager & = delete;
 	public:
 		inline void update(void) noexcept {
-			for (auto iter = _object.begin(); iter != _object.end();) {
-				if (true == (*iter)->_destory) {
+			//for (auto iter = _object.begin(); iter != _object.end();) {
+			//	if (true == (*iter)->_destory) {
 
-				}
-				else {
+			//	}
+			//	else {
 
-				}
-			}
+			//	}
+			//}
+		}
+		inline void fixed_update(void) noexcept {
+
 		}
 	public:
 		inline void create(std::string const key, object* const prototype) noexcept {
 			_prototype.emplace(key, prototype);
 		}
-		inline auto clone(std::string const key) noexcept -> object* {
+		inline auto clone(std::string const key, std::string const layer) noexcept -> object* {
 			object* prototype = (*_prototype.find(key))._second;
 			object* clone = prototype->clone();
-			_object.emplace_back(clone);
+			_object[layer].emplace_back(clone);
 			return clone;
 		}
 	private:
-		unordered_map<std::string, object* const> _prototype;
-		list<object* const> _object;
+		unordered_map<std::string const, object* const> _prototype;
+		unordered_map<std::string const, list<object*>> _object;
 	};
 }
