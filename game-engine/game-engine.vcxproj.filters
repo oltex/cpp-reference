@@ -46,6 +46,9 @@
     <ClInclude Include="timer.h">
       <Filter>engine\timer</Filter>
     </ClInclude>
+    <ClInclude Include="graphic.h">
+      <Filter>engine\graphic</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="library">
@@ -68,6 +71,12 @@
     </Filter>
     <Filter Include="engine\timer">
       <UniqueIdentifier>{d7768b1d-d6de-4ccf-ac61-eb55d9d88f73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\graphic">
+      <UniqueIdentifier>{5b665514-fe03-4e9e-b977-5b05d10f453a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="library\window">
+      <UniqueIdentifier>{87df505c-6b6b-4f5e-9403-41b83b262493}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
