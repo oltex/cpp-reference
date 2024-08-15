@@ -36,9 +36,15 @@ public:
 	inline void update(void) noexcept {
 		_mouse->GetDeviceState(sizeof(_DIMOUSESTATE), &_mouse_state);
 		_keyboard->GetDeviceState(256, _keyboard_state);
+
+
 	}
 public:
-	inline bool key_press(void) noexcept {
+	inline bool key_press(void) const noexcept {
+	}
+	inline bool key_down(void) const noexcept {
+	}
+	inline bool key_up(void) const noexcept {
 	}
 private:
 	IDirectInput8W* _input;
