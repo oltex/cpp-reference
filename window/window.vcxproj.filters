@@ -54,5 +54,8 @@
     <ClInclude Include="bitmap.h">
       <Filter>window\object</Filter>
     </ClInclude>
+    <ClInclude Include="instance.h">
+      <Filter>window\window</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

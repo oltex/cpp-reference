@@ -85,6 +85,9 @@
     <ClInclude Include="input_manager.h">
       <Filter>engine\input</Filter>
     </ClInclude>
+    <ClInclude Include="window\instance.h">
+      <Filter>library\window</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="library">

@@ -65,7 +65,7 @@ namespace window {
 			return _hwnd;
 		}
 	protected:
-		HWND _hwnd = nullptr;
+		HWND _hwnd;
 	};
 }
 
@@ -82,13 +82,13 @@ namespace window {
 //#include "brush.h"
 //#include "pen.h"
 //
-namespace window {
-	inline auto message(void) noexcept -> int {
-		MSG msg;
-		while (GetMessageW(&msg, nullptr, 0, 0)) {
-			TranslateMessage(&msg);
-			DispatchMessageW(&msg);
-		}
-		return (int)msg.wParam;
-	};
-}
+//namespace window {
+//	inline auto message(void) noexcept -> int {
+//		MSG msg;
+//		while (GetMessageW(&msg, nullptr, 0, 0)) {
+//			TranslateMessage(&msg);
+//			DispatchMessageW(&msg);
+//		}
+//		return (int)msg.wParam;
+//	};
+//}

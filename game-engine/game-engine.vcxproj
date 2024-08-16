@@ -88,9 +88,10 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -116,9 +117,10 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -153,9 +155,15 @@
     <ClInclude Include="data-structure\vector.h" />
     <ClInclude Include="design-pattern\singleton.h" />
     <ClInclude Include="engine.h" />
-    <ClInclude Include="graphic.h" />
+    <ClInclude Include="graphic.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="input_manager.h" />
-    <ClInclude Include="screen.h" />
+    <ClInclude Include="screen.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="timer.h" />
     <ClInclude Include="timer_manager.h" />
     <ClInclude Include="object.h" />
@@ -166,6 +174,7 @@
     <ClInclude Include="window\cursor.h" />
     <ClInclude Include="window\device_context.h" />
     <ClInclude Include="window\icon.h" />
+    <ClInclude Include="window\instance.h" />
     <ClInclude Include="window\object.h" />
     <ClInclude Include="window\pen.h" />
     <ClInclude Include="window\sct.h" />

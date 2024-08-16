@@ -1,10 +1,14 @@
 #pragma once
 #include "design-pattern/singleton.h"
+#include "window/instance.h"
+#include "window/window.h"
 
 #include "object_manager.h"
 #include "component_manager.h"
 #include "timer_manager.h"
+#include "input_manager.h"
 
+//test
 #pragma comment(lib, "Winmm.lib")
 #include <Windows.h>
 
@@ -15,15 +19,17 @@ namespace engine {
 		inline explicit engine(void) noexcept
 			: _object_manager(object_manager::instance()),
 			_component_manager(component_manager::instance()),
-			_timer_manager(timer_manager::instance()) {
+			_timer_manager(timer_manager::instance()),
+			_input_manager(input_manager::instance()) {
 
 			timeBeginPeriod(1);
 		};
 		inline ~engine(void) noexcept = default;
 	public:
 		inline void update(void) const noexcept {
-			_timer_manager.set_frame(1);
+			_timer_manager.set_frame(100);
 			for (;;) {
+				_input_manager.update();
 
 				static int _update_tick = 0;
 				static long _time = timeGetTime();
@@ -43,5 +49,6 @@ namespace engine {
 		object_manager& _object_manager;
 		component_manager& _component_manager;
 		timer_manager& _timer_manager;
+		input_manager& _input_manager;
 	};
 }

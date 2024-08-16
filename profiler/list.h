@@ -60,7 +60,7 @@ public:
 #pragma warning(suppress: 6011)
 		_head->_next = _head->_prev = _head;
 	}
-	inline explicit list(std::initializer_list<_Ty> init_list) noexcept
+	inline list(std::initializer_list<_Ty> init_list) noexcept
 		: list() {
 		for (auto& iter : init_list)
 			emplace_back(iter);

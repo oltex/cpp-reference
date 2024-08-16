@@ -65,7 +65,7 @@ namespace window {
 			return _hwnd;
 		}
 	protected:
-		HWND _hwnd = nullptr;
+		HWND _hwnd;
 	};
 }
 
