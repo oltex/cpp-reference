@@ -1,6 +1,7 @@
 #pragma once
 #include "icon.h"
 #include "cursor.h"
+#include "instance.h"
 #include <Windows.h>
 
 namespace window {
@@ -33,8 +34,8 @@ namespace window {
 		inline void set_window_extra(int const cbWndExtra) noexcept {
 			_wcex.cbWndExtra = cbWndExtra;
 		}
-		inline void set_instance(HINSTANCE const instance) noexcept {
-			_wcex.hInstance = instance;
+		inline void set_instance(instance const& instance) noexcept {
+			_wcex.hInstance = instance.data();
 		}
 		inline void set_icon(icon const& icon) noexcept {
 			_wcex.hIcon = icon.data();

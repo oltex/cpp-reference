@@ -8,6 +8,17 @@ namespace window {
 		inline explicit window(HWND const hwnd) noexcept
 			: _hwnd(hwnd) {
 		}
+		inline explicit window(window const& rhs) noexcept = delete;
+		inline window& operator=(window const& rhs) noexcept = delete;
+		inline explicit window(window&& rhs) noexcept
+			: _hwnd(rhs._hwnd) {
+			rhs._hwnd = nullptr;
+		}
+		inline window& operator=(window&& rhs) noexcept {
+			_hwnd = rhs._hwnd;
+			rhs._hwnd = nullptr;
+			return *this;
+		}
 		inline ~window(void) noexcept = default;
 	public:
 		inline auto get_device_context(void) const noexcept -> device_context {

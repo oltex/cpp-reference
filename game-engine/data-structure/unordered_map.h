@@ -30,7 +30,7 @@ public:
 		auto& first = _vector[idx << 1];
 		auto& last = _vector[(idx << 1) + 1];
 
-		auto res = _list.emplace(first, pair{ key, std::forward<argument>(arg)... });
+		auto res = _list.emplace(first, key, std::forward<argument>(arg)...);
 		if (first == _list.end())
 			last = res;
 		first = res;

@@ -1,10 +1,12 @@
 #pragma once
 #include "design-pattern/singleton.h"
-#include "data-structure/list.h"
-#include "data-structure/unordered_map.h"
+//#include "data-structure/list.h"
+//#include "data-structure/unordered_map.h"
 
 #include "object.h"
 #include <string>
+#include <list>
+#include <unordered_map>
 
 namespace engine {
 	class object_manager final : public singleton<object_manager> {
@@ -33,16 +35,17 @@ namespace engine {
 		}
 	public:
 		inline void create(std::string const key, object* const prototype) noexcept {
-			_prototype.emplace(key, prototype);
+			//_prototype.emplace(key, prototype);
 		}
 		inline auto clone(std::string const key, std::string const layer) noexcept -> object* {
-			object* prototype = (*_prototype.find(key))._second;
-			object* clone = prototype->clone();
-			_object[layer].emplace_back(clone);
-			return clone;
+			//object* prototype = (*_prototype.find(key)).second;
+			//object* clone = prototype->clone();
+			//_object[layer].emplace_back(clone);
+			//return clone;
+			return nullptr;
 		}
 	private:
-		unordered_map<std::string const, object* const> _prototype;
-		unordered_map<std::string const, list<object*>> _object;
+		std::unordered_map<std::string, object* const> _prototype;
+		//std::unordered_map<std::string const, std::list<object*>> _object;
 	};
 }

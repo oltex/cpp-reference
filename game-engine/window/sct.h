@@ -1,4 +1,5 @@
 #pragma once
+#include "instance.h"
 #include "window.h"
 #include <Windows.h>
 
@@ -64,8 +65,8 @@ namespace window {
 		inline void set_menu(HMENU const hMenu) noexcept {
 			_wsex.hMenu = hMenu;
 		}
-		inline void set_instance(HINSTANCE const instance) noexcept {
-			_wsex.hInstance = instance;
+		inline void set_instance(instance const& instance) noexcept {
+			_wsex.hInstance = instance.data();
 		}
 		//_wsex.lpParam = nullptr;
 	private:
