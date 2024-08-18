@@ -51,7 +51,9 @@ namespace engine {
 				}
 				_input_manager.update();
 
-				if (_input_manager.key_down(DIK_E))
+				if (_input_manager.mouse_down(input_manager::button::right))
+					std::cout << "press" << std::endl;
+				if (_input_manager.mouse_up(input_manager::button::right))
 					std::cout << "press" << std::endl;
 				//if(_input_manager.mouse_press(input_manager::button::wheel))
 				//	std::cout << "press" << std::endl;
