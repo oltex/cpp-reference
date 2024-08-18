@@ -9,8 +9,8 @@
 #include <unordered_map>
 
 namespace engine {
-	class object_manager final : public singleton<object_manager> {
-		friend class singleton<object_manager>;
+	class object_manager final : public design_pattern::singleton<object_manager> {
+		friend class design_pattern::singleton<object_manager>;
 	private:
 		inline explicit object_manager(void) noexcept = default;
 		inline ~object_manager(void) noexcept {

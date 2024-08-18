@@ -1,4 +1,5 @@
 #pragma once
+#include "design-pattern/singleton.h"
 #include "window/instance.h"
 #include "window/window.h"
 
@@ -13,13 +14,20 @@
 #include <iostream>
 
 namespace engine {
-	class engine final {
+	class engine final : public design_pattern::singleton<engine, design_pattern::member_static<engine>> {
+		friend class design_pattern::singleton<engine, design_pattern::member_static<engine>>;
+	public:
+		inline static auto constructor(window::instance& instance, window::window& window) noexcept -> engine& {
+			_instance = new engine(instance, window);
+			atexit(destructor);
+			return *_instance;
+		}
 	private:
 		inline explicit engine(window::instance& instance, window::window& window) noexcept
 			: _object_manager(object_manager::instance()),
 			_component_manager(component_manager::instance()),
 			_timer_manager(timer_manager::instance()),
-			_input_manager(input_manager::instance(&instance, &window)) {
+			_input_manager(input_manager::constructor(instance, window)) {
 			//timeBeginPeriod(1);
 		};
 		inline explicit engine(engine const& rhs) noexcept = delete;
@@ -28,13 +36,10 @@ namespace engine {
 		inline auto operator=(engine&& rhs) noexcept -> engine & = delete;
 		inline ~engine(void) noexcept = default;
 	public:
-		inline static engine& instance(window::instance* instance = nullptr, window::window* window = nullptr) noexcept {
-			static engine inst(*instance, *window);
-			return inst;
+		inline virtual void Initialize(void) noexcept {
 		}
-	public:
 		inline void update(void) const noexcept {
-			_timer_manager.set_frame(100);
+			_timer_manager.set_frame(50);
 
 			MSG msg;
 			for (;;) {
@@ -44,13 +49,12 @@ namespace engine {
 					TranslateMessage(&msg);
 					DispatchMessage(&msg);
 				}
-
-
 				_input_manager.update();
 
-
-				if (_input_manager.key_press(DIK_E))
+				if (_input_manager.key_down(DIK_E))
 					std::cout << "press" << std::endl;
+				//if(_input_manager.mouse_press(input_manager::button::wheel))
+				//	std::cout << "press" << std::endl;
 
 				//static int _update_tick = 0;
 				//static long _time = timeGetTime();

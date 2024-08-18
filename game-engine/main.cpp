@@ -1,3 +1,7 @@
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+
 #include "window/cursor.h"
 #include "window/cls.h"
 #include "window/sct.h"
@@ -32,16 +36,17 @@ int APIENTRY wWinMain(_In_ HINSTANCE hinstance, _In_opt_ HINSTANCE prevhinstance
 		window.show(true);
 		window.update();
 
-		engine::engine::instance(&instance, &window);
+		engine::engine::constructor(instance, window);
 	}
 	engine::engine::instance().update();
+
+	_CrtDumpMemoryLeaks();
 	return 0;
 }
 
+
 LRESULT CALLBACK procedure(HWND const hwnd, UINT const message, WPARAM const wparam, LPARAM const lparam) noexcept {
 	switch (message) {
-	case WM_PAINT:
-		break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;

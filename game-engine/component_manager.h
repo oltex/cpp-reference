@@ -4,8 +4,8 @@
 #include "component.h"
 
 namespace engine {
-	class component_manager final : public singleton<component_manager> {
-		friend class singleton<component_manager>;
+	class component_manager final : public design_pattern::singleton<component_manager> {
+		friend class design_pattern::singleton<component_manager>;
 	private:
 		inline explicit component_manager(void) noexcept = default;
 		inline ~component_manager(void) noexcept {

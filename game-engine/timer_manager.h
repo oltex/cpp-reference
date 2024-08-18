@@ -3,8 +3,8 @@
 #include "timer.h"
 
 namespace engine {
-	class timer_manager final : public singleton<timer_manager> {
-		friend class singleton<timer_manager>;
+	class timer_manager final : public design_pattern::singleton<timer_manager> {
+		friend class design_pattern::singleton<timer_manager>;
 		friend class engine;
 	private:
 		inline explicit timer_manager(void) noexcept {
