@@ -146,6 +146,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="async.h" />
     <ClInclude Include="pair.h" />
     <ClInclude Include="poll.h" />
     <ClInclude Include="storage.h" />

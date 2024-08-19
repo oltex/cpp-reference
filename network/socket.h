@@ -17,12 +17,12 @@ namespace network {
 			: _socket(sock) {
 		}
 		inline explicit socket(socket const& rhs) noexcept = delete;
-		inline socket& operator=(socket const& rhs) noexcept = delete;
-		inline explicit socket(socket&& rhs) noexcept 
+		inline auto operator=(socket const& rhs) noexcept -> socket & = delete;
+		inline explicit socket(socket&& rhs) noexcept
 			: _socket(rhs._socket) {
 			rhs._socket = INVALID_SOCKET;
 		}
-		inline socket& operator=(socket&& rhs) noexcept {
+		inline auto operator=(socket&& rhs) noexcept -> socket& {
 			_socket = rhs._socket;
 			rhs._socket = INVALID_SOCKET;
 			return *this;

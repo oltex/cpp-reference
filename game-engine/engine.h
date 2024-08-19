@@ -8,9 +8,6 @@
 #include "timer_manager.h"
 #include "input_manager.h"
 
-//test
-//#pragma comment(lib, "Winmm.lib")
-//#include <Windows.h>
 #include <iostream>
 
 namespace engine {
@@ -28,7 +25,6 @@ namespace engine {
 			_component_manager(component_manager::instance()),
 			_timer_manager(timer_manager::instance()),
 			_input_manager(input_manager::constructor(instance, window)) {
-			//timeBeginPeriod(1);
 		};
 		inline explicit engine(engine const& rhs) noexcept = delete;
 		inline auto operator=(engine const& rhs) noexcept -> engine & = delete;
@@ -36,7 +32,7 @@ namespace engine {
 		inline auto operator=(engine&& rhs) noexcept -> engine & = delete;
 		inline ~engine(void) noexcept = default;
 	public:
-		inline virtual void Initialize(void) noexcept {
+		inline virtual void initialize(void) noexcept {
 		}
 		inline void update(void) const noexcept {
 			_timer_manager.set_frame(50);
@@ -58,17 +54,6 @@ namespace engine {
 						std::cout << "press" << std::endl;
 					//if(_input_manager.mouse_press(input_manager::button::wheel))
 					//	std::cout << "press" << std::endl;
-
-					//static int _update_tick = 0;
-					//static long _time = timeGetTime();
-					//_update_tick++;
-					//long time = timeGetTime();
-					//if (time - _time >= 1000) {
-					//	_time += 1000;
-					//	std::cout << _update_tick << std::endl;
-					//	_update_tick = 0;
-					//}
-					//std::cout << _timer_manager.get_delta() << std::endl;
 
 					_timer_manager.update();
 				}
