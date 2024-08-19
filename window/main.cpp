@@ -1,17 +1,15 @@
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+
 #include "window.h"
 #include "cls.h"
 #include "sct.h"
 
-#include "pen.h"
-
-#include <Windows.h>
-
-window::window* _wnd;
-window::device_context* _dc;
-window::bitmap* _bitmap;
-
+auto message(void) noexcept -> MSG;
 LRESULT CALLBACK procedure(HWND const wnd, UINT const message, WPARAM const wparam, LPARAM const lparam) noexcept;
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow) {
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	{
 		window::cursor cursor_;
 		cursor_.load(nullptr, IDC_CROSS, IMAGE_CURSOR, 0, 0, LR_DEFAULTSIZE | LR_SHARED);
@@ -31,41 +29,25 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 		sct.set_x(CW_USEDEFAULT);
 		sct.set_width(CW_USEDEFAULT);
 
-		_wnd = new window::window(sct.create());
+		window::window window = sct.create();
+		window.show(true);
+		window.update();
 	}
-
-	window::device_context dc = _wnd->get_device_context();
-	RECT rect = _wnd->get_client_rect();
-
-	
-	//_dc = new window::device_context(dc.create_compatible_device_context());
-	//_bitmap = new window::bitmap(dc.create_compatible_bitmap(rect.right, rect.bottom));
-	//_dc->select_object(*_bitmap);
-
-	_wnd->show(true);
-	_wnd->update();
-
-	return window::message();
+	MSG msg = message();
+	return static_cast<int>(msg.wParam);
 }
+
+auto message(void) noexcept -> MSG {
+	MSG msg;
+	while (GetMessageW(&msg, nullptr, 0, 0)) {
+		TranslateMessage(&msg);
+		DispatchMessageW(&msg);
+	}
+	return msg;
+};
 
 LRESULT CALLBACK procedure(HWND const hwnd, UINT const message, WPARAM const wparam, LPARAM const lparam) noexcept {
 	switch (message) {
-	case WM_PAINT: {
-		_dc->pat_blt(0, 0, 100, 100, WHITENESS);
-		window::pen pen(PS_SOLID, 2, RGB(255, 0, 0));
-		_dc->select_object(pen);
-		_dc->move_to(0, 0);
-		_dc->line_to(100, 100);
-		_dc->select_object(*_bitmap);
-
-
-		window::device_context dc = _wnd->begin_paint();
-
-		dc.bit_blt(0, 0, 100, 100, *_dc, 0, 0, SRCCOPY);
-
-		_wnd->end_paint(dc);
-	}
-				 break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
