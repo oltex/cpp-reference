@@ -28,4 +28,3 @@ namespace window {
 		HGDIOBJ _hgdiobj;
 	};
 }
-

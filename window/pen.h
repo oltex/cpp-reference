@@ -19,4 +19,3 @@ namespace window {
 		inline virtual ~pen(void) noexcept override = default;
 	};
 }
-

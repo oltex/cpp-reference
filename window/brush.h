@@ -1,5 +1,6 @@
 #pragma once
 #include "object.h"
+#include <utility>
 
 namespace window {
 	class brush final : public object {
@@ -18,4 +19,3 @@ namespace window {
 		inline virtual ~brush(void) noexcept override = default;
 	};
 }
-
