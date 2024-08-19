@@ -49,27 +49,29 @@ namespace engine {
 					TranslateMessage(&msg);
 					DispatchMessage(&msg);
 				}
-				_input_manager.update();
+				else {
+					_input_manager.update();
 
-				if (_input_manager.mouse_down(input_manager::button::right))
-					std::cout << "press" << std::endl;
-				if (_input_manager.mouse_up(input_manager::button::right))
-					std::cout << "press" << std::endl;
-				//if(_input_manager.mouse_press(input_manager::button::wheel))
-				//	std::cout << "press" << std::endl;
+					if (_input_manager.mouse_down(input_manager::button::right))
+						std::cout << "press" << std::endl;
+					if (_input_manager.mouse_up(input_manager::button::right))
+						std::cout << "press" << std::endl;
+					//if(_input_manager.mouse_press(input_manager::button::wheel))
+					//	std::cout << "press" << std::endl;
 
-				//static int _update_tick = 0;
-				//static long _time = timeGetTime();
-				//_update_tick++;
-				//long time = timeGetTime();
-				//if (time - _time >= 1000) {
-				//	_time += 1000;
-				//	std::cout << _update_tick << std::endl;
-				//	_update_tick = 0;
-				//}
-				//std::cout << _timer_manager.get_delta() << std::endl;
+					//static int _update_tick = 0;
+					//static long _time = timeGetTime();
+					//_update_tick++;
+					//long time = timeGetTime();
+					//if (time - _time >= 1000) {
+					//	_time += 1000;
+					//	std::cout << _update_tick << std::endl;
+					//	_update_tick = 0;
+					//}
+					//std::cout << _timer_manager.get_delta() << std::endl;
 
-				_timer_manager.update();
+					_timer_manager.update();
+				}
 			}
 
 		};

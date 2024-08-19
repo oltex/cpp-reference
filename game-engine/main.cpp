@@ -10,7 +10,7 @@
 #include <iostream>
 
 LRESULT CALLBACK procedure(HWND const wnd, UINT const message, WPARAM const wparam, LPARAM const lparam) noexcept;
-int APIENTRY wWinMain(_In_ HINSTANCE hinstance, _In_opt_ HINSTANCE prevhinstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow) {
+int APIENTRY wWinMain(_In_ HINSTANCE hinstance, _In_opt_ HINSTANCE prevhinstance, _In_ LPWSTR cmdline, _In_ int cmdshow) {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	{
 		window::instance instance(hinstance);

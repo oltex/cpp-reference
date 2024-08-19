@@ -11,7 +11,6 @@ window::device_context* _dc;
 window::bitmap* _bitmap;
 
 LRESULT CALLBACK procedure(HWND const wnd, UINT const message, WPARAM const wparam, LPARAM const lparam) noexcept;
-
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow) {
 	{
 		window::cursor cursor_;
@@ -39,9 +38,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	RECT rect = _wnd->get_client_rect();
 
 	
-	_dc = new window::device_context(dc.create_compatible_device_context());
-	_bitmap = new window::bitmap(dc.create_compatible_bitmap(rect.right, rect.bottom));
-	_dc->select_object(*_bitmap);
+	//_dc = new window::device_context(dc.create_compatible_device_context());
+	//_bitmap = new window::bitmap(dc.create_compatible_bitmap(rect.right, rect.bottom));
+	//_dc->select_object(*_bitmap);
 
 	_wnd->show(true);
 	_wnd->update();
