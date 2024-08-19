@@ -7,7 +7,7 @@ namespace window {
 		inline explicit pen(int const iStyle, int const cWidth, COLORREF const color) noexcept {
 			_hgdiobj = CreatePen(iStyle, cWidth, color);
 		}
-		virtual ~pen(void) noexcept override = default;
+		inline virtual ~pen(void) noexcept override = default;
 	};
 }
 

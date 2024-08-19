@@ -8,12 +8,12 @@ namespace window {
 			: _hinstance(hinstance) {
 		}
 		inline explicit instance(instance const& rhs) noexcept = delete;
-		inline instance& operator=(instance const& rhs) noexcept = delete;
+		inline auto operator=(instance const& rhs) noexcept -> instance & = delete;
 		inline explicit instance(instance&& rhs) noexcept
 			: _hinstance(rhs._hinstance) {
 			rhs._hinstance = nullptr;
 		}
-		inline instance& operator=(instance&& rhs) noexcept {
+		inline auto operator=(instance&& rhs) noexcept -> instance& {
 			_hinstance = rhs._hinstance;
 			rhs._hinstance = nullptr;
 			return *this;

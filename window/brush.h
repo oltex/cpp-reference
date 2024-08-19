@@ -7,7 +7,7 @@ namespace window {
 		inline explicit brush(COLORREF const color) noexcept {
 			_hgdiobj = CreateSolidBrush(color);
 		};
-		virtual ~brush(void) noexcept override = default;
+		inline virtual ~brush(void) noexcept override = default;
 	};
 }
 

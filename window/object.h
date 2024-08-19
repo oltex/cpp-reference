@@ -6,7 +6,7 @@ namespace window {
 	public:
 		inline explicit object(void) noexcept = default;
 		inline explicit object(object const& rhs) noexcept = delete;
-		inline object& operator=(object const& rhs) noexcept = delete;
+		inline auto operator=(object const& rhs) noexcept -> object & = delete;
 		inline virtual ~object(void) noexcept {
 			DeleteObject(_hgdiobj);
 		}
