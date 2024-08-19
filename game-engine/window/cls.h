@@ -1,7 +1,7 @@
 #pragma once
+#include "instance.h"
 #include "icon.h"
 #include "cursor.h"
-#include "instance.h"
 #include <Windows.h>
 
 namespace window {
@@ -59,6 +59,3 @@ namespace window {
 		WNDCLASSEXW _wcex;
 	};
 }
-
-
-

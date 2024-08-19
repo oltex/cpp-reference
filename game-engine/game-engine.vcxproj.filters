@@ -88,6 +88,9 @@
     <ClInclude Include="window\instance.h">
       <Filter>library\window</Filter>
     </ClInclude>
+    <ClInclude Include="sound_manager.h">
+      <Filter>engine\sound</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="library">
@@ -119,6 +122,9 @@
     </Filter>
     <Filter Include="engine\input">
       <UniqueIdentifier>{5f02737a-cdea-44e9-9dae-322c26fa36d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\sound">
+      <UniqueIdentifier>{0216325f-ca29-4b94-a9c3-4589e26a6184}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

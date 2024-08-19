@@ -2,7 +2,6 @@
 #include "bitmap.h"
 #include "object.h"
 #include "brush.h"
-
 #include <Windows.h>
 
 namespace window {
@@ -14,6 +13,19 @@ namespace window {
 		inline explicit device_context(HDC const hdc, PAINTSTRUCT const& paint)
 			: _hdc(hdc), _paint(paint) {
 		}
+		inline explicit device_context(device_context const& rhs) noexcept = delete;
+		inline auto operator=(device_context const& rhs) noexcept -> device_context & = delete;
+		inline explicit device_context(device_context&& rhs) noexcept
+			: _hdc(rhs._hdc), _paint(rhs._paint) {
+			rhs._hdc = nullptr;
+			rhs._paint = PAINTSTRUCT{};
+		};
+		inline auto operator=(device_context&& rhs) noexcept -> device_context& {
+			_hdc = rhs._hdc;
+			rhs._hdc = nullptr;
+			_paint = rhs._paint;
+			rhs._paint = PAINTSTRUCT{};
+		};
 		inline ~device_context(void) noexcept {
 			DeleteDC(_hdc);
 		};
@@ -23,8 +35,8 @@ namespace window {
 			return device_context(hdc);
 		}
 		inline auto create_compatible_bitmap(int const cx, int const cy) const noexcept {
-			 HBITMAP hbitmap = CreateCompatibleBitmap(_hdc, cx, cy);
-			 return bitmap(hbitmap);
+			HBITMAP hbitmap = CreateCompatibleBitmap(_hdc, cx, cy);
+			return bitmap(hbitmap);
 		}
 	public:
 		inline void select_object(object const& object_) noexcept {
@@ -76,4 +88,3 @@ namespace window {
 		PAINTSTRUCT _paint{};
 	};
 }
-

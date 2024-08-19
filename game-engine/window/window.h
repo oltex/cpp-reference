@@ -9,12 +9,12 @@ namespace window {
 			: _hwnd(hwnd) {
 		}
 		inline explicit window(window const& rhs) noexcept = delete;
-		inline window& operator=(window const& rhs) noexcept = delete;
+		inline auto operator=(window const& rhs) noexcept -> window & = delete;
 		inline explicit window(window&& rhs) noexcept
 			: _hwnd(rhs._hwnd) {
 			rhs._hwnd = nullptr;
 		}
-		inline window& operator=(window&& rhs) noexcept {
+		inline auto operator=(window&& rhs) noexcept -> window& {
 			_hwnd = rhs._hwnd;
 			rhs._hwnd = nullptr;
 			return *this;
@@ -79,27 +79,3 @@ namespace window {
 		HWND _hwnd;
 	};
 }
-
-//#pragma once
-//#include "wnd.h"
-//#include "cls.h"
-//#include "sct.h"
-//
-//#include "cursor.h"
-//#include "icon.h"
-//
-//#include "device_context.h"
-//#include "bitmap.h"
-//#include "brush.h"
-//#include "pen.h"
-//
-//namespace window {
-//	inline auto message(void) noexcept -> int {
-//		MSG msg;
-//		while (GetMessageW(&msg, nullptr, 0, 0)) {
-//			TranslateMessage(&msg);
-//			DispatchMessageW(&msg);
-//		}
-//		return (int)msg.wParam;
-//	};
-//}

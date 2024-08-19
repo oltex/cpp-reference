@@ -2,7 +2,6 @@
 #include "bitmap.h"
 #include "object.h"
 #include "brush.h"
-
 #include <Windows.h>
 
 namespace window {
@@ -89,4 +88,3 @@ namespace window {
 		PAINTSTRUCT _paint{};
 	};
 }
-
