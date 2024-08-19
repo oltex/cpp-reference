@@ -1,5 +1,7 @@
 #pragma once
 #include <winrt/windows.gaming.input.h>
+#include <GameInput.h>
+
 #pragma comment(lib,"dinput8.lib")
 #pragma comment(lib,"dxguid.lib")
 #include "design-pattern/singleton.h"
@@ -26,7 +28,6 @@ namespace engine {
 		}
 	private:
 		inline explicit input_manager(window::instance& instance, window::window& window) noexcept {
-			//winrt::Windows::Gaming::Input:: //이걸로 바꿔라
 			auto hinstance = instance.data();
 			auto hwnd = window.data();
 			DirectInput8Create(hinstance, DIRECTINPUT_VERSION, IID_IDirectInput8, reinterpret_cast<void**>(&_input), nullptr);
