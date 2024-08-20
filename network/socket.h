@@ -7,7 +7,6 @@
 namespace network {
 	class socket final {
 	public:
-		inline explicit socket(void) noexcept = default;
 		inline explicit socket(ADDRESS_FAMILY const af, int const type, int const protocol) noexcept {
 			_socket = ::socket(af, type, protocol);
 			if (INVALID_SOCKET == _socket)

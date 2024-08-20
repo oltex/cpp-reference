@@ -1,8 +1,5 @@
 #pragma once
 #include "design-pattern/singleton.h"
-//#include "data-structure/list.h"
-//#include "data-structure/unordered_map.h"
-
 #include "object.h"
 #include <string>
 #include <list>

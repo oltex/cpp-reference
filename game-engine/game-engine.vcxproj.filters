@@ -91,6 +91,33 @@
     <ClInclude Include="sound_manager.h">
       <Filter>engine\sound</Filter>
     </ClInclude>
+    <ClInclude Include="fmod\fmod.h">
+      <Filter>library\fmod</Filter>
+    </ClInclude>
+    <ClInclude Include="fmod\fmod.hpp">
+      <Filter>library\fmod</Filter>
+    </ClInclude>
+    <ClInclude Include="fmod\fmod_codec.h">
+      <Filter>library\fmod</Filter>
+    </ClInclude>
+    <ClInclude Include="fmod\fmod_common.h">
+      <Filter>library\fmod</Filter>
+    </ClInclude>
+    <ClInclude Include="fmod\fmod_dsp.h">
+      <Filter>library\fmod</Filter>
+    </ClInclude>
+    <ClInclude Include="fmod\fmod_dsp_effects.h">
+      <Filter>library\fmod</Filter>
+    </ClInclude>
+    <ClInclude Include="fmod\fmod_errors.h">
+      <Filter>library\fmod</Filter>
+    </ClInclude>
+    <ClInclude Include="fmod\fmod_output.h">
+      <Filter>library\fmod</Filter>
+    </ClInclude>
+    <ClInclude Include="fmod\fmod_uwp.h">
+      <Filter>library\fmod</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="library">
@@ -126,11 +153,11 @@
     <Filter Include="engine\sound">
       <UniqueIdentifier>{0216325f-ca29-4b94-a9c3-4589e26a6184}</UniqueIdentifier>
     </Filter>
+    <Filter Include="library\fmod">
+      <UniqueIdentifier>{06f7939b-8986-4ee6-915b-cf8c73cc2ef3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
 </Project>

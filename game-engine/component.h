@@ -10,8 +10,6 @@ namespace engine {
 		}
 		inline virtual ~component(void) noexcept {
 		}
-	public:
-
 	private:
 		bool _active;
 		bool _destory;

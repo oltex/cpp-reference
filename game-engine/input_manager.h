@@ -1,7 +1,4 @@
 #pragma once
-#include <winrt/windows.gaming.input.h>
-#include <GameInput.h>
-
 #pragma comment(lib,"dinput8.lib")
 #pragma comment(lib,"dxguid.lib")
 #include "design-pattern/singleton.h"
@@ -44,7 +41,6 @@ namespace engine {
 
 			memset(_mouse_up, 1, 3);
 			memset(_keyboard_up, 1, 256);
-
 		};
 		inline explicit input_manager(input_manager const& rhs) noexcept = delete;
 		inline auto operator=(input_manager const& rhs) noexcept -> input_manager & = delete;

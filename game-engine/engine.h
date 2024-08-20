@@ -7,6 +7,7 @@
 #include "component_manager.h"
 #include "timer_manager.h"
 #include "input_manager.h"
+#include "sound_manager.h"
 
 #include <iostream>
 
@@ -24,7 +25,8 @@ namespace engine {
 			: _object_manager(object_manager::instance()),
 			_component_manager(component_manager::instance()),
 			_timer_manager(timer_manager::instance()),
-			_input_manager(input_manager::constructor(instance, window)) {
+			_input_manager(input_manager::constructor(instance, window)),
+			_sound_manager(sound_manager::instance()) {
 		};
 		inline explicit engine(engine const& rhs) noexcept = delete;
 		inline auto operator=(engine const& rhs) noexcept -> engine & = delete;
@@ -32,7 +34,7 @@ namespace engine {
 		inline auto operator=(engine&& rhs) noexcept -> engine & = delete;
 		inline ~engine(void) noexcept = default;
 	public:
-		inline virtual void initialize(void) noexcept {
+		inline void initialize(void) noexcept {
 		}
 		inline void update(void) const noexcept {
 			_timer_manager.set_frame(50);
@@ -47,23 +49,16 @@ namespace engine {
 				}
 				else {
 					_input_manager.update();
-
-					if (_input_manager.mouse_down(input_manager::button::right))
-						std::cout << "press" << std::endl;
-					if (_input_manager.mouse_up(input_manager::button::right))
-						std::cout << "press" << std::endl;
-					//if(_input_manager.mouse_press(input_manager::button::wheel))
-					//	std::cout << "press" << std::endl;
-
+					_sound_manager.update();
 					_timer_manager.update();
 				}
 			}
-
 		};
 	private:
 		object_manager& _object_manager;
 		component_manager& _component_manager;
 		timer_manager& _timer_manager;
 		input_manager& _input_manager;
+		sound_manager& _sound_manager;
 	};
 }

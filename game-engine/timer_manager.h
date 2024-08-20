@@ -7,10 +7,12 @@ namespace engine {
 		friend class design_pattern::singleton<timer_manager>;
 		friend class engine;
 	private:
-		inline explicit timer_manager(void) noexcept {
-		}
-		inline ~timer_manager(void) noexcept {
-		}
+		inline explicit timer_manager(void) noexcept = default;
+		inline explicit timer_manager(timer_manager const& rhs) noexcept = delete;
+		inline auto operator=(timer_manager const& rhs) noexcept -> timer_manager & = delete;
+		inline explicit timer_manager(timer_manager&& rhs) noexcept = delete;
+		inline auto operator=(timer_manager&& rhs) noexcept -> timer_manager & = delete;
+		inline ~timer_manager(void) noexcept = default;
 	public:
 		inline void update(void) noexcept {
 			auto time = std::chrono::high_resolution_clock::now();

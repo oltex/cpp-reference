@@ -21,19 +21,12 @@ void func(void) noexcept {
 	storage.set_address("127.0.0.1");
 	storage.set_port(1111);
 
-	network::socket socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	socket.set_linger(1, 0);
+	network::socket socket(AF_INET, SOCK_STREAM, IPPROTO_UDP);
+	//socket.set_linger(1, 0);
 	socket.set_nonblocking(1);
+	//socket.set_tcp_nodelay(1);
 	socket.bind(reinterpret_cast<network::storage&>(storage));
 	socket.listen(SOMAXCONN);
-
-	//network::poll poll;
-	//poll.push(socket, POLLRDNORM);
-	//poll.execute(-1);
-
-	//for (auto& iter : poll) {
-	//	if (iter._revent & POLLRDNORM)
-	//}
 
 	system("pause");
 }
