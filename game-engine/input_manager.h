@@ -28,6 +28,10 @@ namespace engine {
 		inline explicit input_manager(window::instance& instance, window::window& window) noexcept {
 			GameInputCreate(&_input);
 
+			IGameInputReading* reading;
+			_input->GetCurrentReading(GameInputKindKeyboard, nullptr, &reading);
+			reading->GetDevice(&_keyboard);
+
 			//auto hinstance = instance.data();
 			//auto hwnd = window.data();
 			//DirectInput8Create(hinstance, DIRECTINPUT_VERSION, IID_IDirectInput8, reinterpret_cast<void**>(&_input), nullptr);
@@ -50,6 +54,7 @@ namespace engine {
 		inline explicit input_manager(input_manager&& rhs) noexcept = delete;
 		inline auto operator=(input_manager&& rhs) noexcept -> input_manager & = delete;
 		inline ~input_manager(void) noexcept {
+			_keyboard->Release();
 			_input->Release();
 			//_keyboard->Unacquire();
 			//_keyboard->Release();
@@ -60,7 +65,10 @@ namespace engine {
 	public:
 		inline void update(void) noexcept {
 			//_reading->Release();
-			_input->GetCurrentReading(GameInputKindKeyboard, nullptr, &_reading);
+			IGameInputDevice* d = nullptr;
+			_input->GetCurrentReading(GameInputKindKeyboard, d, &_reading);
+			//_reading->GetDevice(&d);
+			HRESULT hr = _input->GetPreviousReading(_reading, GameInputKindKeyboard, d, &_reading2);
 			//_mouse->GetDeviceState(sizeof(_DIMOUSESTATE), &_mouse_state);
 			//_keyboard->GetDeviceState(256, _keyboard_state);
 			//memset(_mouse_up_frame, 0, 3);
@@ -148,6 +156,9 @@ namespace engine {
 		//bool _keyboard_down_frame[256];
 
 		IGameInput* _input;
-		IGameInputReading* _reading;
+		IGameInputDevice* _keyboard;
+		IGameInputReading* _keyboard_reading;
+
+		IGameInputReading* _reading2;
 	};
 }

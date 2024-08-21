@@ -90,11 +90,14 @@ namespace network {
 		}
 	public:
 		inline void set_tcp_nodelay(int const enable) const noexcept {
-			set_option(IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<char const*>(&enable), sizeof(enable));
+			set_option(IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<char const*>(&enable), sizeof(int));
 		}
 		inline void set_linger(unsigned short const onoff, unsigned short const time) const noexcept {
 			LINGER linger{ onoff , time };
-			set_option(SOL_SOCKET, SO_LINGER, reinterpret_cast<char const*>(&linger), sizeof(linger));
+			set_option(SOL_SOCKET, SO_LINGER, reinterpret_cast<char const*>(&linger), sizeof(LINGER));
+		}
+		inline void set_broadcast(unsigned long const enable) const noexcept {
+			set_option(SOL_SOCKET, SO_BROADCAST, reinterpret_cast<char const*>(&enable), sizeof(unsigned long));
 		}
 		inline void set_send_buffer(int const size) const noexcept {
 			set_option(SOL_SOCKET, SO_SNDBUF, reinterpret_cast<char const*>(&size), sizeof(size));
