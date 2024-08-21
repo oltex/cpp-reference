@@ -7,6 +7,9 @@
 #include "window/window.h"
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
+#include <vector>
+#include <array>
+#include <span>
 
 namespace engine {
 	class input_manager final : public design_pattern::singleton<input_manager, design_pattern::member_static<input_manager>> {
@@ -27,10 +30,14 @@ namespace engine {
 	private:
 		inline explicit input_manager(window::instance& instance, window::window& window) noexcept {
 			GameInputCreate(&_input);
-
-			IGameInputReading* reading;
-			_input->GetCurrentReading(GameInputKindKeyboard, nullptr, &reading);
-			reading->GetDevice(&_keyboard);
+			//GameInputCallbackToken _token;
+			//_input->RegisterDeviceCallback(nullptr,
+			//	GameInputKindKeyboard, GameInputDeviceInputEnabled, GameInputAsyncEnumeration,
+			//	(void*)this, device_callback, &_token);
+			_input->GetCurrentReading(GameInputKindKeyboard, nullptr, &_reading);
+			_reading->GetDevice(&_deive);
+			_key_state.resize(_deive->GetDeviceInfo()->keyboardInfo->maxSimultaneousKeys);
+			_reading->Release();
 
 			//auto hinstance = instance.data();
 			//auto hwnd = window.data();
@@ -54,7 +61,6 @@ namespace engine {
 		inline explicit input_manager(input_manager&& rhs) noexcept = delete;
 		inline auto operator=(input_manager&& rhs) noexcept -> input_manager & = delete;
 		inline ~input_manager(void) noexcept {
-			_keyboard->Release();
 			_input->Release();
 			//_keyboard->Unacquire();
 			//_keyboard->Release();
@@ -63,20 +69,35 @@ namespace engine {
 			//_input->Release();
 		};
 	public:
-		inline void update(void) noexcept {
+		inline void begin_update(void) noexcept {
+			_input->GetCurrentReading(GameInputKindMouse | GameInputKindKeyboard, nullptr, &_reading);
+			_reading->GetKeyState(_reading->GetKeyCount(), _key_state.data());
+
+
 			//_reading->Release();
-			IGameInputDevice* d = nullptr;
-			_input->GetCurrentReading(GameInputKindKeyboard, d, &_reading);
-			//_reading->GetDevice(&d);
-			HRESULT hr = _input->GetPreviousReading(_reading, GameInputKindKeyboard, d, &_reading2);
+			//_input->GetCurrentReading(GameInputKindKeyboard, _keyboard, &_keyboard_reading);
+			//_keyboard_reading->GetDevice(&_keyboard);
+			//HRESULT hr = _input->GetPreviousReading(_keyboard_reading, GameInputKindKeyboard, _keyboard, &_reading2);
 			//_mouse->GetDeviceState(sizeof(_DIMOUSESTATE), &_mouse_state);
 			//_keyboard->GetDeviceState(256, _keyboard_state);
 			//memset(_mouse_up_frame, 0, 3);
 			//memset(_mouse_down_frame, 0, 3);
 			//memset(_keyboard_up_frame, 0, 256);
 			//memset(_keyboard_down_frame, 0, 256);
+			//_keyboard_reading->Release();
+		}
+		inline void end_update(void) noexcept {
+			_reading->Release();
 		}
 	public:
+		inline static void __stdcall device_callback(
+			_In_ GameInputCallbackToken callbackToken,
+			_In_ void* context,
+			_In_ IGameInputDevice* device,
+			_In_ uint64_t timestamp,
+			_In_ GameInputDeviceStatus currentStatus,
+			_In_ GameInputDeviceStatus previousStatus) noexcept {
+		}
 		//inline long mouse_move(move const move) const noexcept {
 		//	return *(&_mouse_state.lX + static_cast<unsigned char>(move));
 		//}
@@ -109,9 +130,16 @@ namespace engine {
 		//	}
 		//	return _mouse_down_frame[static_cast<unsigned char>(btn)];
 		//}
-		//inline bool key_press(unsigned char const key) const noexcept {
-		//	return static_cast<bool>(_keyboard_state[key]);
-		//}
+		inline bool key_press(unsigned char const key) noexcept {
+			for(auto i = 0; i < _reading->GetKeyCount(); ++i){
+				if (_key_state[i].virtualKey == key)
+					int a = 10;
+			}
+			//_reading->GetKeyState(_keyboard_reading->GetKeyCount(), state);
+			//_reading->GetGamepadState()
+			return 0;
+			//return static_cast<bool>(_keyboard_state[key]);
+		}
 		//inline bool key_up(unsigned char const key) noexcept {
 		//	switch (static_cast<bool>(_keyboard_state[key])) {
 		//	case false:
@@ -156,9 +184,8 @@ namespace engine {
 		//bool _keyboard_down_frame[256];
 
 		IGameInput* _input;
-		IGameInputDevice* _keyboard;
-		IGameInputReading* _keyboard_reading;
-
-		IGameInputReading* _reading2;
+		IGameInputReading* _reading;
+		IGameInputDevice* _deive;
+		std::vector<GameInputKeyState> _key_state;
 	};
 }
