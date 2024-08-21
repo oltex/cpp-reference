@@ -84,8 +84,9 @@ namespace network {
 		inline auto receive(char* const buf, int const len, int const flag) const noexcept -> int {
 			return ::recv(_socket, buf, len, flag);
 		}
-		inline auto receive_from(char* const buf, int const len, int const flag) const noexcept -> int {
-			//return ::recvfrom(_socket, buf, len, flag);
+		inline auto receive_from(char* const buf, int const len, int const flag, storage& stor, int& length) noexcept -> int {
+			auto& addr = reinterpret_cast<sockaddr&>(stor.data());
+			return ::recvfrom(_socket, buf, len, flag, &addr, &length);
 		}
 	public:
 		inline void set_tcp_nodelay(int const enable) const noexcept {

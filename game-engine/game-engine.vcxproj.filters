@@ -115,9 +115,6 @@
     <ClInclude Include="fmod\fmod_output.h">
       <Filter>library\fmod</Filter>
     </ClInclude>
-    <ClInclude Include="fmod\fmod_uwp.h">
-      <Filter>library\fmod</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="library">
@@ -159,5 +156,22 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="fmod\fmod.dll">
+      <Filter>library\fmod</Filter>
+    </None>
+    <None Include="fmod\fmodL.dll">
+      <Filter>library\fmod</Filter>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="fmod\fmod_vc.lib">
+      <Filter>library\fmod</Filter>
+    </Library>
+    <Library Include="fmod\fmodL_vc.lib">
+      <Filter>library\fmod</Filter>
+    </Library>
   </ItemGroup>
 </Project>

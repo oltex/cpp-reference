@@ -17,16 +17,24 @@ void func(void) noexcept {
 	//for (auto& iter : storage)
 	//	std::cout << iter.get_address() << std::endl;
 
-	network::storage_ipv4 storage;
-	storage.set_address("127.0.0.1");
-	storage.set_port(1111);
-
-	network::socket socket(AF_INET, SOCK_STREAM, IPPROTO_UDP);
+	network::socket socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	//socket.set_linger(1, 0);
 	socket.set_nonblocking(1);
 	//socket.set_tcp_nodelay(1);
-	socket.bind(reinterpret_cast<network::storage&>(storage));
-	socket.listen(SOMAXCONN);
+
+	network::storage_ipv4 storage;
+	storage.set_address("192.168.10.79");
+	storage.set_port(20000);
+	//socket.bind(reinterpret_cast<network::storage&>(storage));
+	socket.connect(reinterpret_cast<network::storage&>(storage));
+
+	char buf[] = "hello!";
+	socket.send_to(buf, 6, 0, reinterpret_cast<network::storage&>(storage));
+
+	network::storage storage2;
+	int length = 999;
+	char buf2[7] = "";
+	socket.receive_from(buf2, 6, 0, storage2, length);
 
 	system("pause");
 }

@@ -1,8 +1,8 @@
 #pragma once
 #ifdef _DEBUG
-#pragma comment(lib, "fmod/fmodL.lib") 
+#pragma comment(lib, "fmod/fmodL_vc.lib") 
 #else
-#pragma comment(lib, "fmod/fmod.lib")
+#pragma comment(lib, "fmod/fmod_vc.lib")
 #endif
 #include "design-pattern/singleton.h"
 #include "fmod/fmod.hpp"
@@ -10,8 +10,6 @@
 namespace engine {
 	class sound_manager final : public design_pattern::singleton<sound_manager> {
 		friend class design_pattern::singleton<sound_manager>;
-	//public:
-	//	enum class EChannel : _ubyte { BGM, CH0, CH1, CH2, CH3, END };
 	private:
 		inline explicit sound_manager(void) noexcept {
 			FMOD::System_Create(&_system);
