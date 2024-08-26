@@ -115,6 +115,9 @@
     <ClInclude Include="fmod\fmod_output.h">
       <Filter>library\fmod</Filter>
     </ClInclude>
+    <ClInclude Include="device.h">
+      <Filter>engine\input</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="library">

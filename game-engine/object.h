@@ -12,6 +12,8 @@ namespace engine {
 			: _type(rhs._type) {
 		}
 		inline auto operator=(object const& rhs) noexcept -> object & = delete;
+		inline explicit object(object&& rhs) noexcept = delete;
+		inline auto operator=(object&& rhs) noexcept -> object & = delete;
 		inline virtual ~object(void) noexcept = default;
 	public:
 		inline virtual void Initialize(void) noexcept {

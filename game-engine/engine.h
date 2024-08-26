@@ -48,13 +48,11 @@ namespace engine {
 					DispatchMessage(&msg);
 				}
 				else {
-					_input_manager.begin_update();
-
+					_input_manager.update();
 					_sound_manager.update();
 
 					_input_manager.key_press(VK_RETURN);
 
-					_input_manager.end_update();
 					_timer_manager.update();
 
 				}
