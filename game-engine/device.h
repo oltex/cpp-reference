@@ -2,27 +2,19 @@
 #include <GameInput.h>
 
 namespace engine {
-	class device final {
+	class device {
 	public:
-		inline explicit device(IGameInputDevice* device_, unsigned int const type) noexcept
-			: _device(device_), _type(type) {
-			auto info = _device->GetDeviceInfo();
-			_device.
-			int a = 10;
-			GameInputKind supportedInput
+		inline explicit device(IGameInputDevice* device_) noexcept
+			: _device(device_){
 		};
 		inline explicit device(device const& rhs) = delete;
 		inline auto operator=(device const& rhs) noexcept -> device & = delete;
 		inline explicit device(device&& rhs) noexcept = delete;
 		inline auto operator=(device&& rhs) noexcept -> device & = delete;
-		inline virtual ~device(void) noexcept {
+		inline ~device(void) noexcept {
 			_device->Release();
 		};
-	public:
-		inline void update(IGameInput& input) noexcept {
-		}
-	private:
-		unsigned int _type;
+	protected:
 		IGameInputDevice* _device;
 	};
 }

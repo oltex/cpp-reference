@@ -39,7 +39,7 @@ namespace engine {
 
 			GameInputCallbackToken _token;
 			_input->RegisterDeviceCallback(nullptr,
-				GameInputKindKeyboard, GameInputDeviceInputEnabled, GameInputAsyncEnumeration,
+				GameInputKindMouse | GameInputKindKeyboard, GameInputDeviceInputEnabled, GameInputAsyncEnumeration,
 				(void*)this, device_callback, &_token);
 
 
@@ -74,16 +74,8 @@ namespace engine {
 		};
 	public:
 		inline void update(void) noexcept {
-			//IGameInputReading* reading;
-			//IGameInputDevice* device;
-			//IGameInputReading* previous_reading;
-			//_input->GetCurrentReading(GameInputKindMouse | GameInputKindKeyboard, nullptr, &reading);
-			//reading->GetDevice(&device);
-			//_input->GetPreviousReading(reading, GameInputKindMouse | GameInputKindKeyboard, nullptr, &previous_reading);
-			//reading->GetKeyState(reading->GetKeyCount(), _key_state.data());
-			////previous_reading->Release();
-			//device->Release();
-			//reading->Release();
+			for (auto& iter : _device)
+				iter.update(*_input);
 
 			//_reading->Release();
 			//_input->GetCurrentReading(GameInputKindKeyboard, _keyboard, &_keyboard_reading);
@@ -194,3 +186,14 @@ namespace engine {
 		std::list<device> _device;
 	};
 }
+
+//IGameInputReading* reading;
+//IGameInputDevice* device;
+//IGameInputReading* previous_reading;
+//_input->GetCurrentReading(GameInputKindMouse | GameInputKindKeyboard, nullptr, &reading);
+//reading->GetDevice(&device);
+//_input->GetPreviousReading(reading, GameInputKindMouse | GameInputKindKeyboard, nullptr, &previous_reading);
+//reading->GetKeyState(reading->GetKeyCount(), _key_state.data());
+////previous_reading->Release();
+//device->Release();
+//reading->Release();

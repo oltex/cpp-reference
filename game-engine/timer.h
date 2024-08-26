@@ -5,11 +5,11 @@
 class timer final {
 public:
 	inline explicit timer(void) noexcept
-		: _time(std::chrono::high_resolution_clock::now()) {
+		: _time(std::chrono::steady_clock::now()) {
 	}
 	inline ~timer(void) noexcept = default;
 public:
-	inline void update(std::chrono::high_resolution_clock::time_point time) noexcept {
+	inline void update(std::chrono::steady_clock::time_point time) noexcept {
 		_delta = std::chrono::duration_cast<std::chrono::nanoseconds>(time - _time);
 		if (0 != _frame.count())
 			_time += _frame;
@@ -27,7 +27,7 @@ public:
 		return _delta;
 	}
 private:
-	std::chrono::high_resolution_clock::time_point _time;
+	std::chrono::steady_clock::time_point _time;
 	std::chrono::nanoseconds _frame;
 	std::chrono::nanoseconds _delta;
 };

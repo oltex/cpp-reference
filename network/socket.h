@@ -55,34 +55,76 @@ namespace network {
 				DebugBreak();
 			return pair<socket, storage>(socket(sock), storage(addr));
 		}
-		inline void connect(storage& stor) const noexcept {
+		inline auto connect(storage& stor) noexcept -> int {
 			auto& addr = reinterpret_cast<sockaddr&>(stor.data());
-			int len;
+			int length;
 			switch (stor.get_family()) {
 			case AF_INET:
-				len = sizeof(sockaddr_in);
+				length = sizeof(sockaddr_in);
 				break;
 			}
-			if (SOCKET_ERROR == ::connect(_socket, &addr, len))
+			int result = ::connect(_socket, &addr, length);
+			switch (result) {
+			case WSAEWOULDBLOCK:
+				break;
+			case WSAETIMEDOUT:
+			case WSAECONNREFUSED:
+				close();
+				break;
+			default:
 				DebugBreak();
+			}
+			return result;
 		}
 		inline void shutdown(int const how) const noexcept {
 			if (SOCKET_ERROR == ::shutdown(_socket, how))
 				DebugBreak();
 		}
-		inline void close(void) const noexcept {
+		inline void close(void) noexcept {
 			closesocket(_socket);
+			_socket = INVALID_SOCKET;
 		}
 	public:
-		inline auto send(char const* const buf, int const len, int const flag) const noexcept -> int {
-			return ::send(_socket, buf, len, flag);
+		inline auto send(char const* const buf, int const len, int const flag) noexcept -> int {
+			int result = ::send(_socket, buf, len, flag);
+			if (SOCKET_ERROR == result) {
+				switch (GetLastError()) {
+				case WSAEWOULDBLOCK:
+					break;
+				case WSAECONNRESET:
+				case WSAECONNABORTED:
+					close();
+					break;
+				case WSAENOTCONN:
+				default:
+					DebugBreak();
+				}
+			}
+			return result;
 		}
 		inline auto send_to(char const* const buf, int const len, int const flag, storage& stor) const noexcept -> int {
 			auto& addr = reinterpret_cast<sockaddr&>(stor.data());
 			return ::sendto(_socket, buf, len, flag, &addr, sizeof(sockaddr_in));
 		}
-		inline auto receive(char* const buf, int const len, int const flag) const noexcept -> int {
-			return ::recv(_socket, buf, len, flag);
+		inline auto receive(char* const buf, int const len, int const flag) noexcept -> int {
+			int result = ::recv(_socket, buf, len, flag);
+			if (SOCKET_ERROR == result) {
+				switch (GetLastError()) {
+				case WSAEWOULDBLOCK:
+					break;
+				case WSAECONNRESET:
+				case WSAECONNABORTED:
+					close();
+					break;
+				case WSAENOTCONN:
+				default:
+					DebugBreak();
+				}
+			}
+			else if (0 == result)
+				close();
+
+			return result;
 		}
 		inline auto receive_from(char* const buf, int const len, int const flag, storage& stor, int& length) noexcept -> int {
 			auto& addr = reinterpret_cast<sockaddr&>(stor.data());

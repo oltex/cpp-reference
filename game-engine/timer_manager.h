@@ -15,7 +15,7 @@ namespace engine {
 		inline ~timer_manager(void) noexcept = default;
 	public:
 		inline void update(void) noexcept {
-			auto time = std::chrono::high_resolution_clock::now();
+			auto time = std::chrono::steady_clock::now();
 			_delta.update(time);
 			_frame.update(time);
 			if (_frame.get_delta() < _frame.get_frame())

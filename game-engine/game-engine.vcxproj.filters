@@ -118,6 +118,9 @@
     <ClInclude Include="device.h">
       <Filter>engine\input</Filter>
     </ClInclude>
+    <ClInclude Include="keyboard.h">
+      <Filter>engine\input</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="library">

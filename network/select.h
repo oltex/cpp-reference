@@ -32,16 +32,13 @@ namespace network {
 			auto exception_set = type::exception & type ? 0 != _exception_set.fd_count ? &_exception_set : nullptr : nullptr;
 			if (nullptr == read_set && nullptr == write_set && nullptr == exception_set)
 				return 0;
-			int result = ::select(0,
-				type::read & type ? &_read_set : nullptr,
-				type::write & type ? &_write_set : nullptr,
-				type::exception & type ? &_exception_set : nullptr,
-				time);
+
+			int result = ::select(0, read_set, write_set, exception_set, time);
 			if (SOCKET_ERROR == result)
 				DebugBreak();
 			return result;
 		}
-		inline auto is(socket const& socket, type const type) const noexcept -> int {
+		inline auto is_set(socket const& socket, type const type) const noexcept -> int {
 			switch (type) {
 			case read:
 				return FD_ISSET(socket.data(), &_read_set);
