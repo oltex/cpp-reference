@@ -14,9 +14,9 @@ namespace network {
 			if (type::read & type)
 				FD_ZERO(&_read_set);
 			if (type::write & type)
-				FD_ZERO(&_read_set);
+				FD_ZERO(&_write_set);
 			if (type::exception & type)
-				FD_ZERO(&_read_set);
+				FD_ZERO(&_exception_set);
 		}
 		inline void set(socket const& socket, char const type) noexcept {
 			if (type::read & type)
