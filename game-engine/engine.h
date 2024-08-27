@@ -37,7 +37,7 @@ namespace engine {
 		inline void initialize(void) noexcept {
 		}
 		inline void update(void) const noexcept {
-			_timer_manager.set_frame(50);
+			_timer_manager.set_frame(1);
 
 			MSG msg;
 			for (;;) {
@@ -51,7 +51,8 @@ namespace engine {
 					_input_manager.update();
 					_sound_manager.update();
 
-					_input_manager.key_press(VK_RETURN);
+					if (_input_manager.key_press(VK_RETURN))
+						int a = 10;
 
 					_timer_manager.update();
 

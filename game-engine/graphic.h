@@ -4,7 +4,7 @@
 #include <d3d11.h>
 
 namespace engine {
-	class graphic final : public singleton<graphic> {
+	class graphic final : public design_pattern::singleton<graphic> {
 		friend class singleton<graphic>;
 	private:
 		inline explicit graphic(void) noexcept {

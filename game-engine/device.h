@@ -6,6 +6,7 @@ namespace engine {
 	public:
 		inline explicit device(IGameInputDevice* device_) noexcept
 			: _device(device_){
+			_device->AddRef();
 		};
 		inline explicit device(device const& rhs) = delete;
 		inline auto operator=(device const& rhs) noexcept -> device & = delete;
