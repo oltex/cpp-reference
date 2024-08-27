@@ -186,9 +186,6 @@
     <ClInclude Include="input_manager.h" />
     <ClInclude Include="keyboard.h" />
     <ClInclude Include="mouse.h" />
-    <ClInclude Include="screen.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="sound_manager.h" />
     <ClInclude Include="timer.h" />
     <ClInclude Include="timer_manager.h" />

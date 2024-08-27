@@ -79,9 +79,6 @@
     <ClInclude Include="window\window.h">
       <Filter>library\window</Filter>
     </ClInclude>
-    <ClInclude Include="screen.h">
-      <Filter>engine\graphic</Filter>
-    </ClInclude>
     <ClInclude Include="input_manager.h">
       <Filter>engine\input</Filter>
     </ClInclude>
@@ -188,6 +185,9 @@
     </Filter>
     <Filter Include="library\imgui">
       <UniqueIdentifier>{2557e3bf-12e7-4f56-910d-46ffb6092846}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\editer">
+      <UniqueIdentifier>{55dac13d-ad5a-49c9-b325-f6e41b3ae568}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

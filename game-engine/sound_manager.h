@@ -20,10 +20,9 @@ namespace engine {
 		inline auto operator=(sound_manager const& rhs) noexcept -> sound_manager & = delete;
 		inline explicit sound_manager(sound_manager&& rhs) noexcept = delete;
 		inline auto operator=(sound_manager&& rhs) noexcept -> sound_manager & = delete;
-		inline ~sound_manager(void) override {
+		inline ~sound_manager(void) {
 			_system->close();
 			_system->release();
-			
 		};
 	public:
 		inline void update(void) noexcept {

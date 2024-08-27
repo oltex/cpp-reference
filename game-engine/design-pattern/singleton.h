@@ -15,7 +15,7 @@ namespace design_pattern {
 	class singleton : public trait {
 	protected:
 		inline explicit singleton(void) noexcept = default;
-		inline virtual ~singleton(void) noexcept = default;
+		inline ~singleton(void) noexcept = default;
 	private:
 		inline explicit singleton(singleton const& rhs) noexcept = delete;
 		inline auto operator=(singleton const& rhs) noexcept -> singleton & = delete;

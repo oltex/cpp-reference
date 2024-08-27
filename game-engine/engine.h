@@ -3,6 +3,7 @@
 #include "window/instance.h"
 #include "window/window.h"
 
+#include "graphic.h"
 #include "object_manager.h"
 #include "component_manager.h"
 #include "timer_manager.h"
@@ -22,7 +23,8 @@ namespace engine {
 		}
 	private:
 		inline explicit engine(window::instance& instance, window::window& window) noexcept
-			: _object_manager(object_manager::instance()),
+			: _graphic(graphic::constructor(window)),
+			_object_manager(object_manager::instance()),
 			_component_manager(component_manager::instance()),
 			_timer_manager(timer_manager::instance()),
 			_input_manager(input_manager::constructor(instance, window)),
@@ -37,7 +39,7 @@ namespace engine {
 		inline void initialize(void) noexcept {
 		}
 		inline void update(void) const noexcept {
-			_timer_manager.set_frame(1);
+			_timer_manager.set_frame(50);
 
 			MSG msg;
 			for (;;) {
@@ -48,11 +50,14 @@ namespace engine {
 					DispatchMessage(&msg);
 				}
 				else {
+					//update
 					_input_manager.update();
 					_sound_manager.update();
 
-					if (_input_manager.key_press(VK_RETURN))
-						int a = 10;
+					//render
+					_graphic.begin_render();
+
+					_graphic.end_render();
 
 					_timer_manager.update();
 
@@ -60,6 +65,7 @@ namespace engine {
 			}
 		};
 	private:
+		graphic& _graphic;
 		object_manager& _object_manager;
 		component_manager& _component_manager;
 		timer_manager& _timer_manager;
