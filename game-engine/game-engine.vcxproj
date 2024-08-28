@@ -163,6 +163,7 @@
     <ClInclude Include="data-structure\vector.h" />
     <ClInclude Include="design-pattern\singleton.h" />
     <ClInclude Include="device.h" />
+    <ClInclude Include="editor.h" />
     <ClInclude Include="engine.h" />
     <ClInclude Include="fmod\fmod.h" />
     <ClInclude Include="fmod\fmod.hpp" />

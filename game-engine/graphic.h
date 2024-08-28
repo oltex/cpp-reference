@@ -9,7 +9,6 @@ namespace engine {
 	public:
 		inline static auto constructor(window::window& window) noexcept -> graphic& {
 			_instance = new graphic(window);
-			atexit(destructor);
 			return *_instance;
 		}
 	private:

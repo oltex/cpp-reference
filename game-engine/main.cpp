@@ -39,14 +39,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hinstance, _In_opt_ HINSTANCE prevhinstance
 
 		engine::engine::constructor(instance, window);
 	}
-	engine::engine::instance().update();
+	engine::engine::instance().run();
 	return 0;
 }
 
 
 LRESULT CALLBACK procedure(HWND const hwnd, UINT const message, WPARAM const wparam, LPARAM const lparam) noexcept {
-	if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
-		return true;
+	//if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
+		//return true;
 	switch (message) {
 	case WM_DESTROY:
 		PostQuitMessage(0);

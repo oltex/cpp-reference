@@ -4,6 +4,8 @@
 #include "window/window.h"
 
 #include "graphic.h"
+#include "editor.h"
+
 #include "object_manager.h"
 #include "component_manager.h"
 #include "timer_manager.h"
@@ -24,6 +26,7 @@ namespace engine {
 	private:
 		inline explicit engine(window::instance& instance, window::window& window) noexcept
 			: _graphic(graphic::constructor(window)),
+			_editor(editor::constructor(window, _graphic)),
 			_object_manager(object_manager::instance()),
 			_component_manager(component_manager::instance()),
 			_timer_manager(timer_manager::instance()),
@@ -34,11 +37,14 @@ namespace engine {
 		inline auto operator=(engine const& rhs) noexcept -> engine & = delete;
 		inline explicit engine(engine&& rhs) noexcept = delete;
 		inline auto operator=(engine&& rhs) noexcept -> engine & = delete;
-		inline ~engine(void) noexcept = default;
+		inline ~engine(void) noexcept {
+			_editor.destructor();
+			_graphic.destructor();
+		};
 	public:
 		inline void initialize(void) noexcept {
 		}
-		inline void update(void) const noexcept {
+		inline void run(void) const noexcept {
 			_timer_manager.set_frame(50);
 
 			MSG msg;
@@ -53,10 +59,11 @@ namespace engine {
 					//update
 					_input_manager.update();
 					_sound_manager.update();
+					_editor.update();
 
 					//render
 					_graphic.begin_render();
-
+					_editor.render();
 					_graphic.end_render();
 
 					_timer_manager.update();
@@ -66,6 +73,8 @@ namespace engine {
 		};
 	private:
 		graphic& _graphic;
+		editor& _editor;
+
 		object_manager& _object_manager;
 		component_manager& _component_manager;
 		timer_manager& _timer_manager;
