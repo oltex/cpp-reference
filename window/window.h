@@ -19,7 +19,9 @@ namespace window {
 			rhs._hwnd = nullptr;
 			return *this;
 		}
-		inline ~window(void) noexcept = default;
+		inline ~window(void) noexcept {
+			destroy();
+		};
 	public:
 		inline auto get_device_context(void) const noexcept -> device_context {
 			HDC hdc = GetDC(_hwnd);
