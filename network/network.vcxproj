@@ -155,6 +155,7 @@
     <ClInclude Include="list.h" />
     <ClInclude Include="network.h" />
     <ClInclude Include="socket.h" />
+    <ClInclude Include="test.h" />
     <ClInclude Include="vector.h" />
     <ClInclude Include="select.h" />
   </ItemGroup>

@@ -21,6 +21,7 @@
     </ClInclude>
     <ClInclude Include="async.h" />
     <ClInclude Include="rpc.h" />
+    <ClInclude Include="test.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="data-structure">

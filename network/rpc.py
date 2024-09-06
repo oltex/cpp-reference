@@ -44,9 +44,12 @@ f"""
 #pragma once
 
 namespace network {{
-class remote_procedure_call final {{
-enum type {{
-    {', '.join(info_._function +' = ' + info_._enum for info_ in infos_)}
-}}
+    class remote_procedure_call final {{
+    enum type {{
+        {', '.join(info_._function +' = ' + info_._enum for info_ in infos_)}
+    }}
+    public:
+	    inline explicit remote_procedure_call(void) noexcept = default;
+	    inline ~remote_procedure_call(void) noexcept = default;
 """
 )
