@@ -20,6 +20,7 @@
       <Filter>data-structure</Filter>
     </ClInclude>
     <ClInclude Include="async.h" />
+    <ClInclude Include="rpc.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="data-structure">

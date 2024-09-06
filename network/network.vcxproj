@@ -149,6 +149,7 @@
     <ClInclude Include="async.h" />
     <ClInclude Include="pair.h" />
     <ClInclude Include="poll.h" />
+    <ClInclude Include="rpc.h" />
     <ClInclude Include="storage.h" />
     <ClInclude Include="domain.h" />
     <ClInclude Include="list.h" />
