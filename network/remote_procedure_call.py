@@ -49,7 +49,7 @@ f"""#pragma once
 
 class session;
 class remote_procedure_call final {{
-enum type {{
+enum class type : unsigned short {{
     {", ".join(function_._name + " = " + function_._enum for function_ in functions_)}
 }};
 public:
@@ -60,7 +60,10 @@ public:
     inline auto operator=(remote_procedure_call&& rhs) noexcept -> remote_procedure_call & = delete;
     inline ~remote_procedure_call(void) noexcept = default;
 public:
-    {"\n\t".join("void "+ function_._name + "(std::list<session*> session, " + function_._parameter + ") noexcept;" for function_ in functions_)}
+    void stub(session& session, data_structure::serialize_buffer& serialize_buffer) const noexcept;
+public:
+    //proc
+    {"\n\t".join("void "+ function_._name + "(std::list<session*> session, " + function_._parameter + ") const noexcept;" for function_ in functions_)}
 }};"""
     )
 
@@ -70,11 +73,28 @@ f"""#include "remote_procedure_call.h"
 #include "session.h"
 {"\n".join("#include \"" + include_ + "\"" for include_ in includes_)}
 
-{"\n\t".join(
-f"""void remote_procedure_call::{function_._name}(std::list<session*> session, {function_._parameter}) noexcept {{
+void remote_procedure_call::stub(session& session, data_structure::serialize_buffer& serialize_buffer) const noexcept {{
+	type type_;
+	serialize_buffer >> (unsigned short)type_;
+    switch (type_) {{
+    {"\n\t".join(
+    f"""case type::{function_._name}: {{
+        {function_._parameter.replace(",", ";")};
+        serialize_buffer >>{" >>".join(" " + argument_[1] for argument_ in function_._arguments)};
+        ::{function_._name}({", ".join(argument_[1] for argument_ in function_._arguments)});
+    }}
+        break;"""
+    for function_ in functions_)}
+	default:
+		break;
+	}}
+}}
+
+{"\n".join(
+f"""void remote_procedure_call::{function_._name}(std::list<session*> session, {function_._parameter}) const noexcept {{
     data_structure::serialize_buffer serialize_buffer;
     serialize_buffer <<{" <<".join(" " + argument_[1] for argument_ in function_._arguments)};
-    for(auto& iter : session)
+    for (auto& iter : session)
         iter->send(serialize_buffer);
 }}"""
 for function_ in functions_)}

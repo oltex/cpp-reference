@@ -75,8 +75,9 @@ public:
 			int result = iter._socket.send(
 				(char*)(iter._send_ring_buffer.data() + iter._send_ring_buffer.get_front()),
 				size, 0);
-			if (SOCKET_ERROR != result)
-				iter._send_ring_buffer.move_front(result);
+			if (SOCKET_ERROR == result)
+				continue;
+			iter._send_ring_buffer.move_front(result);
 		}
 	}
 	inline void close(void) noexcept {
@@ -89,7 +90,7 @@ public:
 				++iter;
 		}
 	}
-public:
+private:
 	network::network _network;
 	network::select _select;
 

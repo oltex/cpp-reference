@@ -6,6 +6,8 @@
 #include <optional>
 
 class session {
+	friend class server;
+	friend class remote_procedure_call;
 	struct header {
 		unsigned short _size;
 	};
@@ -35,6 +37,8 @@ public:
 				_recv_ring_buffer.pop(_header->_size);
 				serialize_buffer.move_rear(_header->_size);
 				_header = std::nullopt;
+
+
 			}
 		}
 	};
@@ -43,7 +47,7 @@ public:
 	};
 	inline void close(void) noexcept {
 	};
-public:
+private:
 	network::socket _socket;
 	network::storage _storage;
 	data_structure::ring_buffer _recv_ring_buffer;
