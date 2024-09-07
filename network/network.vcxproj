@@ -144,20 +144,38 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="remote_procedure_call.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="async.h" />
     <ClInclude Include="pair.h" />
     <ClInclude Include="poll.h" />
-    <ClInclude Include="rpc.h" />
+    <ClInclude Include="remote_procedure_call.h" />
+    <ClInclude Include="ring_buffer.h" />
+    <ClInclude Include="serialize_buffer.h" />
+    <ClInclude Include="server.h" />
+    <ClInclude Include="session.h" />
     <ClInclude Include="storage.h" />
     <ClInclude Include="domain.h" />
     <ClInclude Include="list.h" />
     <ClInclude Include="network.h" />
     <ClInclude Include="socket.h" />
-    <ClInclude Include="test.h" />
+    <ClInclude Include="test.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="vector.h" />
     <ClInclude Include="select.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="remote_procedure_call.py">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

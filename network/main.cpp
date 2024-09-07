@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <crtdbg.h>
 
+#include "server.h"
+
 #include "network.h"
 #include "socket.h"
 #include "domain.h"

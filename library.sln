@@ -5,10 +5,6 @@ VisualStudioVersion = 17.9.34723.18
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "window", "window\window.vcxproj", "{9E6B0376-9BC9-41B6-9870-5C3619ED1713}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cache-simulator", "cache-simulator\cache-simulator.vcxproj", "{F1EA1A74-DD5B-4346-9B4E-C7B4702DA29B}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "profiler", "profiler\profiler.vcxproj", "{12FF0685-339D-4A07-BDE3-B1D6F4EDCB73}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "network", "network\network.vcxproj", "{121FC81B-CA09-4AA3-AFBB-77BBED661787}"
 EndProject
 Global
@@ -27,22 +23,6 @@ Global
 		{9E6B0376-9BC9-41B6-9870-5C3619ED1713}.Release|x64.Build.0 = Release|x64
 		{9E6B0376-9BC9-41B6-9870-5C3619ED1713}.Release|x86.ActiveCfg = Release|Win32
 		{9E6B0376-9BC9-41B6-9870-5C3619ED1713}.Release|x86.Build.0 = Release|Win32
-		{F1EA1A74-DD5B-4346-9B4E-C7B4702DA29B}.Debug|x64.ActiveCfg = Debug|x64
-		{F1EA1A74-DD5B-4346-9B4E-C7B4702DA29B}.Debug|x64.Build.0 = Debug|x64
-		{F1EA1A74-DD5B-4346-9B4E-C7B4702DA29B}.Debug|x86.ActiveCfg = Debug|Win32
-		{F1EA1A74-DD5B-4346-9B4E-C7B4702DA29B}.Debug|x86.Build.0 = Debug|Win32
-		{F1EA1A74-DD5B-4346-9B4E-C7B4702DA29B}.Release|x64.ActiveCfg = Release|x64
-		{F1EA1A74-DD5B-4346-9B4E-C7B4702DA29B}.Release|x64.Build.0 = Release|x64
-		{F1EA1A74-DD5B-4346-9B4E-C7B4702DA29B}.Release|x86.ActiveCfg = Release|Win32
-		{F1EA1A74-DD5B-4346-9B4E-C7B4702DA29B}.Release|x86.Build.0 = Release|Win32
-		{12FF0685-339D-4A07-BDE3-B1D6F4EDCB73}.Debug|x64.ActiveCfg = Debug|x64
-		{12FF0685-339D-4A07-BDE3-B1D6F4EDCB73}.Debug|x64.Build.0 = Debug|x64
-		{12FF0685-339D-4A07-BDE3-B1D6F4EDCB73}.Debug|x86.ActiveCfg = Debug|Win32
-		{12FF0685-339D-4A07-BDE3-B1D6F4EDCB73}.Debug|x86.Build.0 = Debug|Win32
-		{12FF0685-339D-4A07-BDE3-B1D6F4EDCB73}.Release|x64.ActiveCfg = Release|x64
-		{12FF0685-339D-4A07-BDE3-B1D6F4EDCB73}.Release|x64.Build.0 = Release|x64
-		{12FF0685-339D-4A07-BDE3-B1D6F4EDCB73}.Release|x86.ActiveCfg = Release|Win32
-		{12FF0685-339D-4A07-BDE3-B1D6F4EDCB73}.Release|x86.Build.0 = Release|Win32
 		{121FC81B-CA09-4AA3-AFBB-77BBED661787}.Debug|x64.ActiveCfg = Debug|x64
 		{121FC81B-CA09-4AA3-AFBB-77BBED661787}.Debug|x64.Build.0 = Debug|x64
 		{121FC81B-CA09-4AA3-AFBB-77BBED661787}.Debug|x86.ActiveCfg = Debug|Win32

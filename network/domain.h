@@ -8,8 +8,8 @@
 namespace network {
 	class domain final {
 	public:
-		inline auto get_storage(wchar_t const* const node_name, wchar_t const* const service_name) const noexcept -> list<storage> {
-			list<storage> storage;
+		inline auto get_storage(wchar_t const* const node_name, wchar_t const* const service_name) const noexcept -> data_structure::list<storage> {
+			data_structure::list<storage> storage;
 
 			addrinfoW* info;
 			if (0 != GetAddrInfoW(node_name, service_name, nullptr, &info))

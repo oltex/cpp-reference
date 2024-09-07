@@ -1,7 +1,7 @@
 #pragma once
 
 [[rpc::type(stub), rpc::enum(1)]]
-inline static int test(int x, int y) noexcept {
+inline static int test(int x, int y, int z) noexcept {
 	//여기에 어떤 코드가 있음
 }
 

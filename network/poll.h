@@ -1,9 +1,7 @@
 #pragma once
 #pragma comment(lib,"ws2_32.lib")
-
-#include "vector.h"
 #include "socket.h"
-
+#include "vector.h"
 #include <WinSock2.h>
 
 namespace network {
@@ -13,7 +11,7 @@ namespace network {
 			socket _socket;
 			short _revent;
 		};
-		using iterator = typename vector<node>::iterator;
+		using iterator = typename data_structure::vector<node>::iterator;
 	public:
 		//POLLRDNORM //POLLWRNORM
 		inline void push(socket const& socket, short const event) noexcept {
@@ -21,8 +19,8 @@ namespace network {
 		}
 		inline void execute(int const timeout) noexcept {
 			WSAPoll(_pollfd.data(), _pollfd.size(), timeout);
-			for (auto& iter : _pollfd)
-				_result.emplace_back(socket(iter.fd), iter.revents);
+			//for (auto& iter : _pollfd)
+			//	_result.emplace_back(socket(iter.fd), iter.revents);
 		}
 	public:
 		inline auto begin(void) const noexcept -> iterator {
@@ -37,7 +35,7 @@ namespace network {
 			_result.clear();
 		}
 	private:
-		vector<pollfd> _pollfd;
-		vector<node> _result;
+		data_structure::vector<pollfd> _pollfd;
+		data_structure::vector<node> _result;
 	};
 }
