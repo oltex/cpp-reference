@@ -104,6 +104,7 @@ public:
             break;"""
         for function_ in functions_)}
 	    default:
+            session._socket.close();
 		    break;
 	    }}
     }}

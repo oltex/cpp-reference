@@ -22,7 +22,7 @@ private:
 public:
     inline static void accept(session& session) noexcept {
     };
-    inline static void receive(session& session, data_structure::serialize_buffer& serialize_buffer) noexcept {
+    inline static void receive(session& session) noexcept {
     	while (true) {
 			if (sizeof(header) > session._recv_ring_buffer.size())
 				break;
@@ -35,6 +35,7 @@ public:
 			session._recv_ring_buffer.peek((unsigned char*)serialize_buffer.data(), header_._size);
 			session._recv_ring_buffer.pop(header_._size);
 			serialize_buffer.move_rear(header_._size);
+            stub(session, serialize_buffer);
 		}
     };
     inline static void send(session& session, data_structure::serialize_buffer& serialize_buffer) noexcept {
@@ -64,6 +65,7 @@ public:
         }
             break;
 	    default:
+            session._socket.close();
 		    break;
 	    }
     }
@@ -71,13 +73,13 @@ public:
     //proxy
     inline static void test(std::list<session*> session, int x, int y, int z) noexcept {
         data_structure::serialize_buffer serialize_buffer;
-        serialize_buffer << static_cast<unsigned char>(type::test) << x << y << z;
+        serialize_buffer << static_cast<unsigned short>(type::test) << x << y << z;
         for (auto& iter : session)
             send(*iter, serialize_buffer);
     }
 	inline static void test2(std::list<session*> session, int x, int z) noexcept {
         data_structure::serialize_buffer serialize_buffer;
-        serialize_buffer << static_cast<unsigned char>(type::test2) << x << z;
+        serialize_buffer << static_cast<unsigned short>(type::test2) << x << z;
         for (auto& iter : session)
             send(*iter, serialize_buffer);
     }
