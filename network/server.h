@@ -47,7 +47,7 @@ public:
 
 			if constexpr (!std::is_same_v<session, session_type>)
 				iter.accept();
-			if constexpr (std::is_void_v<rpc_type>)
+			if constexpr (!std::is_void_v<rpc_type>)
 				rpc_type::accept(iter);
 		}
 
@@ -64,7 +64,7 @@ public:
 
 			if constexpr (!std::is_same_v<session, session_type>)
 				iter.receive();
-			if constexpr (std::is_void_v<rpc_type>)
+			if constexpr (!std::is_void_v<rpc_type>)
 				rpc_type::receive(iter);
 		}
 	};
@@ -96,8 +96,8 @@ public:
 		for (auto iter = _session.begin(); iter != _session.end();) {
 			if (INVALID_SOCKET == (*iter)._socket.data()) {
 				if constexpr (!std::is_same_v<session, session_type>)
-					iter->close();
-				if constexpr (std::is_void_v<rpc_type>)
+					(*iter).close();
+				if constexpr (!std::is_void_v<rpc_type>)
 					rpc_type::close(*iter);
 				iter = _session.erase(iter);
 			}

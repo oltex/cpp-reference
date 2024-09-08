@@ -50,13 +50,13 @@ public:
     //proxy
     inline static void test(std::list<session*> session, int x, int y, int z) noexcept {
         data_structure::serialize_buffer serialize_buffer;
-        serialize_buffer << x << y << z;
+        serialize_buffer << static_cast<unsigned char>(type::test) << x << y << z;
         for (auto& iter : session)
             send(*iter, serialize_buffer);
     }
 	inline static void test2(std::list<session*> session, int x, int z) noexcept {
         data_structure::serialize_buffer serialize_buffer;
-        serialize_buffer << x << z;
+        serialize_buffer << static_cast<unsigned char>(type::test2) << x << z;
         for (auto& iter : session)
             send(*iter, serialize_buffer);
     }

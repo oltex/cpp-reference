@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <crtdbg.h>
 
+#include "rpc.h"
+#include "server.h"
+
 #include "network.h"
 #include "socket.h"
 #include "domain.h"
@@ -37,5 +40,7 @@ int main(void) noexcept {
 	socket.receive_from(buf2, 6, 0, storage2, length);
 
 	system("pause");
+
+	server<session, remote_procedure_call> a;
 	return 0;
 }

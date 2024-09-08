@@ -8,14 +8,11 @@ public:
 	inline explicit session(network::socket&& socket, network::storage& storage)
 		: _socket(std::move(socket)), _storage(storage) {
 	}
+	inline explicit session(session const& rhs) noexcept = delete;
+	inline auto operator=(session const& rhs) noexcept -> session & = delete;
+	inline explicit session(session&& rhs) noexcept = delete;
+	inline auto operator=(session&& rhs) noexcept -> session & = delete;
 	inline ~session(void) noexcept = default;
-public:
-	inline void accept(void) noexcept {
-	};
-	inline void receive(void) noexcept {
-	};
-	inline void close(void) noexcept {
-	};
 public:
 	network::socket _socket;
 	network::storage _storage;

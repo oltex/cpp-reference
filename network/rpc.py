@@ -96,7 +96,7 @@ public:
     {"\n\t".join(
     f"""inline static void {function_._name}(std::list<session*> session, {function_._parameter}) noexcept {{
         data_structure::serialize_buffer serialize_buffer;
-        serialize_buffer <<{" <<".join(" " + argument_[1] for argument_ in function_._arguments)};
+        serialize_buffer << static_cast<unsigned char>(type::{function_._name}) <<{" <<".join(" " + argument_[1] for argument_ in function_._arguments)};
         for (auto& iter : session)
             send(*iter, serialize_buffer);
     }}"""
