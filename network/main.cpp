@@ -11,8 +11,10 @@
 #include "poll.h"
 
 #include <iostream>
+extern inline int test(int x, int y, int z) noexcept;
 
 int main(void) noexcept {
+	test(1, 2, 3);
 	network::network network;
 
 	//network::domain domain;

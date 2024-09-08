@@ -11,6 +11,7 @@ pattern = '|'.join(f'{re.escape(word)}' for word in {
 class function:
     _type: str
     _enum: str
+    _signature: str
     _name: str
     _parameter: str
     _arguments : list = field(default_factory=list)
@@ -27,17 +28,18 @@ for root_, dirs_, files_ in os.walk(path_):
             continue
         with open(path_, 'r') as open_:
             content_ = open_.read().replace('\n', '').replace('\r', '')
-        matches_ = re.findall(r'\[\[(.*?rpc.*?)\]\].+?\b(\w+)\s*?\((.*?)\)', content_)
+        matches_ = re.findall(r'\[\[(.*?rpc.*?)\]\](.+?\b(\w+)\s*?\((.*?)\)(?:\s*noexcept)?)', content_)
         for match_ in matches_:
             type_ = re.search(r'rpc::type\((\w+)\)', match_[0]).group(1)
             enum_ = re.search(r'rpc::enum\((\w+)\)', match_[0]).group(1)
-            name_ = match_[1]
-            parameter_ = match_[2]
-            arguments_ = re.findall( r'\b(' + pattern + r')\b.*?\b(\w+)\s*(?=,|$)', match_[2])
+            signature_ = match_[1]
+            name_ = match_[2]
+            parameter_ = match_[3]
+            arguments_ = re.findall( r'\b(' + pattern + r')\b.*?\b(\w+)\s*(?=,|$)', match_[3])
 
             if 'stub' == type_:
                 includes_.add(file_)
-            functions_.append(function(type_, enum_, name_, parameter_, arguments_))
+            functions_.append(function(type_, enum_, signature_, name_, parameter_, arguments_))
 
 
 
@@ -47,6 +49,7 @@ f"""#pragma once
 #include "session.h"
 #include "serialize_buffer.h"
 #include <list>
+{"\n".join("extern " + function_._signature + ";" for function_ in functions_)}
 
 class remote_procedure_call final {{
 	struct header {{
@@ -90,13 +93,28 @@ public:
     }};
 public:
     //stub
-    static void stub(session& session, data_structure::serialize_buffer& serialize_buffer) noexcept;
+    inline static void stub(session& session, data_structure::serialize_buffer& serialize_buffer) noexcept {{
+    	type type_;
+	    serialize_buffer >> (unsigned short&)type_;
+        switch (type_) {{
+        {"\n\t\t".join(
+        f"""case type::{function_._name}: {{
+            {function_._parameter.replace(",", ";")};
+            serialize_buffer >>{" >>".join(" " + argument_[1] for argument_ in function_._arguments)};
+            ::{function_._name}({", ".join(argument_[1] for argument_ in function_._arguments)});
+        }}
+            break;"""
+        for function_ in functions_)}
+	    default:
+		    break;
+	    }}
+    }}
 public:
     //proxy
     {"\n\t".join(
     f"""inline static void {function_._name}(std::list<session*> session, {function_._parameter}) noexcept {{
         data_structure::serialize_buffer serialize_buffer;
-        serialize_buffer << static_cast<unsigned char>(type::{function_._name}) <<{" <<".join(" " + argument_[1] for argument_ in function_._arguments)};
+        serialize_buffer << static_cast<unsigned short>(type::{function_._name}) <<{" <<".join(" " + argument_[1] for argument_ in function_._arguments)};
         for (auto& iter : session)
             send(*iter, serialize_buffer);
     }}"""
@@ -106,28 +124,28 @@ public:
 
 
 
-with open('rpc.cpp', 'w') as open_:
-    open_.write(
-f"""#include "rpc.h"
-{"\n".join("#include \"" + include_ + "\"" for include_ in includes_)}
+# with open('rpc.cpp', 'w') as open_:
+#     open_.write(
+# f"""#include "rpc.h"
+# {"\n".join("#include \"" + include_ + "\"" for include_ in includes_)}
 
-void remote_procedure_call::stub(session& session, data_structure::serialize_buffer& serialize_buffer) noexcept {{
-	type type_;
-	serialize_buffer >> (unsigned short&)type_;
-    switch (type_) {{
-    {"\n\t".join(
-    f"""case type::{function_._name}: {{
-        {function_._parameter.replace(",", ";")};
-        serialize_buffer >>{" >>".join(" " + argument_[1] for argument_ in function_._arguments)};
-        ::{function_._name}({", ".join(argument_[1] for argument_ in function_._arguments)});
-    }}
-        break;"""
-    for function_ in functions_)}
-	default:
-		break;
-	}}
-}}"""
-    )
+# void remote_procedure_call::stub(session& session, data_structure::serialize_buffer& serialize_buffer) noexcept {{
+# 	type type_;
+# 	serialize_buffer >> (unsigned short&)type_;
+#     switch (type_) {{
+#     {"\n\t".join(
+#     f"""case type::{function_._name}: {{
+#         {function_._parameter.replace(",", ";")};
+#         serialize_buffer >>{" >>".join(" " + argument_[1] for argument_ in function_._arguments)};
+#         ::{function_._name}({", ".join(argument_[1] for argument_ in function_._arguments)});
+#     }}
+#         break;"""
+#     for function_ in functions_)}
+# 	default:
+# 		break;
+# 	}}
+# }}"""
+#     )
 
 # {"\n\t".join("static void "+ function_._name + "(std::list<session*> session, " + function_._parameter + ") noexcept;" for function_ in functions_)}
 
