@@ -6,9 +6,9 @@
 #include "socket.h"
 #include "list.h"
 
-//template<typename session_type>
+template<typename session_type, typename rpc_type = void>
 class server final {
-	//static_assert(std::is_base_of<session, session_type>::value);
+	static_assert(std::is_base_of<session, session_type>::value);
 public:
 	inline explicit server(void) noexcept
 		: _listen(AF_INET, SOCK_STREAM, IPPROTO_TCP) {
@@ -23,6 +23,10 @@ public:
 		_listen.bind(reinterpret_cast<network::storage&>(storage));
 		_listen.listen(SOMAXCONN);
 	}
+	inline explicit server(server const& rhs) noexcept = delete;
+	inline auto operator=(server const& rhs) noexcept -> server & = delete;
+	inline explicit server(server&& rhs) noexcept = delete;
+	inline auto operator=(server&& rhs) noexcept -> server & = delete;
 	inline ~server(void) noexcept {
 	}
 public:
@@ -40,7 +44,11 @@ public:
 		if (_select.is_set(_listen, network::select::read)) {
 			auto [sock, stor] = _listen.accept();
 			auto& iter = _session.emplace_back(std::move(sock), stor);
-			iter.accept();
+
+			if constexpr (!std::is_same_v<session, session_type>)
+				iter.accept();
+			if constexpr (std::is_void_v<rpc_type>)
+				rpc_type::accept(iter);
 		}
 
 		//receive
@@ -50,10 +58,14 @@ public:
 			int result = iter._socket.receive(
 				(char*)(iter._recv_ring_buffer.data() + iter._recv_ring_buffer.get_rear())
 				, (int)iter._recv_ring_buffer.at_once_receive(), 0);
-			if (SOCKET_ERROR != result && 0 != result) {
-				iter._recv_ring_buffer.move_rear(result);
+			if (SOCKET_ERROR == result || 0 == result)
+				continue;
+			iter._recv_ring_buffer.move_rear(result);
+
+			if constexpr (!std::is_same_v<session, session_type>)
 				iter.receive();
-			}
+			if constexpr (std::is_void_v<rpc_type>)
+				rpc_type::receive(iter);
 		}
 	};
 	inline void send(void) noexcept {
@@ -83,7 +95,10 @@ public:
 	inline void close(void) noexcept {
 		for (auto iter = _session.begin(); iter != _session.end();) {
 			if (INVALID_SOCKET == (*iter)._socket.data()) {
-				(*iter).close();
+				if constexpr (!std::is_same_v<session, session_type>)
+					iter->close();
+				if constexpr (std::is_void_v<rpc_type>)
+					rpc_type::close(*iter);
 				iter = _session.erase(iter);
 			}
 			else
@@ -95,5 +110,5 @@ private:
 	network::select _select;
 
 	network::socket _listen;
-	data_structure::list<session> _session;
+	data_structure::list<session_type> _session;
 };

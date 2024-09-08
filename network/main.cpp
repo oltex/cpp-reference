@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <crtdbg.h>
 
-#include "server.h"
-
 #include "network.h"
 #include "socket.h"
 #include "domain.h"
@@ -11,7 +9,7 @@
 
 #include <iostream>
 
-void func(void) noexcept {
+int main(void) noexcept {
 	network::network network;
 
 	//network::domain domain;
@@ -39,14 +37,5 @@ void func(void) noexcept {
 	socket.receive_from(buf2, 6, 0, storage2, length);
 
 	system("pause");
-}
-
-void exit(void) noexcept {
-	_CrtDumpMemoryLeaks();
-}
-
-int main(void) noexcept {
-	atexit(exit);
-	func();
 	return 0;
 }

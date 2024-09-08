@@ -2,8 +2,8 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="remote_procedure_call.cpp">
-      <Filter>remote_procedure_call</Filter>
+    <ClCompile Include="rpc.cpp">
+      <Filter>rpc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -23,36 +23,39 @@
       <Filter>data-structure</Filter>
     </ClInclude>
     <ClInclude Include="async.h" />
-    <ClInclude Include="serialize_buffer.h">
-      <Filter>data-structure</Filter>
-    </ClInclude>
-    <ClInclude Include="remote_procedure_call.h">
-      <Filter>remote_procedure_call</Filter>
+    <ClInclude Include="rpc.h">
+      <Filter>rpc</Filter>
     </ClInclude>
     <ClInclude Include="test.h">
-      <Filter>remote_procedure_call</Filter>
-    </ClInclude>
-    <ClInclude Include="session.h">
-      <Filter>remote_procedure_call</Filter>
-    </ClInclude>
-    <ClInclude Include="server.h">
-      <Filter>remote_procedure_call</Filter>
+      <Filter>rpc</Filter>
     </ClInclude>
     <ClInclude Include="ring_buffer.h">
       <Filter>data-structure</Filter>
+    </ClInclude>
+    <ClInclude Include="serialize_buffer.h">
+      <Filter>data-structure</Filter>
+    </ClInclude>
+    <ClInclude Include="server.h">
+      <Filter>server</Filter>
+    </ClInclude>
+    <ClInclude Include="session.h">
+      <Filter>server</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="data-structure">
       <UniqueIdentifier>{9921b480-9573-4fcc-801f-31e7a4059392}</UniqueIdentifier>
     </Filter>
-    <Filter Include="remote_procedure_call">
-      <UniqueIdentifier>{35a3246d-07c0-4181-b214-672cdd77e34a}</UniqueIdentifier>
+    <Filter Include="server">
+      <UniqueIdentifier>{7cddaa94-4ba8-4b00-9b1a-01cf0dab3a58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rpc">
+      <UniqueIdentifier>{07816cbe-b499-4ade-8f34-1efb93fa54aa}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="remote_procedure_call.py">
-      <Filter>remote_procedure_call</Filter>
+    <None Include="rpc.py">
+      <Filter>rpc</Filter>
     </None>
   </ItemGroup>
 </Project>
