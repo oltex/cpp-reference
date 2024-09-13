@@ -38,6 +38,7 @@
     <ClInclude Include="session.h">
       <Filter>server</Filter>
     </ClInclude>
+    <ClInclude Include="file_descriptor.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="data-structure">

@@ -147,6 +147,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="async.h" />
+    <ClInclude Include="file_descriptor.h" />
     <ClInclude Include="pair.h" />
     <ClInclude Include="poll.h" />
     <ClInclude Include="rpc.h" />
