@@ -9,16 +9,12 @@ namespace window {
 			: _hwnd(hwnd) {
 		}
 		inline explicit window(window const& rhs) noexcept = delete;
-		inline auto operator=(window const& rhs) noexcept -> window & = delete;
 		inline explicit window(window&& rhs) noexcept
 			: _hwnd(rhs._hwnd) {
 			rhs._hwnd = nullptr;
 		}
-		inline auto operator=(window&& rhs) noexcept -> window& {
-			_hwnd = rhs._hwnd;
-			rhs._hwnd = nullptr;
-			return *this;
-		}
+		inline auto operator=(window const& rhs) noexcept -> window & = delete;
+		inline auto operator=(window&& rhs) noexcept -> window & = delete;
 		inline ~window(void) noexcept {
 			destroy();
 		};

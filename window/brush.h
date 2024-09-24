@@ -9,13 +9,11 @@ namespace window {
 			: object(CreateSolidBrush(color)) {
 		};
 		inline explicit brush(brush const& rhs) noexcept = delete;
-		inline auto operator=(brush const& rhs) noexcept -> brush & = delete;
 		inline explicit brush(brush&& rhs) noexcept
 			: object(std::move(rhs)) {
 		};
-		inline auto operator=(brush&& rhs) noexcept -> brush& {
-			object::operator=(std::move(rhs));
-		};
+		inline auto operator=(brush const& rhs) noexcept -> brush & = delete;
+		inline auto operator=(brush&& rhs) noexcept -> brush & = delete;
 		inline virtual ~brush(void) noexcept override = default;
 	};
 }

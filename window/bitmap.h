@@ -12,13 +12,11 @@ namespace window {
 			: object(static_cast<HBITMAP>(LoadImageW(hInst, name, IMAGE_BITMAP, cx, cy, fuLoad))) {
 		}
 		inline explicit bitmap(bitmap const& rhs) noexcept = delete;
-		inline auto operator=(bitmap const& rhs) noexcept -> bitmap & = delete;
 		inline explicit bitmap(bitmap&& rhs) noexcept
 			: object(std::move(rhs)) {
 		};
-		inline auto operator=(bitmap&& rhs) noexcept -> bitmap& {
-			object::operator=(std::move(rhs));
-		};
+		inline auto operator=(bitmap const& rhs) noexcept -> bitmap & = delete;
+		inline auto operator=(bitmap&& rhs) noexcept -> bitmap & = delete;
 		inline virtual ~bitmap(void) noexcept override = default;
 	};
 }
