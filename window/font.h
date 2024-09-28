@@ -1,5 +1,6 @@
 #pragma once
 #include "object.h"
+#include <utility>
 
 namespace window {
 	class font final : public object {
@@ -9,6 +10,12 @@ namespace window {
 			: object(CreateFontW(height, width, escapement, orientation, weight, italic, under_line, strike_out,
 				char_set, out_precision, clip_precision, quality, pitch_and_family, psz_face_name)) {
 		};
+		inline explicit font(font const& rhs) noexcept = delete;
+		inline explicit font(font&& rhs) noexcept
+			: object(std::move(rhs)) {
+		};
+		inline auto operator=(font const& rhs) noexcept -> font & = delete;
+		inline auto operator=(font&& rhs) noexcept -> font & = delete;
 		inline virtual ~font(void) noexcept override = default;
 	};
 }
