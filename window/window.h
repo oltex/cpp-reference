@@ -34,6 +34,12 @@ namespace window {
 		inline void end_paint(device_context& dc) const noexcept {
 			EndPaint(_hwnd, &dc.get_paint_struct());
 		}
+		inline void set_timer(UINT_PTR IdEvent, UINT Elapse, TIMERPROC lpTimerFunc) noexcept {
+			SetTimer(_hwnd, IdEvent, Elapse, lpTimerFunc);
+		}
+		inline void kill_timer(UINT_PTR IdEvent) noexcept {
+			KillTimer(_hwnd, IdEvent);
+		}
 	public:
 		inline void screen_to_client(LPPOINT const lpPoint) const noexcept {
 			ScreenToClient(_hwnd, lpPoint);
