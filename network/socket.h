@@ -9,8 +9,12 @@ namespace network {
 	public:
 		inline explicit socket(ADDRESS_FAMILY const af, int const type, int const protocol) noexcept {
 			_socket = ::socket(af, type, protocol);
-			if (INVALID_SOCKET == _socket)
-				DebugBreak();
+			if (INVALID_SOCKET == _socket) {
+				switch (GetLastError()) {
+				default:
+					DebugBreak();
+				}
+			}
 		}
 		inline explicit socket(SOCKET const sock) noexcept
 			: _socket(sock) {
@@ -30,7 +34,7 @@ namespace network {
 			closesocket(_socket);
 		}
 	public:
-		inline void bind(storage& stor) const noexcept {
+		inline auto bind(storage& stor) const noexcept -> int {
 			auto addr = reinterpret_cast<sockaddr*>(&stor.data());
 			int len;
 			switch (stor.get_family()) {
@@ -38,21 +42,40 @@ namespace network {
 				len = sizeof(sockaddr_in);
 				break;
 			}
-			if (SOCKET_ERROR == ::bind(_socket, addr, len))
-				DebugBreak();
+			int result = ::bind(_socket, addr, len);
+			if (SOCKET_ERROR == result) {
+				switch (GetLastError()) {
+					//WSAEADDRINUSE
+				default:
+					DebugBreak();
+				}
+			}
+			return result;
 		}
-		inline void listen(int backlog) const noexcept {
+		inline auto listen(int backlog) const noexcept -> int {
 			if (SOMAXCONN != backlog)
 				backlog = SOMAXCONN_HINT(backlog);
-			if (SOCKET_ERROR == ::listen(_socket, backlog))
-				DebugBreak();
+			int result = ::listen(_socket, backlog);
+			if (SOCKET_ERROR == result) {
+				switch (GetLastError()) {
+				default:
+					DebugBreak();
+				}
+			}
+			return result;
 		}
 		inline auto accept(void) const noexcept -> data_structure::pair<socket, storage> {
 			sockaddr_storage addr;
 			int len = sizeof(sockaddr_in);
 			SOCKET sock = ::accept(_socket, reinterpret_cast<sockaddr*>(&addr), &len);
-			if (INVALID_SOCKET == sock)
-				DebugBreak();
+			if (INVALID_SOCKET == sock) {
+				switch (GetLastError()) {
+				case WSAEWOULDBLOCK:
+					break;
+				default:
+					DebugBreak();
+				}
+			}
 			return data_structure::pair<socket, storage>(socket(sock), storage(addr));
 		}
 		inline auto connect(storage& stor) noexcept -> int {
@@ -64,15 +87,17 @@ namespace network {
 				break;
 			}
 			int result = ::connect(_socket, &addr, length);
-			switch (result) {
-			case WSAEWOULDBLOCK:
-				break;
-			case WSAETIMEDOUT:
-			case WSAECONNREFUSED:
-				close();
-				break;
-			default:
-				DebugBreak();
+			if (SOCKET_ERROR == result) {
+				switch (GetLastError()) {
+				case WSAEWOULDBLOCK:
+					break;
+				case WSAETIMEDOUT:
+				case WSAECONNREFUSED:
+					close();
+					break;
+				default:
+					DebugBreak();
+				}
 			}
 			return result;
 		}
@@ -123,7 +148,6 @@ namespace network {
 			}
 			else if (0 == result)
 				close();
-
 			return result;
 		}
 		inline auto receive_from(char* const buf, int const len, int const flag, storage& stor, int& length) noexcept -> int {
