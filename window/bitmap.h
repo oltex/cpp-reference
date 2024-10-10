@@ -8,7 +8,7 @@ namespace window {
 		inline explicit bitmap(HBITMAP const hbitmap) noexcept
 			: object(hbitmap) {
 		}
-		inline explicit bitmap(HINSTANCE const hInst, LPCWSTR const name, int const cx, int const cy, UINT const fuLoad) noexcept
+		inline explicit bitmap(HINSTANCE const hInst, LPCWSTR const name, int const cx, int const cy, unsigned int const fuLoad) noexcept
 			: object(static_cast<HBITMAP>(LoadImageW(hInst, name, IMAGE_BITMAP, cx, cy, fuLoad))) {
 		}
 		inline explicit bitmap(bitmap const& rhs) noexcept = delete;

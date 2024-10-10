@@ -8,6 +8,9 @@
 namespace network {
 	class domain final {
 	public:
+		inline explicit domain(void) noexcept = default;
+		inline ~domain(void) noexcept = default;
+	public:
 		inline auto get_storage(wchar_t const* const node_name, wchar_t const* const service_name) const noexcept -> data_structure::list<storage> {
 			data_structure::list<storage> storage;
 

@@ -20,16 +20,12 @@ namespace network {
 			: _socket(sock) {
 		}
 		inline explicit socket(socket const& rhs) noexcept = delete;
-		inline auto operator=(socket const& rhs) noexcept -> socket & = delete;
 		inline explicit socket(socket&& rhs) noexcept
 			: _socket(rhs._socket) {
 			rhs._socket = INVALID_SOCKET;
 		}
-		inline auto operator=(socket&& rhs) noexcept -> socket& {
-			_socket = rhs._socket;
-			rhs._socket = INVALID_SOCKET;
-			return *this;
-		}
+		inline auto operator=(socket const& rhs) noexcept -> socket & = delete;
+		inline auto operator=(socket&& rhs) noexcept -> socket&;
 		inline ~socket(void) noexcept {
 			closesocket(_socket);
 		}
