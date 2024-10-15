@@ -20,10 +20,12 @@ public:
 	};
 public:
 	inline void create(wchar_t const* const path, unsigned long desired_access, unsigned long share_mode, unsigned long  creation_disposition, unsigned long flags_and_attributes) noexcept {
+		CloseHandle(_file);
 		_file = CreateFileW(path, desired_access, share_mode, nullptr, creation_disposition, flags_and_attributes, nullptr);
 	}
 	inline void close(void) noexcept {
 		CloseHandle(_file);
+		_file = INVALID_HANDLE_VALUE;
 	}
 	inline void read(void* const buffer, unsigned long const length) const noexcept {
 		ReadFile(_file, buffer, length, nullptr, nullptr);
