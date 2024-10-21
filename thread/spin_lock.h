@@ -12,8 +12,8 @@ namespace thread {
 		inline ~spin_lock(void) noexcept = default;
 	public:
 		inline void lock(void) noexcept {
-			while (1 == _lock || 1 == _InterlockedExchange(&_lock, 1)) {
-			}
+			while (1 == _lock || 1 == _InterlockedExchange(&_lock, 1))
+				YieldProcessor();
 		}
 		inline void unlock(void) noexcept {
 			_lock = 0;
