@@ -12,14 +12,13 @@ namespace thread {
 		inline ~spin_lock(void) noexcept = default;
 	public:
 		inline void lock(void) noexcept {
-			while (1 == _InterlockedExchange(&_lock, 1)) {
+			while (1 == _lock || 1 == _InterlockedExchange(&_lock, 1)) {
 			}
 		}
 		inline void unlock(void) noexcept {
-			_InterlockedExchange(&_lock, 0);
+			_lock = 0;
 		}
 	private:
-		long _lock = 0;
-		unsigned long _id;
+		volatile long _lock = 0;
 	};
 }
