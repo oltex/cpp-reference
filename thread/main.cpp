@@ -15,6 +15,10 @@ unsigned int _value = 0;
 DWORD WINAPI function(LPVOID lparam) {
 	for (int i = 0; i < 100000000; ++i) {
 		_spin_lock.lock();
+
+		volatile unsigned long long tsc;
+		tsc = __rdtsc();
+		tsc = __rdtsc() - tsc;
 		_value++;
 		_spin_lock.unlock();
 	}
@@ -38,14 +42,17 @@ int main(void) noexcept {
 	SetThreadPriority(handle[0], THREAD_PRIORITY_TIME_CRITICAL);
 	SetThreadPriority(handle[1], THREAD_PRIORITY_TIME_CRITICAL);
 
+	system("pause");
 
 	ResumeThread(handle[0]);
 	ResumeThread(handle[1]);
 	//ResumeThread(handle[2]);
 	//ResumeThread(handle[3]);
-	//
 	WaitForMultipleObjects(2, handle, true, INFINITE);
-	
+
 	std::cout << __rdtsc() - rdtsc << " : " << _value << std::endl;
+
+	system("pause");
+
 	return 0;
 }

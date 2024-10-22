@@ -18,7 +18,7 @@ namespace thread {
 		inline void unlock(void) noexcept {
 			_lock = 0;
 		}
-	private:
+	public:
 		volatile long _lock = 0;
 	};
 }
