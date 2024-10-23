@@ -2,6 +2,21 @@
 #include <Windows.h>
 
 namespace thread {
+	//template <class _Tuple, size_t... _Indices>
+	//static unsigned int __stdcall _Invoke(void* _RawVals) noexcept /* terminates */ {
+	//	// adapt invoke of user's callable object to _beginthreadex's thread procedure
+	//	const unique_ptr<_Tuple> _FnVals(static_cast<_Tuple*>(_RawVals));
+	//	_Tuple& _Tup = *_FnVals.get(); // avoid ADL, handle incomplete types
+	//	_STD invoke(_STD move(_STD get<_Indices>(_Tup))...);
+	//	_Cnd_do_broadcast_at_thread_exit(); // TRANSITION, ABI
+	//	return 0;
+	//}
+
+	//template <class _Tuple, size_t... _Indices>
+	//_NODISCARD static constexpr auto _Get_invoke(index_sequence<_Indices...>) noexcept {
+	//	return &_Invoke<_Tuple, _Indices...>;
+	//}
+
 	class thread final {
 	public:
 		inline explicit thread(void) noexcept
