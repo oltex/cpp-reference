@@ -7,6 +7,5 @@
     <ClInclude Include="thread.h" />
     <ClInclude Include="spin_lock.h" />
     <ClInclude Include="wait_on_address_lock.h" />
-    <ClInclude Include="peterson_algorithm.h" />
   </ItemGroup>
 </Project>
