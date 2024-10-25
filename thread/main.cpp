@@ -21,26 +21,39 @@ DWORD WINAPI function(LPVOID lparam) {
 	return 0;
 }
 
+void test2(void) {
+
+}
+
+void test(int func, char a) noexcept {
+	std::cout << "hello" << std::endl;
+}
+
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-	HANDLE handle[2];
+	//HANDLE handle[2];
+	//handle[0] = CreateThread(nullptr, 0, function, nullptr, CREATE_SUSPENDED, nullptr);
+	//handle[1] = CreateThread(nullptr, 0, function, nullptr, CREATE_SUSPENDED, nullptr);
 
-	handle[0] = CreateThread(nullptr, 0, function, nullptr, CREATE_SUSPENDED, nullptr);
-	handle[1] = CreateThread(nullptr, 0, function, nullptr, CREATE_SUSPENDED, nullptr);
+	////SetThreadAffinityMask(handle[0], 1 << 0);
+	////SetThreadAffinityMask(handle[1], 1 << 2);
+	////SetPriorityClass(GetCurrentProcess(), REALTIME_PRIORITY_CLASS);
+	////SetThreadPriority(handle[0], THREAD_PRIORITY_TIME_CRITICAL);
+	////SetThreadPriority(handle[1], THREAD_PRIORITY_TIME_CRITICAL);
 
-	//SetThreadAffinityMask(handle[0], 1 << 0);
-	//SetThreadAffinityMask(handle[1], 1 << 2);
-	//SetPriorityClass(GetCurrentProcess(), REALTIME_PRIORITY_CLASS);
-	//SetThreadPriority(handle[0], THREAD_PRIORITY_TIME_CRITICAL);
-	//SetThreadPriority(handle[1], THREAD_PRIORITY_TIME_CRITICAL);
+	//system("pause");
+	//auto rdtsc = __rdtsc();
+	//ResumeThread(handle[0]);
+	//ResumeThread(handle[1]);
+	//WaitForMultipleObjects(2, handle, true, INFINITE);
+	//std::cout << __rdtsc() - rdtsc << " : " << _value << std::endl;
 
-	system("pause");
-	auto rdtsc = __rdtsc();
-	ResumeThread(handle[0]);
-	ResumeThread(handle[1]);
-	WaitForMultipleObjects(2, handle, true, INFINITE);
-	std::cout << __rdtsc() - rdtsc << " : " << _value << std::endl;
+	std::thread t;
+	t.join();
+	thread::thread tt(test, 1, 'c');
+
+	Sleep(INFINITE);
 
 	return 0;
 }

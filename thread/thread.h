@@ -1,33 +1,57 @@
 #pragma once
 #include <Windows.h>
+#include <process.h>
+
+#include <tuple>
+#include <type_traits>
+#include <intrin.h>
+
+#include <iostream>
 
 namespace thread {
-	//template <class _Tuple, size_t... _Indices>
-	//static unsigned int __stdcall _Invoke(void* _RawVals) noexcept /* terminates */ {
-	//	// adapt invoke of user's callable object to _beginthreadex's thread procedure
-	//	const unique_ptr<_Tuple> _FnVals(static_cast<_Tuple*>(_RawVals));
-	//	_Tuple& _Tup = *_FnVals.get(); // avoid ADL, handle incomplete types
-	//	_STD invoke(_STD move(_STD get<_Indices>(_Tup))...);
-	//	_Cnd_do_broadcast_at_thread_exit(); // TRANSITION, ABI
-	//	return 0;
-	//}
-
-	//template <class _Tuple, size_t... _Indices>
-	//_NODISCARD static constexpr auto _Get_invoke(index_sequence<_Indices...>) noexcept {
-	//	return &_Invoke<_Tuple, _Indices...>;
-	//}
-
 	class thread final {
+	private:
+		template <typename tuple, size_t... index>
+		inline static unsigned int __stdcall invoke(void* arg) noexcept {
+			const std::unique_ptr<tuple> value(static_cast<tuple*>(arg));
+			tuple& tuple = *value.get();
+			std::invoke(std::move(std::get<index>(tuple))...);
+			return 0;
+		}
+		template <typename tuple, size_t... index> // 1 2 3 4 5
+		static constexpr auto make(std::index_sequence<index...>) noexcept {
+			return &invoke<tuple, index...>;
+		}
 	public:
 		inline explicit thread(void) noexcept
 			: _thread(GetCurrentThread()) {
 		}
 		template <typename function, typename... argument>
 		inline explicit thread(function&& func, argument&&... arg) noexcept {
-			_beginthreadex(nullptr, 0, func, arg, 0, 0);
-			//reinterpret_cast<void*>(_CSTD _beginthreadex(nullptr, 0, _Invoker_proc, _Decay_copied.get(), 0, &_Thr._Id));
+			using tuple = std::tuple<std::decay_t<function>, std::decay_t<argument>...>;
+			auto copy = std::make_unique<tuple>(std::forward<function>(func), std::forward<argument>(arg)...);
+			constexpr auto proc = make<tuple>(std::make_index_sequence<1 + sizeof...(argument)>());
+			_thread = (HANDLE)_beginthreadex(nullptr, 0, proc, copy.get(), 0, 0);
+
+			if (_thread)
+				copy.release();
+			else
+				__debugbreak();
 		}
-		inline ~thread(void) noexcept = default;
+		inline ~thread(void) noexcept {
+			CloseHandle(_thread);
+		}
+	public:
+		inline void join(void) noexcept {
+
+		}
+		inline void detach(void) noexcept {
+			CloseHandle(_thread);
+		}
+		inline unsigned long id(void) noexcept {
+			GetThreadId(_thread);
+		}
+
 	public:
 		inline void set_affinity_mask(DWORD_PTR mask) noexcept {
 			SetThreadAffinityMask(_thread, mask);
@@ -48,8 +72,8 @@ namespace thread {
 			SwitchToThread();
 		}
 	public:
-		inline DWORD id(void) noexcept {
-			GetThreadId(_thread);
+		inline auto data(void) const noexcept -> HANDLE {
+			return _thread;
 		}
 	private:
 		HANDLE _thread;
