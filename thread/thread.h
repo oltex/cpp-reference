@@ -12,7 +12,8 @@ namespace thread {
 		inline static unsigned int __stdcall invoke(void* arg) noexcept {
 			const std::unique_ptr<tuple> value(static_cast<tuple*>(arg));
 			tuple& tuple = *value.get();
-			return std::invoke(std::move(std::get<index>(tuple))...);
+			std::invoke(std::move(std::get<index>(tuple))...);
+			return 0; 
 		}
 		template <typename tuple, size_t... index>
 		inline static constexpr auto make(std::index_sequence<index...>) noexcept {

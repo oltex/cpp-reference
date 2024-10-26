@@ -1,6 +1,7 @@
 #pragma once
 #pragma comment(lib, "Synchronization.lib")
 #include <Windows.h>
+#include <iostream>
 
 namespace thread {
 	class wait_on_address_lock final {
@@ -20,6 +21,10 @@ namespace thread {
 		inline void unlock(void) noexcept {
 			_lock = 0;
 			WakeByAddressSingle((void*)&_lock);
+		}
+		inline void unlock_all(void) noexcept {
+			_lock = 0;
+			WakeByAddressAll((void*)&_lock);
 		}
 	private:
 		volatile long _lock = 0;
