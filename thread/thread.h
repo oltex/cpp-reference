@@ -35,6 +35,10 @@ namespace thread {
 			else
 				__debugbreak();
 		}
+		inline explicit thread(thread const& rhs) noexcept = delete;
+		inline explicit thread(thread&& rhs) noexcept = delete;
+		inline auto operator=(thread const& rhs) noexcept -> thread & = delete;
+		inline auto operator=(thread&& rhs) noexcept -> thread & = delete;
 		inline ~thread(void) noexcept {
 			CloseHandle(_thread);
 		}
