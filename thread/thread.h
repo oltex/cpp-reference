@@ -1,12 +1,9 @@
 #pragma once
-#include <Windows.h>
 #include <process.h>
-
+#include <Windows.h>
 #include <tuple>
 #include <type_traits>
-#include <intrin.h>
-
-#include <iostream>
+#include <memory>
 
 namespace thread {
 	class thread final {
@@ -15,11 +12,10 @@ namespace thread {
 		inline static unsigned int __stdcall invoke(void* arg) noexcept {
 			const std::unique_ptr<tuple> value(static_cast<tuple*>(arg));
 			tuple& tuple = *value.get();
-			std::invoke(std::move(std::get<index>(tuple))...);
-			return 0;
+			return std::invoke(std::move(std::get<index>(tuple))...);
 		}
-		template <typename tuple, size_t... index> // 1 2 3 4 5
-		static constexpr auto make(std::index_sequence<index...>) noexcept {
+		template <typename tuple, size_t... index>
+		inline static constexpr auto make(std::index_sequence<index...>) noexcept {
 			return &invoke<tuple, index...>;
 		}
 	public:
@@ -27,11 +23,11 @@ namespace thread {
 			: _thread(GetCurrentThread()) {
 		}
 		template <typename function, typename... argument>
-		inline explicit thread(function&& func, argument&&... arg) noexcept {
+		inline explicit thread(function&& func, unsigned int flag, argument&&... arg) noexcept {
 			using tuple = std::tuple<std::decay_t<function>, std::decay_t<argument>...>;
 			auto copy = std::make_unique<tuple>(std::forward<function>(func), std::forward<argument>(arg)...);
 			constexpr auto proc = make<tuple>(std::make_index_sequence<1 + sizeof...(argument)>());
-			_thread = (HANDLE)_beginthreadex(nullptr, 0, proc, copy.get(), 0, 0);
+			_thread = (HANDLE)_beginthreadex(nullptr, 0, proc, copy.get(), flag, 0);
 
 			if (_thread)
 				copy.release();
@@ -42,8 +38,8 @@ namespace thread {
 			CloseHandle(_thread);
 		}
 	public:
-		inline void join(void) noexcept {
-
+		inline void join(unsigned long milli_second) noexcept {
+			WaitForSingleObject(_thread, milli_second);
 		}
 		inline void detach(void) noexcept {
 			CloseHandle(_thread);
@@ -51,7 +47,6 @@ namespace thread {
 		inline unsigned long id(void) noexcept {
 			GetThreadId(_thread);
 		}
-
 	public:
 		inline void set_affinity_mask(DWORD_PTR mask) noexcept {
 			SetThreadAffinityMask(_thread, mask);
@@ -68,9 +63,25 @@ namespace thread {
 		inline void terminate(void) noexcept {
 			TerminateThread(_thread, 0);
 		}
-		inline void switch_to(void) noexcept {
+		inline void wait_for_single_object(unsigned long milli_second) noexcept {
+			WaitForSingleObject(_thread, milli_second);
+		}
+		inline auto get_exit_code(void) noexcept -> unsigned long {
+			unsigned long code;
+			GetExitCodeThread(_thread, &code);
+			return code;
+		}
+	public:
+		inline static void switch_to(void) noexcept {
 			SwitchToThread();
 		}
+		//inline static void wait_for_multiple_object(std::initializer_list<thread> threads, bool wait_all, unsigned long milli_second) noexcept {
+		//	HANDLE handle;
+		//	for (auto& iter : threads) {
+		//		iter.data();
+		//	}
+		//	WaitForMultipleObjects(threads.size(), );
+		//}
 	public:
 		inline auto data(void) const noexcept -> HANDLE {
 			return _thread;
