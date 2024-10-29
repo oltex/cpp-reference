@@ -41,13 +41,13 @@ namespace network {
 		inline void set_address(char const* const address) noexcept {
 			auto& storage = get_stroage();
 			if (1 != inet_pton(AF_INET, address, &storage.sin_addr))
-				DebugBreak();
+				__debugbreak();
 		}
 		inline auto get_address(void) const noexcept -> std::wstring {
 			auto& storage = get_stroage();
 			wchar_t string[INET_ADDRSTRLEN];
 			if (0 == InetNtopW(AF_INET, &storage.sin_addr, string, INET_ADDRSTRLEN))
-				DebugBreak();
+				__debugbreak();
 			return std::wstring(string);
 		}
 		inline void set_port(unsigned short port) noexcept {

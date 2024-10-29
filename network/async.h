@@ -9,7 +9,7 @@ namespace network {
 	public:
 		inline void select(socket const& socket, window::window const& window, unsigned int message, long event_) const noexcept {
 			if (SOCKET_ERROR == WSAAsyncSelect(socket.data(), window.data(), message, event_))
-				DebugBreak();
+				__debugbreak();
 		}
 	};
 }

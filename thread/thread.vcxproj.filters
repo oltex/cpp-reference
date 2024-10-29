@@ -5,7 +5,40 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="thread.h" />
-    <ClInclude Include="spin_lock.h" />
-    <ClInclude Include="wait_on_address_lock.h" />
+    <ClInclude Include="spin_lock.h">
+      <Filter>lock</Filter>
+    </ClInclude>
+    <ClInclude Include="wait_on_address_lock.h">
+      <Filter>lock</Filter>
+    </ClInclude>
+    <ClInclude Include="slim_reader_writer_lock.h">
+      <Filter>lock</Filter>
+    </ClInclude>
+    <ClInclude Include="critical_section.h">
+      <Filter>lock</Filter>
+    </ClInclude>
+    <ClInclude Include="event.h">
+      <Filter>synchronize</Filter>
+    </ClInclude>
+    <ClInclude Include="wait_on_address.h">
+      <Filter>synchronize</Filter>
+    </ClInclude>
+    <ClInclude Include="condition_variable.h">
+      <Filter>synchronize</Filter>
+    </ClInclude>
+    <ClInclude Include="ordering.h">
+      <Filter>ordering</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="lock">
+      <UniqueIdentifier>{1ef91688-46c6-4ef2-a8ad-dac8b0f179e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="synchronize">
+      <UniqueIdentifier>{d2d2cf42-5c1e-4111-befa-3810c241761b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ordering">
+      <UniqueIdentifier>{8774c50b-42c6-49cf-804a-d82ef0838d05}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

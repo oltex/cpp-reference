@@ -3,6 +3,7 @@
 #include "storage.h"
 #include "pair.h"
 #include <WinSock2.h>
+#include <intrin.h>
 
 namespace network {
 	class socket final {
@@ -12,7 +13,7 @@ namespace network {
 			if (INVALID_SOCKET == _socket) {
 				switch (GetLastError()) {
 				default:
-					DebugBreak();
+					__debugbreak();
 				}
 			}
 		}
@@ -43,7 +44,7 @@ namespace network {
 				switch (GetLastError()) {
 					//WSAEADDRINUSE
 				default:
-					DebugBreak();
+					__debugbreak();
 				}
 			}
 			return result;
@@ -55,7 +56,7 @@ namespace network {
 			if (SOCKET_ERROR == result) {
 				switch (GetLastError()) {
 				default:
-					DebugBreak();
+					__debugbreak();
 				}
 			}
 			return result;
@@ -69,7 +70,7 @@ namespace network {
 				case WSAEWOULDBLOCK:
 					break;
 				default:
-					DebugBreak();
+					__debugbreak();
 				}
 			}
 			return data_structure::pair<socket, storage>(socket(sock), storage(addr));
@@ -92,14 +93,14 @@ namespace network {
 					close();
 					break;
 				default:
-					DebugBreak();
+					__debugbreak();
 				}
 			}
 			return result;
 		}
 		inline void shutdown(int const how) const noexcept {
 			if (SOCKET_ERROR == ::shutdown(_socket, how))
-				DebugBreak();
+				__debugbreak();
 		}
 		inline void close(void) noexcept {
 			closesocket(_socket);
@@ -118,7 +119,7 @@ namespace network {
 					break;
 				case WSAENOTCONN:
 				default:
-					DebugBreak();
+					__debugbreak();
 				}
 			}
 			return result;
@@ -139,7 +140,7 @@ namespace network {
 					break;
 				case WSAENOTCONN:
 				default:
-					DebugBreak();
+					__debugbreak();
 				}
 			}
 			else if (0 == result)
@@ -169,7 +170,7 @@ namespace network {
 		}
 		inline void set_option(int const level, int const name, char const* value, int const length) const noexcept {
 			if (SOCKET_ERROR == setsockopt(_socket, level, name, value, length))
-				DebugBreak();
+				__debugbreak();
 		}
 	public:
 		inline void set_nonblocking(unsigned long const enable) const noexcept {
@@ -177,7 +178,7 @@ namespace network {
 		}
 		inline void set_io_control(long const cmd, unsigned long arg) const noexcept {
 			if (SOCKET_ERROR == ioctlsocket(_socket, cmd, &arg))
-				DebugBreak();
+				__debugbreak();
 		}
 	public:
 		inline auto data(void) const noexcept -> SOCKET {

@@ -58,8 +58,8 @@ class remote_procedure_call final {{
 private:
     inline explicit remote_procedure_call(void) noexcept = delete;
     inline explicit remote_procedure_call(remote_procedure_call const& rhs) noexcept = delete;
-    inline auto operator=(remote_procedure_call const& rhs) noexcept -> remote_procedure_call & = delete;
     inline explicit remote_procedure_call(remote_procedure_call&& rhs) noexcept = delete;
+    inline auto operator=(remote_procedure_call const& rhs) noexcept -> remote_procedure_call & = delete;
     inline auto operator=(remote_procedure_call&& rhs) noexcept -> remote_procedure_call & = delete;
     inline ~remote_procedure_call(void) noexcept = delete;
 public:

@@ -2,11 +2,16 @@
 #include <stdlib.h>
 #include <crtdbg.h>
 
+#include "ordering.h"
+#include "slim_reader_writer_lock.h"
 #include "thread.h"
 #include "spin_lock.h"
 #include "wait_on_address_lock.h"
 
 #include <thread>
+#include <mutex>
+#include <shared_mutex>
+
 #include <iostream>
 #include <conio.h>
 
@@ -14,7 +19,6 @@ struct alignas(64) my_str {
 	int a;
 	int b;
 };
-
 my_str mystr;
 
 void function(void) noexcept {
@@ -44,6 +48,9 @@ int main(void) noexcept {
 	thread2.join(INFINITE);
 	std::cout << mystr.a << mystr.b << std::endl;
 	system("pause");
+
+	std::mutex a;
+	a.lock();
 
 	return 0;
 }

@@ -8,6 +8,13 @@ namespace network {
 	private:
 		using size_type = unsigned int;
 	public:
+		inline explicit file_descriptor(void) noexcept = default;
+		inline explicit file_descriptor(file_descriptor const& rhs) noexcept = delete;
+		inline explicit file_descriptor(file_descriptor&& rhs) noexcept = delete;
+		inline auto operator=(file_descriptor const& rhs) noexcept -> file_descriptor & = delete;
+		inline auto operator=(file_descriptor&& rhs) noexcept -> file_descriptor & = delete;
+		inline ~file_descriptor(void) noexcept = default;
+	public:
 		inline void zero(void) noexcept {
 			FD_ZERO(&_set);
 		}
