@@ -106,7 +106,6 @@ public:
 		}
 	}
 private:
-	network::network _network;
 	network::select _select;
 
 	network::socket _listen;

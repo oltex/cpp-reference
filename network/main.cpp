@@ -15,7 +15,7 @@
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-	network::network network;
+	network::start_up();
 
 	//network::domain domain;
 	//list<network::storage> storage = domain.get_storage(L"www.naver.com", nullptr);
@@ -44,5 +44,7 @@ int main(void) noexcept {
 	system("pause");
 
 	server<session, remote_procedure_call> a;
+
+	network::clean_up();
 	return 0;
 }

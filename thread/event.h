@@ -3,6 +3,7 @@
 
 namespace thread {
 	class event final {
+	public:
 		inline explicit event(bool const manual, bool const initial_state) noexcept
 			: _event(CreateEventW(nullptr, manual, initial_state, nullptr)) {
 		};
