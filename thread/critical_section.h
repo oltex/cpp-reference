@@ -23,6 +23,10 @@ public:
 	inline void leave(void) noexcept {
 		LeaveCriticalSection(&_critical_section);
 	}
+public:
+	inline auto data(void) noexcept -> CRITICAL_SECTION& {
+		return _critical_section;
+	}
 private:
 	CRITICAL_SECTION _critical_section;
 };

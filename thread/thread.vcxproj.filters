@@ -11,7 +11,7 @@
     <ClInclude Include="wait_on_address_lock.h">
       <Filter>lock</Filter>
     </ClInclude>
-    <ClInclude Include="slim_reader_writer_lock.h">
+    <ClInclude Include="slim_read_write_lock.h">
       <Filter>lock</Filter>
     </ClInclude>
     <ClInclude Include="critical_section.h">

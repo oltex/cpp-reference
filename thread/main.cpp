@@ -2,16 +2,18 @@
 #include <stdlib.h>
 #include <crtdbg.h>
 
-#include "ordering.h"
-#include "slim_reader_writer_lock.h"
 #include "thread.h"
+
 #include "spin_lock.h"
 #include "wait_on_address_lock.h"
+#include "critical_section.h"
+#include "slim_read_write_lock.h"
+
+#include "ordering.h"
 
 #include <thread>
 #include <mutex>
 #include <shared_mutex>
-
 #include <iostream>
 #include <conio.h>
 

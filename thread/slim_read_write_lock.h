@@ -30,6 +30,10 @@ public:
 	inline void release_shared(void) noexcept {
 		ReleaseSRWLockShared(&_srwlock);
 	}
+public:
+	inline auto data(void) noexcept -> SRWLOCK& {
+		return _srwlock;
+	}
 private:
 	SRWLOCK _srwlock;
 };
