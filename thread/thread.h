@@ -80,6 +80,9 @@ namespace thread {
 		inline static void switch_to(void) noexcept {
 			SwitchToThread();
 		}
+		inline static auto current_id(void) noexcept {
+			return GetCurrentThreadId();
+		}
 		//inline static void wait_for_multiple_object(std::initializer_list<thread> threads, bool wait_all, unsigned long milli_second) noexcept {
 		//	HANDLE handle;
 		//	for (auto& iter : threads) {
