@@ -6,11 +6,11 @@
 namespace data_structure {
 	template<typename type>
 	class list final {
-		using size_type = unsigned int;
 	private:
+		using size_type = unsigned int;
 		struct node final {
-			type _value;
 			node* _prev, * _next;
+			type _value;
 		};
 	public:
 		class iterator final {
@@ -58,7 +58,7 @@ namespace data_structure {
 		};
 	public:
 		inline explicit list(void) noexcept {
-			_head = static_cast<node*>(calloc(1, sizeof(node)));
+			_head = static_cast<node*>(calloc(1, sizeof(node*) * 2));
 #pragma warning(suppress: 6011)
 			_head->_next = _head->_prev = _head;
 		}
@@ -72,13 +72,17 @@ namespace data_structure {
 			for (auto iter = begin; iter != end; ++iter)
 				emplace_back(*iter);
 		}
-		inline list(list<type> const& rhs) noexcept
+		inline list(list const& rhs) noexcept
 			: list(rhs.begin(), rhs.end()) {
 		}
-		inline explicit list(list<type>&& rhs) noexcept
+		inline explicit list(list&& rhs) noexcept
 			: list() {
 			swap(rhs);
 		}
+		//not implemented
+		inline auto operator=(list const& rhs) noexcept;
+		//not implemented
+		inline auto operator=(list&& rhs) noexcept;
 		inline ~list(void) noexcept {
 			clear();
 			free(_head);
@@ -106,20 +110,24 @@ namespace data_structure {
 		}
 		template<typename... argument>
 		inline auto emplace(iterator const& iter, argument&&... arg) noexcept -> iterator {
-			auto cur = static_cast<node*>(malloc(sizeof(node)));
+			auto current = static_cast<node*>(malloc(sizeof(node)));
+			if constexpr (std::is_class_v<type>) {
+				if constexpr (std::is_constructible_v<type, argument...>)
+					new(&current->_value) type(std::forward<argument>(arg)...);
+			}
+			else if constexpr (1 == sizeof...(arg))
 #pragma warning(suppress: 6011)
-			new(&cur->_value) type(std::forward<argument>(arg)...);
-
+				current->_value = type(std::forward<argument>(arg)...);
 			auto next = iter._node;
 			auto prev = next->_prev;
 
-			prev->_next = cur;
-			cur->_prev = prev;
-			cur->_next = next;
-			next->_prev = cur;
+			prev->_next = current;
+			current->_prev = prev;
+			current->_next = next;
+			next->_prev = current;
 
 			++_size;
-			return iterator(cur);
+			return iterator(current);
 		}
 		inline void pop_front(void) noexcept {
 			erase(begin());
@@ -128,26 +136,26 @@ namespace data_structure {
 			erase(--end());
 		}
 		inline auto erase(iterator const& iter) noexcept -> iterator {
-			auto cur = iter._node;
-			auto prev = cur->_prev;
-			auto next = cur->_next;
+			auto current = iter._node;
+			auto prev = current->_prev;
+			auto next = current->_next;
 
 			prev->_next = next;
 			next->_prev = prev;
 
-			cur->_value.~type();
-			free(cur);
+			if constexpr (!std::is_trivially_destructible_v<type>)
+				current->_value.~type();
+			free(current);
 			--_size;
-			return iterator{ next };
+			return iterator(next);
 		}
 	public:
-		inline auto front(void) const noexcept ->type& {
+		inline auto front(void) const noexcept -> type& {
 			return _head->_next->_value;
 		}
-		inline auto back(void) const noexcept ->type& {
+		inline auto back(void) const noexcept -> type& {
 			return _head->_prev->_value;
 		}
-	public:
 		inline auto begin(void) const noexcept -> iterator {
 			return iterator(_head->_next);
 		}
@@ -155,30 +163,25 @@ namespace data_structure {
 			return iterator(_head);
 		}
 	public:
-		inline auto size(void) const noexcept -> size_type {
-			return _size;
-		}
-		inline bool empty(void) const noexcept {
-			return 0 == _size;
-		}
-		inline void clear(void) noexcept {
-			auto cur = _head->_next;
-			for (auto next = cur; cur != _head; cur = next) {
-				next = next->_next;
-				cur->_value.~type();
-				free(cur);
-			}
-			_head->_next = _head->_prev = _head;
-			_size = 0;
-		}
 		inline void swap(list& rhs) noexcept {
-			node* node = _head;
+			node* head = _head;
 			_head = rhs._head;
-			rhs._head = node;
+			rhs._head = head;
 
 			size_type size = _size;
 			_size = rhs._size;
 			rhs._size = size;
+		}
+		inline void clear(void) noexcept {
+			auto current = _head->_next;
+			for (auto next = current; current != _head; current = next) {
+				next = next->_next;
+				if constexpr (!std::is_trivially_destructible_v<type>)
+					current->_value.~type();
+				free(current);
+			}
+			_head->_next = _head->_prev = _head;
+			_size = 0;
 		}
 		inline void splice(iterator const& _before, iterator const& _first, iterator const& _last) noexcept {
 			node* before = _before._node;
@@ -197,6 +200,13 @@ namespace data_structure {
 			first->_prev = before_prev;
 
 			//return last;
+		}
+	public:
+		inline auto size(void) const noexcept -> size_type {
+			return _size;
+		}
+		inline bool empty(void) const noexcept {
+			return 0 == _size;
 		}
 	private:
 		node* _head;

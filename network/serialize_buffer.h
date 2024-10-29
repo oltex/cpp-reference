@@ -1,9 +1,12 @@
 #pragma once
+//#define debug
 #include <memory>
 #include <string>
+#include <string_view>
 
 namespace data_structure {
 	class serialize_buffer final {
+	private:
 		using byte = unsigned char;
 		using size_type = unsigned int;
 	public:
@@ -11,88 +14,95 @@ namespace data_structure {
 			reserve(1024);
 		};
 		inline explicit serialize_buffer(serialize_buffer const& rhs) noexcept
-			: _front(rhs._front), _rear(rhs._rear), _capacity(rhs._capacity), _fail(rhs._fail) {
-			_array = new byte(_capacity);
-			memcpy(_array, rhs._array, _rear);
-		}
-		inline auto operator=(serialize_buffer const& rhs) noexcept -> serialize_buffer& {
-			_front = rhs._front;
-			_rear = rhs._rear;
-			_capacity = rhs._capacity;
-			_fail = rhs._fail;
-			_array = new byte(_capacity);
+			: _front(rhs._front), _rear(rhs._rear), _capacity(rhs._capacity)
+#ifdef debug
+			, _fail(rhs._fail)
+#endif
+		{
+			_array = static_cast<byte*>(malloc(_capacity));
+#pragma warning(suppress: 6387)
 			memcpy(_array, rhs._array, _rear);
 		}
 		inline explicit serialize_buffer(serialize_buffer&& rhs) noexcept
-			: _front(rhs._front), _rear(rhs._rear), _capacity(rhs._capacity), _fail(rhs._fail), _array(rhs._array) {
+			: _front(rhs._front), _rear(rhs._rear), _capacity(rhs._capacity),
+#ifdef debug
+			_fail(rhs._fail),
+#endif
+			_array(rhs._array) {
 			rhs._array = nullptr;
 		}
-		inline auto operator=(serialize_buffer&& rhs) noexcept -> serialize_buffer& {
-			_front = rhs._front;
-			_rear = rhs._rear;
-			_capacity = rhs._capacity;
-			_fail = rhs._fail;
-			_array = rhs._array;
-			rhs._array = nullptr;
-		}
+		//not implemented
+		inline auto operator=(serialize_buffer const& rhs) noexcept -> serialize_buffer&;
+		//not implemented
+		inline auto operator=(serialize_buffer&& rhs) noexcept -> serialize_buffer&;
 		inline ~serialize_buffer(void) noexcept {
 			free(_array);
 		};
 	public:
 		template<typename type>
 		inline auto operator<<(type const& value) noexcept -> serialize_buffer& requires std::is_arithmetic_v<type> {
+#ifdef debug
 			if (sizeof(type) + _rear > _capacity) {
 				_fail = true;
 				return *this;
 			}
+#endif
 			reinterpret_cast<type&>(_array[_rear]) = value;
 			_rear += sizeof(type);
 			return *this;
 		}
 		inline void push(byte* const buffer, size_type const length) noexcept {
+#ifdef debug
 			if (_rear + length > _capacity) {
 				_fail = true;
 				return;
 			}
+#endif
 			memcpy(_array + _rear, buffer, length);
 			_rear += length;
 		}
 		template<typename string_size_type>
-		inline void push(std::string const& value) noexcept requires std::_Is_any_of_v<string_size_type, unsigned char, unsigned short, unsigned int, unsigned long, unsigned long long> {
+		inline void push(std::string_view const value) noexcept requires std::_Is_any_of_v<string_size_type, unsigned char, unsigned short, unsigned int, unsigned long, unsigned long long> {
 			operator<<(static_cast<string_size_type>(value.size()));
-			push((unsigned char*)value.c_str(), static_cast<size_type>(sizeof(std::string::value_type) * value.size()));
+			push((unsigned char*)value.data(), static_cast<size_type>(sizeof(std::string::value_type) * value.size()));
 		}
 		template<typename string_size_type>
-		inline void push(std::wstring const& value) noexcept requires std::_Is_any_of_v<string_size_type, unsigned char, unsigned short, unsigned int, unsigned long, unsigned long long> {
+		inline void push(std::wstring_view const value) noexcept requires std::_Is_any_of_v<string_size_type, unsigned char, unsigned short, unsigned int, unsigned long, unsigned long long> {
 			operator<<(static_cast<string_size_type>(value.size()));
-			push((unsigned char*)value.c_str(), static_cast<size_type>(sizeof(std::wstring::value_type) * value.size()));
+			push((unsigned char*)value.data(), static_cast<size_type>(sizeof(std::wstring::value_type) * value.size()));
 		}
 		template<typename type>
 		inline auto operator>>(type& value) noexcept -> serialize_buffer& requires std::is_arithmetic_v<type> {
+#ifdef debug
 			if (sizeof(type) + _front > _rear) {
 				_fail = true;
 				return *this;
 			}
+#endif
 			value = reinterpret_cast<type&>(_array[_front]);
 			_front += sizeof(type);
 			return *this;
 		}
 		inline void pop(byte* const buffer, size_type const length) noexcept {
+#ifdef debug
 			if (_front + length > _rear) {
 				_fail = true;
 				return;
 			}
-			memcpy(_array + _front, buffer, length);
+#endif
+			memcpy(buffer, _array + _front, length);
 			_front += length;
 		}
 		template<typename string_size_type>
 		inline void pop(std::string& value) noexcept requires std::_Is_any_of_v<string_size_type, unsigned char, unsigned short, unsigned int, unsigned long, unsigned long long> {
 			string_size_type length;
 			operator>>(length);
+#ifdef debug
 			if (_front + length > _rear) {
 				_fail = true;
 				return;
 			}
+#endif
 			value.assign(reinterpret_cast<char*>(_array + _front), length);
 			_front += length;
 		}
@@ -100,10 +110,12 @@ namespace data_structure {
 		inline void pop(std::wstring& value) noexcept requires std::_Is_any_of_v<string_size_type, unsigned char, unsigned short, unsigned int, unsigned long, unsigned long long> {
 			string_size_type length;
 			operator>>(length);
+#ifdef debug
 			if (_front + length > _rear) {
 				_fail = true;
 				return;
 			}
+#endif
 			value.assign(reinterpret_cast<wchar_t*>(_array + _front), length);
 			_front += length;
 		}
@@ -112,12 +124,28 @@ namespace data_structure {
 			return _array;
 		}
 	public:
+#ifdef debug
 		inline operator bool(void) const noexcept {
 			return !_fail;
 		}
 		inline auto fail(void) const noexcept {
 			return _fail;
 		}
+#endif
+		inline void reserve(size_type const& capacity) noexcept {
+			if (_rear <= capacity) {
+				_capacity = capacity;
+#pragma warning(suppress: 6308)
+				_array = static_cast<byte*>(realloc(_array, _capacity));
+			}
+		}
+		inline void clear(void) noexcept {
+			_front = _rear = 0;
+#ifdef debug
+			_fail = false;
+#endif
+		}
+	public:
 		inline auto rear(void) const noexcept -> size_type {
 			return _rear;
 		}
@@ -126,17 +154,6 @@ namespace data_structure {
 		}
 		inline auto capacity(void) const noexcept -> size_type {
 			return _capacity;
-		}
-		inline void reserve(size_type const& capacity) noexcept {
-			if (_rear > capacity)
-				return;
-			_capacity = capacity;
-#pragma warning(suppress: 6308)
-			_array = static_cast<byte*>(realloc(_array, _capacity));
-		}
-		inline void clear(void) noexcept {
-			_front = _rear = 0;
-			_fail = false;
 		}
 	public:
 		inline void move_front(size_type const length) noexcept {
@@ -149,7 +166,9 @@ namespace data_structure {
 		size_type _front = 0;
 		size_type _rear = 0;
 		size_type _capacity = 0;
+#ifdef debug
 		bool _fail = false;
+#endif
 		byte* _array = nullptr;
 	};
 }

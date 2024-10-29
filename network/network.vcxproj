@@ -154,6 +154,12 @@
     <ClInclude Include="ring_buffer.h" />
     <ClInclude Include="serialize_buffer.h" />
     <ClInclude Include="server.h" />
+    <ClInclude Include="server_v2.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="session.h" />
     <ClInclude Include="storage.h" />
     <ClInclude Include="domain.h" />

@@ -39,6 +39,9 @@
       <Filter>server</Filter>
     </ClInclude>
     <ClInclude Include="file_descriptor.h" />
+    <ClInclude Include="server_v2.h">
+      <Filter>server</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="data-structure">
