@@ -153,6 +153,7 @@
     <ClInclude Include="condition_variable.h" />
     <ClInclude Include="critical_section.h" />
     <ClInclude Include="event.h" />
+    <ClInclude Include="mutex.h" />
     <ClInclude Include="ordering.h" />
     <ClInclude Include="slim_read_write_lock.h" />
     <ClInclude Include="spin_lock.h" />

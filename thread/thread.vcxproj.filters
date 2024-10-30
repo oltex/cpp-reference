@@ -29,6 +29,9 @@
     <ClInclude Include="ordering.h">
       <Filter>ordering</Filter>
     </ClInclude>
+    <ClInclude Include="mutex.h">
+      <Filter>synchronize</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="lock">
