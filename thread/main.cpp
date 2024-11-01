@@ -17,30 +17,23 @@
 #include <iostream>
 #include <conio.h>
 
-struct alignas(64) my_str {
-	int a;
-	int b;
-};
-my_str mystr;
+std::once_flag flag;
 
-void function(void) noexcept {
-	for(int i = 0 ; i < 200000000; ++i){
-		mystr.a++;
-	}
+void once(void) noexcept {
+	std::cout << "a" << std::endl;
 }
 
-
-void function2(void) noexcept {
-	for (int i = 0; i < 200000000; ++i) {
-		mystr.b++;
-	}
+void function(void) noexcept {
+	__debugbreak();
+	std::call_once(flag, once);
+	std::cout << "b" << std::endl;
 }
 
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
 	thread::thread thread1(function, 0);
-	thread::thread thread2(function2, 0);
+	thread::thread thread2(function, 0);
 
 	system("pause");
 	thread1.resume();
@@ -48,11 +41,6 @@ int main(void) noexcept {
 
 	thread1.join(INFINITE);
 	thread2.join(INFINITE);
-	std::cout << mystr.a << mystr.b << std::endl;
 	system("pause");
-
-	std::mutex a;
-	a.lock();
-
 	return 0;
 }

@@ -1,6 +1,7 @@
 #pragma once
+#define x64
 #include <intrin.h>
-//#include <Windows.h>
+#include <Windows.h>
 
 namespace thread {
 	namespace barrier {
@@ -25,7 +26,12 @@ namespace thread {
 			_mm_mfence();
 		}
 		inline static void fast_store(void) noexcept {
+#ifdef x64
 			__faststorefence();
+#else
+			LONG Barrier;
+			_InterlockedOr(&Barrier, 0);
+#endif
 		}
 	}
 }
