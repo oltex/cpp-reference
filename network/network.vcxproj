@@ -149,7 +149,12 @@
     <ClInclude Include="async.h" />
     <ClInclude Include="file_descriptor.h" />
     <ClInclude Include="pair.h" />
-    <ClInclude Include="poll.h" />
+    <ClInclude Include="poll.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="rpc.h" />
     <ClInclude Include="ring_buffer.h" />
     <ClInclude Include="serialize_buffer.h" />

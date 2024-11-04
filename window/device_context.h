@@ -1,6 +1,6 @@
 #pragma once
-#include "bitmap.h"
 #include "object.h"
+#include "bitmap.h"
 #include "brush.h"
 #include <Windows.h>
 

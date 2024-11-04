@@ -128,7 +128,7 @@ namespace network {
 			auto& addr = reinterpret_cast<sockaddr&>(stor.data());
 			return ::sendto(_socket, buffer, length, flag, &addr, sizeof(sockaddr_in));
 		}
-		inline auto wsa_send(WSABUF* buffer, unsigned long count, unsigned long* byte, unsigned long flag, OVERLAPPED* overlapped, LPWSAOVERLAPPED_COMPLETION_ROUTINE completion_roution) noexcept -> int {
+		inline auto wsa_send(WSABUF* buffer, unsigned long count, unsigned long* byte, unsigned long flag, _OVERLAPPED* overlapped, LPWSAOVERLAPPED_COMPLETION_ROUTINE completion_roution) noexcept -> int {
 			int result = WSASend(_socket, buffer, count, byte, flag, overlapped, completion_roution);
 			if (SOCKET_ERROR == result) {
 				switch (GetLastError()) {
@@ -163,7 +163,7 @@ namespace network {
 			auto& addr = reinterpret_cast<sockaddr&>(stor.data());
 			return ::recvfrom(_socket, buffer, length, flag, &addr, &from_length);
 		}
-		inline auto wsa_receive(WSABUF* buffer, unsigned long count, unsigned long* byte, unsigned long* flag, OVERLAPPED* overlapped, LPWSAOVERLAPPED_COMPLETION_ROUTINE completion_roution) noexcept -> int {
+		inline auto wsa_receive(WSABUF* buffer, unsigned long count, unsigned long* byte, unsigned long* flag, _OVERLAPPED* overlapped, LPWSAOVERLAPPED_COMPLETION_ROUTINE completion_roution) noexcept -> int {
 			int result = WSARecv(_socket, buffer, count, byte, flag, overlapped, completion_roution);
 			if (SOCKET_ERROR == result) {
 				switch (GetLastError()) {

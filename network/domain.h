@@ -6,16 +6,8 @@
 #include <WS2tcpip.h>
 
 namespace network {
-	class domain final {
-	public:
-		inline explicit domain(void) noexcept = default;
-		inline explicit domain(domain const& rhs) noexcept = delete;
-		inline explicit domain(domain&& rhs) noexcept = delete;
-		inline auto operator=(domain const& rhs) noexcept -> domain & = delete;
-		inline auto operator=(domain&& rhs) noexcept -> domain & = delete;
-		inline ~domain(void) noexcept = default;
-	public:
-		inline auto get_storage(wchar_t const* const node_name, wchar_t const* const service_name) const noexcept -> data_structure::list<storage> {
+	namespace domain {
+		inline static auto get_storage(wchar_t const* const node_name, wchar_t const* const service_name) noexcept -> data_structure::list<storage> {
 			data_structure::list<storage> storage;
 
 			addrinfoW* info;
@@ -30,5 +22,5 @@ namespace network {
 
 			return storage;
 		}
-	};
+	}
 }
