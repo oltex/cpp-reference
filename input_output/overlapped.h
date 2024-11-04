@@ -1,4 +1,5 @@
 #pragma once
+#include "../multi/event.h"
 #include <Windows.h>
 
 namespace input_output {
@@ -11,6 +12,9 @@ namespace input_output {
 		inline auto operator=(overlapped&& rhs) noexcept -> overlapped & = delete;
 		inline ~overlapped(void) noexcept = default;
 	public:
+		inline void set_event(multi::event& event) noexcept {
+			_overlapped.hEvent = event.data();
+		}
 		inline auto get_result(HANDLE handle, unsigned long* byte, bool wait) noexcept -> bool {
 			return GetOverlappedResult(handle, &_overlapped, byte, wait);
 		}

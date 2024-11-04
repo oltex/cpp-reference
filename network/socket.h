@@ -63,8 +63,8 @@ namespace network {
 		}
 		inline auto accept(void) const noexcept -> data_structure::pair<socket, storage> {
 			sockaddr_storage addr;
-			int len = sizeof(sockaddr_in);
-			SOCKET sock = ::accept(_socket, reinterpret_cast<sockaddr*>(&addr), &len);
+			int length = sizeof(sockaddr_in);
+			SOCKET sock = ::accept(_socket, reinterpret_cast<sockaddr*>(&addr), &length);
 			if (INVALID_SOCKET == sock) {
 				switch (GetLastError()) {
 				case WSAEWOULDBLOCK:
@@ -204,7 +204,6 @@ namespace network {
 			if (SOCKET_ERROR == ioctlsocket(_socket, cmd, &arg))
 				__debugbreak();
 		}
-	public:
 	public:
 		inline auto data(void) const noexcept -> SOCKET {
 			return _socket;

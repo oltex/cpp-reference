@@ -6,9 +6,11 @@
 #include "socket.h"
 #include "list.h"
 
-template<typename session_type, typename rpc_type = void>
+#include <concepts>
+
+template<std::derived_from<session> session_type, typename rpc_type = void>
 class server final {
-	static_assert(std::is_base_of<session, session_type>::value);
+	//static_assert(std::is_base_of<session, session_type>::value);
 public:
 	inline explicit server(void) noexcept
 		: _listen(AF_INET, SOCK_STREAM, IPPROTO_TCP) {

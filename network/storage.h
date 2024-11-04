@@ -20,6 +20,8 @@ namespace network {
 			return _storage.ss_family;
 		}
 		inline auto get_address(void) const noexcept -> std::wstring;
+		inline auto get_port(void) const noexcept -> unsigned short;
+	public:
 		inline auto data(void) noexcept -> sockaddr_storage& {
 			return _storage;
 		}
@@ -54,7 +56,7 @@ namespace network {
 			auto& storage = get_stroage();
 			storage.sin_port = htons(port);
 		}
-		inline auto get_port(void) noexcept -> unsigned short {
+		inline auto get_port(void) const noexcept -> unsigned short {
 			auto& storage = get_stroage();
 			return ntohs(storage.sin_port);
 		}
@@ -71,6 +73,12 @@ namespace network {
 		switch (get_family()) {
 		case AF_INET:
 			return reinterpret_cast<storage_ipv4 const&>(*this).get_address();
+		}
+	}
+	inline auto storage::get_port(void) const noexcept -> unsigned short {
+		switch (get_family()) {
+		case AF_INET:
+			return reinterpret_cast<storage_ipv4 const&>(*this).get_port();
 		}
 	}
 }
