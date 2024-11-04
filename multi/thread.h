@@ -5,7 +5,7 @@
 #include <type_traits>
 #include <memory>
 
-namespace thread {
+namespace multi {
 	class thread final {
 	private:
 		template <typename tuple, size_t... index>

@@ -11,20 +11,17 @@
       <Filter>data-structure</Filter>
     </ClInclude>
     <ClInclude Include="storage.h" />
-    <ClInclude Include="poll.h" />
     <ClInclude Include="vector.h">
       <Filter>data-structure</Filter>
     </ClInclude>
-    <ClInclude Include="select.h" />
     <ClInclude Include="pair.h">
       <Filter>data-structure</Filter>
     </ClInclude>
-    <ClInclude Include="async.h" />
     <ClInclude Include="rpc.h">
-      <Filter>rpc</Filter>
+      <Filter>temp\rpc</Filter>
     </ClInclude>
     <ClInclude Include="test.h">
-      <Filter>rpc</Filter>
+      <Filter>temp\rpc</Filter>
     </ClInclude>
     <ClInclude Include="ring_buffer.h">
       <Filter>data-structure</Filter>
@@ -33,30 +30,47 @@
       <Filter>data-structure</Filter>
     </ClInclude>
     <ClInclude Include="server.h">
-      <Filter>server</Filter>
+      <Filter>temp\server</Filter>
     </ClInclude>
     <ClInclude Include="session.h">
-      <Filter>server</Filter>
+      <Filter>temp\server</Filter>
     </ClInclude>
-    <ClInclude Include="file_descriptor.h" />
     <ClInclude Include="server_v2.h">
-      <Filter>server</Filter>
+      <Filter>temp\server</Filter>
+    </ClInclude>
+    <ClInclude Include="file_descriptor.h">
+      <Filter>select</Filter>
+    </ClInclude>
+    <ClInclude Include="poll.h">
+      <Filter>select</Filter>
+    </ClInclude>
+    <ClInclude Include="select.h">
+      <Filter>select</Filter>
+    </ClInclude>
+    <ClInclude Include="async.h">
+      <Filter>select</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="data-structure">
       <UniqueIdentifier>{9921b480-9573-4fcc-801f-31e7a4059392}</UniqueIdentifier>
     </Filter>
-    <Filter Include="server">
+    <Filter Include="select">
+      <UniqueIdentifier>{b2adf759-0d47-455c-85c2-56ff88e6de14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="temp">
+      <UniqueIdentifier>{21f35bef-943e-4203-8769-e3b006c13068}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="temp\server">
       <UniqueIdentifier>{7cddaa94-4ba8-4b00-9b1a-01cf0dab3a58}</UniqueIdentifier>
     </Filter>
-    <Filter Include="rpc">
+    <Filter Include="temp\rpc">
       <UniqueIdentifier>{07816cbe-b499-4ade-8f34-1efb93fa54aa}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="rpc.py">
-      <Filter>rpc</Filter>
+      <Filter>temp\rpc</Filter>
     </None>
   </ItemGroup>
 </Project>

@@ -1,7 +1,7 @@
 #pragma once
 #include <Windows.h>
 
-namespace thread {
+namespace multi {
 	class event final {
 	public:
 		inline explicit event(bool const manual, bool const initial_state) noexcept

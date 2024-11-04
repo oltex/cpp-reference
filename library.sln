@@ -11,7 +11,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "console", "console\console.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "file", "file\file.vcxproj", "{6B63E413-6981-4F5D-9A04-D588BCC5212E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "thread", "thread\thread.vcxproj", "{AE42504C-8263-4585-A2BE-D4CBCB0D0951}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "input_output", "input_output\input_output.vcxproj", "{CDB30826-DC73-4452-AC9C-ADCA8C62794A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "multi", "multi\multi.vcxproj", "{AE42504C-8263-4585-A2BE-D4CBCB0D0951}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,6 +55,14 @@ Global
 		{6B63E413-6981-4F5D-9A04-D588BCC5212E}.Release|x64.Build.0 = Release|x64
 		{6B63E413-6981-4F5D-9A04-D588BCC5212E}.Release|x86.ActiveCfg = Release|Win32
 		{6B63E413-6981-4F5D-9A04-D588BCC5212E}.Release|x86.Build.0 = Release|Win32
+		{CDB30826-DC73-4452-AC9C-ADCA8C62794A}.Debug|x64.ActiveCfg = Debug|x64
+		{CDB30826-DC73-4452-AC9C-ADCA8C62794A}.Debug|x64.Build.0 = Debug|x64
+		{CDB30826-DC73-4452-AC9C-ADCA8C62794A}.Debug|x86.ActiveCfg = Debug|Win32
+		{CDB30826-DC73-4452-AC9C-ADCA8C62794A}.Debug|x86.Build.0 = Debug|Win32
+		{CDB30826-DC73-4452-AC9C-ADCA8C62794A}.Release|x64.ActiveCfg = Release|x64
+		{CDB30826-DC73-4452-AC9C-ADCA8C62794A}.Release|x64.Build.0 = Release|x64
+		{CDB30826-DC73-4452-AC9C-ADCA8C62794A}.Release|x86.ActiveCfg = Release|Win32
+		{CDB30826-DC73-4452-AC9C-ADCA8C62794A}.Release|x86.Build.0 = Release|Win32
 		{AE42504C-8263-4585-A2BE-D4CBCB0D0951}.Debug|x64.ActiveCfg = Debug|x64
 		{AE42504C-8263-4585-A2BE-D4CBCB0D0951}.Debug|x64.Build.0 = Debug|x64
 		{AE42504C-8263-4585-A2BE-D4CBCB0D0951}.Debug|x86.ActiveCfg = Debug|Win32

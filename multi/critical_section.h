@@ -1,7 +1,7 @@
 #pragma once
 #include <windows.h>
 
-namespace thread {
+namespace multi {
 	class critical_section final {
 	public:
 		inline explicit critical_section(void) noexcept {

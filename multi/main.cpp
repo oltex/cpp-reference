@@ -32,8 +32,8 @@ void function(void) noexcept {
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-	thread::thread thread1(function, 0);
-	thread::thread thread2(function, 0);
+	multi::thread thread1(function, 0);
+	multi::thread thread2(function, 0);
 
 	system("pause");
 	thread1.resume();

@@ -1,7 +1,7 @@
 #pragma once
 #include <Windows.h>
 
-namespace thread {
+namespace multi {
 	class mutex final {
 	public:
 		inline explicit mutex(bool const initial_owner) noexcept

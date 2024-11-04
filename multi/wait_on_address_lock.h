@@ -2,7 +2,7 @@
 #pragma comment(lib, "Synchronization.lib")
 #include <Windows.h>
 
-namespace thread {
+namespace multi {
 	class wait_on_address_lock final {
 	public:
 		inline explicit wait_on_address_lock(void) noexcept = default;

@@ -107,8 +107,8 @@ namespace network {
 			_socket = INVALID_SOCKET;
 		}
 	public:
-		inline auto send(char const* const buf, int const len, int const flag) noexcept -> int {
-			int result = ::send(_socket, buf, len, flag);
+		inline auto send(char const* const buffer, int const length, int const flag) noexcept -> int {
+			int result = ::send(_socket, buffer, length, flag);
 			if (SOCKET_ERROR == result) {
 				switch (GetLastError()) {
 				case WSAEWOULDBLOCK:
@@ -124,12 +124,24 @@ namespace network {
 			}
 			return result;
 		}
-		inline auto send_to(char const* const buf, int const len, int const flag, storage& stor) const noexcept -> int {
+		inline auto send_to(char const* const buffer, int const length, int const flag, storage& stor) const noexcept -> int {
 			auto& addr = reinterpret_cast<sockaddr&>(stor.data());
-			return ::sendto(_socket, buf, len, flag, &addr, sizeof(sockaddr_in));
+			return ::sendto(_socket, buffer, length, flag, &addr, sizeof(sockaddr_in));
 		}
-		inline auto receive(char* const buf, int const len, int const flag) noexcept -> int {
-			int result = ::recv(_socket, buf, len, flag);
+		inline auto wsa_send(WSABUF* buffer, unsigned long count, unsigned long* byte, unsigned long flag, OVERLAPPED* overlapped, LPWSAOVERLAPPED_COMPLETION_ROUTINE completion_roution) noexcept -> int {
+			int result = WSASend(_socket, buffer, count, byte, flag, overlapped, completion_roution);
+			if (SOCKET_ERROR == result) {
+				switch (GetLastError()) {
+				case WSA_IO_PENDING:
+					break;
+				default:
+					__debugbreak();
+				}
+			}
+			return result;
+		}
+		inline auto receive(char* const buffer, int const length, int const flag) noexcept -> int {
+			int result = ::recv(_socket, buffer, length, flag);
 			if (SOCKET_ERROR == result) {
 				switch (GetLastError()) {
 				case WSAEWOULDBLOCK:
@@ -147,9 +159,21 @@ namespace network {
 				close();
 			return result;
 		}
-		inline auto receive_from(char* const buf, int const len, int const flag, storage& stor, int& length) noexcept -> int {
+		inline auto receive_from(char* const buffer, int const length, int const flag, storage& stor, int& from_length) noexcept -> int {
 			auto& addr = reinterpret_cast<sockaddr&>(stor.data());
-			return ::recvfrom(_socket, buf, len, flag, &addr, &length);
+			return ::recvfrom(_socket, buffer, length, flag, &addr, &from_length);
+		}
+		inline auto wsa_receive(WSABUF* buffer, unsigned long count, unsigned long* byte, unsigned long* flag, OVERLAPPED* overlapped, LPWSAOVERLAPPED_COMPLETION_ROUTINE completion_roution) noexcept -> int {
+			int result = WSARecv(_socket, buffer, count, byte, flag, overlapped, completion_roution);
+			if (SOCKET_ERROR == result) {
+				switch (GetLastError()) {
+				case WSA_IO_PENDING:
+					break;
+				default:
+					__debugbreak();
+				}
+			}
+			return result;
 		}
 	public:
 		inline void set_tcp_nodelay(int const enable) const noexcept {
@@ -180,6 +204,7 @@ namespace network {
 			if (SOCKET_ERROR == ioctlsocket(_socket, cmd, &arg))
 				__debugbreak();
 		}
+	public:
 	public:
 		inline auto data(void) const noexcept -> SOCKET {
 			return _socket;

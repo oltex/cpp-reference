@@ -2,7 +2,7 @@
 #pragma comment(lib, "Synchronization.lib")
 #include <Windows.h>
 
-namespace thread {
+namespace multi {
 	class wait_on_address final {
 	public:
 		inline explicit wait_on_address(void) noexcept = default;
@@ -13,7 +13,7 @@ namespace thread {
 		inline ~wait_on_address(void) noexcept = default;
 	public:
 		inline void wait(unsigned long milli_second) noexcept {
-			volatile long compare;
+			volatile long compare = 1;
 			WaitOnAddress(&_address, (void*)&compare, sizeof(long), milli_second);
 		}
 		inline void wake_single(void) noexcept {

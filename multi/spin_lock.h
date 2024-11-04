@@ -1,7 +1,7 @@
 #pragma once
 #include <Windows.h>
 
-namespace thread {
+namespace multi {
 	class spin_lock final {
 	public:
 		inline explicit spin_lock(void) noexcept = default;
