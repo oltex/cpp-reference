@@ -211,13 +211,13 @@ namespace network {
 	public:
 		inline auto get_local_storage(void) noexcept -> storage {
 			storage stor;
-			int length;
+			int length = sizeof(sockaddr_in);
 			getsockname(_socket, reinterpret_cast<sockaddr*>(&stor.data()), &length);
 			return stor;
 		}
 		inline auto get_remote_storage(void) noexcept -> storage {
 			storage stor;
-			int length;
+			int length = sizeof(sockaddr_in);
 			getpeername(_socket, reinterpret_cast<sockaddr*>(&stor.data()), &length);
 			return stor;
 		}

@@ -13,4 +13,7 @@ namespace network {
 		if (SOCKET_ERROR == WSACleanup())
 			__debugbreak();
 	};
+	inline static auto wsa_wait_for_multiple_object(unsigned long const count, HANDLE* handle, bool const wait_all, unsigned long const timeout, bool const alertable) noexcept -> unsigned long {
+		return WSAWaitForMultipleEvents(count, handle, wait_all, timeout, alertable);
+	}
 }

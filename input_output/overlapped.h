@@ -7,9 +7,14 @@ namespace input_output {
 	public:
 		inline explicit overlapped(void) noexcept = default;
 		inline explicit overlapped(overlapped const& rhs) noexcept = delete;
-		inline explicit overlapped(overlapped&& rhs) noexcept = delete;
+		inline explicit overlapped(overlapped&& rhs) noexcept
+			: _overlapped(rhs._overlapped) {
+		};
 		inline auto operator=(overlapped const& rhs) noexcept -> overlapped & = delete;
-		inline auto operator=(overlapped&& rhs) noexcept -> overlapped & = delete;
+		inline auto operator=(overlapped&& rhs) noexcept -> overlapped& {
+			_overlapped = rhs._overlapped;
+			return *this;
+		};
 		inline ~overlapped(void) noexcept = default;
 	public:
 		inline void set_event(multi::event& event) noexcept {
