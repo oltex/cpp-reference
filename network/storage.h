@@ -21,6 +21,13 @@ namespace network {
 		}
 		inline auto get_address(void) const noexcept -> std::wstring;
 		inline auto get_port(void) const noexcept -> unsigned short;
+		inline auto get_length(void) noexcept -> int {
+			switch (get_family()) {
+			case AF_INET:
+				return sizeof(sockaddr_in);
+			}
+			return sizeof(sockaddr_storage);
+		}
 	public:
 		inline auto data(void) noexcept -> sockaddr_storage& {
 			return _storage;

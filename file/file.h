@@ -19,15 +19,11 @@ public:
 		CloseHandle(_handle);
 		_handle = CreateFileW(path, desired_access, share_mode, nullptr, creation_disposition, flags_and_attributes, nullptr);
 	}
-	inline void close(void) noexcept {
-		CloseHandle(_handle);
-		_handle = INVALID_HANDLE_VALUE;
+	inline bool read(void* const buffer, unsigned long const length) const noexcept {
+		return ReadFile(_handle, buffer, length, nullptr, nullptr);
 	}
-	inline void read(void* const buffer, unsigned long const length) const noexcept {
-		ReadFile(_handle, buffer, length, nullptr, nullptr);
-	}
-	inline void write(void const* const buffer, unsigned long const length) const noexcept {
-		WriteFile(_handle, buffer, length, nullptr, nullptr);
+	inline bool write(void const* const buffer, unsigned long const length) const noexcept {
+		return  WriteFile(_handle, buffer, length, nullptr, nullptr);
 	}
 public:
 	inline auto set_pointer(long const distance_to_move, unsigned long move_method) const noexcept -> unsigned long {

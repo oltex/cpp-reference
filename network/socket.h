@@ -8,13 +8,16 @@
 namespace network {
 	class socket final {
 	public:
+		inline explicit socket(void) noexcept
+			: _socket(INVALID_SOCKET) {
+		}
 		inline explicit socket(ADDRESS_FAMILY const af, int const type, int const protocol) noexcept {
 			_socket = ::socket(af, type, protocol);
 			if (INVALID_SOCKET == _socket) {
-				switch (GetLastError()) {
-				default:
-					__debugbreak();
-				}
+				//switch (GetLastError()) {
+				//default:
+				//	__debugbreak();
+				//}
 			}
 		}
 		inline explicit socket(SOCKET const sock) noexcept
@@ -26,26 +29,24 @@ namespace network {
 			rhs._socket = INVALID_SOCKET;
 		}
 		inline auto operator=(socket const& rhs) noexcept -> socket & = delete;
-		inline auto operator=(socket&& rhs) noexcept -> socket&;
+		inline auto operator=(socket&& rhs) noexcept -> socket& {
+			closesocket(_socket);
+			_socket = rhs._socket;
+			rhs._socket = INVALID_SOCKET;
+			return *this;
+		};
 		inline ~socket(void) noexcept {
 			closesocket(_socket);
 		}
 	public:
 		inline auto bind(storage& stor) const noexcept -> int {
-			auto addr = reinterpret_cast<sockaddr*>(&stor.data());
-			int len;
-			switch (stor.get_family()) {
-			case AF_INET:
-				len = sizeof(sockaddr_in);
-				break;
-			}
-			int result = ::bind(_socket, addr, len);
+			int result = ::bind(_socket, reinterpret_cast<sockaddr*>(&stor.data()), stor.get_length());
 			if (SOCKET_ERROR == result) {
-				switch (GetLastError()) {
-					//WSAEADDRINUSE
-				default:
-					__debugbreak();
-				}
+				//switch (GetLastError()) {
+				//	//WSAEADDRINUSE
+				//default:
+				//	__debugbreak();
+				//}
 			}
 			return result;
 		}
@@ -54,10 +55,10 @@ namespace network {
 				backlog = SOMAXCONN_HINT(backlog);
 			int result = ::listen(_socket, backlog);
 			if (SOCKET_ERROR == result) {
-				switch (GetLastError()) {
-				default:
-					__debugbreak();
-				}
+				//switch (GetLastError()) {
+				//default:
+				//	__debugbreak();
+				//}
 			}
 			return result;
 		}
@@ -175,6 +176,9 @@ namespace network {
 			}
 			return result;
 		}
+		inline bool wsa_get_overlapped_result(_OVERLAPPED* overlapped, unsigned long* transfer, bool const wait, unsigned long* flag) noexcept {
+			return WSAGetOverlappedResult(_socket, overlapped, transfer, wait, flag);
+		}
 	public:
 		inline void set_tcp_nodelay(int const enable) const noexcept {
 			set_option(IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<char const*>(&enable), sizeof(int));
@@ -205,7 +209,20 @@ namespace network {
 				__debugbreak();
 		}
 	public:
-		inline auto data(void) const noexcept -> SOCKET {
+		inline auto get_local_storage(void) noexcept -> storage {
+			storage stor;
+			int length;
+			getsockname(_socket, reinterpret_cast<sockaddr*>(&stor.data()), &length);
+			return stor;
+		}
+		inline auto get_remote_storage(void) noexcept -> storage {
+			storage stor;
+			int length;
+			getpeername(_socket, reinterpret_cast<sockaddr*>(&stor.data()), &length);
+			return stor;
+		}
+	public:
+		inline auto data(void) noexcept -> SOCKET& {
 			return _socket;
 		}
 	private:

@@ -26,7 +26,8 @@ namespace multi {
 			return TryAcquireSRWLockShared(&_srwlock);
 		}
 		inline void release_exclusive(void) noexcept {
-			ReleaseSRWLockExclusive(&_srwlock);
+#pragma warning(suppress: 26110)
+			ReleaseSRWLockExclusive(&_srwlock); 
 		}
 		inline void release_shared(void) noexcept {
 			ReleaseSRWLockShared(&_srwlock);

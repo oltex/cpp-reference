@@ -37,9 +37,14 @@ namespace multi {
 				__debugbreak();
 		}
 		inline explicit thread(thread const& rhs) noexcept = delete;
-		inline explicit thread(thread&& rhs) noexcept = delete;
+		inline explicit thread(thread&& rhs) noexcept
+			: object(std::move(rhs)) {
+		};
 		inline auto operator=(thread const& rhs) noexcept -> thread & = delete;
-		inline auto operator=(thread&& rhs) noexcept -> thread & = delete;
+		inline auto operator=(thread&& rhs) noexcept -> thread& {
+			object::operator=(std::move(rhs));
+			return *this;
+		};
 		inline virtual ~thread(void) noexcept override = default;
 	public:
 		inline void join(unsigned long milli_second) noexcept {
