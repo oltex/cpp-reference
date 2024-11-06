@@ -30,8 +30,5 @@ namespace multi {
 		inline void pulse(void) noexcept {
 			PulseEvent(_handle);
 		}
-		inline auto wait(unsigned long milli_second) noexcept -> unsigned long {
-			return WaitForSingleObject(_handle, milli_second);
-		}
 	};
 }
