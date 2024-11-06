@@ -77,14 +77,7 @@ namespace network {
 			return data_structure::pair<socket, storage>(socket(sock), storage(addr));
 		}
 		inline auto connect(storage& stor) noexcept -> int {
-			auto& addr = reinterpret_cast<sockaddr&>(stor.data());
-			int length;
-			switch (stor.get_family()) {
-			case AF_INET:
-				length = sizeof(sockaddr_in);
-				break;
-			}
-			int result = ::connect(_socket, &addr, length);
+			int result = ::connect(_socket, reinterpret_cast<sockaddr*>(&stor.data()), stor.get_length());
 			if (SOCKET_ERROR == result) {
 				switch (GetLastError()) {
 				case WSAEWOULDBLOCK:
