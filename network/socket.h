@@ -170,6 +170,7 @@ namespace network {
 				switch (GetLastError()) {
 				case WSA_IO_PENDING:
 					break;
+				case WSAENOTSOCK:
 				default:
 					__debugbreak();
 				}
