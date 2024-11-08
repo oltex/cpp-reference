@@ -42,6 +42,7 @@ int main(void) noexcept {
 	socket.receive_from(buf2, 6, 0, storage2, length);
 
 	system("pause");
+	socket.set_tcp_nodelay(true);
 
 	server<session, remote_procedure_call> a;
 
