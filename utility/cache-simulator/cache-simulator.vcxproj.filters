@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="cache_simulator.h" />
+    <ClInclude Include="singleton.h">
+      <Filter>design-pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="vector.h">
+      <Filter>data-structure</Filter>
+    </ClInclude>
+    <ClInclude Include="hash.h">
+      <Filter>data-structure</Filter>
+    </ClInclude>
+    <ClInclude Include="list.h">
+      <Filter>data-structure</Filter>
+    </ClInclude>
+    <ClInclude Include="pair.h">
+      <Filter>data-structure</Filter>
+    </ClInclude>
+    <ClInclude Include="unordered_map.h">
+      <Filter>data-structure</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="design-pattern">
+      <UniqueIdentifier>{e5289f38-8160-4b7b-a760-79b6719dce68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="data-structure">
+      <UniqueIdentifier>{09c4aec3-05ec-4f08-bad0-e8966d590a1d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

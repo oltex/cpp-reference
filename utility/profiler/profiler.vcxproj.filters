@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="profiler.h" />
+    <ClInclude Include="hash.h">
+      <Filter>data-structure</Filter>
+    </ClInclude>
+    <ClInclude Include="pair.h">
+      <Filter>data-structure</Filter>
+    </ClInclude>
+    <ClInclude Include="unordered_map.h">
+      <Filter>data-structure</Filter>
+    </ClInclude>
+    <ClInclude Include="vector.h">
+      <Filter>data-structure</Filter>
+    </ClInclude>
+    <ClInclude Include="list.h">
+      <Filter>data-structure</Filter>
+    </ClInclude>
+    <ClInclude Include="singleton.h">
+      <Filter>design-pattern</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="data-structure">
+      <UniqueIdentifier>{5c83712e-f197-47e5-b1a2-78c2d23e8b82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="design-pattern">
+      <UniqueIdentifier>{e1b6a256-b187-4800-a611-33b2283cf1a2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
