@@ -1,4 +1,6 @@
 #pragma once
+#include <intrin.h>
+#include <Windows.h>
 
 class peterson final {
 public:
@@ -23,6 +25,8 @@ public:
 		_turn = 0;
 		bool flag;
 		bool turn;
+		//MemoryFence();
+		MemoryBarrier();
 		for (;;) {
 			turn = _turn;
 			flag = _flag[1];
@@ -45,6 +49,8 @@ public:
 		_turn = 1;
 		bool flag;
 		bool turn;
+		//MemoryFence();
+		MemoryBarrier();
 		for (;;) {
 			turn = _turn;
 			flag = _flag[0];

@@ -4,7 +4,6 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="spin_lock.h" />
     <ClInclude Include="peterson.h" />
   </ItemGroup>
 </Project>

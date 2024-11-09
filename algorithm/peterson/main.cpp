@@ -1,4 +1,4 @@
-#include "spin_lock.h"
+#include "../../module/multi/spin_lock.h"
 #include "peterson.h"
 
 #include <thread>
@@ -7,22 +7,19 @@
 #include <intrin.h>
 
 peterson _peter;
-spin_lock _spin;
+multi::spin_lock _spin;
 unsigned long long _value = 0;
-
 long inter = 0;
 
 DWORD WINAPI function_0(LPVOID lparam) {
 	for (int i = 0; i < 100000000; ++i) {
 		_peter.lock<0>();
 		//_spin.lock();
-		if (0x00 != InterlockedOr(&inter, 0x01)) {
-			__debugbreak();
-		}
+		//if (0x00 != InterlockedOr(&inter, 0x01))
+		//	__debugbreak();
 		_value++;
-		if (0x01 != InterlockedAnd(&inter, ~0x01)) {
-			__debugbreak();
-		}
+		//if (0x01 != InterlockedAnd(&inter, ~0x01))
+		//	__debugbreak();
 		//_spin.unlock();
 		_peter.unlock<0>();
 	}
@@ -32,13 +29,11 @@ DWORD WINAPI function_1(LPVOID lparam) {
 	for (int i = 0; i < 100000000; ++i) {
 		_peter.lock<1>();
 		//_spin.lock();
-		if (0x00 != InterlockedOr(&inter, 0x02)) {
-			__debugbreak();
-		}
+		//if (0x00 != InterlockedOr(&inter, 0x02))
+		//	__debugbreak();
 		_value++;
-		if (0x02 != InterlockedAnd(&inter, ~0x02)) {
-			__debugbreak();
-		}
+		//if (0x02 != InterlockedAnd(&inter, ~0x02))
+		//	__debugbreak();
 		//_spin.unlock();
 		_peter.unlock<1>();
 	}
