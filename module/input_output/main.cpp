@@ -9,11 +9,7 @@ int main(void) noexcept {
 
 
 	input_output::completion com(0);
-
-
-	com.connect_port();
-	com.get_queue_state();
-	com.post_queue_state();
+	auto [result, byte, key, overlapped] = com.get_queue_state2(0);
 
 	return 0;
 }

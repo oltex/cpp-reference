@@ -3,9 +3,6 @@
 #include <type_traits>
 
 namespace data_structure {
-	template <size_t index, class tuple>
-	struct tuple_element;
-
 	template<typename... type>
 	class tuple;
 	template<>
@@ -13,45 +10,62 @@ namespace data_structure {
 	};
 	template<typename type, typename... rest>
 	class tuple<type, rest...> : private tuple<rest...> {
+		friend class element;
 	public:
+		template <size_t index, class tuple>
+		struct element;
+		template <class _this, class... rest>
+		struct element<0, tuple<_this, rest...>> {
+			using type = _this;
+			using _Ttype = tuple<_this, rest...>;
+		};
+		template <size_t index, class _this, class... rest>
+		struct element<index, tuple<_this, rest...>> : element<index - 1, tuple<rest...>> {
+		};
+	public:
+		inline explicit constexpr tuple(void) noexcept = default;
 		template<typename type_argument, typename... rest_argument>
 		inline explicit constexpr tuple(type_argument&& type_arg, rest_argument&&... rest_arg) noexcept
 			: tuple<rest...>(std::forward<rest_argument>(rest_arg)...), _value(std::forward<type_argument>(type_arg)) {
 		}
-		inline explicit constexpr tuple(tuple&) noexcept = default;
+		inline constexpr tuple(tuple&) noexcept = default;
 		inline explicit constexpr tuple(tuple&&) noexcept = default;
 		inline constexpr auto operator=(tuple& rhs) noexcept -> tuple& {
 			_value = rhs._value;
-			get_rest() = rhs.get_rest();
+			static_cast<tuple<rest...>&>(*this) = static_cast<tuple<rest...>&>(rhs);
+			//get_rest() = rhs.get_rest();
 			return *this;
 		}
 		inline constexpr auto operator=(tuple&& rhs) noexcept -> tuple& {
 			_value = std::move(rhs._value);
-			get_rest() = std::move(rhs.get_rest());
+			static_cast<tuple<rest...>&>(*this) = std::move(static_cast<tuple<rest...>&>(rhs));
+			//get_rest() = std::move(rhs.get_rest());
 			return *this;
 		}
 		inline ~tuple(void) noexcept = default;
 	public:
-		inline auto get_rest(void) noexcept -> tuple<rest...>& {
-			return *this;
+		template <size_t index>
+		inline auto get(void) noexcept -> element<index, tuple>::type& {
+			return reinterpret_cast<element<index, tuple>::_Ttype&>(*this)._value;
 		}
-		template <size_t _Index, class... _Types>
-		friend constexpr tuple_element<_Index, tuple<_Types...>>::type& get(tuple<_Types...>& _Tuple) noexcept;
 	public:
 		type _value;
 	};
-
-	template <class _This, class... _Rest>
-	struct tuple_element<0, tuple<_This, _Rest...>> {
-		using type = _This;
-		using _Ttype = tuple<_This, _Rest...>;
-	};
-	template <size_t index, class _This, class... _Rest>
-	struct tuple_element<index, tuple<_This, _Rest...>> : tuple_element<index - 1, tuple<_Rest...>> {
-	};
-
-	template <size_t index, class... _Types>
-	inline static constexpr tuple_element<index, tuple<_Types...>>::type& get(tuple<_Types...>& _Tuple) noexcept {
-		return static_cast<tuple_element<index, tuple<_Types...>>::_Ttype&>(_Tuple)._value;
-	}
 }
+
+template <class... _Types>
+struct std::tuple_size<data_structure::tuple<_Types...>> : integral_constant<size_t, sizeof...(_Types)> {
+};
+template <size_t _Index>
+struct _MSVC_KNOWN_SEMANTICS std::tuple_element<_Index, data_structure::tuple<>> {
+	static_assert(_Always_false<integral_constant<size_t, _Index>>, "tuple index out of bounds");
+};
+template <class _This, class... _Rest>
+struct _MSVC_KNOWN_SEMANTICS std::tuple_element<0, data_structure::tuple<_This, _Rest...>> {
+	using type = _This;
+	using _Ttype = tuple<_This, _Rest...>;
+};
+template <size_t _Index, class _This, class... _Rest>
+struct _MSVC_KNOWN_SEMANTICS std::tuple_element<_Index, data_structure::tuple<_This, _Rest...>>
+	: tuple_element<_Index - 1, tuple<_Rest...>> {
+};
