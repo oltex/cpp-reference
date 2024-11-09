@@ -156,8 +156,8 @@
     <ClInclude Include="event.h" />
     <ClInclude Include="mutex.h" />
     <ClInclude Include="ordering.h" />
-    <ClInclude Include="slim_read_write_lock.h" />
-    <ClInclude Include="spin_lock.h" />
+    <ClInclude Include="slim_read_write.h" />
+    <ClInclude Include="spin.h" />
     <ClInclude Include="thread.h" />
     <ClInclude Include="wait_on_address.h" />
     <ClInclude Include="wait_on_address_lock.h" />

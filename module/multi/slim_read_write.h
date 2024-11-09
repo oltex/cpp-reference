@@ -5,14 +5,14 @@ namespace multi {
 	namespace lock {
 		class slim_read_write final {
 		public:
-			inline explicit slim_read_write_lock(void) noexcept {
+			inline explicit slim_read_write(void) noexcept {
 				InitializeSRWLock(&_srwlock);
 			};
-			inline explicit slim_read_write_lock(slim_read_write_lock const& rhs) noexcept = delete;
-			inline explicit slim_read_write_lock(slim_read_write_lock&& rhs) noexcept = delete;
-			inline auto operator=(slim_read_write_lock const& rhs) noexcept -> slim_read_write_lock & = delete;
-			inline auto operator=(slim_read_write_lock&& rhs) noexcept -> slim_read_write_lock & = delete;
-			inline ~slim_read_write_lock(void) noexcept = default;
+			inline explicit slim_read_write(slim_read_write const& rhs) noexcept = delete;
+			inline explicit slim_read_write(slim_read_write&& rhs) noexcept = delete;
+			inline auto operator=(slim_read_write const& rhs) noexcept -> slim_read_write & = delete;
+			inline auto operator=(slim_read_write&& rhs) noexcept -> slim_read_write & = delete;
+			inline ~slim_read_write(void) noexcept = default;
 		public:
 			inline void acquire_exclusive(void) noexcept {
 				AcquireSRWLockExclusive(&_srwlock);

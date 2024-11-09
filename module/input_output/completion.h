@@ -23,20 +23,20 @@ namespace input_output {
 		inline void connect_port(HANDLE handle, ULONG_PTR key) noexcept {
 			CreateIoCompletionPort(handle, _handle, key, 0);
 		}
-		inline auto get_queue_state(unsigned long milli_second) noexcept -> data_structure::tuple<bool, DWORD, ULONG_PTR, OVERLAPPED*> {
-			data_structure::tuple<bool, DWORD, ULONG_PTR, OVERLAPPED*> result;
-			result.get<0>() = GetQueuedCompletionStatus(_handle, &result.get<1>(), &result.get<2>(), &result.get<3>(), milli_second);
-			return result;
-		}
 		struct get_queue_state_result final {
 			bool _result;
 			DWORD _transferred;
 			ULONG_PTR _key;
 			OVERLAPPED* _overlapped;
 		};
-		auto get_queue_state2(unsigned long milli_second) noexcept -> get_queue_state_result {
+		inline auto get_queue_state(unsigned long milli_second) noexcept -> get_queue_state_result {
 			get_queue_state_result result;
 			result._result = GetQueuedCompletionStatus(_handle, &result._transferred, &result._key, &result._overlapped, milli_second);
+			return result;
+		}
+		inline auto get_queue_state_tuple(unsigned long milli_second) noexcept -> data_structure::tuple<bool, DWORD, ULONG_PTR, OVERLAPPED*> {
+			data_structure::tuple<bool, DWORD, ULONG_PTR, OVERLAPPED*> result;
+			result.get<0>() = GetQueuedCompletionStatus(_handle, &result.get<1>(), &result.get<2>(), &result.get<3>(), milli_second);
 			return result;
 		}
 		inline void post_queue_state(unsigned long byte, uintptr_t key, OVERLAPPED* overlapped) noexcept {
