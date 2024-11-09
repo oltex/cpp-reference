@@ -18,7 +18,7 @@ namespace window {
 			DeleteObject(_hgdiobj);
 		}
 	public:
-		inline auto data(void) const noexcept -> HGDIOBJ {
+		inline auto data(void) noexcept -> HGDIOBJ& {
 			return _hgdiobj;
 		}
 	protected:

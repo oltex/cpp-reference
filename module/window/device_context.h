@@ -72,7 +72,7 @@ namespace window {
 			Rectangle(_hdc, left, top, right, bottom);
 		}
 	public:
-		inline auto data(void) const noexcept -> HDC {
+		inline auto data(void) noexcept -> HDC& {
 			return _hdc;
 		}
 		inline auto get_paint_struct(void) noexcept -> PAINTSTRUCT& {

@@ -7,7 +7,7 @@
 #include <intrin.h>
 
 peterson _peter;
-multi::spin_lock _spin;
+multi::lock::spin _spin;
 unsigned long long _value = 0;
 long inter = 0;
 

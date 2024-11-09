@@ -146,13 +146,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="hash.h" />
-    <ClInclude Include="list.h" />
-    <ClInclude Include="pair.h" />
     <ClInclude Include="profiler.h" />
-    <ClInclude Include="singleton.h" />
-    <ClInclude Include="unordered_map.h" />
-    <ClInclude Include="vector.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

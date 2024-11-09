@@ -2,18 +2,13 @@
 #include <stdlib.h>
 #include <crtdbg.h>
 
-#include "completion.h"
+#include "multimedia.h"
+#include "high_resolution.h"
+#include <iostream>
 
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-
-	input_output::completion com(0);
-
-
-	com.connect_port();
-	com.get_queue_state();
-	com.post_queue_state();
-
+	timer::multimedia::period p(1);
 	return 0;
 }

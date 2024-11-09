@@ -46,6 +46,7 @@ auto message(void) noexcept -> MSG {
 };
 
 LRESULT CALLBACK procedure(HWND const hwnd, UINT const message, WPARAM const wparam, LPARAM const lparam) noexcept {
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	switch (message) {
 	case WM_DESTROY:
 		PostQuitMessage(0);

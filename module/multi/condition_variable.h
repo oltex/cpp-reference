@@ -15,11 +15,11 @@ namespace multi {
 		inline auto operator=(condition_variable&& rhs) noexcept -> condition_variable & = delete;
 		inline ~condition_variable(void) noexcept = default;
 	public:
-		inline void sleep(critical_section& critical_section_, unsigned long milli_second) noexcept {
+		inline void sleep(lock::critical_section& critical_section_, unsigned long milli_second) noexcept {
 			SleepConditionVariableCS(&_condition_variable, &critical_section_.data(), milli_second);
 		}
-		inline void sleep(slim_read_write_lock& slim_read_write_lock_, unsigned long milli_second, unsigned long flag) noexcept {
-			SleepConditionVariableSRW(&_condition_variable, &slim_read_write_lock_.data(), milli_second, flag);
+		inline void sleep(lock::slim_read_write& slim_read_write, unsigned long milli_second, unsigned long flag) noexcept {
+			SleepConditionVariableSRW(&_condition_variable, &slim_read_write.data(), milli_second, flag);
 		}
 		inline void wake(void) noexcept {
 			WakeConditionVariable(&_condition_variable);

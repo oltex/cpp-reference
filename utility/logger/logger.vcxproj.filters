@@ -5,13 +5,5 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="logger.h" />
-    <ClInclude Include="singleton.h">
-      <Filter>design-pattern</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Filter Include="design-pattern">
-      <UniqueIdentifier>{32a8a7c8-bd9b-4c1a-81e3-8539111d1223}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
 </Project>

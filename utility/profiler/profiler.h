@@ -1,9 +1,7 @@
 #pragma once
 #pragma comment (lib, "winmm")
-
-#include "unordered_map.h"
-#include "singleton.h"
-
+#include "../../data-structure/unordered-map/unordered_map.h"
+#include "../../design-pettern/singleton/singleton.h"
 #include <Windows.h>
 #include <fstream>
 #include <chrono>

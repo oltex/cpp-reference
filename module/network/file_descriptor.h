@@ -18,10 +18,10 @@ namespace network {
 		inline void zero(void) noexcept {
 			FD_ZERO(&_set);
 		}
-		inline void set(socket const& socket) noexcept {
+		inline void set(socket& socket) noexcept {
 			FD_SET(socket.data(), &_set);
 		}
-		inline auto is_set(socket const& socket) const noexcept -> int {
+		inline auto is_set(socket& socket) const noexcept -> int {
 			return FD_ISSET(socket.data(), &_set);
 		}
 	public:

@@ -76,7 +76,7 @@ namespace window {
 			return InvalidateRect(_hwnd, lpRect, bErase);
 		}
 	public:
-		inline auto data(void) const noexcept -> HWND {
+		inline auto data(void) noexcept -> HWND& {
 			return _hwnd;
 		}
 	protected:

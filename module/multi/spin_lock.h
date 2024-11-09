@@ -2,24 +2,26 @@
 #include <Windows.h>
 
 namespace multi {
-	class spin_lock final {
-	public:
-		inline explicit spin_lock(void) noexcept = default;
-		inline explicit spin_lock(spin_lock const& rhs) noexcept = delete;
-		inline explicit spin_lock(spin_lock&& rhs) noexcept = delete;
-		inline auto operator=(spin_lock const& rhs) noexcept -> spin_lock & = delete;
-		inline auto operator=(spin_lock&& rhs) noexcept -> spin_lock & = delete;
-		inline ~spin_lock(void) noexcept = default;
-	public:
-		inline void lock(void) noexcept {
-			while (1 == _InterlockedExchange(&_lock, 1))
-				while (1 == _lock)
-					YieldProcessor();
-		}
-		inline void unlock(void) noexcept {
-			_lock = 0;
-		}
-	public:
-		volatile long _lock = 0;
-	};
+	namespace lock {
+		class spin final {
+		public:
+			inline explicit spin(void) noexcept = default;
+			inline explicit spin(spin const& rhs) noexcept = delete;
+			inline explicit spin(spin&& rhs) noexcept = delete;
+			inline auto operator=(spin const& rhs) noexcept -> spin & = delete;
+			inline auto operator=(spin&& rhs) noexcept -> spin & = delete;
+			inline ~spin(void) noexcept = default;
+		public:
+			inline void lock(void) noexcept {
+				while (1 == _InterlockedExchange(&_lock, 1))
+					while (1 == _lock)
+						YieldProcessor();
+			}
+			inline void unlock(void) noexcept {
+				_lock = 0;
+			}
+		public:
+			volatile long _lock = 0;
+		};
+	}
 }
