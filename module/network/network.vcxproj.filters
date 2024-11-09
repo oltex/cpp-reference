@@ -7,27 +7,12 @@
     <ClInclude Include="network.h" />
     <ClInclude Include="socket.h" />
     <ClInclude Include="domain.h" />
-    <ClInclude Include="list.h">
-      <Filter>data-structure</Filter>
-    </ClInclude>
     <ClInclude Include="storage.h" />
-    <ClInclude Include="vector.h">
-      <Filter>data-structure</Filter>
-    </ClInclude>
-    <ClInclude Include="pair.h">
-      <Filter>data-structure</Filter>
-    </ClInclude>
     <ClInclude Include="rpc.h">
       <Filter>temp\rpc</Filter>
     </ClInclude>
     <ClInclude Include="test.h">
       <Filter>temp\rpc</Filter>
-    </ClInclude>
-    <ClInclude Include="ring_buffer.h">
-      <Filter>data-structure</Filter>
-    </ClInclude>
-    <ClInclude Include="serialize_buffer.h">
-      <Filter>data-structure</Filter>
     </ClInclude>
     <ClInclude Include="server.h">
       <Filter>temp\server</Filter>
@@ -52,9 +37,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="data-structure">
-      <UniqueIdentifier>{9921b480-9573-4fcc-801f-31e7a4059392}</UniqueIdentifier>
-    </Filter>
     <Filter Include="select">
       <UniqueIdentifier>{b2adf759-0d47-455c-85c2-56ff88e6de14}</UniqueIdentifier>
     </Filter>

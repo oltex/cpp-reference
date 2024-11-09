@@ -110,24 +110,24 @@ namespace data_structure {
 		}
 		template<typename... argument>
 		inline auto emplace(iterator const& iter, argument&&... arg) noexcept -> iterator {
-			auto current = static_cast<node*>(malloc(sizeof(node)));
+			auto cur = static_cast<node*>(malloc(sizeof(node)));
 			if constexpr (std::is_class_v<type>) {
 				if constexpr (std::is_constructible_v<type, argument...>)
-					new(&current->_value) type(std::forward<argument>(arg)...);
+					new(&cur->_value) type(std::forward<argument>(arg)...);
 			}
 			else if constexpr (1 == sizeof...(arg))
 #pragma warning(suppress: 6011)
-				current->_value = type(std::forward<argument>(arg)...);
+				cur->_value = type(std::forward<argument>(arg)...);
 			auto next = iter._node;
 			auto prev = next->_prev;
 
-			prev->_next = current;
-			current->_prev = prev;
-			current->_next = next;
-			next->_prev = current;
+			prev->_next = cur;
+			cur->_prev = prev;
+			cur->_next = next;
+			next->_prev = cur;
 
 			++_size;
-			return iterator(current);
+			return iterator(cur);
 		}
 		inline void pop_front(void) noexcept {
 			erase(begin());
@@ -136,24 +136,24 @@ namespace data_structure {
 			erase(--end());
 		}
 		inline auto erase(iterator const& iter) noexcept -> iterator {
-			auto current = iter._node;
-			auto prev = current->_prev;
-			auto next = current->_next;
+			auto cur = iter._node;
+			auto prev = cur->_prev;
+			auto next = cur->_next;
 
 			prev->_next = next;
 			next->_prev = prev;
 
 			if constexpr (!std::is_trivially_destructible_v<type>)
-				current->_value.~type();
-			free(current);
+				cur->_value.~type();
+			free(cur);
 			--_size;
-			return iterator(next);
+			return iterator{ next };
 		}
 	public:
-		inline auto front(void) const noexcept -> type& {
+		inline auto front(void) const noexcept ->type& {
 			return _head->_next->_value;
 		}
-		inline auto back(void) const noexcept -> type& {
+		inline auto back(void) const noexcept ->type& {
 			return _head->_prev->_value;
 		}
 		inline auto begin(void) const noexcept -> iterator {
@@ -173,12 +173,12 @@ namespace data_structure {
 			rhs._size = size;
 		}
 		inline void clear(void) noexcept {
-			auto current = _head->_next;
-			for (auto next = current; current != _head; current = next) {
+			auto cur = _head->_next;
+			for (auto next = cur; cur != _head; cur = next) {
 				next = next->_next;
 				if constexpr (!std::is_trivially_destructible_v<type>)
-					current->_value.~type();
-				free(current);
+					cur->_value.~type();
+				free(cur);
 			}
 			_head->_next = _head->_prev = _head;
 			_size = 0;

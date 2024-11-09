@@ -8,17 +8,17 @@ namespace data_structure {
 		using size_type = unsigned int;
 	public:
 		inline explicit ring_buffer(void) noexcept {
-			_array = static_cast<byte*>(malloc(1025));
-			_capacity = 1025;
+			_array = static_cast<byte*>(malloc(1024));
+			_capacity = 1024;
 		};
 		inline explicit ring_buffer(ring_buffer const& rhs) noexcept
-			: _capacity(rhs._capacity), _front(rhs._front), _rear(rhs._rear) {
+			: _size(rhs._size), _capacity(rhs._capacity), _front(rhs._front), _rear(rhs._rear) {
 			_array = static_cast<byte*>(malloc(_capacity));
 #pragma warning(suppress: 6387)
 			memcpy(_array, rhs._array, _capacity);
 		}
 		inline explicit ring_buffer(ring_buffer&& rhs) noexcept
-			: _capacity(rhs._capacity), _front(rhs._front), _rear(rhs._rear), _array(rhs._array) {
+			: _size(rhs._size), _capacity(rhs._capacity), _front(rhs._front), _rear(rhs._rear), _array(rhs._array) {
 			rhs.clear();
 			rhs._capacity = 0;
 			rhs._array = nullptr;
@@ -45,10 +45,10 @@ namespace data_structure {
 			}
 
 			_rear = (_rear + length) % _capacity;
+			_size += length;
 			return length;
 		};
 		inline auto peek(byte* const buffer, size_type length) const noexcept -> size_type {
-			size_type _size = size();
 			if (_size < length)
 				length = _size;
 
@@ -63,19 +63,17 @@ namespace data_structure {
 			return length;
 		};
 		inline void pop(size_type length) noexcept {
-			size_type _size = size();
 			if (_size < length)
 				length = _size;
 			_front = (_front + length) % _capacity;
+			_size -= length;
 		}
 	public:
 		inline auto data(void) noexcept -> byte* {
 			return _array;
 		}
-		inline void reserve(size_type capacity) noexcept {
-			capacity += 1;
-			size_type _size = size();
-			if (_size < capacity) {
+		inline void reserve(size_type const capacity) noexcept {
+			if (_size <= capacity) {
 				byte* array_ = static_cast<byte*>(malloc(capacity));
 
 				size_type once = _capacity - _front;
@@ -95,31 +93,30 @@ namespace data_structure {
 			}
 		}
 		inline void clear(void) noexcept {
-			_front = _rear = 0;
+			_size = _front = _rear = 0;
 		}
 	public:
 		inline auto size(void) const noexcept -> size_type {
-			return (_rear + _capacity - _front) % _capacity;
-		}
-		inline auto remain(void) const noexcept -> size_type {
-			return (_front + _capacity - (_rear + 1)) % _capacity;
+			return _size;
 		}
 		inline auto capacity(void) const noexcept -> size_type {
 			return _capacity;
 		}
+		inline auto remain(void) const noexcept -> size_type {
+			return _capacity - _size;
+		}
 		inline bool empty(void) const noexcept {
-			return _front == _rear;
+			return 0 == _size;
 		}
 	public:
 		inline auto at_once_push(void) const noexcept -> size_type {
-			size_type rema = remain();
+			size_type rema = remain();	//수정 : front와 read의 위치를 먼저 비교를했으면 계산을 줄일 수 있다
 			size_type once = _capacity - _rear;
 			if (rema < once)
 				return rema;
 			return once;
 		}
 		inline auto at_once_peek(void) const noexcept -> size_type {
-			size_type _size = size();
 			size_type once = _capacity - _front;
 			if (_size < once)
 				return _size;
@@ -127,9 +124,11 @@ namespace data_structure {
 		}
 		inline void move_front(size_type const length) noexcept {
 			_front = (_front + length) % _capacity;
+			_size -= length;
 		}
 		inline void move_rear(size_type const length) noexcept {
 			_rear = (_rear + length) % _capacity;
+			_size += length;
 		}
 		inline auto get_front(void) const noexcept -> size_type {
 			return _front;
@@ -138,6 +137,7 @@ namespace data_structure {
 			return _rear;
 		}
 	private:
+		size_type _size = 0;
 		size_type _capacity = 0;
 		size_type _front = 0, _rear = 0;
 		byte* _array = nullptr;

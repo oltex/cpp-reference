@@ -4,7 +4,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ring_buffer_old.h" />
     <ClInclude Include="ring_buffer.h" />
-    <ClInclude Include="ring_buffer_v2.h" />
   </ItemGroup>
 </Project>

@@ -86,11 +86,11 @@ namespace data_structure {
 		}
 	public:
 		inline void reserve(size_type const capacity) noexcept {
-			if (_size <= capacity) {
-				_capacity = capacity;
+			if (_size > capacity)
+				return;
+			_capacity = capacity;
 #pragma warning(suppress: 6308)
-				_array = static_cast<type*>(realloc(_array, sizeof(type) * _capacity));
-			}
+			_array = static_cast<type*>(realloc(_array, sizeof(type) * _capacity));
 		}
 		//not implemented
 		inline void resize(size_type const size) noexcept {

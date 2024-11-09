@@ -1,0 +1,121 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="library">
+      <UniqueIdentifier>{d240f779-921f-486f-9249-c883e26ae52d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="library\data-structure">
+      <UniqueIdentifier>{a60ee27e-b877-4ec6-9b55-16f960728802}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="library\window">
+      <UniqueIdentifier>{5d6b3872-cee2-49c6-be1e-69d14d03c523}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="client">
+      <UniqueIdentifier>{f2486558-8e6e-4049-8273-d9975489a25c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="client\a_star">
+      <UniqueIdentifier>{9e2ba77a-ad2d-494b-b0a4-9902967bcb8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="library\design-pattern">
+      <UniqueIdentifier>{97facd25-a5cd-47dd-84cf-6b98e23ef3f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="library\tool">
+      <UniqueIdentifier>{3dff41d9-2089-4c3b-b1e9-51c473745fad}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="library\data-structure\bit_grid.h">
+      <Filter>library\data-structure</Filter>
+    </ClInclude>
+    <ClInclude Include="library\data-structure\hash.h">
+      <Filter>library\data-structure</Filter>
+    </ClInclude>
+    <ClInclude Include="library\data-structure\list.h">
+      <Filter>library\data-structure</Filter>
+    </ClInclude>
+    <ClInclude Include="library\data-structure\pair.h">
+      <Filter>library\data-structure</Filter>
+    </ClInclude>
+    <ClInclude Include="library\data-structure\unordered_map.h">
+      <Filter>library\data-structure</Filter>
+    </ClInclude>
+    <ClInclude Include="library\data-structure\vector.h">
+      <Filter>library\data-structure</Filter>
+    </ClInclude>
+    <ClInclude Include="library\window\bitmap.h">
+      <Filter>library\window</Filter>
+    </ClInclude>
+    <ClInclude Include="library\window\brush.h">
+      <Filter>library\window</Filter>
+    </ClInclude>
+    <ClInclude Include="library\window\cls.h">
+      <Filter>library\window</Filter>
+    </ClInclude>
+    <ClInclude Include="library\window\cursor.h">
+      <Filter>library\window</Filter>
+    </ClInclude>
+    <ClInclude Include="library\window\device_context.h">
+      <Filter>library\window</Filter>
+    </ClInclude>
+    <ClInclude Include="library\window\icon.h">
+      <Filter>library\window</Filter>
+    </ClInclude>
+    <ClInclude Include="library\window\instance.h">
+      <Filter>library\window</Filter>
+    </ClInclude>
+    <ClInclude Include="library\window\object.h">
+      <Filter>library\window</Filter>
+    </ClInclude>
+    <ClInclude Include="library\window\pen.h">
+      <Filter>library\window</Filter>
+    </ClInclude>
+    <ClInclude Include="library\window\sct.h">
+      <Filter>library\window</Filter>
+    </ClInclude>
+    <ClInclude Include="library\window\window.h">
+      <Filter>library\window</Filter>
+    </ClInclude>
+    <ClInclude Include="a-star\coordinate.h">
+      <Filter>client\a_star</Filter>
+    </ClInclude>
+    <ClInclude Include="a-star\grid.h">
+      <Filter>client\a_star</Filter>
+    </ClInclude>
+    <ClInclude Include="a-star\path.h">
+      <Filter>client\a_star</Filter>
+    </ClInclude>
+    <ClInclude Include="camera.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="tile.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="client.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="library\design-pattern\singleton.h">
+      <Filter>library\design-pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="library\data-structure\shared_pointer.h">
+      <Filter>library\data-structure</Filter>
+    </ClInclude>
+    <ClInclude Include="test.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="library\window\font.h">
+      <Filter>library\window</Filter>
+    </ClInclude>
+    <ClInclude Include="library\window\timer.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="library\data-structure\weak_pointer.h">
+      <Filter>library\data-structure</Filter>
+    </ClInclude>
+    <ClInclude Include="recode.h">
+      <Filter>client</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

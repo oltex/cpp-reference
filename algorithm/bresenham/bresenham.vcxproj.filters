@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="bresenham.h" />
+    <ClInclude Include="list.h">
+      <Filter>data-structure</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="data-structure">
+      <UniqueIdentifier>{25bfbf6b-1cc5-4b3f-97dc-bddd8b9d083c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
