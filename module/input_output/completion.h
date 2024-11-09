@@ -1,5 +1,6 @@
 #pragma once
 #include "../kernel/object.h"
+#include "../../data-structure/tuple/tuple.h"
 #include <Windows.h>
 
 namespace input_output {
@@ -26,7 +27,7 @@ namespace input_output {
 			DWORD byte;
 			ULONG_PTR key;
 			OVERLAPPED* overlapped;
-			auto result = GetQueuedCompletionStatus(_handle, &byte, &key, &overlapped, milli_second);
+			bool result = GetQueuedCompletionStatus(_handle, &byte, &key, &overlapped, milli_second);
 		}
 		inline void post_queue_state(unsigned long byte, uintptr_t key, OVERLAPPED* overlapped) noexcept {
 			PostQueuedCompletionStatus(_handle, byte, key, overlapped);
