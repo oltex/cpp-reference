@@ -10,6 +10,7 @@ int main(void) noexcept {
 
 	input_output::completion com(0);
 	auto [result, byte, key, overlapped] = com.get_queue_state(0);
+	auto [result2, byte2, key2, overlapped2] = com.get_queue_state_tuple(0);
 
 	return 0;
 }

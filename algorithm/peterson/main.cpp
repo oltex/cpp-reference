@@ -1,4 +1,4 @@
-#include "../../module/multi/spin_lock.h"
+#include "../../module/multi/spin.h"
 #include "peterson.h"
 
 #include <thread>
