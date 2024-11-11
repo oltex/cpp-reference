@@ -20,7 +20,7 @@ namespace input_output {
 		inline void set_event(multi::event& event) noexcept {
 			_overlapped.hEvent = event.data();
 		}
-		inline auto get_result(HANDLE handle, unsigned long* byte, bool wait) noexcept -> bool {
+		inline auto get_result(HANDLE handle, unsigned long* byte, bool const wait) noexcept -> bool {
 			return GetOverlappedResult(handle, &_overlapped, byte, wait);
 		}
 		inline bool has_completed(void) const noexcept {
