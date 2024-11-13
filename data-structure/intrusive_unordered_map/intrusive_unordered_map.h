@@ -1,31 +1,32 @@
 #pragma once
-#include "pair.h"
+#include "../pair/pair.h"
 #include "../hash/hash.h"
 
-#include "../list/list.h"
+#include "../intrusive-list/intrusive_list.h"
 #include "../vector/vector.h"
 
 namespace data_structure {
-	template<typename key_type, typename type, class hash = hash<key_type>>
-	class unordered_map final {
+	template<typename key_type, typename type, size_t index, class hash = hash<key_type>>
+	class intrusive_unordered_map final {
 	private:
 		using size_type = unsigned int;
+		using node = intrusive_list_hook<index>;
 		using pair = pair<key_type, type>;
 	public:
-		using iterator = typename list<pair>::iterator;
+		using iterator = typename intrusive_list<pair, index>::iterator;
 	public:
-		inline explicit unordered_map(void) noexcept {
+		inline explicit intrusive_unordered_map(void) noexcept {
 			rehash(_count);
 		}
 		//not implemented
-		inline explicit unordered_map(unordered_map const& rhs) noexcept;
+		inline explicit intrusive_unordered_map(intrusive_unordered_map const& rhs) noexcept;
 		//not implemented
-		inline explicit unordered_map(unordered_map&& rhs) noexcept;
+		inline explicit intrusive_unordered_map(intrusive_unordered_map&& rhs) noexcept;
 		//not implemented
-		inline auto operator=(unordered_map const& rhs) noexcept -> unordered_map&;
+		inline auto operator=(intrusive_unordered_map const& rhs) noexcept -> intrusive_unordered_map&;
 		//not implemented
-		inline auto operator=(unordered_map&& rhs) noexcept -> unordered_map&;
-		inline ~unordered_map(void) noexcept = default;
+		inline auto operator=(intrusive_unordered_map&& rhs) noexcept -> intrusive_unordered_map&;
+		inline ~intrusive_unordered_map(void) noexcept = default;
 	public:
 		template<typename universal>
 		inline void insert(key_type const& key, universal&& value) const noexcept {
@@ -41,14 +42,14 @@ namespace data_structure {
 			auto& first = _vector[index << 1];
 			auto& last = _vector[(index << 1) + 1];
 
-			auto result = _list.emplace(first, key, std::forward<argument>(arg)...);
+			auto res = _list.emplace(first, key, std::forward<argument>(arg)...);
 			if (first == _list.end())
-				last = result;
-			first = result;
+				last = res;
+			first = res;
 
 			if (1.f <= load_factor())
 				rehash(_count < 512 ? _count * 8 : _count + 1);
-			return result;
+			return res;
 		}
 		inline void erase(key_type const& key) noexcept {
 			auto iter = find(key);
@@ -153,7 +154,7 @@ namespace data_structure {
 		}
 	private:
 		vector<iterator> _vector;
-		list<pair> _list;
+		intrusive_list<pair, index> _list;
 		size_type _count = 8;
 		inline static hash const _hash;
 	};
