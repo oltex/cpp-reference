@@ -42,11 +42,11 @@ namespace network {
 		inline auto bind(storage& stor) const noexcept -> int {
 			int result = ::bind(_socket, reinterpret_cast<sockaddr*>(&stor.data()), stor.get_length());
 			if (SOCKET_ERROR == result) {
-				//switch (GetLastError()) {
-				//	//WSAEADDRINUSE
-				//default:
-				//	__debugbreak();
-				//}
+				switch (GetLastError()) {
+				case WSAEADDRINUSE:
+				default:
+					__debugbreak();
+				}
 			}
 			return result;
 		}
@@ -55,10 +55,11 @@ namespace network {
 				backlog = SOMAXCONN_HINT(backlog);
 			int result = ::listen(_socket, backlog);
 			if (SOCKET_ERROR == result) {
-				//switch (GetLastError()) {
-				//default:
-				//	__debugbreak();
-				//}
+				switch (GetLastError()) {
+				case WSAEINVAL:
+				default:
+					__debugbreak();
+				}
 			}
 			return result;
 		}
@@ -70,6 +71,7 @@ namespace network {
 				switch (GetLastError()) {
 				case WSAEWOULDBLOCK:
 					break;
+				case WSAEINVAL:
 				default:
 					__debugbreak();
 				}
