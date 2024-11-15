@@ -20,8 +20,10 @@ namespace data_structure {
 			rhs._head = nullptr;
 		};
 		inline auto operator=(object_pool const&) noexcept = delete;
-		//not implemented
-		inline auto operator=(object_pool&& rhs) noexcept;
+		inline auto operator=(object_pool&& rhs) noexcept {
+			_head = rhs._head;
+			rhs._head = nullptr;
+		}
 		inline ~object_pool(void) noexcept {
 			while (nullptr != _head) {
 #pragma warning(suppress: 6001)
