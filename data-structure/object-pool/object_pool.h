@@ -28,7 +28,8 @@ namespace data_structure {
 			while (nullptr != _head) {
 #pragma warning(suppress: 6001)
 				node* next = _head->_next;
-				_head->_value.~type();
+				if constexpr (!std::is_trivially_destructible_v<type>)
+					_head->_value.~type();
 				free(_head);
 				_head = next;
 			}

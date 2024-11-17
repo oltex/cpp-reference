@@ -72,6 +72,7 @@ namespace network {
 				case WSAEWOULDBLOCK:
 					break;
 				case WSAEINVAL:
+				case WSAENOTSOCK:
 				default:
 					__debugbreak();
 				}
