@@ -27,6 +27,10 @@ namespace input_output {
 			return HasOverlappedIoCompleted(&_overlapped);
 		}
 	public:
+		inline void clear(void) noexcept {
+			memset(&_overlapped, 0, sizeof(_OVERLAPPED));
+		}
+	public:
 		inline auto data(void) noexcept -> _OVERLAPPED& {
 			return _overlapped;
 		}

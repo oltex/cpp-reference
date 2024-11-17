@@ -9,19 +9,19 @@
     <ClInclude Include="domain.h" />
     <ClInclude Include="storage.h" />
     <ClInclude Include="rpc.h">
-      <Filter>temp\rpc</Filter>
+      <Filter>select\temp\rpc</Filter>
     </ClInclude>
     <ClInclude Include="test.h">
-      <Filter>temp\rpc</Filter>
+      <Filter>select\temp\rpc</Filter>
     </ClInclude>
     <ClInclude Include="server.h">
-      <Filter>temp\server</Filter>
+      <Filter>select\temp\server</Filter>
     </ClInclude>
     <ClInclude Include="session.h">
-      <Filter>temp\server</Filter>
+      <Filter>select\temp\server</Filter>
     </ClInclude>
     <ClInclude Include="server_v2.h">
-      <Filter>temp\server</Filter>
+      <Filter>select\temp\server</Filter>
     </ClInclude>
     <ClInclude Include="file_descriptor.h">
       <Filter>select</Filter>
@@ -40,19 +40,19 @@
     <Filter Include="select">
       <UniqueIdentifier>{b2adf759-0d47-455c-85c2-56ff88e6de14}</UniqueIdentifier>
     </Filter>
-    <Filter Include="temp">
+    <Filter Include="select\temp">
       <UniqueIdentifier>{21f35bef-943e-4203-8769-e3b006c13068}</UniqueIdentifier>
     </Filter>
-    <Filter Include="temp\server">
+    <Filter Include="select\temp\server">
       <UniqueIdentifier>{7cddaa94-4ba8-4b00-9b1a-01cf0dab3a58}</UniqueIdentifier>
     </Filter>
-    <Filter Include="temp\rpc">
+    <Filter Include="select\temp\rpc">
       <UniqueIdentifier>{07816cbe-b499-4ade-8f34-1efb93fa54aa}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="rpc.py">
-      <Filter>temp\rpc</Filter>
+      <Filter>select\temp\rpc</Filter>
     </None>
   </ItemGroup>
 </Project>
