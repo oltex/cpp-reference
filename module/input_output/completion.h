@@ -1,5 +1,6 @@
 #pragma once
 #include "../kernel/object.h"
+#include "../network/socket.h"
 #include "../../data-structure/tuple/tuple.h"
 #include <Windows.h>
 
@@ -20,8 +21,8 @@ namespace input_output {
 		}
 		inline virtual ~completion(void) noexcept override = default;
 	public:
-		inline void connect_port(HANDLE handle, ULONG_PTR key) noexcept {
-			CreateIoCompletionPort(handle, _handle, key, 0);
+		inline void connect_port(network::socket& socket, ULONG_PTR key) noexcept {
+			CreateIoCompletionPort(reinterpret_cast<HANDLE>(socket.data()), _handle, key, 0);
 		}
 		struct get_queue_state_result final {
 			bool _result;
