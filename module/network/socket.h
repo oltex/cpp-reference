@@ -2,6 +2,7 @@
 #pragma comment(lib,"ws2_32.lib")
 #include "storage.h"
 #include "../../data-structure/pair/pair.h"
+#include "../input_output/overlapped.h"
 #include <WinSock2.h>
 #include <intrin.h>
 
@@ -72,6 +73,7 @@ namespace network {
 				case WSAEWOULDBLOCK:
 					break;
 				case WSAEINVAL:
+				case WSAENOTSOCK:
 				default:
 					__debugbreak();
 				}
@@ -124,15 +126,30 @@ namespace network {
 			auto& addr = reinterpret_cast<sockaddr&>(stor.data());
 			return ::sendto(_socket, buffer, length, flag, &addr, sizeof(sockaddr_in));
 		}
-		inline auto wsa_send(WSABUF* buffer, unsigned long count, unsigned long* byte, unsigned long flag, _OVERLAPPED* overlapped, LPWSAOVERLAPPED_COMPLETION_ROUTINE completion_roution) noexcept -> int {
-			int result = WSASend(_socket, buffer, count, byte, flag, overlapped, completion_roution);
+		inline auto wsa_send(WSABUF* buffer, unsigned long count, unsigned long* byte, unsigned long flag) noexcept -> int {
+			int result = WSASend(_socket, buffer, count, byte, flag, nullptr, nullptr);
+			if (SOCKET_ERROR == result) {
+				switch (GetLastError()) {
+				case WSAECONNRESET:
+				case WSAECONNABORTED:
+					close();
+					break;
+				case WSAENOTSOCK:
+				default:
+					__debugbreak();
+				}
+			}
+			return result;
+		}
+		inline auto wsa_send(WSABUF* buffer, unsigned long count, unsigned long flag, input_output::overlapped& overlapped) noexcept -> int {
+			int result = WSASend(_socket, buffer, count, nullptr, flag, &overlapped.data(), nullptr);
 			if (SOCKET_ERROR == result) {
 				switch (GetLastError()) {
 				case WSA_IO_PENDING:
 					break;
 				case WSAECONNRESET:
 				case WSAECONNABORTED:
-					close();
+				case WSAENOTSOCK:
 					break;
 				default:
 					__debugbreak();
@@ -163,12 +180,10 @@ namespace network {
 			auto& addr = reinterpret_cast<sockaddr&>(stor.data());
 			return ::recvfrom(_socket, buffer, length, flag, &addr, &from_length);
 		}
-		inline auto wsa_receive(WSABUF* buffer, unsigned long count, unsigned long* byte, unsigned long* flag, _OVERLAPPED* overlapped, LPWSAOVERLAPPED_COMPLETION_ROUTINE completion_roution) noexcept -> int {
-			int result = WSARecv(_socket, buffer, count, byte, flag, overlapped, completion_roution);
+		inline auto wsa_receive(WSABUF* buffer, unsigned long count, unsigned long* byte, unsigned long* flag) noexcept -> int {
+			int result = WSARecv(_socket, buffer, count, byte, flag, nullptr, nullptr);
 			if (SOCKET_ERROR == result) {
 				switch (GetLastError()) {
-				case WSA_IO_PENDING:
-					break;
 				case WSAECONNRESET:
 				case WSAECONNABORTED:
 					close();
@@ -180,8 +195,24 @@ namespace network {
 			}
 			return result;
 		}
-		inline bool wsa_get_overlapped_result(_OVERLAPPED* overlapped, unsigned long* transfer, bool const wait, unsigned long* flag) noexcept {
-			return WSAGetOverlappedResult(_socket, overlapped, transfer, wait, flag);
+		inline auto wsa_receive(WSABUF* buffer, unsigned long count, unsigned long* flag, input_output::overlapped& overlapped) noexcept -> int {
+			int result = WSARecv(_socket, buffer, count, nullptr, flag, &overlapped.data(), nullptr);
+			if (SOCKET_ERROR == result) {
+				switch (GetLastError()) {
+				case WSA_IO_PENDING:
+					break;
+				case WSAECONNRESET:
+				case WSAECONNABORTED:
+				case WSAENOTSOCK:
+					break;
+				default:
+					__debugbreak();
+				}
+			}
+			return result;
+		}
+		inline bool wsa_get_overlapped_result(input_output::overlapped& overlapped, unsigned long* transfer, bool const wait, unsigned long* flag) noexcept {
+			return WSAGetOverlappedResult(_socket, &overlapped.data(), transfer, wait, flag);
 		}
 	public:
 		inline void set_tcp_nodelay(int const enable) const noexcept {

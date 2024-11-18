@@ -1,33 +1,19 @@
-// a_and_b_class.h
-#pragma once
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
 
-#include <array>
-#include <utility>
+#include "../my_class.h"
+#include "memory_pool.h"
 
-// B 클래스 정의
-template<int number>
-class B {
-    // B 클래스의 내용이 여기에 들어갈 수 있습니다.
-};
-
-// A 클래스 정의
-template<int number>
-class A {
-public:
-    A() {
-        static_assert(number >= 0 && number <= 10, "number must be between 0 and 10");
-        createBObjects(std::make_index_sequence<number + 1>{});
-    }
-
-private:
-    template<std::size_t... Is>
-    void createBObjects(std::index_sequence<Is...>) {
-        ((b_objects[Is] = B<Is>{}), ...);
-    }
-
-    std::array<B<0>, 11> b_objects;  // 최대 11개의 B 객체를 저장할 수 있는 배열
-};
 
 int main(void) noexcept {
-    A<3> a;
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
+	data_structure::memory_pool<my_class> memory_pool;
+	my_class& myclass = memory_pool.allocate(1);
+	memory_pool.deallocate(myclass);
+	my_class& myclass2 = memory_pool.allocate(2);
+	memory_pool.deallocate(myclass2);
+
+	return 0;
 }

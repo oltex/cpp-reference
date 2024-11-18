@@ -30,7 +30,9 @@ public:
 			return true;
 		return false;
 	}
-	inline ~my_class(void) noexcept = default;
+	inline ~my_class(void) noexcept {
+		std::cout << "¼Ò¸êÀÚ" << std::endl;
+	};
 private:
 	int _value;
 };
