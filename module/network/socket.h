@@ -1,10 +1,10 @@
 #pragma once
 #pragma comment(lib,"ws2_32.lib")
+#include <WinSock2.h>
+#include <intrin.h>
 #include "storage.h"
 #include "../../data-structure/pair/pair.h"
 #include "../input_output/overlapped.h"
-#include <WinSock2.h>
-#include <intrin.h>
 
 namespace network {
 	class socket final {
@@ -12,8 +12,8 @@ namespace network {
 		inline explicit socket(void) noexcept
 			: _socket(INVALID_SOCKET) {
 		}
-		inline explicit socket(ADDRESS_FAMILY const af, int const type, int const protocol) noexcept {
-			_socket = ::socket(af, type, protocol);
+		inline explicit socket(ADDRESS_FAMILY const af, int const type, int const protocol) noexcept
+			: _socket(::socket(af, type, protocol)) {
 			if (INVALID_SOCKET == _socket) {
 				//switch (GetLastError()) {
 				//default:
@@ -40,6 +40,15 @@ namespace network {
 			closesocket(_socket);
 		}
 	public:
+		inline void create(ADDRESS_FAMILY const af, int const type, int const protocol) noexcept {
+			_socket = ::socket(af, type, protocol);
+			if (INVALID_SOCKET == _socket) {
+				//switch (GetLastError()) {
+				//default:
+				//	__debugbreak();
+				//}
+			}
+		}
 		inline auto bind(storage& stor) const noexcept -> int {
 			int result = ::bind(_socket, reinterpret_cast<sockaddr*>(&stor.data()), stor.get_length());
 			if (SOCKET_ERROR == result) {

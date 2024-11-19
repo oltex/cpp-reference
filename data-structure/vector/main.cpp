@@ -9,44 +9,53 @@
 #include <algorithm>
 #include <vector>
 
-class A {
-public:
-	A(int a, int b) 
-		: _a(a), _b(b){
+//union my_str
+//{
+//	unsigned long long tt;
+//	struct {
+//		unsigned long long _index : 16;
+//		unsigned long long _id : 48;
+//	} _t;
+//};
+struct my_str2 {
+	inline my_str2(unsigned long long a) noexcept {
+		_index = 0xffff;
+		_id = 0xffff;
+		std::cout << "гоюл" << std::endl;
 	}
-public:
-	int _a;
-	int _b;
+	unsigned long long _index : 16;
+	unsigned long long _id : 48;
+};
+struct my_str3 {
+	unsigned long long _index : 16;
+	unsigned long long _id : 48;
+};
+
+
+struct sss {
+	int a;
 };
 
 int main(void) noexcept {
+	//unsigned long long a{};
+	//int result = ((my_str2*)&a)->_id;
+	//int result = ((my_str3)a)._id;
+	//my_str a;
+	//a._id = 0x1122334455667788;
+	//a._index = 0x9999;
+
+	//int a = 10;
+	//int b = (static_cast<my_str2>(a))._index;
+
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
 	std::vector<my_class> std_vector;
-	data_structure::vector<int> vector;
-	vector.emplace_back(1);
+	data_structure::vector<my_class> vector;
 	vector.emplace_back(2);
-	vector.emplace_back(3);
-	vector.emplace_back(4);
-	vector.emplace_back(5);
-	vector.emplace_back(6);
-	//vector.clear();
-
-	for (auto& iter : vector)
-		std::cout << iter << std::endl;
-
-
-	//for (auto iter = vector.begin(); iter != vector.end(); ++iter)
-	//	(*iter)++;
-
-	//std::cout << vector.front()._a << std::endl;
-	//std::cout << vector.back()._a << std::endl;
-	//std::cout << "===========" << std::endl;
-
-	for (auto iter = vector.begin(); iter != vector.end(); ++iter)
-		std::cout << (*iter) << std::endl;
-
-	//vectortor<Class> vector2{ vector };
-	//std::find(vector.begin(), vector.end(), 10);
+	vector.emplace_back(2);
+	vector.emplace_back(2);
+	vector.emplace_back(2);
+	vector.emplace_back(2);
+	vector.resize(3, 1);
 	return 0;
 }

@@ -53,7 +53,7 @@ namespace data_structure {
 		inline auto allocate(size_type const size) noexcept {
 			size_type byte = sizeof(type) * size;
 			if (byte > 4096)
-				return static_cast<type*>(malloc(byte));
+				return reinterpret_cast<type*>(malloc(byte));
 
 			unsigned long bit;
 			_BitScanReverse64(&bit, byte);
@@ -208,11 +208,11 @@ namespace data_structure {
 		inline void reserve(size_type capacity) noexcept {
 			capacity -= _capacity;
 
-			byte* arr = static_cast<byte*>(_aligned_malloc(_size * capacity, _align));
+			byte* arr = reinterpret_cast<byte*>(_aligned_malloc(_size * capacity, _align));
 			reinterpret_cast<node*>(arr + _byte * (capacity - 1))->_next = _head;
 			_head = reinterpret_cast<node*>(arr);
 
-			block* cur = static_cast<block*>(malloc(sizeof(block)));
+			block* cur = reinterpret_cast<block*>(malloc(sizeof(block)));
 			cur->_array = reinterpret_cast<node*>(arr);
 			cur->_next = _block;
 			_block = cur;

@@ -58,7 +58,7 @@ namespace data_structure {
 		};
 	public:
 		inline explicit list(void) noexcept {
-			_head = static_cast<node*>(calloc(1, sizeof(node*) * 2));
+			_head = reinterpret_cast<node*>(calloc(1, sizeof(node*) * 2));
 #pragma warning(suppress: 6011)
 			_head->_next = _head->_prev = _head;
 		}
@@ -110,7 +110,7 @@ namespace data_structure {
 		}
 		template<typename... argument>
 		inline auto emplace(iterator const& iter, argument&&... arg) noexcept -> iterator {
-			auto current = static_cast<node*>(malloc(sizeof(node)));
+			auto current = reinterpret_cast<node*>(malloc(sizeof(node)));
 			if constexpr (std::is_class_v<type>) {
 				if constexpr (std::is_constructible_v<type, argument...>)
 					new(&current->_value) type(std::forward<argument>(arg)...);

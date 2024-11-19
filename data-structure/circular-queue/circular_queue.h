@@ -71,7 +71,7 @@ namespace data_structure {
 		}
 		inline void reserve(size_type const& capacity) noexcept {
 			if (_size <= capacity) {
-				type* array_ = static_cast<type*>(malloc(sizeof(type) * capacity));
+				type* array_ = reinterpret_cast<type*>(malloc(sizeof(type) * capacity));
 
 				//size_type copy = (_capacity - _front);
 				//copy = _size < copy ? _size : copy;

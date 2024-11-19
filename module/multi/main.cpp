@@ -18,7 +18,7 @@
 #include <conio.h>
 
 
-void function(int& a) noexcept {
+void function(int a) noexcept {
 	__debugbreak();
 	std::cout << "b" << std::endl;
 }

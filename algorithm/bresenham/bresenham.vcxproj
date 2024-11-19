@@ -145,7 +145,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bresenham.h" />
-    <ClInclude Include="list.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

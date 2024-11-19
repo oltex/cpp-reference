@@ -11,7 +11,7 @@ namespace multi {
 	private:
 		template <typename tuple, size_t... index>
 		inline static unsigned int __stdcall invoke(void* arg) noexcept {
-			const std::unique_ptr<tuple> value(static_cast<tuple*>(arg));
+			const std::unique_ptr<tuple> value(reinterpret_cast<tuple*>(arg));
 			tuple& tuple = *value.get();
 			std::invoke(std::move(std::get<index>(tuple))...);
 			return 0;

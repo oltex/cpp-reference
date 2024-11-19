@@ -49,7 +49,7 @@ namespace data_structure {
 					capacity++;
 				reserve(capacity);
 			}
-			type* element = _array + _size;
+			type* element = _array + _size++;
 			//if constexpr (!std::is_trivially_constructible_v<type, argument...>)
 			//	int a = 10;
 			if constexpr (std::is_class_v<type>) {
@@ -59,7 +59,6 @@ namespace data_structure {
 			else if constexpr (1 == sizeof...(arg))
 #pragma warning(suppress: 6011)
 				* element = type(std::forward<argument>(arg)...);
-			++_size;
 			return *element;
 		}
 		inline void pop_back(void) noexcept {
@@ -91,11 +90,35 @@ namespace data_structure {
 			if (_size <= capacity) {
 				_capacity = capacity;
 #pragma warning(suppress: 6308)
-				_array = static_cast<type*>(realloc(_array, sizeof(type) * _capacity));
+				_array = reinterpret_cast<type*>(realloc(_array, sizeof(type) * _capacity));
 			}
 		}
-		//not implemented
-		inline void resize(size_type const size) noexcept {
+		template<typename... argument>
+		inline void resize(size_type const size, argument&&... arg) noexcept {
+			if (size > _capacity)
+				reserve(size);
+
+			if (size > _size) {
+				if constexpr (std::is_class_v<type>) {
+					if constexpr (std::is_constructible_v<type, argument...>)
+						while (size != _size)
+							new(_array + _size++) type(std::forward<argument>(arg)...);
+					else
+						_size = size;
+				}
+				else if constexpr (1 == sizeof...(arg))
+					while (size != _size)
+						_array[_size++] = type(std::forward<argument>(arg)...);
+				else
+					_size = size;
+			}
+			else {
+				if constexpr (!std::is_trivially_destructible_v<type>)
+					while (size != _size)
+						pop_back();
+				else
+					_size = size;
+			}
 		}
 		inline void swap(vector& rhs) noexcept {
 			size_type size = _size;
@@ -123,10 +146,9 @@ namespace data_structure {
 			}
 		}
 		inline void clear(void) noexcept {
-			if constexpr (!std::is_trivially_destructible_v<type>) {
+			if constexpr (!std::is_trivially_destructible_v<type>)
 				while (0 != _size)
 					pop_back();
-			}
 			else
 				_size = 0;
 		}

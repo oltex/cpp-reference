@@ -37,7 +37,7 @@ namespace data_structure {
 	public:
 		template<typename... argument>
 		inline auto allocate(argument&&... arg) noexcept -> type& {
-			auto current = static_cast<node*>(malloc(sizeof(node)));
+			auto current = reinterpret_cast<node*>(malloc(sizeof(node)));
 #ifdef debug
 			current->_next = reinterpret_cast<node*>(this);
 #endif

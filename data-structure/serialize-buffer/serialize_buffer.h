@@ -19,7 +19,7 @@ namespace data_structure {
 			, _fail(rhs._fail)
 #endif
 		{
-			_array = static_cast<byte*>(malloc(_capacity));
+			_array = reinterpret_cast<byte*>(malloc(_capacity));
 #pragma warning(suppress: 6387)
 			memcpy(_array, rhs._array, _rear);
 		}
@@ -136,7 +136,7 @@ namespace data_structure {
 			if (_rear <= capacity) {
 				_capacity = capacity;
 #pragma warning(suppress: 6308)
-				_array = static_cast<byte*>(realloc(_array, _capacity));
+				_array = reinterpret_cast<byte*>(realloc(_array, _capacity));
 			}
 		}
 		inline void clear(void) noexcept {

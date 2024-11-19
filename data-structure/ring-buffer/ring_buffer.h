@@ -8,12 +8,12 @@ namespace data_structure {
 		using size_type = unsigned int;
 	public:
 		inline explicit ring_buffer(void) noexcept {
-			_array = static_cast<byte*>(malloc(1025));
+			_array = reinterpret_cast<byte*>(malloc(1025));
 			_capacity = 1025;
 		};
 		inline explicit ring_buffer(ring_buffer const& rhs) noexcept
 			: _capacity(rhs._capacity), _front(rhs._front), _rear(rhs._rear) {
-			_array = static_cast<byte*>(malloc(_capacity));
+			_array = reinterpret_cast<byte*>(malloc(_capacity));
 #pragma warning(suppress: 6387)
 			memcpy(_array, rhs._array, _capacity);
 		}
@@ -76,7 +76,7 @@ namespace data_structure {
 			capacity += 1;
 			size_type _size = size();
 			if (_size < capacity) {
-				byte* array_ = static_cast<byte*>(malloc(capacity));
+				byte* array_ = reinterpret_cast<byte*>(malloc(capacity));
 
 				size_type once = _capacity - _front;
 				if (_size <= once)

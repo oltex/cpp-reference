@@ -10,7 +10,7 @@ int main(void) noexcept {
 	data_structure::serialize_buffer serialize_buffer;
 
 	{
-		std::wstring str = L"hello";
+		std::string str = "hello";
 		serialize_buffer << 0xaaaaaaaa << true << 'c';
 		serialize_buffer.push<unsigned char>(str);
 		//if (!serialize_buffer)
@@ -20,7 +20,7 @@ int main(void) noexcept {
 		unsigned int a;
 		bool b;
 		char c;
-		std::wstring str;
+		std::string str;
 
 		serialize_buffer >> a >> b >> c;
 		serialize_buffer.pop<unsigned char>(str);

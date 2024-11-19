@@ -1,12 +1,14 @@
 #pragma once
-#include "../kernel/object.h"
+#pragma comment(lib,"ws2_32.lib")
+#include <WinSock2.h>
 #include "../network/socket.h"
+#include "../kernel/object.h"
 #include "../../data-structure/tuple/tuple.h"
-#include <Windows.h>
 
 namespace input_output {
 	class completion final : public kernel::object {
 	public:
+		inline explicit completion(void) noexcept = default;
 		inline explicit completion(unsigned long const concurrent_thread) noexcept
 			: object(CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, concurrent_thread)) {
 		};
@@ -21,6 +23,9 @@ namespace input_output {
 		}
 		inline virtual ~completion(void) noexcept override = default;
 	public:
+		inline void create_port(unsigned long const concurrent_thread) noexcept {
+			_handle = CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, concurrent_thread);
+		}
 		inline void connect_port(network::socket& socket, ULONG_PTR key) noexcept {
 			CreateIoCompletionPort(reinterpret_cast<HANDLE>(socket.data()), _handle, key, 0);
 		}

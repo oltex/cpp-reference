@@ -85,7 +85,7 @@ namespace data_structure {
 		};
 	public:
 		inline explicit map(void) noexcept {
-			_root = _nil = static_cast<node*>(calloc(1, (sizeof(node*) * 3) + sizeof(color) + sizeof(bool)));
+			_root = _nil = reinterpret_cast<node*>(calloc(1, (sizeof(node*) * 3) + sizeof(color) + sizeof(bool)));
 			_nil->_nil = true;
 			_nil->_parent = _nil->_left = _nil->_right = _nil;
 			_nil->_color = black;
@@ -125,7 +125,7 @@ namespace data_structure {
 				}
 			}
 			node* child = *cur;
-			node* ret = *cur = static_cast<node*>(malloc(sizeof(node)));
+			node* ret = *cur = reinterpret_cast<node*>(malloc(sizeof(node)));
 			ret->_parent = parent;
 			ret->_left = ret->_right = child;
 			ret->_color = red;
