@@ -1,5 +1,5 @@
 #pragma once
-#include "list.h"
+#include "../../data-structure/list/list.h"
 
 class bresenham final {
 private:
