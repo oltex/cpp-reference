@@ -9,14 +9,14 @@
 #include <algorithm>
 #include <vector>
 
-//union my_str
-//{
-//	unsigned long long tt;
-//	struct {
-//		unsigned long long _index : 16;
-//		unsigned long long _id : 48;
-//	} _t;
-//};
+union my_str
+{
+	unsigned long long tt;
+	struct {
+		unsigned long long _index : 16;
+		unsigned long long _id : 48;
+	} _t;
+};
 struct my_str2 {
 	inline my_str2(unsigned long long a) noexcept {
 		_index = 0xffff;
@@ -37,15 +37,10 @@ struct sss {
 };
 
 int main(void) noexcept {
-	//unsigned long long a{};
-	//int result = ((my_str2*)&a)->_id;
-	//int result = ((my_str3)a)._id;
-	//my_str a;
-	//a._id = 0x1122334455667788;
-	//a._index = 0x9999;
+	unsigned long long a{};
 
-	//int a = 10;
-	//int b = (static_cast<my_str2>(a))._index;
+	int result = ((my_str2*)&a)->_id;
+	//int result2 = ((my_str3)a)._id;
 
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
