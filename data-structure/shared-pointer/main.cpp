@@ -10,6 +10,7 @@ int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	std::shared_ptr<my_class> std_shard_ptr;
 	std::shared_ptr<my_class> std_shard_ptr2(std_shard_ptr);
+
 	std_shard_ptr = nullptr;
 	//std_shard_ptr.use_count();
 	data_structure::shared_pointer<my_class> shared_pointer;

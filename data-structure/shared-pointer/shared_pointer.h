@@ -100,13 +100,17 @@ namespace data_structure {
 		inline auto get(void) const noexcept -> type* {
 			return _value;
 		}
+		//template <class type>
+		//friend inline bool operator==(shared_pointer<type> const& value, nullptr_t) noexcept {
+		//	return value._value == nullptr;
+		//}
 	private:
 		type* _value;
 		reference* _reference;
 	};
 
 	template <class type>
-	inline bool operator==(const shared_pointer<type>& value, nullptr_t) noexcept {
+	inline bool operator==(shared_pointer<type> const& value, nullptr_t) noexcept {
 		return value.get() == nullptr;
 	}
 }
