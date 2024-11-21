@@ -17,7 +17,12 @@ int main(void) noexcept {
 	//queue.emplace(4);
 	//queue.emplace(5);
 	//queue.emplace(6);
+	//queue.emplace(7);
+	//queue.emplace(8);
+	//queue.emplace(9);
 	//queue.pop();
+	//queue.emplace(10);
+	//queue.emplace(11);
 	//queue.pop();
 	//queue.pop();
 	//queue.pop();

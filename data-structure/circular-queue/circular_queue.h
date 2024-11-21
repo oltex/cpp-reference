@@ -8,17 +8,32 @@ namespace data_structure {
 	private:
 		using size_type = unsigned int;
 	public:
-		inline explicit circular_queue(void) noexcept = default;
-		//not implemented
-		inline explicit circular_queue(circular_queue const& rhs) noexcept;
-		//not implemented
-		inline explicit circular_queue(circular_queue&& rhs) noexcept;
+		inline explicit circular_queue(void) noexcept {
+			_array = static_cast<type*>(malloc(sizeof(type) * 11));
+			_capacity = 11;
+		};
+		inline explicit circular_queue(circular_queue const& rhs) noexcept
+			: _capacity(rhs._capacity), _front(rhs._front), _rear(rhs._rear) {
+			_array = reinterpret_cast<type*>(malloc(sizeof(type) * _capacity));
+#pragma warning(suppress: 6387)
+			memcpy(_array, rhs._array, _capacity);
+		};
+		inline explicit circular_queue(circular_queue&& rhs) noexcept
+			: _capacity(rhs._capacity), _front(rhs._front), _rear(rhs._rear), _array(rhs._array) {
+			rhs.clear();
+			rhs._capacity = 0;
+			rhs._array = nullptr;
+		};
 		//not implemented
 		inline auto operator=(circular_queue const& rhs) noexcept -> circular_queue&;
 		//not implemented
 		inline auto operator=(circular_queue&& rhs) noexcept -> circular_queue&;
 		inline ~circular_queue(void) noexcept {
-			clear();
+			if constexpr (!std::is_trivially_destructible_v<type>)
+				while (!empty()) {
+					_array[_front].~type();
+					_front = (_front + 1) % _capacity;
+				}
 			free(_array);
 		}
 	public:
@@ -28,22 +43,23 @@ namespace data_structure {
 		};
 		template<typename... argument>
 		inline auto emplace(argument&&... arg) noexcept -> type& {
-			if (_size >= _capacity) {
-				size_type capacity = static_cast<size_type>(_capacity * 1.5f);
-				if (_size >= capacity)
-					++capacity;
-				reserve(capacity);
-			}
+			//if (full()) {
+			//	size_type capacity = static_cast<size_type>(_capacity * 1.5f);
+			//	if (size() + 1 >= capacity)
+			//		++capacity;
+			//	reserve(capacity);
+			//}
 			type* element = _array + _rear;
-			if constexpr (std::is_class_v<type>) {
-				if constexpr (std::is_constructible_v<type, argument...>)
-					new(element) type(std::forward<argument>(arg)...);
-			}
-			else if constexpr (1 == sizeof...(arg))
+			if (!full()) {
+				if constexpr (std::is_class_v<type>) {
+					if constexpr (std::is_constructible_v<type, argument...>)
+						new(element) type(std::forward<argument>(arg)...);
+				}
+				else if constexpr (1 == sizeof...(arg))
 #pragma warning(suppress: 6011)
-				* element = type(std::forward<argument>(arg)...);
-			_rear = (_rear + 1) % _capacity;
-			++_size;
+					* element = type(std::forward<argument>(arg)...);
+				_rear = (_rear + 1) % _capacity;
+			}
 			return *element;
 		}
 		inline void pop(void) noexcept {
@@ -51,7 +67,6 @@ namespace data_structure {
 				if constexpr (!std::is_trivially_destructible_v<type>)
 					_array[_front].~type();
 				_front = (_front + 1) % _capacity;
-				--_size;
 			}
 		}
 	public:
@@ -60,23 +75,18 @@ namespace data_structure {
 		};
 	public:
 		inline void clear(void) noexcept {
-			if constexpr (!std::is_trivially_destructible_v<type>) {
-				while (0 != _size)
+			if constexpr (!std::is_trivially_destructible_v<type>)
+				while (!empty())
 					pop();
-			}
-			else {
+			else
 				_front = _rear;
-				_size = 0;
-			}
 		}
-		inline void reserve(size_type const& capacity) noexcept {
-			if (_size <= capacity) {
+		inline void reserve(size_type& capacity) noexcept {
+			capacity += 1;
+			size_type _size = size();
+			if (_size < capacity) {
 				type* array_ = reinterpret_cast<type*>(malloc(sizeof(type) * capacity));
 
-				//size_type copy = (_capacity - _front);
-				//copy = _size < copy ? _size : copy;
-				//memcpy(array_, _array + _front, sizeof(type) * copy);
-				//memcpy(array_ + copy, _array, sizeof(type) * (_size - copy));
 				size_type once = _capacity - _front;
 				if (_size <= once)
 					memcpy(array_, _array + _front, sizeof(type) * _size);
@@ -94,16 +104,21 @@ namespace data_structure {
 		}
 	public:
 		inline auto size(void) const noexcept -> size_type {
-			return _size;
+			return (_rear + _capacity - _front) % _capacity;
+		}
+		inline auto remain(void) const noexcept -> size_type {
+			return (_front + _capacity - (_rear + 1)) % _capacity;
 		}
 		inline auto capacity(void) const noexcept -> size_type {
 			return _capacity;
 		}
 		inline bool empty(void) const noexcept {
-			return 0 == _size;
+			return _front == _rear;
+		}
+		inline bool full(void) const noexcept {
+			return (_rear + 1) % _capacity == _front;
 		}
 	private:
-		size_type _size = 0;
 		size_type _capacity = 0;
 		size_type _front = 0, _rear = 0;
 		type* _array = nullptr;
