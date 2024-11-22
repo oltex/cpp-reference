@@ -58,7 +58,7 @@ namespace data_structure {
 		};
 		inline ~intrusive_shared_pointer(void) noexcept {
 			if (nullptr != _node && 0 == --_node->_reference._use) {
-				static_cast<type*>(_node)->temp();
+				destructor(static_cast<type*>(_node));
 				//if constexpr (!std::is_trivially_destructible_v<type>) 
 				//	_value->~type(); // 소멸자 호출
 				//free(_value); // 벨류는 지움

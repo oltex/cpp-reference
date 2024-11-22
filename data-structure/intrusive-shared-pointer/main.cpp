@@ -38,39 +38,20 @@ public:
 	//friend void intrusive_ptr_add_ref(MyObject* p) {
 	//	++p->ref_count;
 	//}
-
 	//friend void intrusive_ptr_release(MyObject* p) {
-	//	if (--p->ref_count == 0) {
-	//		delete p;
-	//	}
+	//	if(--p->ref_count);
+	//    delete();
 	//}
-	void temp(void) noexcept {
-		int a = 10;
+	friend inline static void destructor(my_class* rhs) {
+		delete rhs;
 	}
 public:
 	int _value;
 };
 
-class test {
-public:
-	void func(void) noexcept {
-
-	}
-	friend void func2(test * t) noexcept {
-	}
-private:
-	int value = 10;
-};
-
 int main(void) noexcept {
 	my_class* myclass = new my_class(1);
 	data_structure::intrusive_shared_pointer<my_class, 1> shared_pointer(myclass);
-
-
-
-	auto myclass2 = shared_pointer.data();
-	shared_pointer.reset();
-	delete myclass2;
 
 	return 0;
 }

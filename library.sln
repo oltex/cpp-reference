@@ -97,6 +97,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "intrusive-list", "data-stru
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "intrusive-shared-pointer", "data-structure\intrusive-shared-pointer\intrusive-shared-pointer.vcxproj", "{5136CB5A-6079-4299-8136-B3AA832A8EFC}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "reference-count", "data-structure\reference-count\reference-count.vcxproj", "{FB394098-4034-4E3E-A7B8-E7699C068968}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -433,6 +435,14 @@ Global
 		{5136CB5A-6079-4299-8136-B3AA832A8EFC}.Release|x64.Build.0 = Release|x64
 		{5136CB5A-6079-4299-8136-B3AA832A8EFC}.Release|x86.ActiveCfg = Release|Win32
 		{5136CB5A-6079-4299-8136-B3AA832A8EFC}.Release|x86.Build.0 = Release|Win32
+		{FB394098-4034-4E3E-A7B8-E7699C068968}.Debug|x64.ActiveCfg = Debug|x64
+		{FB394098-4034-4E3E-A7B8-E7699C068968}.Debug|x64.Build.0 = Debug|x64
+		{FB394098-4034-4E3E-A7B8-E7699C068968}.Debug|x86.ActiveCfg = Debug|Win32
+		{FB394098-4034-4E3E-A7B8-E7699C068968}.Debug|x86.Build.0 = Debug|Win32
+		{FB394098-4034-4E3E-A7B8-E7699C068968}.Release|x64.ActiveCfg = Release|x64
+		{FB394098-4034-4E3E-A7B8-E7699C068968}.Release|x64.Build.0 = Release|x64
+		{FB394098-4034-4E3E-A7B8-E7699C068968}.Release|x86.ActiveCfg = Release|Win32
+		{FB394098-4034-4E3E-A7B8-E7699C068968}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -480,6 +490,7 @@ Global
 		{FC39D5CA-C8DE-45EC-B43E-08EDA8572D63} = {23F97BB6-7B24-4705-B39C-9108B0A99B03}
 		{56A5BC51-8A3C-404E-8AC3-E7B44CF89368} = {AA0C0EF0-7364-4B4D-9ADD-E2B0CD2679BF}
 		{5136CB5A-6079-4299-8136-B3AA832A8EFC} = {AA0C0EF0-7364-4B4D-9ADD-E2B0CD2679BF}
+		{FB394098-4034-4E3E-A7B8-E7699C068968} = {638B906C-1177-49D6-86F1-FCF8F6BED5FE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C69985D6-20AB-4E9A-AD82-08BFBE490891}
