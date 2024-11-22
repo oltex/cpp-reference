@@ -7,6 +7,53 @@ namespace data_structure {
 	class circular_queue final {
 	private:
 		using size_type = unsigned int;
+		class iterator final {
+		public:
+			inline explicit iterator(type* const array_, size_type current, size_type capacity) noexcept
+				: _array(array_), _current(current), _capacity(capacity) {
+			}
+			inline iterator(iterator const& rhs) noexcept
+				: _array(rhs._array), _current(rhs._current), _capacity(rhs._capacity) {
+			}
+			inline auto operator=(iterator const& rhs) noexcept -> iterator& {
+				_array = rhs._array;
+				_current = rhs._current;
+				_capacity = rhs._capacity;
+				return *this;
+			}
+		public:
+			inline auto operator*(void) const noexcept -> type& {
+				return _array[_current];
+			}
+			inline auto operator++(void) noexcept -> iterator& {
+				_current = (_current + 1) % _capacity;
+				return *this;
+			}
+			inline auto operator++(int) noexcept -> iterator {
+				iterator iter(*this);
+				_current = (_current + 1) % _capacity;
+				return iter;
+			}
+			inline auto operator--(void) noexcept -> iterator& {
+				_front = (_front + 1) % _capacity;
+				return *this;
+			}
+			inline auto operator--(int) noexcept -> iterator {
+				iterator iter(*this);
+				_front = (_front + 1) % _capacity;
+				return iter;
+			}
+			inline bool operator==(iterator const& rhs) const noexcept {
+				return _current == rhs._current;
+			}
+			inline bool operator!=(iterator const& rhs) const noexcept {
+				return _current != rhs._current;
+			}
+		public:
+			size_type _capacity = 0;
+			size_type _current = 0;
+			type* _array;
+		};
 	public:
 		inline explicit circular_queue(void) noexcept {
 			_array = static_cast<type*>(malloc(sizeof(type) * 11));
@@ -73,6 +120,12 @@ namespace data_structure {
 		inline auto top(void) const noexcept -> type& {
 			return _array[_front];
 		};
+		inline auto begin(void) noexcept -> iterator {
+			return iterator(_array, _front, _capacity);
+		}
+		inline auto end(void) noexcept -> iterator {
+			return iterator(_array, _rear, _capacity);
+		}
 	public:
 		inline void clear(void) noexcept {
 			if constexpr (!std::is_trivially_destructible_v<type>)
