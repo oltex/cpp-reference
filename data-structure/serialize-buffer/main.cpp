@@ -4,11 +4,13 @@
 
 #include "serialize_buffer.h"
 #include <intrin.h>
+#include <string_view>
+
+#include <iostream>
 
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	data_structure::serialize_buffer serialize_buffer;
-
 	{
 		std::string str = "hello";
 		serialize_buffer << 0xaaaaaaaa << true << 'c';
