@@ -86,7 +86,7 @@ namespace data_structure {
 			_front += sizeof(type);
 			return *this;
 		}
-		inline void pop(byte* const buffer, size_type const length) noexcept {
+		inline void peek(byte* const buffer, size_type const length) noexcept {
 #ifdef debug
 			if (_front + length > _rear) {
 				_fail = true;
@@ -94,33 +94,41 @@ namespace data_structure {
 			}
 #endif
 			memcpy(buffer, _array + _front, length);
+		}
+		template<string_size type>
+		inline void peek(std::string& value) noexcept {
+			type length;
+			peek(reinterpret_cast<byte*>(&length), sizeof(type));
+#ifdef debug
+			if (_front + sizeof(type) + length > _rear) {
+				_fail = true;
+				return;
+			}
+#endif
+			value.assign(reinterpret_cast<char*>(_array + _front + sizeof(type)), length);
+		}
+		template<string_size type>
+		inline void peek(std::wstring& value) noexcept {
+			type length;
+			peek(reinterpret_cast<byte*>(&length), sizeof(type));
+#ifdef debug
+			if (_front + sizeof(type) + length > _rear) {
+				_fail = true;
+				return;
+			}
+#endif
+			value.assign(reinterpret_cast<wchar_t*>(_array + _front + sizeof(type)), length);
+		}
+		inline void pop(size_type const length) noexcept {
 			_front += length;
 		}
 		template<string_size type>
-		inline void pop(std::string& value) noexcept {
-			type length;
-			operator>>(length);
-#ifdef debug
-			if (_front + length > _rear) {
-				_fail = true;
-				return;
-			}
-#endif
-			value.assign(reinterpret_cast<char*>(_array + _front), length);
-			_front += sizeof(std::string::value_type) * length;
+		inline void pop(std::string const& value) noexcept {
+			_front += sizeof(type) + sizeof(std::string::value_type) * value.size();
 		}
 		template<string_size type>
-		inline void pop(std::wstring& value) noexcept {
-			type length;
-			operator>>(length);
-#ifdef debug
-			if (_front + length > _rear) {
-				_fail = true;
-				return;
-			}
-#endif
-			value.assign(reinterpret_cast<wchar_t*>(_array + _front), length);
-			_front += sizeof(std::wstring::value_type) * length;
+		inline void pop(std::wstring const& value) noexcept {
+			_front += sizeof(type) + sizeof(std::wstring::value_type) * value.size();
 		}
 	public:
 #ifdef debug

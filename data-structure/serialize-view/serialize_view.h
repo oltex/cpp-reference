@@ -41,23 +41,31 @@ namespace data_structure {
 			_front += sizeof(type);
 			return *this;
 		}
-		inline void pop(byte* const buffer, size_type const length) noexcept {
-			memcpy(buffer, _array + _front, length);
-			_front += length;
+		inline void peek(byte* const buffer, size_type const length) noexcept {
+			memcpy(buffer, _array + _current, length);
 		}
 		template<string_size type>
-		inline void pop(std::string& value) noexcept {
+		inline void peek(std::string& value) noexcept {
 			type length;
-			operator>>(length);
-			value.assign(reinterpret_cast<char*>(_array + _front), length);
-			_front += sizeof(std::string::value_type) * length;
+			peek(reinterpret_cast<byte*>(&length), sizeof(type));
+			value.assign(reinterpret_cast<char*>(_array + _current + sizeof(type)), length);
 		}
 		template<string_size type>
-		inline void pop(std::wstring& value) noexcept {
+		inline void peek(std::wstring& value) noexcept {
 			type length;
-			operator>>(length);
-			value.assign(reinterpret_cast<wchar_t*>(_array + _front), length);
-			_front += sizeof(std::wstring::value_type) * length;
+			peek(reinterpret_cast<byte*>(&length), sizeof(type));
+			value.assign(reinterpret_cast<wchar_t*>(_array + _current + sizeof(type)), length);
+		}
+		inline void pop(size_type const length) noexcept {
+			_current += length;
+		}
+		template<string_size type>
+		inline void pop(std::string const& value) noexcept {
+			_current += sizeof(type) + sizeof(std::string::value_type) * value.size();
+		}
+		template<string_size type>
+		inline void pop(std::wstring const& value) noexcept {
+			_current += sizeof(type) + sizeof(std::wstring::value_type) * value.size();
 		}
 	public:
 		inline auto data(void) noexcept -> byte* {

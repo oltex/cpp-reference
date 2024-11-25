@@ -25,8 +25,11 @@ namespace data_structure {
 		inline explicit vector(vector const& rhs) noexcept
 			: vector(rhs.begin(), rhs.end()) {
 		}
-		inline explicit vector(vector&& rhs) noexcept {
-			swap(rhs);
+		inline explicit vector(vector&& rhs) noexcept
+			: _array(rhs._array), _size(rhs._size), _capacity(rhs._capacity) {
+			rhs._array = nullptr;
+			rhs._size = 0;
+			rhs._capacity = 0;
 		}
 		//not implemented
 		inline auto operator=(vector const& rhs) noexcept -> vector&;
