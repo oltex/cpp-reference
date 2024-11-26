@@ -12,6 +12,8 @@ int main(void) noexcept {
 	logger.output_console(true);
 	logger.output_file(true/*, L"test.txt"*/);
 
+	
+
 
 	logger.log(logger::level::info, "hellowjdfsalkadfslkfdsjladsfkjsdhfkjsdfhjkh");
 	logger.log(logger::level::info, "fkerokprepoktrweoptopiwerptiortripotwiopwrtepiow");
