@@ -28,19 +28,17 @@ public:
 	inline void log(level const level, std::string_view const value) noexcept {
 		if (0 != _output && level >= _level) {
 			constexpr char const* const lm[] = { "trace", "debug", "info", "Warning", "error", "fatal" };
-			auto now = std::chrono::system_clock::now();
-			std::time_t time = std::chrono::system_clock::to_time_t(now);
-			std::tm tm;
-			localtime_s(&tm, &time);
+			__time64_t time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+			std::tm tm; _localtime64_s(&tm, &time);
 
-			std::ostringstream oss;
-			oss << "[" << std::put_time(&tm, "%y/%m/%d %H:%M:%S") << "] [" << lm[static_cast<unsigned char>(level)] << "] " << value << "\n";
-			std::string result = oss.str();
+			std::ostringstream stream;
+			stream << "[" << std::put_time(&tm, "%y/%m/%d %H:%M:%S") << "] [" << lm[static_cast<unsigned char>(level)] << "] " << value << "\n";
+			std::string string = stream.str();
 
 			if (static_cast<unsigned char>(output::console) & _output)
-				std::cout << result;
+				std::cout << string;
 			if (static_cast<unsigned char>(output::file) & _output)
-				WriteFile(_file, result.c_str(), static_cast<unsigned long>(result.size()), NULL, NULL);
+				WriteFile(_file, string.c_str(), static_cast<unsigned long>(string.size()), NULL, NULL);
 		}
 	}
 public:
