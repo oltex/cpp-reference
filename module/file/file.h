@@ -23,7 +23,7 @@ public:
 		return ReadFile(_handle, buffer, length, nullptr, nullptr);
 	}
 	inline bool write(void const* const buffer, unsigned long const length) const noexcept {
-		return  WriteFile(_handle, buffer, length, nullptr, nullptr);
+		return WriteFile(_handle, buffer, length, nullptr, nullptr);
 	}
 public:
 	inline auto set_pointer(long const distance_to_move, unsigned long move_method) const noexcept -> unsigned long {
