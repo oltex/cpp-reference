@@ -10,20 +10,20 @@ int main(void) noexcept {
 
 	logger& logger = logger::instance();
 	logger.set_level(logger::level::info);
-	logger.set_output_console(true);
-	logger.set_output_file(true);
+	logger.set_output(logger::console | logger::file);
+	logger.set_column(4);
 
 	struct MyStruct {
 		int a = 1;
-		int b = 2;
+		int b = 0xffffffff;
 		int c = 3;
 	};
-	
+
 	MyStruct mystr;
 
-	logger.log(logger::output::console, logger::level::info, L"", L"bye : 0x%h", &mystr);
+	logger.log_print(logger::output::console, logger::level::info, L"", L"bye : %d", 10);
 
-
+	logger.log_memory(logger::output::console, logger::level::info, L"", L"data : ", (unsigned char*)&mystr, sizeof(MyStruct));
 
 
 

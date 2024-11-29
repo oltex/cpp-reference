@@ -36,8 +36,7 @@ private:
 	inline auto operator=(logger&& rhs) noexcept -> logger & = delete;
 	inline ~logger(void) noexcept = default;
 public:
-	template<typename... argument>
-	inline void log(flag output_, level const level_, std::wstring_view const key, wchar_t const* const format, ...) noexcept {
+	inline void log_print(flag const output_, level const level_, wchar_t const* const key, wchar_t const* const format, ...) noexcept {
 		if (0 != _output && level_ >= _level) {
 			constexpr wchar_t const* const lm[] = { L"trace", L"debug", L"info", L"Warning", L"error", L"fatal" };
 			__time64_t time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
@@ -45,55 +44,57 @@ public:
 			size_type index = _InterlockedIncrement(&_index);
 
 			wchar_t string[256];
-			int size = _snwprintf_s(string, 255, 255, L"[%d-%02d-%02d %02d:%02d:%02d / %s / %08d] ", tm.tm_year - 100, tm.tm_mon + 1, tm.tm_wday, tm.tm_hour, tm.tm_min, tm.tm_sec, lm[static_cast<unsigned char>(level_)], index);
+			int length = _snwprintf_s(string, 255, 255, L"[%d-%02d-%02d %02d:%02d:%02d / %s / %08d] ", tm.tm_year - 100, tm.tm_mon + 1, tm.tm_wday, tm.tm_hour, tm.tm_min, tm.tm_sec, lm[static_cast<unsigned char>(level_)], index);
 			va_list va_list_;
 			va_start(va_list_, format);
-			size += _vsnwprintf_s(string + size, 255 - size, 255 - size, format, va_list_);
+			length += _vsnwprintf_s(string + length, 255 - length, 255 - length, format, va_list_);
 			va_end(va_list_);
-			size += _snwprintf_s(string + size, 255 - size, 255 - size, L"\n");
+			length += _snwprintf_s(string + length, 255 - length, 255 - length, L"\n");
 
 			if (static_cast<unsigned char>(output::console) & output_)
 				wprintf(string);
 			if (static_cast<unsigned char>(output::file) & output_) {
-				auto& iter = _logged.find(key.data())->second;
+				auto& iter = _logged.find(key)->second;
 				iter._lock.enter();
 				HANDLE handle = CreateFileW(iter._path.data(), FILE_WRITE_DATA, FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_FLAG_WRITE_THROUGH, nullptr);
 				SetFilePointerEx(handle, LARGE_INTEGER{ 0 }, nullptr, FILE_END);
-				WriteFile(handle, string, static_cast<unsigned long>(size) * 2, nullptr, nullptr);
+				WriteFile(handle, string, static_cast<unsigned long>(length) * 2, nullptr, nullptr);
 				CloseHandle(handle);
 				iter._lock.leave();
 			}
 		}
 	}
+	inline void log_memory(flag const output_, level const level_, wchar_t const* const key, wchar_t const* const print, unsigned char* pointer, size_type size) noexcept {
+		if (0 != _output && level_ >= _level) {
+			constexpr wchar_t const* const lm[] = { L"trace", L"debug", L"info", L"Warning", L"error", L"fatal" };
+			__time64_t time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+			std::tm tm; _localtime64_s(&tm, &time);
+			size_type index = _InterlockedIncrement(&_index);
 
-	//template<typename... argument>
-//inline void test(argument&&... arg) noexcept {
-//	((reinterpret_cast<argument&>(_array[_rear]) = std::forward<argument>(arg), _rear += sizeof(argument)), ...);
-//}
+			wchar_t string[256];
+			int length = _snwprintf_s(string, 255, 255, L"[%d-%02d-%02d %02d:%02d:%02d / %s / %08d] ", tm.tm_year - 100, tm.tm_mon + 1, tm.tm_wday, tm.tm_hour, tm.tm_min, tm.tm_sec, lm[static_cast<unsigned char>(level_)], index);
+			length += _snwprintf_s(string + length, 255 - length, 255 - length, L"%s", print);
 
-//template<typename type>
-//inline auto push(std::string const& value) noexcept -> size_type {
-//	operator<<(static_cast<type>(value.size()));
-//	return push((unsigned char*)value.c_str(), int(sizeof(std::string::value_type) * value.size()));
-//}
+			for (int i = 0; i < size; i++) {
+				if (0 == i % _column)
+					length += _snwprintf_s(string + length, 255 - length, 255 - length, L"\n%p  ", pointer + i);
+				length += _snwprintf_s(string + length, 255 - length, 255 - length, L"%02x ", pointer[i]);
+			}
+			size += _snwprintf_s(string + length, 255 - length, 255 - length, L"\n");
 
-
-	//inline void log(level const level, std::string_view const value) noexcept {
-	//	if (0 != _output && level >= _level) {
-	//		constexpr char const* const lm[] = { "trace", "debug", "info", "Warning", "error", "fatal" };
-	//		__time64_t time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-	//		std::tm tm; _localtime64_s(&tm, &time);
-
-	//		std::ostringstream stream;
-	//		stream << "[" << std::put_time(&tm, "%y/%m/%d %H:%M:%S") << "] [" << lm[static_cast<unsigned char>(level)] << "] " << value << "\n";
-	//		std::string string = stream.str();
-
-	//		if (static_cast<unsigned char>(output::console) & _output)
-	//			std::cout << string;
-	//		if (static_cast<unsigned char>(output::file) & _output)
-	//			WriteFile(_file, string.c_str(), static_cast<unsigned long>(string.size()), NULL, NULL);
-	//	}
-	//}
+			if (static_cast<unsigned char>(output::console) & output_)
+				wprintf(string);
+			if (static_cast<unsigned char>(output::file) & output_) {
+				auto& iter = _logged.find(key)->second;
+				iter._lock.enter();
+				HANDLE handle = CreateFileW(iter._path.data(), FILE_WRITE_DATA, FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_FLAG_WRITE_THROUGH, nullptr);
+				SetFilePointerEx(handle, LARGE_INTEGER{ 0 }, nullptr, FILE_END);
+				WriteFile(handle, string, static_cast<unsigned long>(length) * 2, nullptr, nullptr);
+				CloseHandle(handle);
+				iter._lock.leave();
+			}
+		}
+	}
 public:
 	inline void set_level(level const level) noexcept {
 		_level = level;
@@ -101,25 +102,8 @@ public:
 	inline void set_output(flag const output) {
 		_output = output;
 	}
-	inline void set_output_console(bool const enable) noexcept {
-		switch (enable) {
-		case false:
-			_output &= ~static_cast<flag>(output::console);
-			break;
-		case true:
-			_output |= static_cast<flag>(output::console);
-			break;
-		}
-	}
-	inline void set_output_file(bool const enable) noexcept {
-		switch (enable) {
-		case false:
-			_output &= ~static_cast<flag>(output::file);
-			break;
-		case true:
-			_output |= static_cast<flag>(output::file);
-			break;
-		}
+	inline void set_column(size_type const column) noexcept {
+		_column = column;
 	}
 private:
 	inline void create_file(std::wstring_view key, std::wstring_view path) noexcept {
@@ -143,7 +127,9 @@ private:
 	flag _output = 0;
 	level _level = static_cast<level>(none);
 	std::unordered_map<std::wstring, logged> _logged;
+
 	volatile size_type _index = 0;
+	size_type _column = 4;
 };
 
 //TRACE
@@ -176,3 +162,45 @@ private:
 //
 // 가변인자 했을때 타입에 따른 오류가 있을 수 있어서
 // 편하게 string 쓰는법도 고려해보자
+
+
+
+
+//inline void log(level const level, std::string_view const value) noexcept {
+//	if (0 != _output && level >= _level) {
+//		constexpr char const* const lm[] = { "trace", "debug", "info", "Warning", "error", "fatal" };
+//		__time64_t time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+//		std::tm tm; _localtime64_s(&tm, &time);
+
+//		std::ostringstream stream;
+//		stream << "[" << std::put_time(&tm, "%y/%m/%d %H:%M:%S") << "] [" << lm[static_cast<unsigned char>(level)] << "] " << value << "\n";
+//		std::string string = stream.str();
+
+//		if (static_cast<unsigned char>(output::console) & _output)
+//			std::cout << string;
+//		if (static_cast<unsigned char>(output::file) & _output)
+//			WriteFile(_file, string.c_str(), static_cast<unsigned long>(string.size()), NULL, NULL);
+//	}
+//}
+
+
+//inline void set_output_console(bool const enable) noexcept {
+//	switch (enable) {
+//	case false:
+//		_output &= ~static_cast<flag>(output::console);
+//		break;
+//	case true:
+//		_output |= static_cast<flag>(output::console);
+//		break;
+//	}
+//}
+//inline void set_output_file(bool const enable) noexcept {
+//	switch (enable) {
+//	case false:
+//		_output &= ~static_cast<flag>(output::file);
+//		break;
+//	case true:
+//		_output |= static_cast<flag>(output::file);
+//		break;
+//	}
+//}
