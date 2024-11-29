@@ -13,8 +13,19 @@ int main(void) noexcept {
 	logger.set_output_console(true);
 	logger.set_output_file(true);
 
-	logger.log<logger::output::console | logger::output::file>(logger::level::info, L"key", L"hello : %d", 10);
-	logger.log<logger::output::console | logger::output::file>(logger::level::info, L"key", L"bye : %d", 10);
+	struct MyStruct {
+		int a = 1;
+		int b = 2;
+		int c = 3;
+	};
+	
+	MyStruct mystr;
+
+	logger.log(logger::output::console, logger::level::info, L"", L"bye : 0x%h", &mystr);
+
+
+
+
 
 
 	//logger.log(logger::level::info, "hellowjdfsalkadfslkfdsjladsfkjsdhfkjsdfhjkh");

@@ -8,7 +8,6 @@
 
 #include <iostream>
 #include <Windows.h>
-
 #include <unordered_map>
 
 class logger final : public design_pattern::singleton<logger> {
@@ -35,58 +34,50 @@ private:
 	inline explicit logger(logger&& rhs) noexcept = delete;
 	inline auto operator=(logger const& rhs) noexcept -> logger & = delete;
 	inline auto operator=(logger&& rhs) noexcept -> logger & = delete;
-	inline ~logger(void) noexcept {
-	};
+	inline ~logger(void) noexcept = default;
 public:
-	template<flag output_>
-		requires (0 == (static_cast<unsigned char>(output::file) & output_))
-	inline void log(level const level_, wchar_t const* const format, ...) noexcept {
+	template<typename... argument>
+	inline void log(flag output_, level const level_, std::wstring_view const key, wchar_t const* const format, ...) noexcept {
 		if (0 != _output && level_ >= _level) {
 			constexpr wchar_t const* const lm[] = { L"trace", L"debug", L"info", L"Warning", L"error", L"fatal" };
 			__time64_t time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 			std::tm tm; _localtime64_s(&tm, &time);
+			size_type index = _InterlockedIncrement(&_index);
 
 			wchar_t string[256];
-			int size = _snwprintf_s(string, 255, 255, L"%d/%d/%02d %d:%d:%02d [%s] ", tm.tm_year - 100, tm.tm_mon + 1, tm.tm_wday, tm.tm_hour, tm.tm_min, tm.tm_sec, lm[static_cast<unsigned char>(level_)]);
-			va_list va_list_;
-			va_start(va_list_, format);
-			size += _vsnwprintf_s(string + size, 255 - size, 255 - size, format, va_list_);
-			va_end(va_list_);
-
-			wprintf(string);
-		}
-	}
-	template<flag output_>
-		requires (0 != (static_cast<unsigned char>(output::file) & output_))
-	inline void log(level const level_, std::wstring const key, wchar_t const* const format, ...) noexcept {
-		if (0 != _output && level_ >= _level) {
-			constexpr wchar_t const* const lm[] = { L"trace", L"debug", L"info", L"Warning", L"error", L"fatal" };
-			__time64_t time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-			std::tm tm; _localtime64_s(&tm, &time);
-
-			wchar_t string[256];
-			int size = _snwprintf_s(string, 255, 255, L"%d/%d/%02d %d:%d:%02d [%s] ", tm.tm_year - 100, tm.tm_mon + 1, tm.tm_wday, tm.tm_hour, tm.tm_min, tm.tm_sec, lm[static_cast<unsigned char>(level_)]);
+			int size = _snwprintf_s(string, 255, 255, L"[%d-%02d-%02d %02d:%02d:%02d / %s / %08d] ", tm.tm_year - 100, tm.tm_mon + 1, tm.tm_wday, tm.tm_hour, tm.tm_min, tm.tm_sec, lm[static_cast<unsigned char>(level_)], index);
 			va_list va_list_;
 			va_start(va_list_, format);
 			size += _vsnwprintf_s(string + size, 255 - size, 255 - size, format, va_list_);
 			va_end(va_list_);
 			size += _snwprintf_s(string + size, 255 - size, 255 - size, L"\n");
 
-			if (static_cast<unsigned char>(output::console) & _output)
+			if (static_cast<unsigned char>(output::console) & output_)
 				wprintf(string);
-			if (static_cast<unsigned char>(output::file) & _output) {
-				auto& iter = _logged.find(key)->second;
+			if (static_cast<unsigned char>(output::file) & output_) {
+				auto& iter = _logged.find(key.data())->second;
 				iter._lock.enter();
 				HANDLE handle = CreateFileW(iter._path.data(), FILE_WRITE_DATA, FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_FLAG_WRITE_THROUGH, nullptr);
-				SetFilePointerEx(handle, LARGE_INTEGER{0}, nullptr, FILE_END);
+				SetFilePointerEx(handle, LARGE_INTEGER{ 0 }, nullptr, FILE_END);
 				WriteFile(handle, string, static_cast<unsigned long>(size) * 2, nullptr, nullptr);
 				CloseHandle(handle);
 				iter._lock.leave();
 			}
-
-
 		}
 	}
+
+	//template<typename... argument>
+//inline void test(argument&&... arg) noexcept {
+//	((reinterpret_cast<argument&>(_array[_rear]) = std::forward<argument>(arg), _rear += sizeof(argument)), ...);
+//}
+
+//template<typename type>
+//inline auto push(std::string const& value) noexcept -> size_type {
+//	operator<<(static_cast<type>(value.size()));
+//	return push((unsigned char*)value.c_str(), int(sizeof(std::string::value_type) * value.size()));
+//}
+
+
 	//inline void log(level const level, std::string_view const value) noexcept {
 	//	if (0 != _output && level >= _level) {
 	//		constexpr char const* const lm[] = { "trace", "debug", "info", "Warning", "error", "fatal" };
@@ -152,6 +143,7 @@ private:
 	flag _output = 0;
 	level _level = static_cast<level>(none);
 	std::unordered_map<std::wstring, logged> _logged;
+	volatile size_type _index = 0;
 };
 
 //TRACE
