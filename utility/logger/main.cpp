@@ -21,7 +21,7 @@ int main(void) noexcept {
 
 	MyStruct mystr;
 
-	logger.log_print(logger::output::console, logger::level::info, L"", L"bye : %d", 10);
+	logger.log_message(logger::output::console, logger::level::info, L"", L"bye : %d", 10);
 
 	logger.log_memory(logger::output::console, logger::level::info, L"", L"data : ", (unsigned char*)&mystr, sizeof(MyStruct));
 

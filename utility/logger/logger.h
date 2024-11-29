@@ -36,7 +36,7 @@ private:
 	inline auto operator=(logger&& rhs) noexcept -> logger & = delete;
 	inline ~logger(void) noexcept = default;
 public:
-	inline void log_print(flag const output_, level const level_, wchar_t const* const key, wchar_t const* const format, ...) noexcept {
+	inline void log_message(flag const output_, level const level_, wchar_t const* const key, wchar_t const* const format, ...) noexcept {
 		if (0 != _output && level_ >= _level) {
 			constexpr wchar_t const* const lm[] = { L"trace", L"debug", L"info", L"Warning", L"error", L"fatal" };
 			__time64_t time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());

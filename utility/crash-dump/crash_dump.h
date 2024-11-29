@@ -58,10 +58,4 @@ public:
 		}
 		return 0;
 	}
-	//inline static void invalid_parameter_handler(const wchar_t*, const wchar_t*, const wchar_t*, unsigned int, uintptr_t) noexcept {
-	//	__debugbreak();
-	//}
-	//inline static void purecall_handler(void) noexcept {
-	//	__debugbreak();
-	//}
 };
