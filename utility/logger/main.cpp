@@ -18,11 +18,9 @@ int main(void) noexcept {
 		int b = 0xffffffff;
 		int c = 3;
 	};
-
 	MyStruct mystr;
 
 	logger.log_message(logger::output::console, logger::level::info, L"", L"bye : %d", 10);
-
 	logger.log_memory(logger::output::console, logger::level::info, L"", L"data : ", (unsigned char*)&mystr, sizeof(MyStruct));
 
 
