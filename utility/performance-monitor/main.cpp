@@ -5,8 +5,11 @@ int main(void) noexcept {
 	performance_monitor& pm = performance_monitor::instance();
 	std::wcout << L"¾È³ç" << std::endl;
 
-	pm.add_counter(L"process_time", L"\\Processor(_Total)\\% Processor Time");
+	//pm.add_counter(L"process_time", L"\\Processor(_Total)\\% Processor Time");
+	pm.add_counter(L"process_time", L"Processor", L"Processor Time", L"_Total");
 	pm.collect_query();
+	//L"\\Processor(_Total)\\% Processor Time"
+
 
 	pm.test();
 }

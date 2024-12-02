@@ -19,10 +19,25 @@ private:
 	inline auto operator=(performance_monitor const& rhs) noexcept -> performance_monitor & = delete;
 	inline auto operator=(performance_monitor&& rhs) noexcept -> performance_monitor & = delete;
 	inline ~performance_monitor(void) noexcept {
-		//PdhRemoveCounter
 		PdhCloseQuery(&_qurey);
 	}
 public:
+	inline void add_counter(std::wstring_view const key, std::wstring_view const object, std::wstring_view const counter, std::wstring_view const instance) noexcept {
+		size_t size = sizeof(wchar_t) * (object.size() + counter.size() + instance.size() + 7);
+		wchar_t* path = reinterpret_cast<wchar_t*>(malloc(size));
+		swprintf_s(path, size, L"\\%s(%s)\\%% %s", object.data(), instance.data(), counter.data());
+		auto& iter = _counter.emplace(std::piecewise_construct, std::forward_as_tuple(key), std::forward_as_tuple()).first->second;
+		PdhAddCounterW(_qurey, path, NULL, &iter);
+		free(path);
+	}
+	inline void add_counter(std::wstring_view const key, std::wstring_view const object, std::wstring_view const counter) noexcept {
+		size_t size = sizeof(wchar_t) * (object.size() + counter.size() + 5);
+		wchar_t* path = reinterpret_cast<wchar_t*>(malloc(size));
+		swprintf_s(path, size, L"\\%s\\%% %s", object.data(), counter.data());
+		auto& iter = _counter.emplace(std::piecewise_construct, std::forward_as_tuple(key), std::forward_as_tuple()).first->second;
+		PdhAddCounterW(_qurey, path, NULL, &iter);
+		free(path);
+	}
 	inline void add_counter(std::wstring_view const key, wchar_t const* const path) noexcept {
 		auto& iter = _counter.emplace(std::piecewise_construct, std::forward_as_tuple(key), std::forward_as_tuple()).first->second;
 		PdhAddCounterW(_qurey, path, NULL, &iter);
@@ -41,6 +56,9 @@ public:
 		PDH_FMT_COUNTERVALUE counter_value;
 		PdhGetFormattedCounterValue(iter, format, nullptr, &counter_value);
 		return counter_value;
+	}
+	inline auto get_formatted_counter_array(void) noexcept {
+
 	}
 	inline void test(void) noexcept {
 		unsigned long object_size = 0;

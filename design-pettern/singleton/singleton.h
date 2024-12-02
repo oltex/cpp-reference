@@ -29,8 +29,8 @@ namespace design_pattern {
 		inline ~singleton(void) noexcept = default;
 	private:
 		inline explicit singleton(singleton const& rhs) noexcept = delete;
-		inline auto operator=(singleton const& rhs) noexcept -> singleton & = delete;
 		inline explicit singleton(singleton&& rhs) noexcept = delete;
+		inline auto operator=(singleton const& rhs) noexcept -> singleton & = delete;
 		inline auto operator=(singleton&& rhs) noexcept -> singleton & = delete;
 	public:
 		inline static auto instance(void) noexcept -> type& requires std::is_same<local_static<type>, trait>::value {
