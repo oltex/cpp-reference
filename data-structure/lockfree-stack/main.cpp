@@ -13,12 +13,8 @@ inline static unsigned int __stdcall func(void* arg) noexcept {
 }
 
 int main(void) noexcept {
-	//std::thread t1(func);
-	//std::thread t2(func);
-
-	HANDLE _handle = (HANDLE)_beginthreadex(nullptr, 0, func, nullptr, 0, 0);
-	HANDLE _handle2 = (HANDLE)_beginthreadex(nullptr, 0, func, nullptr, 0, 0);
-
+	HANDLE _handle0 = (HANDLE)_beginthreadex(nullptr, 0, func, nullptr, 0, 0);
+	HANDLE _handle1 = (HANDLE)_beginthreadex(nullptr, 0, func, nullptr, 0, 0);
 	Sleep(INFINITE);
 	return 0;
 }

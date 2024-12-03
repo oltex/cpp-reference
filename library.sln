@@ -107,6 +107,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "performance-monitor", "util
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lockfree-stack", "data-structure\lockfree-stack\lockfree-stack.vcxproj", "{D0841A3F-8EDC-418F-AFCF-60DB176EC104}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lockfree-stack", "algorithm\lockfree-stack\lockfree-stack.vcxproj", "{7152C95A-FCA0-4710-AB65-468765E4A6FD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -483,6 +485,14 @@ Global
 		{D0841A3F-8EDC-418F-AFCF-60DB176EC104}.Release|x64.Build.0 = Release|x64
 		{D0841A3F-8EDC-418F-AFCF-60DB176EC104}.Release|x86.ActiveCfg = Release|Win32
 		{D0841A3F-8EDC-418F-AFCF-60DB176EC104}.Release|x86.Build.0 = Release|Win32
+		{7152C95A-FCA0-4710-AB65-468765E4A6FD}.Debug|x64.ActiveCfg = Debug|x64
+		{7152C95A-FCA0-4710-AB65-468765E4A6FD}.Debug|x64.Build.0 = Debug|x64
+		{7152C95A-FCA0-4710-AB65-468765E4A6FD}.Debug|x86.ActiveCfg = Debug|Win32
+		{7152C95A-FCA0-4710-AB65-468765E4A6FD}.Debug|x86.Build.0 = Debug|Win32
+		{7152C95A-FCA0-4710-AB65-468765E4A6FD}.Release|x64.ActiveCfg = Release|x64
+		{7152C95A-FCA0-4710-AB65-468765E4A6FD}.Release|x64.Build.0 = Release|x64
+		{7152C95A-FCA0-4710-AB65-468765E4A6FD}.Release|x86.ActiveCfg = Release|Win32
+		{7152C95A-FCA0-4710-AB65-468765E4A6FD}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -535,6 +545,7 @@ Global
 		{DF915CC9-C27A-4021-9102-F2C7A8182DDC} = {A1116243-A419-4C1A-8BCB-D66ABA7E979C}
 		{B87BF4FA-193C-4CCF-BBCC-5D561AEBEABA} = {A1116243-A419-4C1A-8BCB-D66ABA7E979C}
 		{D0841A3F-8EDC-418F-AFCF-60DB176EC104} = {638B906C-1177-49D6-86F1-FCF8F6BED5FE}
+		{7152C95A-FCA0-4710-AB65-468765E4A6FD} = {88033A2C-B20C-4143-A6D8-0A943F34408E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C69985D6-20AB-4E9A-AD82-08BFBE490891}

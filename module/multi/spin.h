@@ -18,7 +18,8 @@ namespace multi {
 						YieldProcessor();
 			}
 			inline void unlock(void) noexcept {
-				_lock = 0;
+				_InterlockedExchange(&_lock, 0);
+				//_lock = 0;
 			}
 		public:
 			volatile long _lock = 0;
