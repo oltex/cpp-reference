@@ -6,7 +6,6 @@
   <ItemGroup>
     <ClInclude Include="lockfree_stack.h" />
     <ClInclude Include="logger.h" />
-    <ClInclude Include="lockfree_stack2.h" />
     <ClInclude Include="crash_dump.h" />
   </ItemGroup>
 </Project>
