@@ -142,9 +142,8 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="crash_dump.h" />
     <ClInclude Include="lockfree_stack.h" />
-    <ClInclude Include="logger.h" />
+    <ClInclude Include="lockfree_stack2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

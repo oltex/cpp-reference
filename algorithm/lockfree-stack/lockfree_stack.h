@@ -1,7 +1,6 @@
 #pragma once
 #include "../../module/multi/spin.h"
 #include "../../module/multi/wait_on_address_lock.h"
-#include "logger.h"
 #include <utility>
 #include <Windows.h>
 #include <intrin.h>
@@ -60,12 +59,12 @@ public:
 			node* head = (node*)_InterlockedCompareExchangePointer(reinterpret_cast<void* volatile*>(&_head), next, current);
 			if (current == head) {
 				{
-					auto order = _InterlockedIncrement(&_order);
-					_log[order]._thread_id = GetCurrentThreadId();
-					_log[order]._action = L"pop : if (current == head) true";
-					_log[order]._head = (void*)head;
-					_log[order]._next = (void*)next;
-					_log[order]._current = (void*)current;
+					//auto order = _InterlockedIncrement(&_order);
+					//_log[order]._thread_id = GetCurrentThreadId();
+					//_log[order]._action = L"pop : if (current == head) true";
+					//_log[order]._head = (void*)head;
+					//_log[order]._next = (void*)next;
+					//_log[order]._current = (void*)current;
 					//if (head->_next != next)
 					//	__debugbreak();
 				}
