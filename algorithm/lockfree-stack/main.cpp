@@ -1,11 +1,10 @@
 #include "lockfree_stack.h"
-#include "lockfree_stack2.h"
 #include <thread>
 #include <intrin.h>
 #include <Windows.h>
 #include <intrin.h>
 
-lockfree_stack2 _lockfree_stack;
+lockfree_stack _lockfree_stack;
 volatile unsigned int _value = 0;
 
 inline static unsigned int __stdcall func(void* arg) noexcept {

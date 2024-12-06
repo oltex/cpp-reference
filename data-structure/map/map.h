@@ -133,7 +133,7 @@ namespace data_structure {
 			new(&ret->_pair._first) key_type(key);
 			if constexpr (std::is_class_v<type>) {
 				if constexpr (std::is_constructible_v<type, argument...>)
-					new(&ret->_pair._second) type(std::forward<argument>(arg)...);
+					::new(reinterpret_cast<void*>(&ret->_pair._second)) type(std::forward<argument>(arg)...);
 			}
 			else if constexpr (1 == sizeof...(arg))
 				ret->_pair._second = type(std::forward<argument>(arg)...);

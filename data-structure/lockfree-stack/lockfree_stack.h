@@ -3,9 +3,9 @@
 #include <Windows.h>
 #include <intrin.h>
 
-namespace data_structure {
+namespace data_structure::lockfree {
 	template<typename type>
-	class lockfree_stack final {
+	class stack final {
 	private:
 		using size_type = unsigned int;
 		struct node final {
@@ -13,14 +13,14 @@ namespace data_structure {
 			type _value;
 		};
 	public:
-		inline explicit lockfree_stack(void) noexcept
+		inline explicit stack(void) noexcept
 			: _head(nullptr) {
 		}
-		inline explicit lockfree_stack(lockfree_stack const& rhs) noexcept = delete;
-		inline explicit lockfree_stack(lockfree_stack&& rhs) noexcept = delete;
-		inline auto operator=(lockfree_stack const& rhs) noexcept -> lockfree_stack & = delete;
-		inline auto operator=(lockfree_stack&& rhs) noexcept -> lockfree_stack & = delete;
-		inline ~lockfree_stack(void) noexcept = default;
+		inline explicit stack(stack const& rhs) noexcept = delete;
+		inline explicit stack(stack&& rhs) noexcept = delete;
+		inline auto operator=(stack const& rhs) noexcept -> stack & = delete;
+		inline auto operator=(stack&& rhs) noexcept -> stack & = delete;
+		inline ~stack(void) noexcept = default;
 	public:
 		template<typename universal>
 		inline void push(universal&& value) noexcept {
@@ -32,18 +32,14 @@ namespace data_structure {
 		}
 		inline auto pop(void) noexcept -> type {
 			for (;;) {
-				//auto current = _head;
-				//if (current == _InterlockedCompareExchangePointer(reinterpret_cast<void* volatile*>(&_head), current->_next, current))
-				//	return current->_value;
-
 				auto current = _head;
-				auto next = current->_next;
-				if (current == _InterlockedCompareExchangePointer(reinterpret_cast<void* volatile*>(&_head), next, current)) {
+				if (current == _InterlockedCompareExchangePointer(reinterpret_cast<void* volatile*>(&_head), current->_next, current)) {
 					type result = current->_value;
 					delete current;
 					return result;
 				}
 			}
+
 		}
 	public:
 		//inline auto size(void) noexcept -> size_type {

@@ -1,6 +1,4 @@
 #pragma once
-#include "../../module/multi/spin.h"
-#include "../../module/multi/wait_on_address_lock.h"
 #include <utility>
 #include <Windows.h>
 #include <intrin.h>
@@ -36,7 +34,6 @@ public:
 		current->_value = value;
 		for (;;) {
 			current->_next = _head;
-
 			node* head = (node*)_InterlockedCompareExchangePointer(reinterpret_cast<void* volatile*>(&_head), current, current->_next);
 			if (current->_next == head) {
 				//{
@@ -55,7 +52,6 @@ public:
 		for (;;) {
 			auto current = _head;
 			auto next = current->_next;
-
 			node* head = (node*)_InterlockedCompareExchangePointer(reinterpret_cast<void* volatile*>(&_head), next, current);
 			if (current == head) {
 				{

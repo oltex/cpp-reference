@@ -113,7 +113,7 @@ namespace data_structure {
 			auto current = reinterpret_cast<node*>(malloc(sizeof(node)));
 			if constexpr (std::is_class_v<type>) {
 				if constexpr (std::is_constructible_v<type, argument...>)
-					new(&current->_value) type(std::forward<argument>(arg)...);
+					::new(reinterpret_cast<void*>(&current->_value)) type(std::forward<argument>(arg)...);
 			}
 			else if constexpr (1 == sizeof...(arg))
 #pragma warning(suppress: 6011)

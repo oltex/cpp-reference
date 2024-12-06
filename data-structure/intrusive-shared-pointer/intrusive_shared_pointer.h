@@ -57,14 +57,8 @@ namespace data_structure {
 			return *this;
 		};
 		inline ~intrusive_shared_pointer(void) noexcept {
-			if (nullptr != _node && 0 == --_node->_reference._use) {
+			if (nullptr != _node && 0 == --_node->_reference._use)
 				destructor(static_cast<type*>(_node));
-				//if constexpr (!std::is_trivially_destructible_v<type>) 
-				//	_value->~type(); // 소멸자 호출
-				//free(_value); // 벨류는 지움
-				//if (0 == _reference->_weak) // 위크 포인터가 0이면 레퍼런스까지 같이 지움
-				//	free(_reference); //
-			}
 		}
 	public:
 		inline auto operator*(void) noexcept -> type& {

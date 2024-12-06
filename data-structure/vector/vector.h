@@ -57,7 +57,7 @@ namespace data_structure {
 			//	int a = 10;
 			if constexpr (std::is_class_v<type>) {
 				if constexpr (std::is_constructible_v<type, argument...>)
-					new(element) type(std::forward<argument>(arg)...);
+					::new(reinterpret_cast<void*>(element)) type(std::forward<argument>(arg)...);
 			}
 			else if constexpr (1 == sizeof...(arg))
 #pragma warning(suppress: 6011)

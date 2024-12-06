@@ -1,7 +1,7 @@
 #include "lockfree_stack.h"
 #include <thread>
 
-data_structure::lockfree_stack<int> lockfree_stack;
+data_structure::lockfree::stack<int> lockfree_stack;
 
 inline static unsigned int __stdcall func(void* arg) noexcept {
 	for (;;) {
