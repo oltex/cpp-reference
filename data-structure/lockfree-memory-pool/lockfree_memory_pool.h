@@ -25,7 +25,7 @@ namespace data_structure::lockfree {
 			rhs._head = nullptr;
 		}
 		inline ~memory_pool(void) noexcept {
-			node* head = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & head);
+			node* head = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & _head);
 			while (nullptr != head) {
 				node* next = head->_next;
 				free(head);

@@ -1,4 +1,5 @@
 #pragma once
+#include "../lockfree-memory-pool/lockfree_memory_pool.h"
 #include <utility>
 #include <Windows.h>
 #include <intrin.h>
@@ -14,7 +15,7 @@ namespace data_structure::lockfree {
 		};
 	public:
 		inline explicit stack(void) noexcept
-			: _head(nullptr) {
+			: _head(0) {
 		}
 		inline explicit stack(stack const& rhs) noexcept = delete;
 		inline explicit stack(stack&& rhs) noexcept = delete;
@@ -24,29 +25,31 @@ namespace data_structure::lockfree {
 	public:
 		template<typename universal>
 		inline void push(universal&& value) noexcept {
-			node* current = reinterpret_cast<node*>(malloc(sizeof(node)));
+			node* current = &_memory_pool.allocate();
 			current->_value = std::forward<universal>(value);
-			do
-				current->_next = _head;
-			while (current->_next != _InterlockedCompareExchangePointer(reinterpret_cast<void* volatile*>(&_head), current, current->_next));
+
+			for (;;) {
+				unsigned long long head = _head;
+				current->_next = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & head);
+				unsigned long long next = reinterpret_cast<unsigned long long>(current) + (0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
+				if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head))
+					break;
+			}
 		}
 		inline auto pop(void) noexcept -> type {
 			for (;;) {
-				auto current = _head;
-				if (current == _InterlockedCompareExchangePointer(reinterpret_cast<void* volatile*>(&_head), current->_next, current)) {
+				unsigned long long head = _head;
+				node* current = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & head);
+				unsigned long long next = reinterpret_cast<unsigned long long>(current->_next) + (0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
+				if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head)) {
 					type result = current->_value;
-					delete current;
+					_memory_pool.deallocate(*current);
 					return result;
 				}
 			}
-
 		}
-	public:
-		//inline auto size(void) noexcept -> size_type {
-		//}
-		//inline auto empty(void) noexcept -> size_type {
-		//}
 	private:
-		node* _head;
+		unsigned long long _head;
+		memory_pool<node> _memory_pool;
 	};
 }

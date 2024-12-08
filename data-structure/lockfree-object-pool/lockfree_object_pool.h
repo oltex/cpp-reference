@@ -60,7 +60,7 @@ namespace data_structure::lockfree {
 			for (;;) {
 				unsigned long long head = _head;
 				current->_next = reinterpret_cast<node*>(head & 0x00007FFFFFFFFFFFULL);
-				unsigned long long next = reinterpret_cast<unsigned long long>(current) + (head & 0xFFFF800000000000ULL) + 0x0000800000000000ULL;
+				unsigned long long next = reinterpret_cast<unsigned long long>(current) + (head & 0xFFFF800000000000ULL)/* + 0x0000800000000000ULL*/;
 				if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head))
 					break;
 			}
