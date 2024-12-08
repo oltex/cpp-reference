@@ -52,7 +52,7 @@ namespace data_structure {
 			return current->_value;
 		}
 	public:
-		inline auto get(void) noexcept -> type& {
+		inline auto acquire(void) noexcept -> type& {
 			node* current = _head;
 #ifdef debug
 			current->_next = reinterpret_cast<node*>(this);

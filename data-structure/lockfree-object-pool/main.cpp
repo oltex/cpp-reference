@@ -2,31 +2,32 @@
 #include <stdlib.h>
 #include <crtdbg.h>
 
-#include "lockfree_memory_pool.h"
+#include "lockfree_object_pool.h"
 #include <iostream>
 #include <thread>
 #include <vector>
 #include <intrin.h>
 
-
-data_structure::lockfree::memory_pool<int> _memory_pool;
+data_structure::lockfree::object_pool<int> _object_pool;
 
 inline static unsigned int __stdcall func(void* arg) noexcept {
 	std::vector<int*> _vector;
 
 	for (;;) {
-		std::cout << "allocate" << std::endl;
 		for (auto i = 0; i < 5000; ++i) {
-			_vector.emplace_back(&_memory_pool.allocate());
+			_vector.emplace_back(&_object_pool.acquire());
 		}
-		//for (auto i = 0; i < 5000; ++i) {
-		//	if (11 != ++(*_vector[i]))
-		//		__debugbreak();
-		//}
-		std::cout << "deallocate" << std::endl;
+		for (auto i = 0; i < 5000; ++i) {
+			if (11 != ++(*_vector[i]))
+				__debugbreak();
+		}
+		for (auto i = 0; i < 5000; ++i) {
+			if (10 != --(*_vector[i]))
+				__debugbreak();
+		}
 		for (auto i = 0; i < 5000; ++i) {
 			int* a = _vector.back();
-			_memory_pool.deallocate(*a);
+			_object_pool.release(*a);
 			_vector.pop_back();
 		}
 	}
@@ -39,11 +40,11 @@ int main(void) noexcept {
 
 	std::vector<int*> _vector;
 	for (int i = 0; i < 10000; ++i) {
-		_vector.emplace_back(&_memory_pool.allocate());
+		_vector.emplace_back(&_object_pool.acquire(10));
 	}
 	for (auto i = 0; i < 10000; ++i) {
 		int* a = _vector.back();
-		_memory_pool.deallocate(*a);
+		_object_pool.release(*a);
 		_vector.pop_back();
 	}
 

@@ -23,7 +23,7 @@ void func(void) noexcept {
 			if (object_pool.empty())
 				save[index++] = &object_pool.allocate();
 			else
-				save[index++] = &object_pool.get();
+				save[index++] = &object_pool.acquire();
 		}
 		else {
 			if (0 != index)
