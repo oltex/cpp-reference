@@ -155,6 +155,12 @@ namespace data_structure {
 		inline auto size(void) const noexcept -> size_type {
 			return _rear - _front;
 		}
+		inline auto front(void) const noexcept -> size_type {
+			return _front;
+		}
+		inline auto rear(void) const noexcept -> size_type {
+			return _rear;
+		}
 		inline bool empty(void) const noexcept {
 			return _front == _rear;
 		}

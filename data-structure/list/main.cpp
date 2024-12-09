@@ -12,8 +12,6 @@
 #include <any>
 #include <tuple>
 
-
-
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	//data_structure::list<my_class> list;

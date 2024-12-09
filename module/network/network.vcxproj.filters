@@ -23,18 +23,15 @@
     <ClInclude Include="server_v2.h">
       <Filter>select\temp\server</Filter>
     </ClInclude>
-    <ClInclude Include="file_descriptor.h">
-      <Filter>select</Filter>
-    </ClInclude>
     <ClInclude Include="poll.h">
       <Filter>select</Filter>
     </ClInclude>
-    <ClInclude Include="select.h">
-      <Filter>select</Filter>
+    <ClInclude Include="iocp\server.h">
+      <Filter>iocp</Filter>
     </ClInclude>
-    <ClInclude Include="async.h">
-      <Filter>select</Filter>
-    </ClInclude>
+    <ClInclude Include="select.h" />
+    <ClInclude Include="file_descriptor.h" />
+    <ClInclude Include="async.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="select">
@@ -48,6 +45,9 @@
     </Filter>
     <Filter Include="select\temp\rpc">
       <UniqueIdentifier>{07816cbe-b499-4ade-8f34-1efb93fa54aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="iocp">
+      <UniqueIdentifier>{29c78510-960a-4674-84b0-efe6ea67fd09}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

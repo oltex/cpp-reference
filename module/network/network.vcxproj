@@ -148,6 +148,7 @@
   <ItemGroup>
     <ClInclude Include="async.h" />
     <ClInclude Include="file_descriptor.h" />
+    <ClInclude Include="iocp\server.h" />
     <ClInclude Include="poll.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
