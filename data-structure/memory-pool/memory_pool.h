@@ -4,8 +4,13 @@
 namespace data_structure {
 	template<typename type>
 	class memory_pool final {
+	public:
+		template <typename other>
+		using rebind = memory_pool<other>;
 	private:
 		union node final {
+			inline explicit node(void) noexcept = delete;
+			inline ~node(void) noexcept = delete;
 			node* _next;
 			type _value;
 		};
@@ -50,7 +55,7 @@ namespace data_structure {
 			return current->_value;
 		}
 		inline void deallocate(type& value) noexcept {
-			if constexpr (!std::is_trivially_destructible_v<type>)
+			if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
 				value.~type();
 			reinterpret_cast<node*>(&value)->_next = _head;
 			_head = reinterpret_cast<node*>(&value);

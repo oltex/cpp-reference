@@ -2,16 +2,20 @@
 #include <utility>
 #include <stdlib.h>
 #include <malloc.h>
+#include "../memory-pool/memory_pool.h"
 
 namespace data_structure {
-	template<typename type>
+	template<typename type, typename allocator = memory_pool<type>>
 	class list final {
 	private:
 		using size_type = unsigned int;
 		struct node final {
+			inline explicit node(void) noexcept = delete;
+			inline ~node(void) noexcept = delete;
 			node* _prev, * _next;
 			type _value;
 		};
+		using rebind_allocator = allocator::template rebind<node>;
 	public:
 		class iterator final {
 		public:
@@ -57,8 +61,9 @@ namespace data_structure {
 			node* _node;
 		};
 	public:
-		inline explicit list(void) noexcept {
-			_head = reinterpret_cast<node*>(calloc(1, sizeof(node*) * 2));
+		inline explicit list(void) noexcept
+			: _head(reinterpret_cast<node*>(calloc(1, sizeof(node*) * 2))),
+			_allocator(&_static_allocator) {
 #pragma warning(suppress: 6011)
 			_head->_next = _head->_prev = _head;
 		}
@@ -110,7 +115,8 @@ namespace data_structure {
 		}
 		template<typename... argument>
 		inline auto emplace(iterator const& iter, argument&&... arg) noexcept -> iterator {
-			auto current = reinterpret_cast<node*>(malloc(sizeof(node)));
+			auto current = &_allocator->allocate();
+			//auto current = reinterpret_cast<node*>(malloc(sizeof(node)));
 			if constexpr (std::is_class_v<type>) {
 				if constexpr (std::is_constructible_v<type, argument...>)
 					::new(reinterpret_cast<void*>(&current->_value)) type(std::forward<argument>(arg)...);
@@ -143,9 +149,9 @@ namespace data_structure {
 			prev->_next = next;
 			next->_prev = prev;
 
-			if constexpr (!std::is_trivially_destructible_v<type>)
+			if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
 				current->_value.~type();
-			free(current);
+			_allocator->deallocate(*current);
 			--_size;
 			return iterator(next);
 		}
@@ -176,9 +182,9 @@ namespace data_structure {
 			auto current = _head->_next;
 			for (auto next = current; current != _head; current = next) {
 				next = next->_next;
-				if constexpr (!std::is_trivially_destructible_v<type>)
+				if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
 					current->_value.~type();
-				free(current);
+				_allocator->deallocate(*current);
 			}
 			_head->_next = _head->_prev = _head;
 			_size = 0;
@@ -211,5 +217,7 @@ namespace data_structure {
 	private:
 		node* _head;
 		size_type _size = 0;
+		rebind_allocator* _allocator;
+		inline static rebind_allocator _static_allocator;
 	};
 }

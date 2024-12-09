@@ -152,7 +152,6 @@
     <ClInclude Include="library\data-structure\map.h" />
     <ClInclude Include="library\data-structure\pair.h" />
     <ClInclude Include="library\data-structure\predicate.h" />
-    <ClInclude Include="library\design-pattern\singleton.h" />
     <ClInclude Include="library\window\bitmap.h" />
     <ClInclude Include="library\window\brush.h" />
     <ClInclude Include="library\window\cls.h" />

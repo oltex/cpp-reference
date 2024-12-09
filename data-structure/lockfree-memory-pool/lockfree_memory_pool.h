@@ -57,7 +57,7 @@ namespace data_structure::lockfree {
 			return current->_value;
 		}
 		inline void deallocate(type& value) noexcept {
-			if constexpr (!std::is_trivially_destructible_v<type>)
+			if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
 				value.~type();
 
 			for (;;) {

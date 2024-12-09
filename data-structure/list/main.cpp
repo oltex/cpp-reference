@@ -12,17 +12,19 @@
 #include <any>
 #include <tuple>
 
+
+
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	//std::list<int> a;
 
-	std::tuple<int, int, double> t;
 
 	data_structure::list<my_class> list;
-	data_structure::list<int> list2;
-	data_structure::list<int>::iterator iter;
-
 	list.emplace_back(0);
-	list2.emplace_back(1);
+
+	//data_structure::list<int> list2;
+	//data_structure::list<int>::iterator iter;
+	//list2.emplace_back(1);
 	//list.push_back(40);
 	//list.push_front(20);
 	//list.push_back(50);

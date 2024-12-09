@@ -186,9 +186,9 @@ namespace data_structure {
 			color color_ = child->_color;
 			child->_color = cur->_color;
 
-			if constexpr (!std::is_trivially_destructible_v<key_type>)
+			if constexpr (std::is_destructible_v<key_type> && !std::is_trivially_destructible_v<key_type>)
 				cur->_pair._first.~key_type();
-			if constexpr (!std::is_trivially_destructible_v<type>)
+			if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
 				cur->_pair._second.~type();
 			free(cur);
 

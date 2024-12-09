@@ -66,7 +66,7 @@ namespace data_structure {
 		}
 		inline void pop_back(void) noexcept {
 			--_size;
-			if constexpr (!std::is_trivially_destructible_v<type>)
+			if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
 				_array[_size].~type();
 		}
 	public:
@@ -116,7 +116,7 @@ namespace data_structure {
 					_size = size;
 			}
 			else {
-				if constexpr (!std::is_trivially_destructible_v<type>)
+				if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
 					while (size != _size)
 						pop_back();
 				else
@@ -149,7 +149,7 @@ namespace data_structure {
 			}
 		}
 		inline void clear(void) noexcept {
-			if constexpr (!std::is_trivially_destructible_v<type>)
+			if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
 				while (0 != _size)
 					pop_back();
 			else

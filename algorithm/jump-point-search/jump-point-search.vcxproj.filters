@@ -7,14 +7,8 @@
     <Filter Include="library">
       <UniqueIdentifier>{8862dc62-0555-464f-a8a5-c1b041470252}</UniqueIdentifier>
     </Filter>
-    <Filter Include="library\data-structure">
-      <UniqueIdentifier>{e49a4265-f64f-4514-930a-862ba617f867}</UniqueIdentifier>
-    </Filter>
     <Filter Include="library\window">
       <UniqueIdentifier>{95799120-2fb9-43cc-abe6-17befe69b14c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="library\design-pattern">
-      <UniqueIdentifier>{a6c3aada-934b-43f8-ad61-ed1aee812c5b}</UniqueIdentifier>
     </Filter>
     <Filter Include="client">
       <UniqueIdentifier>{8a2dba41-b304-401b-ab88-a26fbbd84984}</UniqueIdentifier>
@@ -24,27 +18,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="library\data-structure\bit_grid.h">
-      <Filter>library\data-structure</Filter>
-    </ClInclude>
-    <ClInclude Include="library\data-structure\hash.h">
-      <Filter>library\data-structure</Filter>
-    </ClInclude>
-    <ClInclude Include="library\data-structure\list.h">
-      <Filter>library\data-structure</Filter>
-    </ClInclude>
-    <ClInclude Include="library\data-structure\pair.h">
-      <Filter>library\data-structure</Filter>
-    </ClInclude>
-    <ClInclude Include="library\data-structure\shared_pointer.h">
-      <Filter>library\data-structure</Filter>
-    </ClInclude>
-    <ClInclude Include="library\data-structure\unordered_map.h">
-      <Filter>library\data-structure</Filter>
-    </ClInclude>
-    <ClInclude Include="library\data-structure\vector.h">
-      <Filter>library\data-structure</Filter>
-    </ClInclude>
     <ClInclude Include="library\window\bitmap.h">
       <Filter>library\window</Filter>
     </ClInclude>
@@ -78,9 +51,6 @@
     <ClInclude Include="library\window\window.h">
       <Filter>library\window</Filter>
     </ClInclude>
-    <ClInclude Include="library\design-pattern\singleton.h">
-      <Filter>library\design-pattern</Filter>
-    </ClInclude>
     <ClInclude Include="camera.h">
       <Filter>client</Filter>
     </ClInclude>
@@ -101,9 +71,6 @@
     </ClInclude>
     <ClInclude Include="test.h">
       <Filter>client</Filter>
-    </ClInclude>
-    <ClInclude Include="library\data-structure\weak_pointer.h">
-      <Filter>library\data-structure</Filter>
     </ClInclude>
     <ClInclude Include="recode.h">
       <Filter>client</Filter>

@@ -16,9 +16,6 @@
     <Filter Include="client">
       <UniqueIdentifier>{3762ef99-f00e-4ca3-a61f-9f05428c299d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="library\design-pattern">
-      <UniqueIdentifier>{bb7c7bc5-8290-43fc-8a09-1431e8ddaca1}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="client.h">
@@ -26,9 +23,6 @@
     </ClInclude>
     <ClInclude Include="camera.h">
       <Filter>client</Filter>
-    </ClInclude>
-    <ClInclude Include="library\design-pattern\singleton.h">
-      <Filter>library\design-pattern</Filter>
     </ClInclude>
     <ClInclude Include="library\window\bitmap.h">
       <Filter>library\window</Filter>
@@ -63,15 +57,6 @@
     <ClInclude Include="library\window\window.h">
       <Filter>library\window</Filter>
     </ClInclude>
-    <ClInclude Include="library\data-structure\map.h">
-      <Filter>library\data-structure</Filter>
-    </ClInclude>
-    <ClInclude Include="library\data-structure\pair.h">
-      <Filter>library\data-structure</Filter>
-    </ClInclude>
-    <ClInclude Include="library\data-structure\predicate.h">
-      <Filter>library\data-structure</Filter>
-    </ClInclude>
     <ClInclude Include="tree.h">
       <Filter>client</Filter>
     </ClInclude>
@@ -83,6 +68,15 @@
     </ClInclude>
     <ClInclude Include="timer.h">
       <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="library\data-structure\map.h">
+      <Filter>library\data-structure</Filter>
+    </ClInclude>
+    <ClInclude Include="library\data-structure\pair.h">
+      <Filter>library\data-structure</Filter>
+    </ClInclude>
+    <ClInclude Include="library\data-structure\predicate.h">
+      <Filter>library\data-structure</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

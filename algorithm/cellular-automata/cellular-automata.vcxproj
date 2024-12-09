@@ -147,9 +147,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cellular_automata.h" />
-    <ClInclude Include="data-structure\bit_grid.h" />
-    <ClInclude Include="data-structure\pair.h" />
-    <ClInclude Include="data-structure\vector.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

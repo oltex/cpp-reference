@@ -67,7 +67,7 @@ namespace data_structure {
 		};
 		inline ~shared_pointer(void) noexcept {
 			if (nullptr != _reference && 0 == --_reference->_use) {
-				if constexpr (!std::is_trivially_destructible_v<type>)
+				if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
 					_value->~type();
 				free(_value);
 				if (0 == _reference->_weak)

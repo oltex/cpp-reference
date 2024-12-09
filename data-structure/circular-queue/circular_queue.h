@@ -76,7 +76,7 @@ namespace data_structure {
 		//not implemented
 		inline auto operator=(circular_queue&& rhs) noexcept -> circular_queue&;
 		inline ~circular_queue(void) noexcept {
-			if constexpr (!std::is_trivially_destructible_v<type>)
+			if constexpr (!std::is_trivially_destructible_v<type> && std::is_destructible_v<type>)
 				while (!empty()) {
 					_array[_front].~type();
 					_front = (_front + 1) % _capacity;
@@ -111,7 +111,7 @@ namespace data_structure {
 		}
 		inline void pop(void) noexcept {
 			if (!empty()) {
-				if constexpr (!std::is_trivially_destructible_v<type>)
+				if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
 					_array[_front].~type();
 				_front = (_front + 1) % _capacity;
 			}
@@ -128,7 +128,7 @@ namespace data_structure {
 		}
 	public:
 		inline void clear(void) noexcept {
-			if constexpr (!std::is_trivially_destructible_v<type>)
+			if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
 				while (!empty())
 					pop();
 			else

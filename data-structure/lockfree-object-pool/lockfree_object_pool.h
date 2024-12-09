@@ -28,7 +28,7 @@ namespace data_structure::lockfree {
 			node* head = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & _head);
 			while (nullptr != head) {
 				node* next = head->_next;
-				if constexpr (!std::is_trivially_destructible_v<type>)
+				if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
 					_head->_value.~type();
 				free(head);
 				head = next;
