@@ -3,10 +3,10 @@
 #include "jump-point-search/grid.h"
 #include "jump-point-search/path.h"
 
-#include "library/window/device_context.h"
-#include "library/window/pen.h"
-#include "library/window/brush.h"
-#include "library/window/font.h"
+#include "../../module/window/device_context.h"
+#include "../../module/window/pen.h"
+#include "../../module/window/brush.h"
+#include "../../module/window/font.h"
 #include <string>
 #include <sstream>
 #include <iomanip>
@@ -30,7 +30,7 @@ public:
 	}
 	inline ~tile(void) noexcept = default;
 public:
-	inline void paint(window::device_context& dc, camera& camera, jump_point_search::grid& grid, jump_point_search::path& path) const noexcept {
+	inline void paint(window::device_context& dc, camera& camera, jump_point_search::grid& grid, jump_point_search::path& path) noexcept {
 		dc.select_object(_line);
 		auto width = grid.get_width();
 		auto height = grid.get_height();

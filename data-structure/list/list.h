@@ -66,8 +66,7 @@ namespace data_structure {
 		};
 	public:
 		inline explicit list(void) noexcept
-			: _head(reinterpret_cast<node*>(calloc(1, sizeof(node*) * 2))),
-			_allocator(&_static_allocator) {
+			: _head(reinterpret_cast<node*>(calloc(1, sizeof(node*) * 2))) {
 #pragma warning(suppress: 6011)
 			_head->_next = _head->_prev = _head;
 		}
@@ -119,7 +118,7 @@ namespace data_structure {
 		}
 		template<typename... argument>
 		inline auto emplace(iterator const& iter, argument&&... arg) noexcept -> iterator {
-			auto current = &_allocator->allocate();
+			auto current = &_allocator.allocate();
 			//auto current = reinterpret_cast<node*>(malloc(sizeof(node)));
 			if constexpr (std::is_class_v<type>) {
 				if constexpr (std::is_constructible_v<type, argument...>)
@@ -155,7 +154,7 @@ namespace data_structure {
 
 			if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
 				current->_value.~type();
-			_allocator->deallocate(*current);
+			_allocator.deallocate(*current);
 			--_size;
 			return iterator(next);
 		}
@@ -182,9 +181,7 @@ namespace data_structure {
 			_size = rhs._size;
 			rhs._size = size;
 
-			rebind_allocator* allocator = _allocator;
-			_allocator = rhs._allocator;
-			rhs._allocator = allocator;
+			_allocator.swap(rhs._allocator);
 		}
 		inline void clear(void) noexcept {
 			auto current = _head->_next;
@@ -192,7 +189,7 @@ namespace data_structure {
 				next = next->_next;
 				if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
 					current->_value.~type();
-				_allocator->deallocate(*current);
+				_allocator.deallocate(*current);
 			}
 			_head->_next = _head->_prev = _head;
 			_size = 0;
@@ -225,7 +222,6 @@ namespace data_structure {
 	private:
 		node* _head;
 		size_type _size = 0;
-		rebind_allocator* _allocator;
-		inline static rebind_allocator _static_allocator;
+		rebind_allocator _allocator;
 	};
 }

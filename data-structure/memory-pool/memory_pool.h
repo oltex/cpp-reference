@@ -64,6 +64,12 @@ namespace data_structure {
 			reinterpret_cast<node*>(&value)->_next = _head;
 			_head = reinterpret_cast<node*>(&value);
 		}
+	public:
+		inline void swap(memory_pool& rhs) noexcept {
+			auto head = _head;
+			_head = rhs._head;
+			rhs._head = head;
+		}
 	private:
 		node* _head = nullptr;
 	};

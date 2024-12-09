@@ -1,5 +1,5 @@
 #pragma once
-#include "../library/data-structure/bit_grid.h"
+#include "../../../data-structure/bit-grid/bit_grid.h"
 #include "coordinate.h"
 
 namespace jump_point_search {

@@ -4,8 +4,8 @@
 #include "jump-point-search/grid.h"
 #include "jump-point-search/path.h"
 
-#include "library/window/device_context.h"
-#include "library/window/font.h"
+#include "../../module/window/device_context.h"
+#include "../../module/window/font.h"
 #include <string>
 
 class recode final {
@@ -18,7 +18,7 @@ public:
 	}
 	inline ~recode(void) noexcept = default;
 public:
-	inline void paint(window::device_context& dc, jump_point_search::path& path) const noexcept {
+	inline void paint(window::device_context& dc, jump_point_search::path& path) noexcept {
 		dc.select_object(_font);
 		dc.set_bk_mode(TRANSPARENT);
 		dc.set_text_color(RGB(255, 255, 255));
