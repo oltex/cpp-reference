@@ -11,6 +11,10 @@ namespace data_structure {
 		using size_type = unsigned int;
 		struct node final {
 			inline explicit node(void) noexcept = delete;
+			inline explicit node(node const&) noexcept = delete;
+			inline explicit node(node&&) noexcept = delete;
+			inline auto operator=(node const&) noexcept = delete;
+			inline auto operator=(node&&) noexcept = delete;
 			inline ~node(void) noexcept = delete;
 			node* _prev, * _next;
 			type _value;
@@ -177,6 +181,10 @@ namespace data_structure {
 			size_type size = _size;
 			_size = rhs._size;
 			rhs._size = size;
+
+			rebind_allocator* allocator = _allocator;
+			_allocator = rhs._allocator;
+			rhs._allocator = allocator;
 		}
 		inline void clear(void) noexcept {
 			auto current = _head->_next;

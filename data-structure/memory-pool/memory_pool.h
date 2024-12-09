@@ -10,6 +10,10 @@ namespace data_structure {
 	private:
 		union node final {
 			inline explicit node(void) noexcept = delete;
+			inline explicit node(node const&) noexcept = delete;
+			inline explicit node(node&&) noexcept = delete;
+			inline auto operator=(node const&) noexcept = delete;
+			inline auto operator=(node&&) noexcept = delete;
 			inline ~node(void) noexcept = delete;
 			node* _next;
 			type _value;
