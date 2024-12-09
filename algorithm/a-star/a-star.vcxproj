@@ -155,24 +155,8 @@
     <ClInclude Include="a-star\path.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="client.h" />
-    <ClInclude Include="library\window\font.h" />
     <ClInclude Include="library\window\timer.h" />
     <ClInclude Include="test.h" />
-    <ClInclude Include="library\data-structure\bit_grid.h" />
-    <ClInclude Include="library\data-structure\hash.h" />
-    <ClInclude Include="library\data-structure\pair.h" />
-    <ClInclude Include="library\design-pattern\singleton.h" />
-    <ClInclude Include="library\window\bitmap.h" />
-    <ClInclude Include="library\window\brush.h" />
-    <ClInclude Include="library\window\cls.h" />
-    <ClInclude Include="library\window\cursor.h" />
-    <ClInclude Include="library\window\device_context.h" />
-    <ClInclude Include="library\window\icon.h" />
-    <ClInclude Include="library\window\instance.h" />
-    <ClInclude Include="library\window\object.h" />
-    <ClInclude Include="library\window\pen.h" />
-    <ClInclude Include="library\window\sct.h" />
-    <ClInclude Include="library\window\window.h" />
     <ClInclude Include="tile.h" />
     <ClInclude Include="recode.h" />
   </ItemGroup>

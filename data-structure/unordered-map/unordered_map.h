@@ -1,5 +1,5 @@
 #pragma once
-#include "pair.h"
+#include "../pair/pair.h"
 #include "../hash/hash.h"
 
 #include "../list/list.h"

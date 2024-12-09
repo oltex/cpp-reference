@@ -2,10 +2,10 @@
 #include <stdlib.h>
 #include <crtdbg.h>
 
-#include "library/window/instance.h"
-#include "library/window/cls.h"
-#include "library/window/sct.h"
-#include "library/window/window.h"
+#include "../../module/window/instance.h"
+#include "../../module/window/cls.h"
+#include "../../module/window/sct.h"
+#include "../../module/window/window.h"
 
 #include "client.h"
 //ºê·¹ÁðÇÜ ÇÏ°í

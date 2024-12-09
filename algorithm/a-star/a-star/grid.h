@@ -1,6 +1,6 @@
 #pragma once
 #include "coordinate.h"
-#include "../library/data-structure/bit_grid.h"
+#include "../../../data-structure/bit-grid/bit_grid.h"
 
 namespace a_star {
 	class grid final {

@@ -34,10 +34,13 @@ namespace window {
 			 return bitmap(hbitmap);
 		}
 	public:
-		inline void select_object(object const& object_) noexcept {
+		inline void select_object(object& object_) noexcept {
 			SelectObject(_hdc, object_.data());
 		}
-		inline void fill_rect(RECT const* const rect, brush const& brush_) noexcept {
+		inline void select_object(HGDIOBJ const& hgdiobj) noexcept {
+			SelectObject(_hdc, hgdiobj);
+		}
+		inline void fill_rect(RECT const* const rect, brush& brush_) noexcept {
 			FillRect(_hdc, rect, (HBRUSH)brush_.data());
 		}
 	public:

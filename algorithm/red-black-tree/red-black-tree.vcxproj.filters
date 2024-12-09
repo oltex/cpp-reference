@@ -7,9 +7,6 @@
     <Filter Include="library">
       <UniqueIdentifier>{4ac2d162-71a0-4a71-babb-1731e76fadc2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="library\window">
-      <UniqueIdentifier>{8a9c42bb-8877-472b-bfb7-eea67b64e458}</UniqueIdentifier>
-    </Filter>
     <Filter Include="library\data-structure">
       <UniqueIdentifier>{133a8e60-6afb-419e-ae04-c68f07a11f02}</UniqueIdentifier>
     </Filter>
@@ -24,44 +21,8 @@
     <ClInclude Include="camera.h">
       <Filter>client</Filter>
     </ClInclude>
-    <ClInclude Include="library\window\bitmap.h">
-      <Filter>library\window</Filter>
-    </ClInclude>
-    <ClInclude Include="library\window\brush.h">
-      <Filter>library\window</Filter>
-    </ClInclude>
-    <ClInclude Include="library\window\cls.h">
-      <Filter>library\window</Filter>
-    </ClInclude>
-    <ClInclude Include="library\window\cursor.h">
-      <Filter>library\window</Filter>
-    </ClInclude>
-    <ClInclude Include="library\window\device_context.h">
-      <Filter>library\window</Filter>
-    </ClInclude>
-    <ClInclude Include="library\window\icon.h">
-      <Filter>library\window</Filter>
-    </ClInclude>
-    <ClInclude Include="library\window\instance.h">
-      <Filter>library\window</Filter>
-    </ClInclude>
-    <ClInclude Include="library\window\object.h">
-      <Filter>library\window</Filter>
-    </ClInclude>
-    <ClInclude Include="library\window\pen.h">
-      <Filter>library\window</Filter>
-    </ClInclude>
-    <ClInclude Include="library\window\sct.h">
-      <Filter>library\window</Filter>
-    </ClInclude>
-    <ClInclude Include="library\window\window.h">
-      <Filter>library\window</Filter>
-    </ClInclude>
     <ClInclude Include="tree.h">
       <Filter>client</Filter>
-    </ClInclude>
-    <ClInclude Include="library\window\font.h">
-      <Filter>library\window</Filter>
     </ClInclude>
     <ClInclude Include="test.h">
       <Filter>client</Filter>

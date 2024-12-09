@@ -1,12 +1,12 @@
 #pragma once
 #include "grid.h"
 
-#include "../library/data-structure/list.h"
-#include "../library/data-structure/vector.h"
-#include "../library/data-structure/bit_grid.h"
-#include "../library/data-structure/unordered_map.h"
-#include "../library/data-structure/shared_pointer.h"
-#include "../library/data-structure/weak_pointer.h"
+#include "../../../data-structure/list/list.h"
+#include "../../../data-structure/vector/vector.h"
+#include "../../../data-structure/bit-grid/bit_grid.h"
+#include "../../../data-structure/unordered-map/unordered_map.h"
+#include "../../../data-structure/shared-pointer/shared_pointer.h"
+#include "../../../data-structure/weak-pointer/weak_pointer.h"
 
 namespace a_star {
 	class path final {

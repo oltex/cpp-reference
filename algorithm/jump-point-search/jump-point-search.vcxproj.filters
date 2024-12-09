@@ -4,12 +4,6 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="library">
-      <UniqueIdentifier>{8862dc62-0555-464f-a8a5-c1b041470252}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="library\window">
-      <UniqueIdentifier>{95799120-2fb9-43cc-abe6-17befe69b14c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="client">
       <UniqueIdentifier>{8a2dba41-b304-401b-ab88-a26fbbd84984}</UniqueIdentifier>
     </Filter>
@@ -18,39 +12,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="library\window\bitmap.h">
-      <Filter>library\window</Filter>
-    </ClInclude>
-    <ClInclude Include="library\window\brush.h">
-      <Filter>library\window</Filter>
-    </ClInclude>
-    <ClInclude Include="library\window\cls.h">
-      <Filter>library\window</Filter>
-    </ClInclude>
-    <ClInclude Include="library\window\cursor.h">
-      <Filter>library\window</Filter>
-    </ClInclude>
-    <ClInclude Include="library\window\device_context.h">
-      <Filter>library\window</Filter>
-    </ClInclude>
-    <ClInclude Include="library\window\icon.h">
-      <Filter>library\window</Filter>
-    </ClInclude>
-    <ClInclude Include="library\window\instance.h">
-      <Filter>library\window</Filter>
-    </ClInclude>
-    <ClInclude Include="library\window\object.h">
-      <Filter>library\window</Filter>
-    </ClInclude>
-    <ClInclude Include="library\window\pen.h">
-      <Filter>library\window</Filter>
-    </ClInclude>
-    <ClInclude Include="library\window\sct.h">
-      <Filter>library\window</Filter>
-    </ClInclude>
-    <ClInclude Include="library\window\window.h">
-      <Filter>library\window</Filter>
-    </ClInclude>
     <ClInclude Include="camera.h">
       <Filter>client</Filter>
     </ClInclude>
@@ -74,9 +35,6 @@
     </ClInclude>
     <ClInclude Include="recode.h">
       <Filter>client</Filter>
-    </ClInclude>
-    <ClInclude Include="library\window\font.h">
-      <Filter>library\window</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
