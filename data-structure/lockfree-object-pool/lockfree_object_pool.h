@@ -7,6 +7,12 @@ namespace data_structure::lockfree {
 	class object_pool final {
 	private:
 		struct node final {
+			inline explicit node(void) noexcept = delete;
+			inline explicit node(node const&) noexcept = delete;
+			inline explicit node(node&&) noexcept = delete;
+			inline auto operator=(node const&) noexcept = delete;
+			inline auto operator=(node&&) noexcept = delete;
+			inline ~node(void) noexcept = delete;
 			node* _next;
 			type _value;
 		};
@@ -29,7 +35,7 @@ namespace data_structure::lockfree {
 			while (nullptr != head) {
 				node* next = head->_next;
 				if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
-					_head->_value.~type();
+					head->_value.~type();
 				free(head);
 				head = next;
 			}

@@ -4,9 +4,6 @@
 namespace data_structure {
 	template<typename type>
 	class memory_pool final {
-	public:
-		template <typename other>
-		using rebind = memory_pool<other>;
 	private:
 		union node final {
 			inline explicit node(void) noexcept = delete;
@@ -18,6 +15,9 @@ namespace data_structure {
 			node* _next;
 			type _value;
 		};
+	public:
+		template <typename other>
+		using rebind = memory_pool<other>;
 	public:
 		inline explicit memory_pool(void) noexcept = default;
 		inline explicit memory_pool(memory_pool const&) noexcept = delete;

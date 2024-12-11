@@ -10,6 +10,12 @@ namespace data_structure::lockfree {
 	private:
 		using size_type = unsigned int;
 		struct node final {
+			inline explicit node(void) noexcept = delete;
+			inline explicit node(node const&) noexcept = delete;
+			inline explicit node(node&&) noexcept = delete;
+			inline auto operator=(node const&) noexcept = delete;
+			inline auto operator=(node&&) noexcept = delete;
+			inline ~node(void) noexcept = delete;
 			node* _next;
 			type _value;
 		};
@@ -21,12 +27,27 @@ namespace data_structure::lockfree {
 		inline explicit stack(stack&& rhs) noexcept = delete;
 		inline auto operator=(stack const& rhs) noexcept -> stack & = delete;
 		inline auto operator=(stack&& rhs) noexcept -> stack & = delete;
-		inline ~stack(void) noexcept = default;
+		inline ~stack(void) noexcept {
+			node* head = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & _head);
+			while (nullptr != head) {
+				node* next = head->_next;
+				if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
+					head->_value.~type();
+				_memory_pool.deallocate(*head);
+				head = next;
+			}
+		};
 	public:
-		template<typename universal>
-		inline void push(universal&& value) noexcept {
+		template<typename... argument>
+		inline void push(argument&&... arg) noexcept {
 			node* current = &_memory_pool.allocate();
-			current->_value = std::forward<universal>(value);
+			if constexpr (std::is_class_v<type>) {
+				if constexpr (std::is_constructible_v<type, argument...>)
+					::new(reinterpret_cast<void*>(&current->_value)) type(std::forward<argument>(arg)...);
+			}
+			else if constexpr (1 == sizeof...(arg))
+#pragma warning(suppress: 6011)
+				current->_value = type(std::forward<argument>(arg)...);
 
 			for (;;) {
 				unsigned long long head = _head;
@@ -40,9 +61,13 @@ namespace data_structure::lockfree {
 			for (;;) {
 				unsigned long long head = _head;
 				node* current = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & head);
+				if (nullptr == current)
+					__debugbreak();
 				unsigned long long next = reinterpret_cast<unsigned long long>(current->_next) + (0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
 				if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head)) {
-					type result = current->_value;
+					type result(std::move(current->_value));
+					if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
+						current->_value.~type();
 					_memory_pool.deallocate(*current);
 					return result;
 				}
