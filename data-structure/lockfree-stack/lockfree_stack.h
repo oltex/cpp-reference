@@ -3,6 +3,7 @@
 #include <utility>
 #include <Windows.h>
 #include <intrin.h>
+#include <optional>
 
 namespace data_structure::lockfree {
 	template<typename type>
@@ -57,12 +58,12 @@ namespace data_structure::lockfree {
 					break;
 			}
 		}
-		inline auto pop(void) noexcept -> type {
+		inline auto pop(void) noexcept ->  std::optional<type> {
 			for (;;) {
 				unsigned long long head = _head;
 				node* current = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & head);
 				if (nullptr == current)
-					__debugbreak();
+					return std::nullopt;
 				unsigned long long next = reinterpret_cast<unsigned long long>(current->_next) + (0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
 				if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head)) {
 					type result(std::move(current->_value));

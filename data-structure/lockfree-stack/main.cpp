@@ -44,7 +44,7 @@ int main(void) noexcept {
 	//Sleep(INFINITE);
 
 	_stack2.push(10);
-	my_class a = _stack2.pop();
+	auto a = _stack2.pop();
 
 	int b = 10;
 	int c = 20;

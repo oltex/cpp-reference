@@ -36,13 +36,13 @@ public:
 			current->_next = _head;
 			node* head = (node*)_InterlockedCompareExchangePointer(reinterpret_cast<void* volatile*>(&_head), current, current->_next);
 			if (current->_next == head) {
-				//{
-				//	auto order = _InterlockedIncrement(&_order);
-				//	_log[order]._thread_id = GetCurrentThreadId();
-				//	_log[order]._action = L"push : if (current->_next == head) turn";
-				//	_log[order]._head = (void*)head;
-				//	_log[order]._current = (void*)current;
-				//}
+				{
+					auto order = _InterlockedIncrement(&_order);
+					_log[order]._thread_id = GetCurrentThreadId();
+					_log[order]._action = L"push : if (current->_next == head) turn";
+					_log[order]._head = (void*)head;
+					_log[order]._current = (void*)current;
+				}
 				break;
 			}
 		}
@@ -55,14 +55,14 @@ public:
 			node* head = (node*)_InterlockedCompareExchangePointer(reinterpret_cast<void* volatile*>(&_head), next, current);
 			if (current == head) {
 				{
-					//auto order = _InterlockedIncrement(&_order);
-					//_log[order]._thread_id = GetCurrentThreadId();
-					//_log[order]._action = L"pop : if (current == head) true";
-					//_log[order]._head = (void*)head;
-					//_log[order]._next = (void*)next;
-					//_log[order]._current = (void*)current;
-					//if (head->_next != next)
-					//	__debugbreak();
+					auto order = _InterlockedIncrement(&_order);
+					_log[order]._thread_id = GetCurrentThreadId();
+					_log[order]._action = L"pop : if (current == head) true";
+					_log[order]._head = (void*)head;
+					_log[order]._next = (void*)next;
+					_log[order]._current = (void*)current;
+					if (head->_next != next)
+						__debugbreak();
 				}
 				result = current->_value;
 				free(current);
