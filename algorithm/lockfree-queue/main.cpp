@@ -3,12 +3,14 @@
 #include <intrin.h>
 #include <Windows.h>
 #include <intrin.h>
+#include <iostream>
 
 lockfree_queue _lockfree_queue;
 volatile unsigned int _value = 0;
 
 inline static unsigned int __stdcall func(void* arg) noexcept {
 	for (;;) {
+		//std::cout << GetCurrentThreadId() << std::endl;
 		for (int i = 0; i < 5; ++i) {
 			auto value = _InterlockedIncrement(&_value);
 			_lockfree_queue.push(value);

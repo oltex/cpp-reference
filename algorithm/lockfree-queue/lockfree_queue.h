@@ -1,5 +1,5 @@
 #pragma once
-#include "../../data-structure/lockfree-memory-pool/lockfree_memory_pool.h"
+#include "../../data-structure/lockfree-object-pool/lockfree_object_pool.h"
 
 class lockfree_queue final {
 private:
@@ -25,7 +25,7 @@ private:
 	};
 public:
 	inline explicit lockfree_queue(void) noexcept {
-		node* current = &_memory_pool.allocate();
+		node* current = &_object_pool.acquire();
 		current->_next = nullptr;
 		_head = _tail = reinterpret_cast<unsigned long long>(current);
 	}
@@ -36,23 +36,18 @@ public:
 	inline ~lockfree_queue(void) noexcept = default;
 public:
 	inline void push(int value) noexcept {
-		node* current = &_memory_pool.allocate();
+		node* current = &_object_pool.acquire();
 		current->_value = value;
-		current->_next = nullptr;
 
 		for (;;) {
 			unsigned long long tail = _tail;
 			node*& next = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & tail)->_next;
+			current->_next = nullptr;
+
 
 			if (nullptr == _InterlockedCompareExchangePointer(reinterpret_cast<void* volatile*>(&next), current, nullptr)) {
-				//{
-				//	auto order = _InterlockedIncrement(&_order);
-				//	_log[order]._thread_id = GetCurrentThreadId();
-				//	_log[order]._action = L"push : tail->next = current";
-				//	_log[order]._tail = (void*)(tail & 0x00007FFFFFFFFFFFULL);
-				//	_log[order]._current = (void*)((unsigned long long)current & 0x00007FFFFFFFFFFFULL);
-				//}
 				unsigned long long change = reinterpret_cast<unsigned long long>(current) + (0xFFFF800000000000ULL & tail) + 0x0000800000000000ULL;
+
 				auto old_tail = _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_tail), change, tail);
 				{
 					auto order = _InterlockedIncrement(&_order);
@@ -61,11 +56,14 @@ public:
 					_log[order]._tail = (void*)(tail & 0x00007FFFFFFFFFFFULL);
 					_log[order]._current = (void*)(change & 0x00007FFFFFFFFFFFULL);
 				}
-				if (tail == old_tail) {
+				if (tail == old_tail)
 					break;
-				}
 				else
 					__debugbreak();
+				//auto old_tail = _InterlockedExchange(reinterpret_cast<unsigned long long volatile*>(&_tail), change);
+				//if ((old_tail & 0x00007FFFFFFFFFFFULL) != (tail & 0x00007FFFFFFFFFFFULL))
+				//	__debugbreak();
+				//break;
 			}
 		}
 	}
@@ -85,7 +83,7 @@ public:
 					_log[order]._next = (void*)(change & 0x00007FFFFFFFFFFFULL);
 				}
 				int result = next->_value;
-				_memory_pool.deallocate(*current);
+				_object_pool.release(*current);
 				return result;
 			}
 		}
@@ -93,7 +91,7 @@ public:
 private:
 	unsigned long long _head;
 	unsigned long long _tail;
-	data_structure::lockfree::memory_pool<node> _memory_pool;
+	data_structure::lockfree::object_pool<node> _object_pool;
 
 
 	volatile unsigned int _order = 0;
