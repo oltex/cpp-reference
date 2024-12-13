@@ -1,4 +1,4 @@
-#include "lockfree_queue_old.h"
+#include "lockfree_queue.h"
 #include <thread>
 #include <intrin.h>
 #include <Windows.h>
@@ -29,10 +29,10 @@ inline static unsigned int __stdcall func1(void* arg) noexcept {
 }
 inline static unsigned int __stdcall func2(void* arg) noexcept {
 	for (;;) {
-		_lockfree_queue.pop();
-		_lockfree_queue.push(1);
-		_lockfree_queue.pop();
-		_lockfree_queue.push(1);
+		//_lockfree_queue.pop();
+		//_lockfree_queue.push(1);
+		//_lockfree_queue.pop();
+		//_lockfree_queue.push(1);
 
 		_lockfree_queue.pop();
 		_lockfree_queue.pop();
