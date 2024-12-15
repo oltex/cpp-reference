@@ -48,7 +48,7 @@ public:
 			if (nullptr == _InterlockedCompareExchangePointer(reinterpret_cast<void* volatile*>(&next), (void*)current, nullptr)) {
 				for(;;) {
 					auto result = _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_tail), (unsigned long long)current, tail);
-					if (result != tail)
+					if (result == tail)
 						break;
 				}
 				//{

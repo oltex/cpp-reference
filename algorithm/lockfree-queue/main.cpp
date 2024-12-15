@@ -1,4 +1,4 @@
-#include "lockfree_queue.h"
+#include "lockfree_queue_test1.h"
 #include <thread>
 #include <intrin.h>
 #include <Windows.h>
@@ -34,7 +34,6 @@ inline static unsigned int __stdcall func_tailtail1(void* arg) noexcept {
 inline static unsigned int __stdcall func_tailtail2(void* arg) noexcept {
 	for (;;) {
 		_lockfree_queue.pop();
-		_lockfree_queue.pop();
 		_lockfree_queue.push(1);
 	}
 }
@@ -53,11 +52,9 @@ inline static unsigned int __stdcall func_pop2(void* arg) noexcept {
 }
 
 int main(void) noexcept {
-	//_lockfree_queue.push(1);
-	//_lockfree_queue.pop();
 
-	HANDLE _handle0 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
-	HANDLE _handle1 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
+	HANDLE _handle0 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func_tailtail1, nullptr, 0, 0));
+	HANDLE _handle1 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func_tailtail2, nullptr, 0, 0));
 	//HANDLE _handle2 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
 	//HANDLE _handle3 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
 	//HANDLE _handle4 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
