@@ -45,21 +45,20 @@ public:
 			node*& next = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & tail)->_next;
 			//if ((tail & 0x00007FFFFFFFFFFFULL) == ((unsigned long long)next & 0x00007FFFFFFFFFFFULL))
 			//	__debugbreak();
-			unsigned long long change = reinterpret_cast<unsigned long long>(current) + (0xFFFF800000000000ULL & tail) + 0x0000800000000000ULL;
-			auto old_tail = _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_tail), change, tail);
-			if (old_tail == tail) {
-				if (nullptr == _InterlockedCompareExchangePointer(reinterpret_cast<void* volatile*>(&next), (void*)current, nullptr)) {
-					//{
-					//	auto order = _InterlockedIncrement(&_order);
-					//	_log[order]._thread_id = GetCurrentThreadId();
-					//	_log[order]._action = L"push : tail->next = current // tail = current";
-					//	_log[order]._tail = (void*)(tail & 0x00007FFFFFFFFFFFULL);
-					//	_log[order]._current = (void*)(change & 0x00007FFFFFFFFFFFULL);
-					//}
-					break;
+			if (nullptr == _InterlockedCompareExchangePointer(reinterpret_cast<void* volatile*>(&next), (void*)current, nullptr)) {
+				for(;;) {
+					auto result = _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_tail), (unsigned long long)current, tail);
+					if (result != tail)
+						break;
 				}
-				else
-					__debugbreak();
+				//{
+				//	auto order = _InterlockedIncrement(&_order);
+				//	_log[order]._thread_id = GetCurrentThreadId();
+				//	_log[order]._action = L"push : tail->next = current // tail = current";
+				//	_log[order]._tail = (void*)(tail & 0x00007FFFFFFFFFFFULL);
+				//	_log[order]._current = (void*)(change & 0x00007FFFFFFFFFFFULL);
+				//}
+				break;
 			}
 		}
 	}
@@ -67,11 +66,7 @@ public:
 		for (;;) {
 			unsigned long long head = _head;
 			node* current = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & head);
-			if (nullptr == current)
-				continue;
 			node* next = current->_next;
-			if (nullptr == next)
-				continue;
 
 			unsigned long long change = reinterpret_cast<unsigned long long>(next) + (0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
 			if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), change, head)) {

@@ -1,4 +1,4 @@
-#include "lockfree_queue_old2.h"
+#include "lockfree_queue.h"
 #include <thread>
 #include <intrin.h>
 #include <Windows.h>
@@ -11,7 +11,7 @@ volatile unsigned int _value = 0;
 inline static unsigned int __stdcall func(void* arg) noexcept {
 	int count = 0;
 	for (;;) {
-		if (count++ == 1000000) {
+		if (count++ == 10000) {
 			std::cout << "thread :" << GetCurrentThreadId() /*<< "size :" << _lockfree_queue._size */<< std::endl;
 			count = 0;
 		}
@@ -58,9 +58,9 @@ int main(void) noexcept {
 
 	HANDLE _handle0 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
 	HANDLE _handle1 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
-	HANDLE _handle2 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
-	HANDLE _handle3 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
-	HANDLE _handle4 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
+	//HANDLE _handle2 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
+	//HANDLE _handle3 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
+	//HANDLE _handle4 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
 	Sleep(INFINITE);
 	return 0;
 }

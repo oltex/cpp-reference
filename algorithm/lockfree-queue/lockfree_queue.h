@@ -52,13 +52,13 @@ public:
 			if (0 == (0x00007FFFFFFFFFFFULL & next) && count == (0xFFFF800000000000ULL & next)) {
 				if (next == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&address->_next), (unsigned long long)current, next)) {
 					_InterlockedExchange(reinterpret_cast<unsigned long long volatile*>(&_tail), reinterpret_cast<unsigned long long>(current) + next_count);
-					//{
-					//	auto order = _InterlockedIncrement(&_order) % 30000000;
-					//	_log[order]._thread_id = GetCurrentThreadId();
-					//	_log[order]._action = L"push : tail->next = current // tail = current";
-					//	_log[order]._tail = (void*)(tail & 0x00007FFFFFFFFFFFULL);
-					//	_log[order]._current = (void*)((unsigned long long)current & 0x00007FFFFFFFFFFFULL);
-					//}
+					{
+						auto order = _InterlockedIncrement(&_order) % 30000000;
+						_log[order]._thread_id = GetCurrentThreadId();
+						_log[order]._action = L"push : tail->next = current // tail = current";
+						_log[order]._tail = (void*)(tail & 0x00007FFFFFFFFFFFULL);
+						_log[order]._current = (void*)((unsigned long long)current & 0x00007FFFFFFFFFFFULL);
+					}
 					break;
 				}
 			}
@@ -77,13 +77,13 @@ public:
 			else {
 				unsigned long long change = next + (0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
 				if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), change, head)) {
-					//{
-					//	auto order = _InterlockedIncrement(&_order) % 30000000;
-					//	_log[order]._thread_id = GetCurrentThreadId();
-					//	_log[order]._action = L"pop : _head = next";
-					//	_log[order]._head = (void*)(head & 0x00007FFFFFFFFFFFULL);
-					//	_log[order]._next = (void*)(change & 0x00007FFFFFFFFFFFULL);
-					//}
+					{
+						auto order = _InterlockedIncrement(&_order) % 30000000;
+						_log[order]._thread_id = GetCurrentThreadId();
+						_log[order]._action = L"pop : _head = next";
+						_log[order]._head = (void*)(head & 0x00007FFFFFFFFFFFULL);
+						_log[order]._next = (void*)(next & 0x00007FFFFFFFFFFFULL);
+					}
 					int result = reinterpret_cast<node*>(next)->_value;
 					_object_pool.deallocate(*address);
 					return result;
