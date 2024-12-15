@@ -42,9 +42,10 @@ public:
 
 		for (;;) {
 			unsigned long long tail = _tail;
+			if ((unsigned long long)current == tail)
+				continue;
 			node*& next = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & tail)->_next;
-			//if ((tail & 0x00007FFFFFFFFFFFULL) == ((unsigned long long)next & 0x00007FFFFFFFFFFFULL))
-			//	__debugbreak();
+
 			if (nullptr == _InterlockedCompareExchangePointer(reinterpret_cast<void* volatile*>(&next), (void*)current, nullptr)) {
 				for(;;) {
 					auto result = _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_tail), (unsigned long long)current, tail);
