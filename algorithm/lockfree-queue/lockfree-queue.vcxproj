@@ -146,8 +146,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="lockfree_queue.h" />
-    <ClInclude Include="lockfree_queue2.h" />
     <ClInclude Include="lockfree_queue_old.h" />
+    <ClInclude Include="lockfree_queue_old2.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

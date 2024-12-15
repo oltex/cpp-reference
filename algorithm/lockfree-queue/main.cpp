@@ -1,4 +1,4 @@
-#include "lockfree_queue.h"
+#include "lockfree_queue_old2.h"
 #include <thread>
 #include <intrin.h>
 #include <Windows.h>
@@ -11,17 +11,16 @@ volatile unsigned int _value = 0;
 inline static unsigned int __stdcall func(void* arg) noexcept {
 	int count = 0;
 	for (;;) {
-		//if (count++ == 1000000) {
-		//	std::cout << "thread :" << GetCurrentThreadId() /*<< "size :" << _lockfree_queue._size */<< std::endl;
-		//	count = 0;
-		//}
-		for (int i = 0; i < 3; ++i) {
-			auto value = _InterlockedIncrement(&_value);
-			_lockfree_queue.push(value);
+		if (count++ == 1000000) {
+			std::cout << "thread :" << GetCurrentThreadId() /*<< "size :" << _lockfree_queue._size */<< std::endl;
+			count = 0;
 		}
 		for (int i = 0; i < 3; ++i) {
-			/*if (0 == */_lockfree_queue.pop();
-				//__debugbreak();
+			//auto value = _InterlockedIncrement(&_value);
+			_lockfree_queue.push(1);
+		}
+		for (int i = 0; i < 3; ++i) {
+			_lockfree_queue.pop();
 		}
 	}
 }
