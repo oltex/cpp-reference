@@ -44,13 +44,15 @@ public:
 			unsigned long long tail = _tail;
 			unsigned long long count = 0xFFFF800000000000ULL & tail;
 			node* address = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & tail);
+			if (current == address)
+				continue;
 			unsigned long long next = address->_next;
 
-			unsigned long long next_count = count + 0x0000800000000000ULL;
-			current->_next = next_count;
 
 			if (0 == (0x00007FFFFFFFFFFFULL & next) && count == (0xFFFF800000000000ULL & next)) {
 				if (next == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&address->_next), (unsigned long long)current, next)) {
+					unsigned long long next_count = count + 0x0000800000000000ULL;
+					current->_next = next_count;
 					_InterlockedExchange(reinterpret_cast<unsigned long long volatile*>(&_tail), reinterpret_cast<unsigned long long>(current) + next_count);
 					{
 						auto order = _InterlockedIncrement(&_order) % 30000000;
@@ -72,7 +74,7 @@ public:
 			if (0 == (0x00007FFFFFFFFFFFULL & next)) {
 				if (head == _head)
 					__debugbreak();
-					//return 0;
+				//return 0;
 			}
 			else {
 				unsigned long long change = next + (0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
