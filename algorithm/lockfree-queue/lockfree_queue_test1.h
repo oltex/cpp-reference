@@ -47,11 +47,12 @@ public:
 			node*& next = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & tail)->_next;
 
 			if (nullptr == _InterlockedCompareExchangePointer(reinterpret_cast<void* volatile*>(&next), (void*)current, nullptr)) {
-				for(;;) {
-					auto result = _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_tail), (unsigned long long)current, tail);
-					if (result == tail)
-						break;
-				}
+				//while (true) {
+				//	if (current->_next == nullptr)
+				//		break;
+				//	current = current->_next;
+				//}
+				auto result = _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_tail), (unsigned long long)current, tail);
 				//{
 				//	auto order = _InterlockedIncrement(&_order);
 				//	_log[order]._thread_id = GetCurrentThreadId();
