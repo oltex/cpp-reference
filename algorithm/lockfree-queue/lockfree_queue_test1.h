@@ -43,6 +43,8 @@ public:
 
 		for (;;) {
 			node* tail = _tail;
+			if (tail == current)
+				__debugbreak();
 			node* next = tail->_next;
 
 			if (nullptr != next) {
@@ -50,7 +52,6 @@ public:
 			}
 			else {
 				if (nullptr == _InterlockedCompareExchangePointer(reinterpret_cast<void* volatile*>(&tail->_next), (void*)current, nullptr)) {
-					//auto result = _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_tail), (unsigned long long)current, tail);
 					{
 						auto order = _InterlockedIncrement(&_order);
 						_log[order]._thread_id = GetCurrentThreadId();
@@ -68,6 +69,21 @@ public:
 			unsigned long long head = _head;
 			node* address = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & head);
 			node* next = address->_next;
+			if (next == nullptr)
+				continue;
+
+			for (;;) {
+				node* tail = _tail;
+				node* next = tail->_next;
+				if (tail == next)
+					__debugbreak();
+
+				if (nullptr != next) {
+					_InterlockedCompareExchangePointer(reinterpret_cast<void* volatile*>(&_tail), (void*)next, tail);
+				}
+				else
+					break;
+			}
 
 			unsigned long long change = reinterpret_cast<unsigned long long>(next) + (0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
 			if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), change, head)) {

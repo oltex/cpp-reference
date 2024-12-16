@@ -48,7 +48,6 @@ public:
 				continue;
 			unsigned long long next = address->_next;
 
-
 			if (0 == (0x00007FFFFFFFFFFFULL & next) && count == (0xFFFF800000000000ULL & next)) {
 				unsigned long long next_count = count + 0x0000800000000000ULL;
 				current->_next = next_count;
