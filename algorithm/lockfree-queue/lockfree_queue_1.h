@@ -12,22 +12,22 @@ private:
 		inline auto operator=(node const&) noexcept = delete;
 		inline auto operator=(node&&) noexcept = delete;
 		inline ~node(void) noexcept = delete;
-		node* _next;
+		unsigned long long _next;
 		int _value;
 	};
 	struct log final {
 		unsigned long _thread_id;
 		wchar_t const* _action;
 
+		void* _head = 0;
 		void* _tail = 0;
 		void* _current = 0;
-		void* _head = 0;
 		void* _next = 0;
 	};
 public:
 	inline explicit lockfree_queue(void) noexcept {
 		node* current = &_object_pool.allocate();
-		current->_next = nullptr;
+		current->_next = 0;
 		_head = _tail = reinterpret_cast<unsigned long long>(current);
 	}
 	inline explicit lockfree_queue(lockfree_queue const& rhs) noexcept = delete;
@@ -39,26 +39,27 @@ public:
 	inline void push(int value) noexcept {
 		node* current = &_object_pool.allocate();
 		current->_value = value;
-		current->_next = nullptr;
 
 		for (;;) {
 			unsigned long long tail = _tail;
+			unsigned long long count = 0xFFFF800000000000ULL & tail;
 			node* address = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & tail);
-			node* next = address->_next;
+			if (current == address)
+				continue;
+			unsigned long long next = address->_next;
 
-			if (nullptr != next)
-				_InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_tail),
-					reinterpret_cast<unsigned long long>(next) + (0xFFFF800000000000ULL & tail) + 0x0000800000000000ULL, tail);
-			else {
-				if (nullptr == _InterlockedCompareExchangePointer(reinterpret_cast<void* volatile*>(&address->_next), (void*)current, nullptr)) {
+			if (0 == (0x00007FFFFFFFFFFFULL & next) && count == (0xFFFF800000000000ULL & next)) {
+				unsigned long long next_count = count + 0x0000800000000000ULL;
+				current->_next = next_count;
+				if (next == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&address->_next), (unsigned long long)current, next)) {
+					//_InterlockedExchange(reinterpret_cast<unsigned long long volatile*>(&_tail), reinterpret_cast<unsigned long long>(current) + next_count);
+					_tail = reinterpret_cast<unsigned long long>(current) + next_count;
 					//{
 					//	auto order = _InterlockedIncrement(&_order) % 30000000;
 					//	_log[order]._thread_id = GetCurrentThreadId();
 					//	_log[order]._action = L"push : tail->next = current // tail = current";
-					//	_log[order]._tail = (void*)(tail);
+					//	_log[order]._tail = (void*)(tail & 0x00007FFFFFFFFFFFULL);
 					//	_log[order]._current = (void*)((unsigned long long)current & 0x00007FFFFFFFFFFFULL);
-					//	_log[order]._head = 0;
-					//	_log[order]._next = 0;
 					//}
 					break;
 				}
@@ -69,29 +70,22 @@ public:
 		for (;;) {
 			unsigned long long head = _head;
 			node* address = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & head);
-			node* next = address->_next;
-			if (next == nullptr)
-				continue;
-
-			unsigned long long tail = _tail;
-			if ((0x00007FFFFFFFFFFFULL & tail) == (0x00007FFFFFFFFFFFULL & head)) {
-				node* next = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & tail)->_next;
-				if (nullptr != next)
-					_InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_tail),
-						reinterpret_cast<unsigned long long>(next) + (0xFFFF800000000000ULL & tail) + 0x0000800000000000ULL, tail);
+			unsigned long long next = address->_next;
+			if (0 == (0x00007FFFFFFFFFFFULL & next)) {
+				if (head == _head)
+					__debugbreak();
+				//return 0;
 			}
-			else {
-				int result = next->_value;
-				unsigned long long change = reinterpret_cast<unsigned long long>(next) + (0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
+			else if ((head & 0x00007FFFFFFFFFFFULL) != (_tail & 0x00007FFFFFFFFFFFULL)) {
+				int result = reinterpret_cast<node*>(next)->_value;
+				unsigned long long change = next + (0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
 				if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), change, head)) {
 					//{
 					//	auto order = _InterlockedIncrement(&_order) % 30000000;
 					//	_log[order]._thread_id = GetCurrentThreadId();
 					//	_log[order]._action = L"pop : _head = next";
-					//	_log[order]._tail = 0;
-					//	_log[order]._current = 0;
 					//	_log[order]._head = (void*)(head & 0x00007FFFFFFFFFFFULL);
-					//	_log[order]._next = (void*)(change & 0x00007FFFFFFFFFFFULL);
+					//	_log[order]._next = (void*)(next & 0x00007FFFFFFFFFFFULL);
 					//}
 					_object_pool.deallocate(*address);
 					return result;
