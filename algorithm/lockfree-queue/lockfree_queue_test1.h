@@ -42,7 +42,7 @@ public:
 		for (;;) {
 			unsigned long long tail = _tail;
 			node* address = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & tail);
-			node* next = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & tail)->_next;
+			node* next = address->_next;
 
 			if (nullptr != next)
 				_InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_tail),
