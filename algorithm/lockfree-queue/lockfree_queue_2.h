@@ -29,6 +29,7 @@ public:
 		node* current = &_object_pool.allocate();
 		current->_next = nullptr;
 		_head = _tail = reinterpret_cast<unsigned long long>(current);
+		_nullptr = _InterlockedIncrement(&_static_nullptr);
 	}
 	inline explicit lockfree_queue(lockfree_queue const& rhs) noexcept = delete;
 	inline explicit lockfree_queue(lockfree_queue&& rhs) noexcept = delete;
@@ -39,17 +40,17 @@ public:
 	inline void push(int value) noexcept {
 		node* current = &_object_pool.allocate();
 		current->_value = value;
-		current->_next = nullptr;
+		current->_next = (node*)_nullptr;
 
 		for (;;) {
 			unsigned long long tail = _tail;
 			node* address = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & tail);
 			node* next = address->_next;
 
-			if (nullptr != next)
+			if (_nullptr != next)
 				_InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_tail),
 					reinterpret_cast<unsigned long long>(next) + (0xFFFF800000000000ULL & tail) + 0x0000800000000000ULL, tail);
-			else if (nullptr == _InterlockedCompareExchangePointer(reinterpret_cast<void* volatile*>(&address->_next), (void*)current, nullptr)) {
+			else if (_nullptr == _InterlockedCompareExchangePointer(reinterpret_cast<void* volatile*>(&address->_next), (void*)current, _nullptr)) {
 				{
 					auto order = _InterlockedIncrement(&_order) % 30000000;
 					_log[order]._thread_id = GetCurrentThreadId();
@@ -102,7 +103,8 @@ private:
 	unsigned long long _head;
 	unsigned long long _tail;
 	data_structure::lockfree::memory_pool<node> _object_pool;
-
+	inline static unsigned long long _nullptr;
+	inline static unsigned long long _static_nullptr = 0;
 
 	volatile unsigned int _order = 0;
 	log* _log = new log[30000000];

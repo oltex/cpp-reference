@@ -98,7 +98,6 @@ private:
 	unsigned long long _tail;
 	data_structure::lockfree::memory_pool<node> _object_pool;
 
-
 	volatile unsigned int _order = 0;
 	log* _log = new log[30000000];
 };
