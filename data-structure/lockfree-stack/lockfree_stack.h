@@ -58,7 +58,7 @@ namespace data_structure::lockfree {
 					break;
 			}
 		}
-		inline auto pop(void) noexcept ->  std::optional<type> {
+		inline auto pop(void) noexcept -> std::optional<type> {
 			for (;;) {
 				unsigned long long head = _head;
 				node* address = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & head);
