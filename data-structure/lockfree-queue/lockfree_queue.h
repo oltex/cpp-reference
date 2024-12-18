@@ -30,7 +30,16 @@ namespace data_structure::lockfree {
 		inline explicit lockfree_queue(lockfree_queue&& rhs) noexcept = delete;
 		inline auto operator=(lockfree_queue const& rhs) noexcept -> lockfree_queue & = delete;
 		inline auto operator=(lockfree_queue&& rhs) noexcept -> lockfree_queue & = delete;
-		inline ~lockfree_queue(void) noexcept = default;
+		inline ~lockfree_queue(void) noexcept {
+			node* head = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & _head);
+			while (_nullptr != reinterpret_cast<unsigned long long>(head)) {
+				unsigned long long next = head->_next;
+				if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
+					head->_value.~type();
+				_memory_pool.deallocate(*head);
+				head = reinterpret_cast<node*>(next);
+			}
+		};
 	public:
 		template<typename universal>
 		inline void push(universal&& value) noexcept {

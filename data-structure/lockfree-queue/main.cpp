@@ -1,8 +1,10 @@
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+
 #include "lockfree_queue.h"
 #include "../../module/multi/spin.h"
 #include <thread>
-#include <intrin.h>
-#include <Windows.h>
 #include <intrin.h>
 #include <iostream>
 
@@ -73,6 +75,7 @@ inline static unsigned int __stdcall func(void* arg) noexcept {
 
 
 int main(void) noexcept {
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	HANDLE _handle0 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
 	HANDLE _handle1 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
 	//HANDLE _handle2 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
