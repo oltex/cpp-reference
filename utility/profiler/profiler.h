@@ -1,7 +1,7 @@
 #pragma once
 #pragma comment (lib, "winmm")
-#include "../../system/time/multimedia.h"
-#include "../../system/time/high_resolution.h"
+#include "../../system-component/time/multimedia.h"
+#include "../../system-component/time/high_resolution.h"
 #include "../../data-structure/unordered-map/unordered_map.h"
 #include "../../design-pettern/singleton/singleton.h"
 
@@ -128,7 +128,7 @@ namespace utility {
 		}
 	private:
 		LARGE_INTEGER _frequency;
-		thread_local void* p;k
+		thread_local void* p; k
 			data_structure::unordered_map<char const* const, profile> _profile;
 	};
 }
