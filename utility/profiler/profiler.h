@@ -1,10 +1,9 @@
 #pragma once
 #pragma comment (lib, "winmm")
 #include "../../system-component/time/multimedia.h"
-#include "../../system-component/time/high_resolution.h"
+#include "../../system-component/time/query_performance.h"
 #include "../../data-structure/unordered-map/unordered_map.h"
 #include "../../design-pettern/singleton/singleton.h"
-
 #include <Windows.h>
 #include <fstream>
 #include <chrono>
@@ -18,55 +17,45 @@
 namespace utility {
 	class profiler final : public design_pattern::singleton<profiler> {
 	private:
+		using size_type = unsigned int;
+	private:
 		friend class design_pattern::singleton<profiler>;
 		struct profile final {
-			LARGE_INTEGER _counter;
-			LARGE_INTEGER _pause;
-
+			system_component::time::query_performance _timer;
+			system_component::time::query_performance _pause;
 			double _sum, _minimum = DBL_MAX, _maximum = -DBL_MAX;
-			size_t _count;
+			size_type _count;
 		};
 	private:
 		inline explicit profiler(void) noexcept {
 			system_component::time::multimedia::begin_period(1);
-			QueryPerformanceFrequency(&_frequency);
 		}
-		inline explicit profiler(profiler const& rhs) noexcept = delete;
-		inline explicit profiler(profiler&& rhs) noexcept = delete;
-		inline auto operator=(profiler const& rhs) noexcept -> singleton & = delete;
-		inline auto operator=(profiler&& rhs) noexcept -> singleton & = delete;
+		inline explicit profiler(profiler const&) noexcept = delete;
+		inline explicit profiler(profiler&&) noexcept = delete;
+		inline auto operator=(profiler const&) noexcept -> singleton & = delete;
+		inline auto operator=(profiler&&) noexcept -> singleton & = delete;
 		inline ~profiler(void) noexcept {
 			system_component::time::multimedia::end_period(1);
 		}
 	public:
 		inline void start(char const* const tag) noexcept {
-			auto& prof = _profile[tag];
-			prof._pause.QuadPart = 0;
-			QueryPerformanceCounter(&prof._counter);
+			profile& profile_ = _profile[tag];
+			profile_._pause.clear();
+			profile_._timer.counter();
 		}
 		inline void stop(char const* const tag) const noexcept {
-			LARGE_INTEGER counter;
-			QueryPerformanceCounter(&counter);
+			system_component::time::query_performance timer;
+			timer.counter();
 
-			auto iter = _profile.find(tag);
-			if (iter == _profile.end())
-				return;
-			auto& prof = (*iter)._second;
-
-			if (0 == prof._counter.QuadPart)
-				return;
-			prof._pause.QuadPart += counter.QuadPart - prof._counter.QuadPart;
-			prof._counter.QuadPart = 0;
-
-			double time = static_cast<double>(prof._pause.QuadPart) / _frequency.QuadPart;
-			prof._pause.QuadPart = 0;
-
-			prof._sum += time;
-			if (prof._minimum > time)
-				prof._minimum = time;
-			if (prof._maximum < time)
-				prof._maximum = time;
-			++prof._count;
+			profile& profile_ = (*_profile.find(tag))._second;
+			double time = static_cast<double>(timer.data().QuadPart - profile_._timer.data().QuadPart) / system_component::time::_frequency.data().QuadPart;
+			profile_._sum += time;
+			if (profile_._minimum > time)
+				profile_._minimum = time;
+			if (profile_._maximum < time)
+				profile_._maximum = time;
+			profile_._timer.clear();
+			++profile_._count;
 		}
 		inline void pause(char const* const tag) const noexcept {
 			LARGE_INTEGER counter;
@@ -127,7 +116,7 @@ namespace utility {
 			return (*iter)._second;
 		}
 	private:
-		LARGE_INTEGER _frequency;
+		inline static thread_local void* thiread = 0;
 		data_structure::unordered_map<char const* const, profile> _profile;
 	};
 }

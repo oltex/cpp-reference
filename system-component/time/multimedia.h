@@ -5,13 +5,6 @@
 namespace system_component::time {
 	class multimedia final {
 	public:
-		inline static void begin_period(unsigned int peroid) noexcept {
-			timeBeginPeriod(peroid);
-		}
-		inline static void end_period(unsigned int peroid) noexcept {
-			timeEndPeriod(peroid);
-		}
-	public:
 		inline explicit multimedia(void) noexcept = default;
 		inline explicit multimedia(multimedia const& rhs) noexcept
 			: _time(rhs._time) {
@@ -36,6 +29,13 @@ namespace system_component::time {
 		}
 	private:
 		unsigned long _time;
+	public:
+		inline static void begin_period(unsigned int peroid) noexcept {
+			timeBeginPeriod(peroid);
+		}
+		inline static void end_period(unsigned int peroid) noexcept {
+			timeEndPeriod(peroid);
+		}
 	};
 
 	//namespace period {

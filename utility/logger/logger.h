@@ -1,7 +1,7 @@
 #pragma once
 #include "../../design-pettern/singleton/singleton.h"
-#include "../../module/multi/critical_section.h"
-#include "../../module/file/file.h"
+#include "../../system-component/multi/critical_section.h"
+#include "../../system-component/file/file.h"
 #include <string_view>
 #include <optional>
 #include <chrono>

@@ -5,9 +5,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="multimedia.h" />
-    <ClInclude Include="high_resolution.h" />
+    <ClInclude Include="query_performance.h" />
     <ClInclude Include="system.h" />
-    <ClInclude Include="time_struct.h" />
-    <ClInclude Include="unix_time.h" />
+    <ClInclude Include="date.h" />
+    <ClInclude Include="unix.h" />
   </ItemGroup>
 </Project>
