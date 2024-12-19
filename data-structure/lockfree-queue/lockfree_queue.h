@@ -88,6 +88,8 @@ namespace data_structure::lockfree {
 						type result = reinterpret_cast<node*>(next)->_value;
 						unsigned long long change = next + (0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
 						if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), change, head)) {
+							if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
+								address->_value.~type();
 							_memory_pool.deallocate(*address);
 							return result;
 						}

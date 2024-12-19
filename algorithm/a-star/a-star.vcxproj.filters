@@ -4,7 +4,7 @@
     <Filter Include="client">
       <UniqueIdentifier>{f2486558-8e6e-4049-8273-d9975489a25c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="client\a_star">
+    <Filter Include="a_star">
       <UniqueIdentifier>{9e2ba77a-ad2d-494b-b0a4-9902967bcb8b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -13,13 +13,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="a-star\coordinate.h">
-      <Filter>client\a_star</Filter>
+      <Filter>a_star</Filter>
     </ClInclude>
     <ClInclude Include="a-star\grid.h">
-      <Filter>client\a_star</Filter>
+      <Filter>a_star</Filter>
     </ClInclude>
     <ClInclude Include="a-star\path.h">
-      <Filter>client\a_star</Filter>
+      <Filter>a_star</Filter>
     </ClInclude>
     <ClInclude Include="camera.h">
       <Filter>client</Filter>
@@ -31,9 +31,6 @@
       <Filter>client</Filter>
     </ClInclude>
     <ClInclude Include="test.h">
-      <Filter>client</Filter>
-    </ClInclude>
-    <ClInclude Include="library\window\timer.h">
       <Filter>client</Filter>
     </ClInclude>
     <ClInclude Include="recode.h">

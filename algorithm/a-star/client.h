@@ -50,8 +50,8 @@ public:
 		case WM_LBUTTONDOWN: {
 			POINT point = _camera.camera_to_client(POINT(GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam)));
 			_tile._drag = true;
-			_tile._erase = _grid.get_tile(a_star::coordinate{ (unsigned int)point.x / _tile._size, (unsigned int)point.y / _tile._size });
-			_grid.set_tile(a_star::coordinate{ (unsigned int)point.x / _tile._size, (unsigned int)point.y / _tile._size }, !_tile._erase);
+			_tile._erase = _grid.get_tile(algorithm::a_star::coordinate{ (unsigned int)point.x / _tile._size, (unsigned int)point.y / _tile._size });
+			_grid.set_tile(algorithm::a_star::coordinate{ (unsigned int)point.x / _tile._size, (unsigned int)point.y / _tile._size }, !_tile._erase);
 			_window.invalidate_rect(nullptr, true);
 		} break;
 		case WM_LBUTTONUP: {
@@ -60,12 +60,12 @@ public:
 		} break;
 		case WM_MBUTTONDOWN: {
 			POINT point = _camera.camera_to_client(POINT(GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam)));
-			_path.set_source(a_star::coordinate{ (unsigned int)point.x / _tile._size, (unsigned int)point.y / _tile._size });
+			_path.set_source(algorithm::a_star::coordinate{ (unsigned int)point.x / _tile._size, (unsigned int)point.y / _tile._size });
 			_window.invalidate_rect(nullptr, true);
 		} break;
 		case WM_RBUTTONDOWN: {
 			POINT point = _camera.camera_to_client(POINT(GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam)));
-			_path.set_destination(a_star::coordinate{ (unsigned int)point.x / _tile._size, (unsigned int)point.y / _tile._size });
+			_path.set_destination(algorithm::a_star::coordinate{ (unsigned int)point.x / _tile._size, (unsigned int)point.y / _tile._size });
 			_window.invalidate_rect(nullptr, true);
 		} break;
 		case WM_KEYDOWN: {
@@ -82,7 +82,7 @@ public:
 			POINT point = _camera.camera_to_client(POINT(GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam)));
 			if (false == _tile._drag)
 				break;
-			_grid.set_tile(a_star::coordinate{ (unsigned int)point.x / _tile._size, (unsigned int)point.y / _tile._size }, !_tile._erase);
+			_grid.set_tile(algorithm::a_star::coordinate{ (unsigned int)point.x / _tile._size, (unsigned int)point.y / _tile._size }, !_tile._erase);
 			_window.invalidate_rect(nullptr, true);
 		} break;
 		case WM_MOUSEWHEEL: {
@@ -115,6 +115,6 @@ public:
 	recode _recode;
 	test _test;
 
-	a_star::grid _grid;
-	a_star::path _path;
+	algorithm::a_star::grid _grid;
+	algorithm::a_star::path _path;
 };

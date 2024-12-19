@@ -18,7 +18,7 @@ public:
 	}
 	inline ~recode(void) noexcept = default;
 public:
-	inline void paint(window::device_context& dc, jump_point_search::path& path) noexcept {
+	inline void paint(window::device_context& dc, algorithm::jump_point_search::path& path) noexcept {
 		dc.select_object(_font);
 		dc.set_bk_mode(TRANSPARENT);
 		dc.set_text_color(RGB(255, 255, 255));

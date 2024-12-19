@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-namespace a_star {
+namespace algorithm::a_star {
 	struct coordinate {
 	private:
 		using size_type = unsigned int;

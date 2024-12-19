@@ -10,7 +10,7 @@
 #include "../../../data-structure/weak-pointer/weak_pointer.h"
 #include <optional>
 
-namespace jump_point_search {
+namespace algorithm::jump_point_search {
 	class path final {
 	public:
 		using size_type = unsigned int;

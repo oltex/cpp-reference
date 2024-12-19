@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-namespace jump_point_search {
+namespace algorithm::jump_point_search {
 	struct coordinate {
 	private:
 		using size_type = unsigned int;

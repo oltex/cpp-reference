@@ -155,7 +155,6 @@
     <ClInclude Include="a-star\path.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="client.h" />
-    <ClInclude Include="library\window\timer.h" />
     <ClInclude Include="test.h" />
     <ClInclude Include="tile.h" />
     <ClInclude Include="recode.h" />

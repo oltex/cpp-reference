@@ -2,7 +2,7 @@
 #include "../../../data-structure/bit-grid/bit_grid.h"
 #include "coordinate.h"
 
-namespace jump_point_search {
+namespace algorithm::jump_point_search {
 	class grid final {
 	private:
 		using size_type = unsigned int;

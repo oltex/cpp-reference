@@ -8,7 +8,7 @@
 #include "../../../data-structure/shared-pointer/shared_pointer.h"
 #include "../../../data-structure/weak-pointer/weak_pointer.h"
 
-namespace a_star {
+namespace algorithm::a_star {
 	class path final {
 	public:
 		using size_type = unsigned int;

@@ -50,8 +50,8 @@ public:
 		case WM_LBUTTONDOWN: {
 			POINT point = _camera.camera_to_client(POINT(GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam)));
 			_tile._drag = true;
-			_tile._erase = _grid.get_tile(jump_point_search::coordinate{ (unsigned int)point.x / _tile._size, (unsigned int)point.y / _tile._size });
-			jump_point_search::coordinate coordinate{ (unsigned int)point.x / _tile._size, (unsigned int)point.y / _tile._size };
+			_tile._erase = _grid.get_tile(algorithm::jump_point_search::coordinate{ (unsigned int)point.x / _tile._size, (unsigned int)point.y / _tile._size });
+			algorithm::jump_point_search::coordinate coordinate{ (unsigned int)point.x / _tile._size, (unsigned int)point.y / _tile._size };
 			if (_grid.in_bound(coordinate))
 				_grid.set_tile(coordinate, !_tile._erase);
 			_window.invalidate_rect(nullptr, true);
@@ -62,12 +62,12 @@ public:
 		} break;
 		case WM_MBUTTONDOWN: {
 			POINT point = _camera.camera_to_client(POINT(GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam)));
-			_path.set_source(jump_point_search::coordinate{ (unsigned int)point.x / _tile._size, (unsigned int)point.y / _tile._size });
+			_path.set_source(algorithm::jump_point_search::coordinate{ (unsigned int)point.x / _tile._size, (unsigned int)point.y / _tile._size });
 			_window.invalidate_rect(nullptr, true);
 		} break;
 		case WM_RBUTTONDOWN: {
 			POINT point = _camera.camera_to_client(POINT(GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam)));
-			_path.set_destination(jump_point_search::coordinate{ (unsigned int)point.x / _tile._size, (unsigned int)point.y / _tile._size });
+			_path.set_destination(algorithm::jump_point_search::coordinate{ (unsigned int)point.x / _tile._size, (unsigned int)point.y / _tile._size });
 			_window.invalidate_rect(nullptr, true);
 		} break;
 		case WM_KEYDOWN: {
@@ -84,7 +84,7 @@ public:
 			POINT point = _camera.camera_to_client(POINT(GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam)));
 			if (false == _tile._drag)
 				break;
-			jump_point_search::coordinate coordinate{ (unsigned int)point.x / _tile._size, (unsigned int)point.y / _tile._size };
+			algorithm::jump_point_search::coordinate coordinate{ (unsigned int)point.x / _tile._size, (unsigned int)point.y / _tile._size };
 			if (_grid.in_bound(coordinate))
 				_grid.set_tile(coordinate, !_tile._erase);
 			_window.invalidate_rect(nullptr, true);
@@ -124,6 +124,6 @@ public:
 	recode _recode;
 	test _test;
 
-	jump_point_search::grid _grid;
-	jump_point_search::path _path;
+	algorithm::jump_point_search::grid _grid;
+	algorithm::jump_point_search::path _path;
 };

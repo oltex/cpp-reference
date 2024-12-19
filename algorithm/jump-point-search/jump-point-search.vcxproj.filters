@@ -7,7 +7,7 @@
     <Filter Include="client">
       <UniqueIdentifier>{8a2dba41-b304-401b-ab88-a26fbbd84984}</UniqueIdentifier>
     </Filter>
-    <Filter Include="client\jump-point-search">
+    <Filter Include="jump-point-search">
       <UniqueIdentifier>{bf2f55da-d4dc-4c1c-b9bb-a6c6d38f461f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -22,13 +22,13 @@
       <Filter>client</Filter>
     </ClInclude>
     <ClInclude Include="jump-point-search\grid.h">
-      <Filter>client\jump-point-search</Filter>
+      <Filter>jump-point-search</Filter>
     </ClInclude>
     <ClInclude Include="jump-point-search\coordinate.h">
-      <Filter>client\jump-point-search</Filter>
+      <Filter>jump-point-search</Filter>
     </ClInclude>
     <ClInclude Include="jump-point-search\path.h">
-      <Filter>client\jump-point-search</Filter>
+      <Filter>jump-point-search</Filter>
     </ClInclude>
     <ClInclude Include="test.h">
       <Filter>client</Filter>

@@ -30,7 +30,7 @@ public:
 	}
 	inline ~tile(void) noexcept = default;
 public:
-	inline void paint(window::device_context& dc, camera& camera, jump_point_search::grid& grid, jump_point_search::path& path) noexcept {
+	inline void paint(window::device_context& dc, camera& camera, algorithm::jump_point_search::grid& grid, algorithm::jump_point_search::path& path) noexcept {
 		dc.select_object(_line);
 		auto width = grid.get_width();
 		auto height = grid.get_height();
@@ -51,7 +51,7 @@ public:
 		dc.select_object(_wall);
 		for (size_type i = 0; i < height; ++i) {
 			for (size_type j = 0; j < width; ++j) {
-				if (!grid.get_tile(jump_point_search::coordinate(j, i)))
+				if (!grid.get_tile(algorithm::jump_point_search::coordinate(j, i)))
 					continue;
 				RECT rect(j * _size, i * _size, (j + 1) * _size, (i + 1) * _size);
 				rect = camera.clinet_to_camera(rect);
@@ -62,7 +62,7 @@ public:
 		dc.select_object(_close);
 		for (auto iter = path._parent.begin(); iter != path._parent.end();) {
 			if (!(*iter).expired()) {
-				jump_point_search::coordinate position = (*iter)->_position;
+				algorithm::jump_point_search::coordinate position = (*iter)->_position;
 				RECT rect(position._x * _size, position._y * _size, (position._x + 1) * _size, (position._y + 1) * _size);
 				rect = camera.clinet_to_camera(rect);
 				dc.rectangle(rect.left, rect.top, rect.right, rect.bottom);
@@ -73,7 +73,7 @@ public:
 		}
 		dc.select_object(_open);
 		for (auto& iter : path._heap._vector) {
-			jump_point_search::coordinate position = iter->_node->_position;
+			algorithm::jump_point_search::coordinate position = iter->_node->_position;
 			RECT rect = camera.clinet_to_camera(RECT(position._x * _size, position._y * _size, (position._x + 1) * _size, (position._y + 1) * _size));
 			dc.rectangle(rect.left, rect.top, rect.right, rect.bottom);
 		}
@@ -100,7 +100,7 @@ public:
 		dc.select_object(_parent);
 		for (auto iter = path._parent.begin(); iter != path._parent.end();) {
 			if (!(*iter).expired()) {
-				jump_point_search::coordinate position = (*iter)->_position;
+				algorithm::jump_point_search::coordinate position = (*iter)->_position;
 				POINT point = camera.clinet_to_camera(POINT(position._x * _size + _size / 2, position._y * _size + _size / 2));
 				RECT rect = camera.clinet_to_camera(RECT(position._x * _size, position._y * _size, (position._x + 1) * _size, (position._y + 1) * _size));
 
@@ -134,7 +134,7 @@ public:
 				iter = path._parent.erase(iter);
 		}
 		for (auto& iter : path._heap._vector) {
-			jump_point_search::coordinate position = iter->_node->_position;
+			algorithm::jump_point_search::coordinate position = iter->_node->_position;
 			POINT point = camera.clinet_to_camera(POINT(position._x * _size + _size / 2, position._y * _size + _size / 2));
 			RECT rect = camera.clinet_to_camera(RECT(position._x * _size, position._y * _size, (position._x + 1) * _size, (position._y + 1) * _size));
 
