@@ -1,7 +1,10 @@
 #pragma once
 #pragma comment (lib, "winmm")
+#include "../../system/time/multimedia.h"
+#include "../../system/time/high_resolution.h"
 #include "../../data-structure/unordered-map/unordered_map.h"
 #include "../../design-pettern/singleton/singleton.h"
+
 #include <Windows.h>
 #include <fstream>
 #include <chrono>
@@ -12,7 +15,7 @@
 //#define declspec_dll _declspec(dllimport)
 //#endif
 
-namespace library::utility {
+namespace utility {
 	class profiler final : public design_pattern::singleton<profiler> {
 	private:
 		friend class design_pattern::singleton<profiler>;
@@ -25,7 +28,7 @@ namespace library::utility {
 		};
 	private:
 		inline explicit profiler(void) noexcept {
-			timeBeginPeriod(1);
+			timer::multimedia::begin_period(1);
 			QueryPerformanceFrequency(&_frequency);
 		}
 		inline explicit profiler(profiler const& rhs) noexcept = delete;
@@ -33,7 +36,7 @@ namespace library::utility {
 		inline auto operator=(profiler const& rhs) noexcept -> singleton & = delete;
 		inline auto operator=(profiler&& rhs) noexcept -> singleton & = delete;
 		inline ~profiler(void) noexcept {
-			timeEndPeriod(1);
+			timer::multimedia::end_period(1);
 		}
 	public:
 		inline void start(char const* const tag) noexcept {
@@ -125,7 +128,7 @@ namespace library::utility {
 		}
 	private:
 		LARGE_INTEGER _frequency;
-		thread_local
+		thread_local void* p;k
 			data_structure::unordered_map<char const* const, profile> _profile;
 	};
 }

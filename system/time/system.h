@@ -1,5 +1,6 @@
 #pragma once
 #include <Windows.h>
+
 namespace timer::system {
 	inline static auto get_tick_count(void) noexcept -> unsigned long {
 #pragma warning(suppress: 28159)

@@ -53,7 +53,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "logger", "utility\logger\lo
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "profiler", "utility\profiler\profiler.vcxproj", "{12FF0685-339D-4A07-BDE3-B1D6F4EDCB73}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "system", "system", "{1AA55DD9-5821-4C5B-980D-997F42D8264C}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "system-component", "system-component", "{1AA55DD9-5821-4C5B-980D-997F42D8264C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "algorithm", "algorithm", "{88033A2C-B20C-4143-A6D8-0A943F34408E}"
 EndProject
