@@ -7,5 +7,7 @@
     <ClInclude Include="multimedia.h" />
     <ClInclude Include="high_resolution.h" />
     <ClInclude Include="system.h" />
+    <ClInclude Include="time_struct.h" />
+    <ClInclude Include="unix_time.h" />
   </ItemGroup>
 </Project>

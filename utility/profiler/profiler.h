@@ -28,7 +28,7 @@ namespace utility {
 		};
 	private:
 		inline explicit profiler(void) noexcept {
-			timer::multimedia::begin_period(1);
+			system_component::time::multimedia::begin_period(1);
 			QueryPerformanceFrequency(&_frequency);
 		}
 		inline explicit profiler(profiler const& rhs) noexcept = delete;
@@ -36,7 +36,7 @@ namespace utility {
 		inline auto operator=(profiler const& rhs) noexcept -> singleton & = delete;
 		inline auto operator=(profiler&& rhs) noexcept -> singleton & = delete;
 		inline ~profiler(void) noexcept {
-			timer::multimedia::end_period(1);
+			system_component::time::multimedia::end_period(1);
 		}
 	public:
 		inline void start(char const* const tag) noexcept {
@@ -128,7 +128,6 @@ namespace utility {
 		}
 	private:
 		LARGE_INTEGER _frequency;
-		thread_local void* p; k
-			data_structure::unordered_map<char const* const, profile> _profile;
+		data_structure::unordered_map<char const* const, profile> _profile;
 	};
 }
