@@ -7,18 +7,11 @@
 #include <Windows.h>
 #include <fstream>
 
-//#ifdef dll
-//#define declspec_dll _declspec(dllexport)
-//#else
-//#define declspec_dll _declspec(dllimport)
-//#endif
-
 namespace utility {
-	class profiler final : public design_pattern::singleton<profiler> {
+	class profiler final {
 	private:
 		using size_type = unsigned int;
 	private:
-		friend class design_pattern::singleton<profiler>;
 		struct profile final {
 			system_component::time::query_performance _timer;
 			system_component::time::query_performance _pause;
@@ -112,6 +105,8 @@ namespace utility {
 			return (*_profile.find(tag))._second;
 		}
 	private:
+		inline static thread_local void* thiread = 0;
 		data_structure::unordered_map<char const* const, profile> _profile;
 	};
 }
+

@@ -8,10 +8,10 @@
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-	auto& profiler = profiler::instance();
+	auto& profiler = utility::profiler::instance();
 
 	profiler.start("C");
-	for (int i = 0; i < 1000; ++i) {
+	for (int i = 0; i < 100; ++i) {
 		profiler.start("B");
 		for (auto i = 0; i < 100000; ++i)
 			int a = 10;
