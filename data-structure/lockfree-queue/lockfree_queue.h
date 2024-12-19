@@ -17,8 +17,8 @@ namespace data_structure::lockfree {
 			inline auto operator=(node const&) noexcept = delete;
 			inline auto operator=(node&&) noexcept = delete;
 			inline ~node(void) noexcept = delete;
-			unsigned long long _next;
 			type _value;
+			unsigned long long _next;
 		};
 	public:
 		inline explicit lockfree_queue(void) noexcept {

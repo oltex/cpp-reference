@@ -15,7 +15,7 @@ multi::lock::spin _spin;
 inline static unsigned int __stdcall func(void* arg) noexcept {
 	int count = 0;
 	for (;;) {
-		if (count++ == 100000) {
+		if (count++ == 1000000) {
 			std::cout << "thread :" << GetCurrentThreadId() << /*"time :" << ctsc - tsc <<*/ std::endl;
 			count = 0;
 		}
@@ -23,7 +23,10 @@ inline static unsigned int __stdcall func(void* arg) noexcept {
 			_lockfree_queue.push(1);
 		}
 		for (int i = 0; i < 2; ++i) {
-			_lockfree_queue.pop();
+			auto result = _lockfree_queue.pop();
+			if (result)
+				if (1 != *result)
+					__debugbreak();
 		}
 	}
 }
@@ -78,9 +81,9 @@ int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	HANDLE _handle0 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
 	HANDLE _handle1 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
-	//HANDLE _handle2 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
-	//HANDLE _handle3 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
-	//HANDLE _handle4 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
+	HANDLE _handle2 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
+	HANDLE _handle3 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
+	HANDLE _handle4 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
 	//system("pause");
 	//ResumeThread(_handle0);
 	//ResumeThread(_handle1);
