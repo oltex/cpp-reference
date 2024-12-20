@@ -8,8 +8,13 @@
 #include "multimedia.h"
 #include "query_performance.h"
 #include <iostream>
+#include <chrono>
 
 int main(void) noexcept {
+	std::chrono::system_clock::now();
+	std::chrono::steady_clock::now();
+	std::chrono::high_resolution_clock::now();
+
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
 	system_component::time::unix unix;
