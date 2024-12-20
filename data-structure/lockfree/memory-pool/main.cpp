@@ -8,7 +8,6 @@
 #include <vector>
 #include <intrin.h>
 
-
 data_structure::lockfree::memory_pool<int> _memory_pool;
 
 inline static unsigned int __stdcall func(void* arg) noexcept {

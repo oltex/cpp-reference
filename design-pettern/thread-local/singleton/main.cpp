@@ -5,8 +5,7 @@
 #include "singleton.h"
 #include <iostream>
 
-class my_class : public design_pattern::singleton<my_class> {
-	friend class design_pattern::singleton<my_class>;
+class my_class : public design_pattern::_thread_local::singleton<my_class> {
 private:
 	inline explicit my_class(void) noexcept = default;
 	inline virtual ~my_class(void) noexcept = default;
@@ -18,6 +17,5 @@ private:
 
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	my_class::instance();
 	return 0;
 }
