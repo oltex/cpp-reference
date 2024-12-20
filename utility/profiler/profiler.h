@@ -16,9 +16,8 @@
 namespace utility {
 	class profiler final : public design_pattern::singleton<profiler> {
 	private:
-		using size_type = unsigned int;
-	private:
 		friend class design_pattern::singleton<profiler>;
+		using size_type = unsigned int;
 		struct profile final {
 			system_component::time::query_performance _timer;
 			system_component::time::query_performance _pause;

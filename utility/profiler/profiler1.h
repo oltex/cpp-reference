@@ -11,7 +11,6 @@ namespace utility {
 	class profiler final {
 	private:
 		using size_type = unsigned int;
-	private:
 		struct profile final {
 			system_component::time::query_performance _timer;
 			system_component::time::query_performance _pause;
