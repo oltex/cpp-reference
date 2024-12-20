@@ -4,6 +4,6 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="intrusive_list.h" />
+    <ClInclude Include="object_pool.h" />
   </ItemGroup>
 </Project>

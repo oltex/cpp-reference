@@ -2,15 +2,15 @@
 #include <stdlib.h>
 #include <crtdbg.h>
 
-#include "lockfree_queue.h"
-#include "../../module/multi/spin.h"
+#include "queue.h"
+//#include "../../module/multi/spin.h"
 #include <thread>
 #include <intrin.h>
 #include <iostream>
 
 data_structure::lockfree::lockfree_queue<int> _lockfree_queue;
 volatile unsigned int _value = 0;
-multi::lock::spin _spin;
+//multi::lock::spin _spin;
 
 inline static unsigned int __stdcall func(void* arg) noexcept {
 	int count = 0;

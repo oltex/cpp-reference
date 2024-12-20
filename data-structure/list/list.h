@@ -212,7 +212,6 @@ namespace data_structure {
 
 			//return last;
 		}
-	public:
 		inline auto size(void) const noexcept -> size_type {
 			return _size;
 		}

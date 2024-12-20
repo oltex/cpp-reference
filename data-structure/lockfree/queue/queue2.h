@@ -1,6 +1,5 @@
 #pragma once
-#include "../../data-structure/lockfree-object-pool/lockfree_object_pool.h"
-#include "../../data-structure/lockfree-memory-pool/lockfree_memory_pool.h"
+#include "../memory-pool/memory_pool.h"
 
 namespace data_structure::lockfree {
 	template <typename type>

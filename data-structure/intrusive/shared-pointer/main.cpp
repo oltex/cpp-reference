@@ -1,8 +1,8 @@
-#include "intrusive_shared_pointer.h"
+#include "shared_pointer.h"
 #include <iostream>
 #include <memory>
 
-class my_class final : public data_structure::intrusive_shared_pointer_hook<1> {
+class my_class final : public data_structure::intrusive::shared_pointer_hook<1> {
 public:
 	inline explicit my_class(int value) noexcept
 		: _value(value) {
@@ -51,7 +51,7 @@ public:
 
 int main(void) noexcept {
 	my_class* myclass = new my_class(1);
-	data_structure::intrusive_shared_pointer<my_class, 1> shared_pointer(myclass);
+	data_structure::intrusive::shared_pointer<my_class, 1> shared_pointer(myclass);
 
 	return 0;
 }

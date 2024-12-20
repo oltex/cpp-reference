@@ -1,5 +1,5 @@
 #pragma once
-#include "../lockfree-memory-pool/lockfree_memory_pool.h"
+#include "../memory-pool/memory_pool.h"
 #include <utility>
 #include <Windows.h>
 #include <intrin.h>

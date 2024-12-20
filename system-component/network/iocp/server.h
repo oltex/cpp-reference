@@ -29,16 +29,32 @@ public:
 	inline auto operator=(server&& rhs) noexcept -> server & = delete;
 	inline ~server(void) noexcept = default;
 public:
+	inline void start(void) noexcept {
+		_completion.create_port(0);
+		_thread.emplace_back(&server::accept, CREATE_SUSPENDED, this);
+
+		_listen.create(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+		network::socket_address_ipv4 socket_address;
+		socket_address.set_address(INADDR_ANY);
+		socket_address.set_port(6000);
+		_listen.set_linger(1, 0);
+		_listen.set_send_buffer(0);
+		_listen.bind(socket_address);
+		_listen.listen(65535);
+
+		_thread[0].resume();
+	}
+public:
 	inline void accept(void) noexcept {
 		for (;;) {
-			auto [socket, storage] = _listen.accept();
+			auto [socket, socket_address] = _listen.accept();
 			if (INVALID_SOCKET == socket.data())
 				return;
-				if (false == on_accept(storage))
-					continue;
+			if (false == on_accept(socket_address))
+				continue;
 
-				session& session_ = _session.get();
-				session_.initialize(std::move(socket), storage);
+			session& session_ = _session.get();
+			session_.initialize(std::move(socket), storage);
 
 			//	session& session_ = _session.get();
 			//	session_.initialize(std::move(socket), storage);
@@ -55,16 +71,14 @@ public:
 		}
 	}
 public:
-	inline virtual bool on_accept(network::storage& storage) noexcept {
+	inline virtual bool on_accept(network::socket_address& socket_address) noexcept {
 		return true;
 	}
 private:
 	network::window_socket_api::initialize _initialize;
-
 	input_output::completion _completion;
 	data_structure::vector<multi::thread> _thread;
 
 	network::socket _listen;
 	//session_array _session;
-	//unsigned long long _accept_count = 0;
 };

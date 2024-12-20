@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <crtdbg.h>
 
-#include "lockfree_memory_pool.h"
+#include "memory_pool.h"
 #include <iostream>
 #include <thread>
 #include <vector>

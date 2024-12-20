@@ -3,21 +3,22 @@
 #include <stdlib.h>
 #include <malloc.h>
 
-namespace data_structure {
+namespace data_structure::intrusive {
 	template<size_t index>
-	class intrusive_list_hook {
+	class list_hook {
 	private:
 		template<typename type, size_t>
-		friend class intrusive_list;
+		friend class list;
 	private:
-		intrusive_list_hook* _prev, * _next;
+		list_hook* _prev, * _next;
 	};
 
 	template<typename type, size_t index>
-	class intrusive_list final {
+		//requires std::is_base_of<list_hook<index>, type>::value
+	class list final {
 	private:
 		using size_type = unsigned int;
-		using node = intrusive_list_hook<index>;
+		using node = list_hook<index>;
 		static_assert(std::is_base_of<node, type>::value);
 	public:
 		class iterator final {
@@ -64,10 +65,10 @@ namespace data_structure {
 			node* _node;
 		};
 	public:
-		inline explicit intrusive_list(void) noexcept {
+		inline explicit list(void) noexcept {
 			_head._next = _head._prev = &_head;
 		}
-		inline ~intrusive_list(void) noexcept = default;
+		inline ~list(void) noexcept = default;
 	public:
 		inline void push_front(type& value) noexcept {
 			insert(begin(), value);
@@ -122,7 +123,7 @@ namespace data_structure {
 			return iterator(&_head);
 		}
 	public:
-		inline void swap(intrusive_list& rhs) noexcept {
+		inline void swap(list& rhs) noexcept {
 			node* next;
 			next = _head._next;
 			next->_prev = _head._prev->_next = &rhs._head;
@@ -141,7 +142,6 @@ namespace data_structure {
 			_head._next = _head._prev = &_head;
 			_size = 0;
 		}
-	public:
 		inline auto size(void) const noexcept -> size_type {
 			return _size;
 		}
