@@ -56,6 +56,7 @@ namespace data_structure {
 			else if constexpr (1 == sizeof...(arg))
 #pragma warning(suppress: 6011)
 				current->_value = type(std::forward<argument>(arg)...);
+#pragma warning(suppress: 6011)
 			return current->_value;
 		}
 		inline void deallocate(type& value) noexcept {

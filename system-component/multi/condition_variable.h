@@ -1,6 +1,6 @@
 #pragma once
-#include "critical_section.h"
-#include "slim_read_write.h"
+#include "lock/critical_section.h"
+#include "lock/slim_read_write.h"
 #include <Windows.h>
 
 namespace multi {

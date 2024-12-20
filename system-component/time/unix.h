@@ -2,7 +2,7 @@
 #include <ctime>
 #include "date.h"
 
-namespace system_component::time {
+namespace time {
 	class unix final {
 	public:
 		inline explicit unix(void) noexcept = default;

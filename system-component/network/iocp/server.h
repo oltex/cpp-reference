@@ -1,5 +1,5 @@
 #pragma once
-#include "../network.h"
+#include "../window_socket_api/initialize.h"
 #include "../../input_output/completion.h"
 #include "../../multi/thread.h"
 
@@ -59,7 +59,8 @@ public:
 		return true;
 	}
 private:
-	network::network _network;
+	network::window_socket_api::initialize _initialize;
+
 	input_output::completion _completion;
 	data_structure::vector<multi::thread> _thread;
 

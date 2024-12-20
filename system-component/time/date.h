@@ -3,7 +3,7 @@
 #include <iomanip>
 #include <ctime>
 
-namespace system_component::time {
+namespace time {
 	class date final {
 	public:
 		inline explicit date(void) noexcept = default;

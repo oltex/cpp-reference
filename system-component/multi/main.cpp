@@ -4,10 +4,10 @@
 
 #include "thread.h"
 
-#include "spin.h"
-#include "wait_on_address_lock.h"
-#include "critical_section.h"
-#include "slim_read_write.h"
+#include "lock/spin.h"
+#include "lock/wait_on_address.h"
+#include "lock/critical_section.h"
+#include "lock/slim_read_write.h"
 
 #include "ordering.h"
 

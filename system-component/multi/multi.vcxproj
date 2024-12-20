@@ -152,15 +152,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="condition_variable.h" />
-    <ClInclude Include="critical_section.h" />
     <ClInclude Include="event.h" />
+    <ClInclude Include="lock\critical_section.h" />
+    <ClInclude Include="lock\slim_read_write.h" />
+    <ClInclude Include="lock\spin.h" />
+    <ClInclude Include="lock\wait_on_address.h" />
     <ClInclude Include="mutex.h" />
     <ClInclude Include="ordering.h" />
-    <ClInclude Include="slim_read_write.h" />
-    <ClInclude Include="spin.h" />
     <ClInclude Include="thread.h" />
     <ClInclude Include="wait_on_address.h" />
-    <ClInclude Include="wait_on_address_lock.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

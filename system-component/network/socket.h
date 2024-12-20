@@ -2,7 +2,7 @@
 #pragma comment(lib,"ws2_32.lib")
 #include <WinSock2.h>
 #include <intrin.h>
-#include "storage.h"
+#include "socket_address.h"
 #include "../../data-structure/pair/pair.h"
 #include "../input_output/overlapped.h"
 
@@ -12,8 +12,8 @@ namespace network {
 		inline explicit socket(void) noexcept
 			: _socket(INVALID_SOCKET) {
 		}
-		inline explicit socket(ADDRESS_FAMILY const af, int const type, int const protocol) noexcept
-			: _socket(::socket(af, type, protocol)) {
+		inline explicit socket(ADDRESS_FAMILY const address_family, int const type, int const protocol) noexcept
+			: _socket(::socket(address_family, type, protocol)) {
 			if (INVALID_SOCKET == _socket) {
 				//switch (GetLastError()) {
 				//default:
@@ -40,8 +40,8 @@ namespace network {
 			closesocket(_socket);
 		}
 	public:
-		inline void create(ADDRESS_FAMILY const af, int const type, int const protocol) noexcept {
-			_socket = ::socket(af, type, protocol);
+		inline void create(ADDRESS_FAMILY const address_family, int const type, int const protocol) noexcept {
+			_socket = ::socket(address_family, type, protocol);
 			if (INVALID_SOCKET == _socket) {
 				//switch (GetLastError()) {
 				//default:
@@ -49,8 +49,8 @@ namespace network {
 				//}
 			}
 		}
-		inline auto bind(storage& stor) const noexcept -> int {
-			int result = ::bind(_socket, reinterpret_cast<sockaddr*>(&stor.data()), stor.get_length());
+		inline auto bind(socket_address& socket_address) const noexcept -> int {
+			int result = ::bind(_socket, &socket_address.data(), socket_address.get_length());
 			if (SOCKET_ERROR == result) {
 				switch (GetLastError()) {
 				case WSAEADDRINUSE:
@@ -73,10 +73,10 @@ namespace network {
 			}
 			return result;
 		}
-		inline auto accept(void) const noexcept -> data_structure::pair<socket, storage> {
-			sockaddr_storage addr;
+		inline auto accept(void) const noexcept -> data_structure::pair<socket, socket_address_ipv4> {
+			socket_address_ipv4 socket_address;
 			int length = sizeof(sockaddr_in);
-			SOCKET sock = ::accept(_socket, reinterpret_cast<sockaddr*>(&addr), &length);
+			SOCKET sock = ::accept(_socket, &socket_address.data(), &length);
 			if (INVALID_SOCKET == sock) {
 				switch (GetLastError()) {
 				case WSAEWOULDBLOCK:
@@ -87,10 +87,10 @@ namespace network {
 					__debugbreak();
 				}
 			}
-			return data_structure::pair<socket, storage>(socket(sock), storage(addr));
+			return data_structure::pair<socket, socket_address_ipv4>(socket(sock), socket_address);
 		}
-		inline auto connect(storage& stor) noexcept -> int {
-			int result = ::connect(_socket, reinterpret_cast<sockaddr*>(&stor.data()), stor.get_length());
+		inline auto connect(socket_address& socket_address) noexcept -> int {
+			int result = ::connect(_socket, &socket_address.data(), socket_address.get_length());
 			if (SOCKET_ERROR == result) {
 				switch (GetLastError()) {
 				case WSAEWOULDBLOCK:
@@ -131,9 +131,8 @@ namespace network {
 			}
 			return result;
 		}
-		inline auto send_to(char const* const buffer, int const length, int const flag, storage& stor) const noexcept -> int {
-			auto& addr = reinterpret_cast<sockaddr&>(stor.data());
-			return ::sendto(_socket, buffer, length, flag, &addr, sizeof(sockaddr_in));
+		inline auto send_to(char const* const buffer, int const length, int const flag, socket_address& socket_address) const noexcept -> int {
+			return ::sendto(_socket, buffer, length, flag, &socket_address.data(), socket_address.get_length());
 		}
 		inline auto wsa_send(WSABUF* buffer, unsigned long count, unsigned long* byte, unsigned long flag) noexcept -> int {
 			int result = WSASend(_socket, buffer, count, byte, flag, nullptr, nullptr);
@@ -185,9 +184,8 @@ namespace network {
 				close();
 			return result;
 		}
-		inline auto receive_from(char* const buffer, int const length, int const flag, storage& stor, int& from_length) noexcept -> int {
-			auto& addr = reinterpret_cast<sockaddr&>(stor.data());
-			return ::recvfrom(_socket, buffer, length, flag, &addr, &from_length);
+		inline auto receive_from(char* const buffer, int const length, int const flag, socket_address& socket_address, int& from_length) noexcept -> int {
+			return ::recvfrom(_socket, buffer, length, flag, &socket_address.data(), &from_length);
 		}
 		inline auto wsa_receive(WSABUF* buffer, unsigned long count, unsigned long* byte, unsigned long* flag) noexcept -> int {
 			int result = WSARecv(_socket, buffer, count, byte, flag, nullptr, nullptr);
@@ -253,17 +251,17 @@ namespace network {
 				__debugbreak();
 		}
 	public:
-		inline auto get_local_storage(void) noexcept -> storage {
-			storage stor;
-			int length = sizeof(sockaddr_in);
-			getsockname(_socket, reinterpret_cast<sockaddr*>(&stor.data()), &length);
-			return stor;
+		inline auto get_local_socket_address(void) const noexcept -> socket_address_ipv4 {
+			socket_address_ipv4 socket_address;
+			int length = socket_address.get_length();
+			getsockname(_socket, &socket_address.data(), &length);
+			return socket_address;
 		}
-		inline auto get_remote_storage(void) noexcept -> storage {
-			storage stor;
-			int length = sizeof(sockaddr_in);
-			getpeername(_socket, reinterpret_cast<sockaddr*>(&stor.data()), &length);
-			return stor;
+		inline auto get_remote_socket_address(void) const noexcept -> socket_address_ipv4 {
+			socket_address_ipv4 socket_address;
+			int length = socket_address.get_length();
+			getpeername(_socket, &socket_address.data(), &length);
+			return socket_address;
 		}
 	public:
 		inline auto data(void) noexcept -> SOCKET& {

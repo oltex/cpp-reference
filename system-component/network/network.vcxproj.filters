@@ -4,10 +4,9 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="network.h" />
     <ClInclude Include="socket.h" />
     <ClInclude Include="domain.h" />
-    <ClInclude Include="storage.h" />
+    <ClInclude Include="socket_address.h" />
     <ClInclude Include="rpc.h">
       <Filter>select\temp\rpc</Filter>
     </ClInclude>
@@ -31,7 +30,15 @@
     </ClInclude>
     <ClInclude Include="select.h" />
     <ClInclude Include="file_descriptor.h" />
-    <ClInclude Include="async.h" />
+    <ClInclude Include="function.h">
+      <Filter>window_socket_api</Filter>
+    </ClInclude>
+    <ClInclude Include="async.h">
+      <Filter>window_socket_api</Filter>
+    </ClInclude>
+    <ClInclude Include="window_socket_api\initialize.h">
+      <Filter>window_socket_api</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="select">
@@ -48,6 +55,9 @@
     </Filter>
     <Filter Include="iocp">
       <UniqueIdentifier>{29c78510-960a-4674-84b0-efe6ea67fd09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="window_socket_api">
+      <UniqueIdentifier>{39e58ec2-d7a8-420a-803b-5a91bc40b051}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

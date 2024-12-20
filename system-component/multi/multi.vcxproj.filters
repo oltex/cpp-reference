@@ -5,18 +5,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="thread.h" />
-    <ClInclude Include="spin.h">
-      <Filter>lock</Filter>
-    </ClInclude>
-    <ClInclude Include="wait_on_address_lock.h">
-      <Filter>lock</Filter>
-    </ClInclude>
-    <ClInclude Include="slim_read_write.h">
-      <Filter>lock</Filter>
-    </ClInclude>
-    <ClInclude Include="critical_section.h">
-      <Filter>lock</Filter>
-    </ClInclude>
     <ClInclude Include="event.h">
       <Filter>synchronize</Filter>
     </ClInclude>
@@ -31,6 +19,18 @@
     </ClInclude>
     <ClInclude Include="mutex.h">
       <Filter>synchronize</Filter>
+    </ClInclude>
+    <ClInclude Include="lock\critical_section.h">
+      <Filter>lock</Filter>
+    </ClInclude>
+    <ClInclude Include="lock\slim_read_write.h">
+      <Filter>lock</Filter>
+    </ClInclude>
+    <ClInclude Include="lock\spin.h">
+      <Filter>lock</Filter>
+    </ClInclude>
+    <ClInclude Include="lock\wait_on_address.h">
+      <Filter>lock</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
