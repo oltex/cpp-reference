@@ -1,20 +1,16 @@
-//#define _CRTDBG_MAP_ALLOC
-//#include <stdlib.h>
-//#include <crtdbg.h>
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
 
-//#include <WS2tcpip.h>
-//#include <iostream>
-#pragma comment(lib,"ws2_32.lib")
-#include <WinSock2.h>
-
-//#include "window_socket_api/initialize.h"
-//#include "socket.h"
-//#include "socket_address.h"
-//#include "domain.h"
-
+#include "window_socket_api/initialize.h"
+#include "socket.h"
+#include "socket_address.h"
+#include "domain.h"
+#include "select.h"
+#include "file_descriptor.h"
 
 int main(void) noexcept {
-	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
 	//network::window_socket_api::start_up();
 

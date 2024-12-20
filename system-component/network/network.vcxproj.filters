@@ -7,51 +7,39 @@
     <ClInclude Include="socket.h" />
     <ClInclude Include="domain.h" />
     <ClInclude Include="socket_address.h" />
-    <ClInclude Include="rpc.h">
-      <Filter>select\temp\rpc</Filter>
+    <ClInclude Include="select.h" />
+    <ClInclude Include="file_descriptor.h" />
+    <ClInclude Include="window_socket_api\initialize.h">
+      <Filter>window_socket_api</Filter>
     </ClInclude>
-    <ClInclude Include="test.h">
-      <Filter>select\temp\rpc</Filter>
+    <ClInclude Include="window_socket_api\async.h">
+      <Filter>window_socket_api</Filter>
     </ClInclude>
-    <ClInclude Include="server.h">
-      <Filter>select\temp\server</Filter>
-    </ClInclude>
-    <ClInclude Include="session.h">
-      <Filter>select\temp\server</Filter>
-    </ClInclude>
-    <ClInclude Include="server_v2.h">
-      <Filter>select\temp\server</Filter>
-    </ClInclude>
-    <ClInclude Include="poll.h">
-      <Filter>select</Filter>
+    <ClInclude Include="window_socket_api\function.h">
+      <Filter>window_socket_api</Filter>
     </ClInclude>
     <ClInclude Include="iocp\server.h">
       <Filter>iocp</Filter>
     </ClInclude>
-    <ClInclude Include="select.h" />
-    <ClInclude Include="file_descriptor.h" />
-    <ClInclude Include="function.h">
-      <Filter>window_socket_api</Filter>
+    <ClInclude Include="select\poll.h">
+      <Filter>select</Filter>
     </ClInclude>
-    <ClInclude Include="async.h">
-      <Filter>window_socket_api</Filter>
+    <ClInclude Include="select\rpc.h">
+      <Filter>select</Filter>
     </ClInclude>
-    <ClInclude Include="window_socket_api\initialize.h">
-      <Filter>window_socket_api</Filter>
+    <ClInclude Include="select\server.h">
+      <Filter>select</Filter>
+    </ClInclude>
+    <ClInclude Include="select\server_v2.h">
+      <Filter>select</Filter>
+    </ClInclude>
+    <ClInclude Include="select\session.h">
+      <Filter>select</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="select">
       <UniqueIdentifier>{b2adf759-0d47-455c-85c2-56ff88e6de14}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="select\temp">
-      <UniqueIdentifier>{21f35bef-943e-4203-8769-e3b006c13068}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="select\temp\server">
-      <UniqueIdentifier>{7cddaa94-4ba8-4b00-9b1a-01cf0dab3a58}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="select\temp\rpc">
-      <UniqueIdentifier>{07816cbe-b499-4ade-8f34-1efb93fa54aa}</UniqueIdentifier>
     </Filter>
     <Filter Include="iocp">
       <UniqueIdentifier>{29c78510-960a-4674-84b0-efe6ea67fd09}</UniqueIdentifier>
@@ -61,8 +49,8 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="rpc.py">
-      <Filter>select\temp\rpc</Filter>
+    <None Include="select\rpc.py">
+      <Filter>select</Filter>
     </None>
   </ItemGroup>
 </Project>
