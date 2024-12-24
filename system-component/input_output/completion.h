@@ -45,6 +45,9 @@ namespace input_output {
 			result.get<0>() = GetQueuedCompletionStatus(_handle, &result.get<1>(), &result.get<2>(), &result.get<3>(), milli_second);
 			return result;
 		}
+		//inline auto get_queue_state_ex(void) noexcept {
+		//	GetQueuedCompletionStatusEx()
+		//}
 		inline void post_queue_state(unsigned long byte, uintptr_t key, OVERLAPPED* overlapped) noexcept {
 			PostQueuedCompletionStatus(_handle, byte, key, overlapped);
 		}

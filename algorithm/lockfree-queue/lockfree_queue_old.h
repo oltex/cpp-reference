@@ -1,5 +1,5 @@
 #pragma once
-#include "../../data-structure/lockfree-object-pool/lockfree_object_pool.h"
+#include "../../data-structure/lockfree/object-pool/object_pool.h"
 
 class lockfree_queue final {
 private:
