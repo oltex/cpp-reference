@@ -4,10 +4,10 @@
 #include "a-star/path.h"
 #include "a-star/grid.h"
 
-#include "../../module/window/device_context.h"
-#include "../../module/window/pen.h"
-#include "../../module/window/brush.h"
-#include "../../module/window/font.h"
+#include "../../system-component/window/device_context.h"
+#include "../../system-component/window/pen.h"
+#include "../../system-component/window/brush.h"
+#include "../../system-component/window/font.h"
 #include <string>
 #include <sstream>
 #include <iomanip>

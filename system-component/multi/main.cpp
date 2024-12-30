@@ -24,13 +24,22 @@ void function(int a) noexcept {
 }
 
 int main(void) noexcept {
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	int a = 10;
-	std::thread thread1(function, a);
-	std::thread thread2(function, a);
-	system("pause");
-	thread1.join();
-	thread2.join();
-	system("pause");
+	unsigned char a = 166;
+	char b = (char)a;
+
+	int* a_i = (int*)&a;
+	int* b_i = (int*)&b;
+
+	std::cout << *a_i << std::endl;
+	std::cout << *b_i << std::endl;
+
+	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	//int a = 10;
+	//std::thread thread1(function, a);
+	//std::thread thread2(function, a);
+	//system("pause");
+	//thread1.join();
+	//thread2.join();
+	//system("pause");
 	return 0;
 }

@@ -1,5 +1,5 @@
 #pragma once
-#include "../../module/window/window.h"
+#include "../../system-component/window/window.h"
 #include "jump-point-search/grid.h"
 #include "jump-point-search//path.h"
 

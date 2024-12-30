@@ -1,5 +1,5 @@
 #pragma once
-#include "../../module/window/window.h"
+#include "../../system-component/window/window.h"
 #include "a-star/grid.h"
 #include "a-star/path.h"
 

@@ -1,7 +1,7 @@
 #pragma once
 #include "../../design-pettern/singleton/singleton.h"
-#include "../../module/window/window.h"
-#include "../../module/window/device_context.h"
+#include "../../system-component/window/window.h"
+#include "../../system-component/window/device_context.h"
 #include <windowsx.h>
 
 #include "camera.h"
