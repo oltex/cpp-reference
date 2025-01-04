@@ -12,5 +12,10 @@ namespace design_pattern::_thread_local {
 		inline explicit singleton(singleton&& rhs) noexcept = delete;
 		inline auto operator=(singleton const& rhs) noexcept -> singleton & = delete;
 		inline auto operator=(singleton&& rhs) noexcept -> singleton & = delete;
+	public:
+		inline static auto instance(void) noexcept -> type& {
+			thread_local type _instance;
+			return _instance;
+		}
 	};
 }

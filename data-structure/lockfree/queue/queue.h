@@ -85,7 +85,7 @@ namespace data_structure::lockfree {
 							_InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_tail), tail_next + (0xFFFF800000000000ULL & tail) + 0x0000800000000000ULL, tail);
 					}
 					else {
-						type result = reinterpret_cast<node*>(next)->_value;
+						type result = reinterpret_cast<node*>(next)->_value; // next 다른 숫자일때 추가적인 작업이 필요함
 						unsigned long long change = next + (0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
 						if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), change, head)) {
 							if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)

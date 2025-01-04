@@ -15,20 +15,16 @@ public:
 	}
 private:
 	inline explicit my_class(void) noexcept = default;
-	inline virtual ~my_class(void) noexcept = default;
 	inline explicit my_class(my_class const& rhs) noexcept = delete;
-	inline auto operator=(my_class const& rhs) noexcept -> my_class & = delete;
 	inline explicit my_class(my_class&& rhs) noexcept = delete;
+	inline auto operator=(my_class const& rhs) noexcept -> my_class & = delete;
 	inline auto operator=(my_class&& rhs) noexcept -> my_class & = delete;
+	inline ~my_class(void) noexcept = default;
 };
 
-void func(void) noexcept {
+int main(void) noexcept {
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	my_class::constructor();
 	my_class::instance();
-}
-
-int main(void) noexcept {
-	func();
-	_CrtDumpMemoryLeaks();
 	return 0;
 }
