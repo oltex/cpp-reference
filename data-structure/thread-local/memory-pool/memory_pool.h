@@ -3,7 +3,7 @@
 #include "../../lockfree/stack/stack.h"
 
 namespace data_structure::_thread_local {
-	template<typename type, size_t bucket_size = 4>
+	template<typename type, size_t bucket_size = 128>
 	class memory_pool final : public design_pattern::_thread_local::singleton<memory_pool<type, bucket_size>> {
 	private:
 		friend class design_pattern::_thread_local::singleton<memory_pool<type, bucket_size>>;
@@ -65,9 +65,8 @@ namespace data_structure::_thread_local {
 					bucket* address = reinterpret_cast<bucket*>(0x00007FFFFFFFFFFFULL & head);
 					if (nullptr == address) {
 						node* result = reinterpret_cast<node*>(malloc(sizeof(node) * bucket_size));
-						for (size_type index = 0; index < bucket_size - 1; ++index) {
+						for (size_type index = 0; index < bucket_size - 1; ++index)
 							result[index]._next = result + index + 1;
-						}
 						return result;
 					}
 					unsigned long long next = reinterpret_cast<unsigned long long>(address->_next) + (0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
@@ -120,6 +119,9 @@ namespace data_structure::_thread_local {
 			}
 			if (bucket_size == _size)
 				_release = _head;
+
+			if (bucket_size * 2 <= _size)
+				__debugbreak();
 		}
 	private:
 		inline static stack _stack;
