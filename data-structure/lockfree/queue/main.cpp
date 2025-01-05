@@ -8,7 +8,7 @@
 #include <intrin.h>
 #include <iostream>
 
-data_structure::lockfree::lockfree_queue<int> _lockfree_queue;
+data_structure::lockfree::queue<int> _lockfree_queue;
 volatile unsigned int _value = 0;
 //multi::lock::spin _spin;
 

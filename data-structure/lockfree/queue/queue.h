@@ -7,7 +7,7 @@
 namespace data_structure::lockfree {
 	template <typename type>
 		requires std::is_trivially_copy_constructible_v<type>&& std::is_trivially_destructible_v<type>
-	class lockfree_queue final {
+	class queue final {
 	private:
 		using size_type = unsigned int;
 		struct node final {
@@ -21,16 +21,16 @@ namespace data_structure::lockfree {
 			unsigned long long _next;
 		};
 	public:
-		inline explicit lockfree_queue(void) noexcept {
+		inline explicit queue(void) noexcept {
 			node* current = &_memory_pool.allocate();
 			current->_next = _nullptr = _InterlockedIncrement(&_static_nullptr);
 			_head = _tail = reinterpret_cast<unsigned long long>(current);
 		}
-		inline explicit lockfree_queue(lockfree_queue const& rhs) noexcept = delete;
-		inline explicit lockfree_queue(lockfree_queue&& rhs) noexcept = delete;
-		inline auto operator=(lockfree_queue const& rhs) noexcept -> lockfree_queue & = delete;
-		inline auto operator=(lockfree_queue&& rhs) noexcept -> lockfree_queue & = delete;
-		inline ~lockfree_queue(void) noexcept {
+		inline explicit queue(queue const& rhs) noexcept = delete;
+		inline explicit queue(queue&& rhs) noexcept = delete;
+		inline auto operator=(queue const& rhs) noexcept -> queue & = delete;
+		inline auto operator=(queue&& rhs) noexcept -> queue & = delete;
+		inline ~queue(void) noexcept {
 			node* head = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & _head);
 			while (_nullptr != reinterpret_cast<unsigned long long>(head)) {
 				unsigned long long next = head->_next;
@@ -75,7 +75,7 @@ namespace data_structure::lockfree {
 				unsigned long long next = address->_next;
 
 				if (_nullptr == next || 0 == next)
-					std::nullopt;
+					return std::nullopt;
 				else {
 					unsigned long long tail = _tail;
 					node* tail_address = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & tail);

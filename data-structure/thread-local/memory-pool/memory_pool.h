@@ -1,6 +1,8 @@
 #pragma once
 #include "../../../design-pettern/thread-local/singleton/singleton.h"
 #include "../../lockfree/stack/stack.h"
+#include "../../pair/pair.h"
+volatile long _size1 = 0;
 
 namespace data_structure::_thread_local {
 	template<typename type, size_t bucket_size = 128>
@@ -29,6 +31,7 @@ namespace data_structure::_thread_local {
 				inline ~bucket(void) noexcept = delete;
 				bucket* _next;
 				node* _value;
+				size_type _size;
 			};
 		public:
 			inline explicit stack(void) noexcept
@@ -47,9 +50,11 @@ namespace data_structure::_thread_local {
 				}
 			};
 		public:
-			inline void push(node* value) noexcept {
+			inline void push(node* value, size_type size) noexcept {
+				_push_count++;
 				bucket* current = &_memory_pool.allocate();
 				current->_value = value;
+				current->_size = size;
 
 				for (;;) {
 					unsigned long long head = _head;
@@ -59,19 +64,27 @@ namespace data_structure::_thread_local {
 						break;
 				}
 			}
-			inline auto pop(void) noexcept -> node* {
+			inline auto pop(void) noexcept -> pair<node*, size_type> {
+				_pop_count++;
 				for (;;) {
 					unsigned long long head = _head;
 					bucket* address = reinterpret_cast<bucket*>(0x00007FFFFFFFFFFFULL & head);
 					if (nullptr == address) {
-						node* result = reinterpret_cast<node*>(malloc(sizeof(node) * bucket_size));
-						for (size_type index = 0; index < bucket_size - 1; ++index)
-							result[index]._next = result + index + 1;
+						static long count = 0;
+						std::cout << "make bucket " << "queue_size: " << _size1 << " count: " << ++count << " push_count:" << _push_count << " pop_count:" << _pop_count << std::endl;
+						pair<node*, size_type> result{ reinterpret_cast<node*>(malloc(sizeof(node) * bucket_size)), bucket_size };
+
+						node* current = result._first;
+						node* next = current + 1;
+						for (size_type index = 0; index < bucket_size - 1; ++index, current = next++)
+							current->_next = next;
+						current->_next = nullptr;
+
 						return result;
 					}
 					unsigned long long next = reinterpret_cast<unsigned long long>(address->_next) + (0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
 					if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head)) {
-						node* result = address->_value;
+						pair<node*, size_type> result{ address->_value, address->_size };
 						_memory_pool.deallocate(*address);
 						return result;
 					}
@@ -80,6 +93,9 @@ namespace data_structure::_thread_local {
 		private:
 			unsigned long long _head;
 			lockfree::memory_pool<bucket> _memory_pool;
+
+			unsigned long long _push_count = 0;
+			unsigned long long _pop_count = 0;
 		};
 	private:
 		inline explicit memory_pool(void) noexcept = default;
@@ -87,14 +103,24 @@ namespace data_structure::_thread_local {
 		inline explicit memory_pool(memory_pool&& rhs) noexcept = delete;
 		inline auto operator=(memory_pool const& rhs) noexcept -> memory_pool & = delete;
 		inline auto operator=(memory_pool&& rhs) noexcept -> memory_pool & = delete;
-		inline ~memory_pool(void) noexcept = default;
+		inline ~memory_pool(void) noexcept {
+			if (_size > bucket_size) {
+				_stack.push(_head, bucket_size);
+				_head = _break;
+				_size -= bucket_size;
+			}
+			if (_size > bucket_size)
+				__debugbreak();
+			_stack.push(_head, _size);
+		};
 	public:
 		template<typename... argument>
 		inline auto allocate(argument&&... arg) noexcept -> type& {
 			node* current;
 			if (0 == _size) {
-				_head = _stack.pop();
-				_size = bucket_size;
+				auto [value, size] = _stack.pop();
+				_head = value;
+				_size = size;
 			}
 			current = _head;
 			_head = current->_next;
@@ -113,20 +139,25 @@ namespace data_structure::_thread_local {
 			reinterpret_cast<node*>(&value)->_next = _head;
 			_head = reinterpret_cast<node*>(&value);
 			++_size;
-			if (bucket_size * 2 == _size) {
-				_stack.push(_release);
+
+			if (bucket_size == _size)
+				_break = _head;
+			else if (bucket_size * 2 == _size) {
+				//test
+				node* a = _head;
+				for (int i = 0; i < bucket_size - 1; ++i)
+					a = a->_next;
+				a->_next = nullptr;
+
+				_stack.push(_head, bucket_size);
+				_head = _break;
 				_size -= bucket_size;
 			}
-			if (bucket_size == _size)
-				_release = _head;
-
-			if (bucket_size * 2 <= _size)
-				__debugbreak();
 		}
 	private:
 		inline static stack _stack;
 		node* _head = nullptr;
-		node* _release = nullptr;
+		node* _break = nullptr;
 		size_type _size = 0;
 	};
 }
