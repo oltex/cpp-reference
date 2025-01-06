@@ -2,8 +2,20 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="memory_pool.h" />
+    <ClInclude Include="temp\CAddressTranslator.h">
+      <Filter>temp</Filter>
+    </ClInclude>
+    <ClInclude Include="temp\CTlsObjectPool.h">
+      <Filter>temp</Filter>
+    </ClInclude>
+    <ClInclude Include="memory_pool1.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="temp">
+      <UniqueIdentifier>{67157b23-954f-43f8-872e-6b429aee3eb4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

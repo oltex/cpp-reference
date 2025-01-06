@@ -2,10 +2,9 @@
 #include "../../../design-pettern/thread-local/singleton/singleton.h"
 #include "../../lockfree/stack/stack.h"
 #include "../../pair/pair.h"
-volatile long _size1 = 0;
 
 namespace data_structure::_thread_local {
-	template<typename type, size_t bucket_size = 128>
+	template<typename type, size_t bucket_size = 1024>
 	class memory_pool final : public design_pattern::_thread_local::singleton<memory_pool<type, bucket_size>> {
 	private:
 		friend class design_pattern::_thread_local::singleton<memory_pool<type, bucket_size>>;
@@ -51,7 +50,6 @@ namespace data_structure::_thread_local {
 			};
 		public:
 			inline void push(node* value, size_type size) noexcept {
-				_push_count++;
 				bucket* current = &_memory_pool.allocate();
 				current->_value = value;
 				current->_size = size;
@@ -65,13 +63,13 @@ namespace data_structure::_thread_local {
 				}
 			}
 			inline auto pop(void) noexcept -> pair<node*, size_type> {
-				_pop_count++;
 				for (;;) {
 					unsigned long long head = _head;
 					bucket* address = reinterpret_cast<bucket*>(0x00007FFFFFFFFFFFULL & head);
 					if (nullptr == address) {
-						static long count = 0;
-						std::cout << "make bucket " << "queue_size: " << _size1 << " count: " << ++count << " push_count:" << _push_count << " pop_count:" << _pop_count << std::endl;
+						//static unsigned long long count = 0;
+						//volatile unsigned long long stack_size = _stack_size;
+						//std::cout << "make bucket " << stack_size << " count: " << ++count << " push_count:" << _push_count << " pop_count:" << _pop_count << std::endl;
 						pair<node*, size_type> result{ reinterpret_cast<node*>(malloc(sizeof(node) * bucket_size)), bucket_size };
 
 						node* current = result._first;
@@ -93,9 +91,6 @@ namespace data_structure::_thread_local {
 		private:
 			unsigned long long _head;
 			lockfree::memory_pool<bucket> _memory_pool;
-
-			unsigned long long _push_count = 0;
-			unsigned long long _pop_count = 0;
 		};
 	private:
 		inline explicit memory_pool(void) noexcept = default;
@@ -143,12 +138,6 @@ namespace data_structure::_thread_local {
 			if (bucket_size == _size)
 				_break = _head;
 			else if (bucket_size * 2 == _size) {
-				//test
-				node* a = _head;
-				for (int i = 0; i < bucket_size - 1; ++i)
-					a = a->_next;
-				a->_next = nullptr;
-
 				_stack.push(_head, bucket_size);
 				_head = _break;
 				_size -= bucket_size;
