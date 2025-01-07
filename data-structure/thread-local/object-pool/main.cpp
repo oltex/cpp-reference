@@ -3,8 +3,7 @@
 #include <crtdbg.h>
 
 #include <iostream>
-#include "memory_pool.h"
-#include "temp/CTlsObjectPool.h"
+#include "object_pool.h"
 #include "../../my_class.h"
 #include "../../lockfree/queue/queue.h"
 #include "../../lockfree/stack/stack.h"
@@ -12,37 +11,29 @@
 #include <vector>
 
 struct my_struct {
-	my_struct(void) = delete;
-	~my_struct(void) = delete;
 	unsigned long long _value[128];
 };
-
-CTlsObjectPool<my_struct, false> tls_object_pool;
-
-data_structure::lockfree::queue<int*> _queue;
 data_structure::lockfree::stack<int*> _stack;
 volatile unsigned long long _stack_size = 0;
 
-
 inline static unsigned int __stdcall func_pool(void* arg) noexcept {
-	auto& instance = data_structure::_thread_local::memory_pool<my_struct>::instance();
+	auto& instance = data_structure::_thread_local::object_pool<my_struct>::instance();
 	my_struct** _array = (my_struct**)malloc(sizeof(my_struct*) * 1000000);
-
 
 	for (;;) {
 		auto _rdtsc = __rdtsc();
 
 		for (auto i = 0; i < 1000000; ++i) {
-			//_array[i] = tls_object_pool.Alloc();
-			_array[i] = &instance.allocate();
+			if (instance.empty())
+				_array[i] = &instance.allocate();
+			else 
+				_array[i] = &instance.acquire();
 		}
 		//for (auto i = 0; i < 1000000; ++i)
 		//	if (11 != ++(*_array[i]))
 		//		__debugbreak();
-		for (auto i = 0; i < 1000000; ++i) {
-			//tls_object_pool.Free(_array[i]);
-			instance.deallocate(*_array[i]);
-		}
+		for (auto i = 0; i < 1000000; ++i)
+			instance.release(*_array[i]);
 
 		auto result = __rdtsc() - _rdtsc;
 		printf("pool : %llu\n", result);
@@ -50,8 +41,8 @@ inline static unsigned int __stdcall func_pool(void* arg) noexcept {
 	return 0;
 }
 inline static unsigned int __stdcall func_new(void* arg) noexcept {
-	auto& instance = data_structure::_thread_local::memory_pool<int>::instance();
 	my_struct** _array = (my_struct**)malloc(sizeof(my_struct*) * 1000000);
+
 	for (;;) {
 		auto _rdtsc = __rdtsc();
 
@@ -103,14 +94,18 @@ inline static unsigned int __stdcall func_new(void* arg) noexcept {
 
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//auto& instance = data_structure::_thread_local::memory_pool<int>::instance();
-	//std::vector<int*> _vector;
+	//auto& instance = data_structure::_thread_local::object_pool<my_class>::instance();
+	//std::vector<my_class*> _vector;
 	//for (int i = 0; i < 4; ++i) {
-	//	_vector.emplace_back(&instance.allocate());
+	//	if (instance.empty())
+	//		_vector.emplace_back(&instance.allocate(10));
+	//	else {
+	//		_vector.emplace_back(&instance.acquire());
+	//	}
 	//}
 	//for (auto i = 0; i < 4; ++i) {
-	//	int* a = _vector.back();
-	//	instance.deallocate(*a);
+	//	my_class* a = _vector.back();
+	//	instance.release(*a);
 	//	_vector.pop_back();
 	//}
 
