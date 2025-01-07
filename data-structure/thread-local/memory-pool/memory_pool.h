@@ -1,6 +1,6 @@
 #pragma once
 #include "../../../design-pettern/thread-local/singleton/singleton.h"
-#include "../../lockfree/stack/stack.h"
+#include "../../lockfree/memory-pool/memory_pool.h"
 #include "../../pair/pair.h"
 
 namespace data_structure::_thread_local {
