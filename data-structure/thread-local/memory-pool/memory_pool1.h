@@ -16,7 +16,7 @@ namespace data_structure::_thread_local {
 			inline auto operator=(bucket const&) noexcept = delete;
 			inline auto operator=(bucket&&) noexcept = delete;
 			inline ~bucket(void) noexcept = delete;
-			size_type _dealloc = 0;
+			size_type _count = 0;
 			type _array[bucket_size];
 		};
 		inline static consteval size_type power_of_two(size_type number, size_type square = 1) noexcept {
@@ -58,7 +58,7 @@ namespace data_structure::_thread_local {
 
 				for (;;) {
 					unsigned long long head = _head;
-					current->_next = reinterpret_cast<bucket*>(0x00007FFFFFFFFFFFULL & head);
+					current->_next = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & head);
 					unsigned long long next = reinterpret_cast<unsigned long long>(current) + (0xFFFF800000000000ULL & head);
 					if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head))
 						break;
@@ -69,14 +69,8 @@ namespace data_structure::_thread_local {
 					unsigned long long head = _head;
 					node* address = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & head);
 					if (nullptr == address) {
-						bucket* result = reinterpret_cast<node*>(_aligned_malloc(sizeof(bucket), _align);
-
-						//node* current = result._first;
-						//node* next = current + 1;
-						//for (size_type index = 0; index < bucket_size - 1; ++index, current = next++)
-						//	current->_next = next;
-						//current->_next = nullptr;
-
+						bucket* result = reinterpret_cast<bucket*>(_aligned_malloc(sizeof(bucket), _align));
+						result->_count = 0;
 						return result;
 					}
 					unsigned long long next = reinterpret_cast<unsigned long long>(address->_next) + (0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
@@ -103,7 +97,7 @@ namespace data_structure::_thread_local {
 		template<typename... argument>
 		inline auto allocate(argument&&... arg) noexcept -> type& {
 			if (bucket_size == _index) {
-				//วาด็ :
+				_bucket = _stack.pop();
 				_index = 0;
 			}
 			type& value = _bucket->_array[_index++];
@@ -115,24 +109,17 @@ namespace data_structure::_thread_local {
 				value = type(std::forward<argument>(arg)...);
 			return value;
 		}
-		//inline void deallocate(type& value) noexcept {
-		//	if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
-		//		value.~type();
-		//	reinterpret_cast<node*>(&value)->_next = _head;
-		//	_head = reinterpret_cast<node*>(&value);
-		//	++_size;
+		inline void deallocate(type& value) noexcept {
+			if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
+				value.~type();
 
-		//	if (bucket_size == _size)
-		//		_break = _head;
-		//	else if (bucket_size * 2 == _size) {
-		//		_stack.push(_head, bucket_size);
-		//		_head = _break;
-		//		_size -= bucket_size;
-		//	}
-		//}
+			bucket* bucket_ = reinterpret_cast<bucket*>(reinterpret_cast<uintptr_t>(&value) & ~(uintptr_t)(_align - 1));
+			if (bucket_size == _InterlockedIncrement(&bucket_->_count))
+				_stack.push(bucket_);
+		}
 	private:
 		bucket* _bucket;
-		size_type _index = 0;
+		size_type _index = bucket_size;
 		inline static stack _stack;
 	};
 }
