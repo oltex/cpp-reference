@@ -3,7 +3,7 @@
 #include <Windows.h>
 #include <utility>
 
-namespace multi {
+namespace system_component::multi {
 	class event final : public kernel::object {
 	public:
 		inline explicit event(void) noexcept = default;

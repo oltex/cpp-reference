@@ -2,7 +2,7 @@
 #include "../multi/event.h"
 #include <Windows.h>
 
-namespace input_output {
+namespace system_component::input_output {
 	class overlapped final {
 	public:
 		inline explicit overlapped(void) noexcept = default;
@@ -30,7 +30,6 @@ namespace input_output {
 		inline void clear(void) noexcept {
 			memset(&_overlapped, 0, sizeof(_OVERLAPPED));
 		}
-	public:
 		inline auto data(void) noexcept -> _OVERLAPPED& {
 			return _overlapped;
 		}

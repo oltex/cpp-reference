@@ -6,7 +6,7 @@
 #include "../../data-structure/pair/pair.h"
 #include "../input_output/overlapped.h"
 
-namespace network {
+namespace system_component::network {
 	class socket final {
 	public:
 		inline explicit socket(void) noexcept

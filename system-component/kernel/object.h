@@ -2,7 +2,7 @@
 #include <Windows.h>
 #include <concepts>
 
-namespace kernel {
+namespace system_component::kernel {
 	class object {
 	public:
 		inline explicit object(void) noexcept
@@ -37,7 +37,6 @@ namespace kernel {
 		inline auto wait_single_ex(unsigned long const milli_second, bool alertable) noexcept -> unsigned long {
 			return WaitForSingleObjectEx(_handle, milli_second, alertable);
 		}
-	public:
 		inline auto data(void) noexcept -> HANDLE& {
 			return _handle;
 		}

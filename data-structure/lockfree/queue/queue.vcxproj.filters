@@ -5,6 +5,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="queue.h" />
-    <ClInclude Include="queue2.h" />
+    <ClInclude Include="queue1.h" />
   </ItemGroup>
 </Project>

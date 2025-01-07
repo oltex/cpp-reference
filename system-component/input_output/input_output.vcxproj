@@ -147,7 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="completion.h" />
+    <ClInclude Include="completion_port.h" />
     <ClInclude Include="overlapped.h" />
   </ItemGroup>
   <ItemGroup>

@@ -5,28 +5,28 @@
 #include "../kernel/object.h"
 #include "../../data-structure/tuple/tuple.h"
 
-namespace input_output {
-	class completion final : public kernel::object {
+namespace system_component::input_output {
+	class completion_port final : public kernel::object {
 	public:
-		inline explicit completion(void) noexcept = default;
-		inline explicit completion(unsigned long const concurrent_thread) noexcept
+		inline explicit completion_port(void) noexcept = default;
+		inline explicit completion_port(unsigned long const concurrent_thread) noexcept
 			: object(CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, concurrent_thread)) {
 		};
-		inline explicit completion(completion const& rhs) noexcept = delete;
-		inline explicit completion(completion&& rhs) noexcept
+		inline explicit completion_port(completion_port const& rhs) noexcept = delete;
+		inline explicit completion_port(completion_port&& rhs) noexcept
 			: object(std::move(rhs)) {
 		};
-		inline auto operator=(completion const& rhs) noexcept -> completion & = delete;
-		inline auto operator=(completion&& rhs) noexcept -> completion& {
+		inline auto operator=(completion_port const& rhs) noexcept -> completion_port & = delete;
+		inline auto operator=(completion_port&& rhs) noexcept -> completion_port& {
 			object::operator=(std::move(rhs));
 			return *this;
 		}
-		inline virtual ~completion(void) noexcept override = default;
+		inline virtual ~completion_port(void) noexcept override = default;
 	public:
-		inline void create_port(unsigned long const concurrent_thread) noexcept {
+		inline void create(unsigned long const concurrent_thread) noexcept {
 			_handle = CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, concurrent_thread);
 		}
-		inline void connect_port(network::socket& socket, ULONG_PTR key) noexcept {
+		inline void connect(network::socket& socket, ULONG_PTR key) noexcept {
 			CreateIoCompletionPort(reinterpret_cast<HANDLE>(socket.data()), _handle, key, 0);
 		}
 		struct get_queue_state_result final {

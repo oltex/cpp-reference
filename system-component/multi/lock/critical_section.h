@@ -1,7 +1,7 @@
 #pragma once
 #include <windows.h>
 
-namespace multi::lock {
+namespace system_component::multi::lock {
 	class critical_section final {
 	public:
 		inline explicit critical_section(void) noexcept {

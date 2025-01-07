@@ -6,7 +6,7 @@
 #include <type_traits>
 #include <memory>
 
-namespace multi {
+namespace system_component::multi {
 	class thread final : public kernel::object {
 	private:
 		template <typename tuple, size_t... index>

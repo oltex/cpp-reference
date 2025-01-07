@@ -2,7 +2,7 @@
 #pragma comment(lib, "Synchronization.lib")
 #include <Windows.h>
 
-namespace multi {
+namespace system_component::multi {
 	class wait_on_address final {
 	public:
 		inline explicit wait_on_address(void) noexcept = default;

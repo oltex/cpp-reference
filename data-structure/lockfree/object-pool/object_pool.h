@@ -56,7 +56,7 @@ namespace data_structure::lockfree {
 						current->_value = type(std::forward<argument>(arg)...);
 					return current->_value;
 				}
-				unsigned long long next = reinterpret_cast<unsigned long long>(current->_next) + (0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
+				unsigned long long next = reinterpret_cast<unsigned long long>(current->_next) + (0xFFFF800000000000ULL & head)/* + 0x0000800000000000ULL*/;
 				if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head))
 					return current->_value;
 			}
@@ -66,7 +66,7 @@ namespace data_structure::lockfree {
 			for (;;) {
 				unsigned long long head = _head;
 				current->_next = reinterpret_cast<node*>(head & 0x00007FFFFFFFFFFFULL);
-				unsigned long long next = reinterpret_cast<unsigned long long>(current) + (head & 0xFFFF800000000000ULL)/* + 0x0000800000000000ULL*/;
+				unsigned long long next = reinterpret_cast<unsigned long long>(current) + (head & 0xFFFF800000000000ULL) + 0x0000800000000000ULL;
 				if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head))
 					break;
 			}

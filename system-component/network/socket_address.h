@@ -4,7 +4,7 @@
 #include <WS2tcpip.h>
 #include <string>
 
-namespace network {
+namespace system_component::network {
 	class socket_address {
 	public:
 		inline explicit socket_address(void) noexcept = default;

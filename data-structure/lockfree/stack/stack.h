@@ -53,7 +53,7 @@ namespace data_structure::lockfree {
 			for (;;) {
 				unsigned long long head = _head;
 				current->_next = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & head);
-				unsigned long long next = reinterpret_cast<unsigned long long>(current) + (0xFFFF800000000000ULL & head) /*+ 0x0000800000000000ULL*/;
+				unsigned long long next = reinterpret_cast<unsigned long long>(current) + (0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
 				if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head))
 					break;
 			}
@@ -64,7 +64,7 @@ namespace data_structure::lockfree {
 				node* address = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & head);
 				if (nullptr == address)
 					return std::nullopt;
-				unsigned long long next = reinterpret_cast<unsigned long long>(address->_next) + (0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
+				unsigned long long next = reinterpret_cast<unsigned long long>(address->_next) + (0xFFFF800000000000ULL & head) /*+ 0x0000800000000000ULL*/;
 				if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head)) {
 					type result(std::move(address->_value));
 					if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
