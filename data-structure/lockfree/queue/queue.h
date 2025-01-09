@@ -100,7 +100,7 @@ namespace data_structure::lockfree {
 	private:
 		unsigned long long _head;
 		unsigned long long _tail;
-		inline static unsigned long long _nullptr;
+		unsigned long long _nullptr;
 		inline static unsigned long long _static_nullptr = 0;
 		memory_pool<node> _memory_pool;
 	};
