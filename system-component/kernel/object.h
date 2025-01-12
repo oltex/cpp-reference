@@ -1,4 +1,5 @@
 #pragma once
+#include "../input_output/overlapped.h"
 #include <Windows.h>
 #include <concepts>
 
@@ -30,6 +31,15 @@ namespace system_component::kernel {
 		inline void close(void) noexcept {
 			CloseHandle(_handle);
 			_handle = INVALID_HANDLE_VALUE;
+		}
+		inline void cancel_io(void) const noexcept {
+			CancelIo(_handle);
+		}
+		inline void cancel_io_ex(void) const noexcept {
+			CancelIoEx(_handle, nullptr);
+		}
+		inline void cancel_io_ex(input_output::overlapped overlapped) const noexcept {
+			CancelIoEx(_handle, &overlapped.data());
 		}
 		inline auto wait_for_single(unsigned long const milli_second) noexcept -> unsigned long {
 			return WaitForSingleObject(_handle, milli_second);

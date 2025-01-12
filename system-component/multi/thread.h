@@ -47,6 +47,18 @@ namespace system_component::multi {
 		};
 		inline virtual ~thread(void) noexcept override = default;
 	public:
+		template <typename function, typename... argument>
+		inline void begin(function&& func, unsigned int flag, argument&&... arg) noexcept {
+			using tuple = std::tuple<std::decay_t<function>, std::decay_t<argument>...>;
+			auto copy = std::make_unique<tuple>(std::forward<function>(func), std::forward<argument>(arg)...);
+			constexpr auto proc = make<tuple>(std::make_index_sequence<1 + sizeof...(argument)>());
+			_handle = (HANDLE)_beginthreadex(nullptr, 0, proc, copy.get(), flag, 0);
+
+			if (_handle)
+				copy.release();
+			else
+				__debugbreak();
+		}
 		inline void join(unsigned long milli_second) noexcept {
 			WaitForSingleObject(_handle, milli_second);
 		}

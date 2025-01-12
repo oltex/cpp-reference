@@ -67,9 +67,6 @@ namespace data_structure::_thread_local {
 					unsigned long long head = _head;
 					bucket* address = reinterpret_cast<bucket*>(0x00007FFFFFFFFFFFULL & head);
 					if (nullptr == address) {
-						//static unsigned long long count = 0;
-						//volatile unsigned long long stack_size = _stack_size;
-						//std::cout << "make bucket " << stack_size << " count: " << ++count << " push_count:" << _push_count << " pop_count:" << _pop_count << std::endl;
 						pair<node*, size_type> result{ reinterpret_cast<node*>(malloc(sizeof(node) * bucket_size)), bucket_size };
 
 						node* current = result._first;

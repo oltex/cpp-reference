@@ -267,6 +267,16 @@ namespace system_component::network {
 		inline auto data(void) noexcept -> SOCKET& {
 			return _socket;
 		}
+
+		inline void cancel_io(void) const noexcept {
+			CancelIo(reinterpret_cast<HANDLE>(_socket));
+		}
+		inline void cancel_io_ex(void) const noexcept {
+			CancelIoEx(reinterpret_cast<HANDLE>(_socket), nullptr);
+		}
+		inline void cancel_io_ex(input_output::overlapped overlapped) const noexcept {
+			CancelIoEx(reinterpret_cast<HANDLE>(_socket), &overlapped.data());
+		}
 	private:
 		SOCKET _socket;
 	};
