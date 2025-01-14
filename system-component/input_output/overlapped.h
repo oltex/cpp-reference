@@ -1,5 +1,5 @@
 #pragma once
-#include "../multi/event.h"
+//#include "../multi/event.h"
 #include <Windows.h>
 
 namespace system_component::input_output {
@@ -17,9 +17,9 @@ namespace system_component::input_output {
 		};
 		inline ~overlapped(void) noexcept = default;
 	public:
-		inline void set_event(multi::event& event) noexcept {
-			_overlapped.hEvent = event.data();
-		}
+		//inline void set_event(multi::event& event) noexcept {
+		//	_overlapped.hEvent = event.data();
+		//}
 		inline auto get_result(HANDLE handle, unsigned long* byte, bool const wait) noexcept -> bool {
 			return GetOverlappedResult(handle, &_overlapped, byte, wait);
 		}

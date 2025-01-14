@@ -1,10 +1,8 @@
 #pragma once
 #include "../pair/pair.h"
 #include "../hash/hash.h"
-
 #include "../list/list.h"
 #include "../vector/vector.h"
-
 namespace data_structure {
 	template<typename key_type, typename type, class hash = hash<key_type>>
 	class unordered_map final {

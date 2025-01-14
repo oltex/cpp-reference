@@ -1,344 +1,89 @@
 #pragma once
-#include "precompiled.h"
-#include "CommandLine.h"
+#include "../../system-component/file/file.h"
+#include <unordered_map>
+#include <string>
+#include <vector>
+#include <iostream>
 
-#define LOG_MODULE "CommandLine"
-#include "Logger.h"
-
-//
-// Constructor
-//
-CommandLine::CommandLine(std::string text) {
-	this->line = text;
-	this->Parse(text);
-}
-
-//
-// Destructor
-//
-CommandLine::~CommandLine() {
-}
-
-//
-// Command matcher
-//
-bool CommandLine::is(std::string command) {
-
-	std::string match = this->command;
-	std::transform(command.begin(), command.end(), command.begin(), ::tolower);
-	std::transform(match.begin(), match.end(), match.begin(), ::tolower);
-
-	if (command.compare(match) == 0) {
-		return true;
-	}
-	return false;
-}
-
-//
-// Get command in lower case
-//
-std::string CommandLine::GetCommandLowerCase() {
-	std::transform(command.begin(), command.end(), command.begin(), ::tolower);
-	return command;
-}
-
-//
-// Get command parameters as as string
-//
-std::string CommandLine::GetParameterString() {
-	if (command.size() < line.size())
-		return line.substr(command.size() + 1);
-	return "";
-}
-
-
-//
-// Parse
-//
-int CommandLine::Parse(std::string line) {
-
-	std::string item = "";
-	std::vector<std::string> items;
-
-	int lineLength = line.size();
-	int itemLength = 0;
-	int itemCount = 0;
-	int index = 0;
-
-	char currentChar;
-	char previousChar = 0;
-	char splitChars[] = " ,:(){}[]=";
-	char endChars[] = { '\r', '\n', ';', 0 };
-	char commentChar = '#';
-	char escapeChar = '\\';
-	char enclosingChar = '"';
-
-	bool isSplitChar = false;
-	bool isEndChar = false;
-	bool isEnclosingChar = false;
-	bool isLastChar = false;
-	bool isEnclosed = false;
-
-	for (std::string::iterator it = line.begin(); it != line.end(); ++it) {
-		currentChar = *it;
-
-		// Comment char
-		if (!isEnclosed && currentChar == commentChar) {
-			if (itemLength > 0) {
-				items.push_back(item);
-			}
-			break;
+namespace utility {
+	class parser final {
+		using size_type = unsigned int;
+	public:
+		inline explicit parser(void) noexcept = default;
+		inline explicit parser(std::wstring_view path) noexcept {
+			open(path);
 		}
+		inline explicit parser(parser const& rhs) noexcept = delete;
+		inline explicit parser(parser&& rhs) noexcept = delete;
+		inline auto operator=(parser const& rhs) noexcept -> parser & = delete;
+		inline auto operator=(parser&& rhs) noexcept -> parser & = delete;
+		inline ~parser(void) noexcept = default;
+	public:
+		inline void open(std::wstring_view path) noexcept {
+			system_component::file file(path, GENERIC_READ, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL);
+			auto size = file.get_size_ex().QuadPart;
 
-		// Is split char?
-		isSplitChar = false;
-		for (int i = 0; i < (int)sizeof(splitChars); i++) {
-			if (splitChars[i] && currentChar == splitChars[i]) {
-				isSplitChar = true;
-				break;
-			}
-		}
+			char* buffer = reinterpret_cast<char*>(malloc(sizeof(char) * size + 1));
+			file.read(buffer, size);
+			buffer[size] = 0;
 
-		// Is end char?
-		isEndChar = false;
-		for (int i = 0; i < (int)sizeof(endChars); i++) {
-			if (currentChar == endChars[i]) {
-				isEndChar = true;
-				break;
-			}
-		}
+			std::vector<std::string> item;
+			static constexpr char comment_char = '#';
+			static constexpr char split_char[] = " ,:(){}[]=";
+			static constexpr char end_char[] = { '\r', '\n', ';', 0 };
+			bool encoding = true;
 
-		// Is last char?
-		isLastChar = false;
-		if (index == lineLength - 1) {
-			isLastChar = true;
-		}
+			char* current = buffer;
+			size_type begin_index = 0;
+			for (size_type index = 0; index < size + 1; ++index, ++current) {
+				bool finish = false;
 
-
-		// Toggle enclosing
-		isEnclosingChar = false;
-		if (currentChar == enclosingChar && previousChar != escapeChar) {
-			isEnclosed = !isEnclosed;
-			isEnclosingChar = true;
-		}
-
-		// New item
-		if (
-			!isEnclosed &&
-			(
-				isSplitChar ||
-				isEndChar ||
-				(itemCount == 0 && currentChar == '=') ||
-				(itemCount == 1 && itemLength == 0 && currentChar == '=') ||
-				isLastChar ||
-				(isLastChar && isEnclosingChar)
-				)
-			) {
-
-			//INFO("char: %c\n", currentChar);
-			//INFO("itemCount = %d\n", itemCount);
-			//INFO("itemLength = %d\n", itemLength);
-
-			// Last char
-			if (isLastChar && !isEndChar && !isSplitChar) {
-				if (!isEnclosingChar) {
-					item.push_back(currentChar);
-					itemLength = 1;
+				// comment
+				if (*current == comment_char) {
+					encoding = false;
+					finish = true;
+				}
+				// end char
+				if (false == finish) {
+					for (auto& iter : end_char) {
+						if (*current == iter) {
+							if (true == encoding && begin_index != index)
+								item.emplace_back(std::string(buffer + begin_index, index - begin_index));
+							if (!item.empty()) {
+								auto res = _parsing.emplace(std::piecewise_construct, std::forward_as_tuple(item[0]), std::forward_as_tuple());
+								for (size_type i = 1; i < item.size(); ++i)
+									res.first->second.emplace_back(item[i]);
+								item.clear();
+							}
+							begin_index = index + 1;
+							encoding = true;
+							finish = true;
+							break;
+						}
+					}
+				}
+				// split char
+				if (false == finish && true == encoding) {
+					for (auto& iter : split_char) {
+						if (*current == iter) {
+							if (begin_index != index)
+								item.emplace_back(std::string(buffer + begin_index, index - begin_index));
+							begin_index = index + 1;
+							finish = true;
+							break;
+						}
+					}
 				}
 			}
-
-			// Create new item
-			if (itemLength > 0) {
-				items.push_back(item);
-				item = "";
-				itemLength = 0;
-				itemCount++;
-			}
-			else {
-				item = "";
-				itemLength = 0;
-			}
-
-			// Stop parsing at end of the line
-			if (isEndChar) {
-				break;
-			}
-
-			// Add text to item
+			free(buffer);
 		}
-		else if (currentChar >= 32) {
-			if (itemCount == 0 && currentChar == '=') {
-			}
-			else if (isEnclosingChar) {
-			}
-			else if (currentChar == escapeChar && !isEnclosed) {
-			}
-			else {
-				item.push_back(currentChar);
-				itemLength++;
-			}
+		inline auto begin(void) noexcept {
+			return _parsing.begin();
 		}
-		index++;
-		previousChar = currentChar;
-	}
-
-	// Set command
-	if (itemCount > 0) {
-		command = items[0];
-		isValid = true;
-	}
-	else {
-		isValid = false;
-	}
-
-	// Set values
-	values.clear();
-	for (int i = 1; i < (int)items.size(); i++) {
-		values.push_back(items[i]);
-	}
-
-	valueCount = values.size();
-	return valueCount;
-}
-
-
-//
-// Parse hex string
-//
-std::string CommandLine::ParseHex(std::string str) {
-	if (str.size() >= 3 && str[0] == '0' && str[1] == 'x') {
-		try {
-			std::string tmp = str.substr(2, str.size() - 2);
-			return std::to_string(stol(tmp, 0, 16));
+		inline auto end(void) noexcept {
+			return _parsing.end();
 		}
-		catch (std::exception) {
-		}
-	}
-	return str;
-}
-
-//
-// Parse bit string (e.g. 0b10100101)
-//
-std::string CommandLine::ParseBits(std::string str) {
-	if (str.size() >= 3 && str[0] == '0' && str[1] == 'b') {
-		int length = str.size();
-		unsigned int output = 0;
-		try {
-			for (int i = 2; i < length; i++) {
-				char c = str.at(i);
-				if (c == '1') {
-					output |= 1 << (length - (i + 1));
-				}
-			}
-			return std::to_string(output);
-		}
-		catch (std::exception) {
-		}
-	}
-	return str;
-}
-
-//
-// Parse hex and bits strings
-//
-std::string CommandLine::ParseHexBits(std::string str)
-{
-	return ParseBits(ParseHex(str));
-}
-
-
-//
-// Get string value
-//
-std::string CommandLine::GetString(int index, std::string defaultValue) {
-	if (index < valueCount) {
-		return values[index];
-	}
-	return defaultValue;
-}
-
-
-//
-// Get lowercase string value
-//
-std::string CommandLine::GetStringLower(int index, std::string defaultValue) {
-	std::string str = GetString(index, defaultValue);
-	transform(str.begin(), str.end(), str.begin(), ::tolower);
-	return str;
-}
-
-
-//
-// Get integer
-//
-int CommandLine::GetInt(int index, int defaultValue) {
-	if (index < valueCount) {
-		try {
-			auto value = stoi(ParseHexBits(values[index]));
-			return value;
-		}
-		catch (std::exception) {}
-	}
-	return defaultValue;
-}
-
-
-//
-// Get long integer
-//
-long CommandLine::GetLong(int index, long defaultValue) {
-	if (index < valueCount) {
-		try {
-			auto value = stol(ParseHexBits(values[index]));
-			return value;
-		}
-		catch (std::exception) {}
-	}
-	return defaultValue;
-}
-
-
-//
-// Get double precision floating point number
-//
-double CommandLine::GetDouble(int index, double defaultValue) {
-	if (index < valueCount) {
-		try {
-			auto value = stod(ParseHexBits(values[index]));
-			return value;
-		}
-		catch (std::exception) {}
-	}
-	return defaultValue;
-}
-
-
-//
-// Get floating point number
-//
-float CommandLine::GetFloat(int index, float defaultValue) {
-	if (index < valueCount) {
-		try {
-			auto value = stof(ParseHexBits(values[index]));
-			return value;
-		}
-		catch (std::exception) {}
-	}
-	return defaultValue;
-}
-
-
-//
-// Get boolean
-//
-bool CommandLine::GetBoolean(int index, bool defaultValue) {
-	if (GetInt(index, 0) > 0) return true;
-	std::string str = GetStringLower(index, "");
-	if (str == "true") return true;
-	if (str == "on") return true;
-	if (str == "false") return false;
-	if (str == "off") return false;
-	if (str == "0") return false;
-	return defaultValue;
+	private:
+		std::unordered_map<std::string, std::vector<std::string>> _parsing;
+	};
 }

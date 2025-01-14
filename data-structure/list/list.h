@@ -37,6 +37,9 @@ namespace data_structure {
 			inline auto operator*(void) const noexcept -> type& {
 				return _node->_value;
 			}
+			inline auto operator->(void) const noexcept -> type* {
+				return _node->_value;
+			}
 			inline auto operator++(void) noexcept -> iterator& {
 				_node = _node->_next;
 				return *this;
