@@ -70,8 +70,8 @@ public:
 				continue;
 
 			unsigned long long tail = _tail;
-			node* tail_address = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & tail);
-			if (reinterpret_cast<unsigned long long>(tail_address) == reinterpret_cast<unsigned long long>(address)) {
+			if (tail == head) {
+				node* tail_address = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & tail);
 				unsigned long long tail_next = tail_address->_next;
 				if (_nullptr != tail_next)
 					_InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_tail), tail_next + (0xFFFF800000000000ULL & tail) + 0x0000800000000000ULL, tail);

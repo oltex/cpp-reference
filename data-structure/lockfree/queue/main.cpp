@@ -2,31 +2,39 @@
 #include <stdlib.h>
 #include <crtdbg.h>
 
-#include "queue.h"
-//#include "../../module/multi/spin.h"
+#include "queue1.h"
 #include <thread>
 #include <intrin.h>
 #include <iostream>
 
-data_structure::lockfree::queue<int> _lockfree_queue;
-volatile unsigned int _value = 0;
-//multi::lock::spin _spin;
+data_structure::lockfree::queue<std::pair<int, unsigned int>> _lockfree_queue;
+static int _static_id = 0;
 
 inline static unsigned int __stdcall func(void* arg) noexcept {
 	int count = 0;
+	int _id = _static_id++;
+	volatile unsigned int _value = 0;
+	volatile unsigned int _prev_value = 0;
 	for (;;) {
 		if (count++ == 1000000) {
-			std::cout << "thread :" << GetCurrentThreadId() << /*"time :" << ctsc - tsc <<*/ std::endl;
+			printf("thread : %d\n", GetCurrentThreadId());
 			count = 0;
 		}
 		for (int i = 0; i < 2; ++i) {
-			_lockfree_queue.push(1);
+			_lockfree_queue.push(std::pair<int, unsigned int>(_id, ++_value));
 		}
 		for (int i = 0; i < 2; ++i) {
 			auto result = _lockfree_queue.pop();
-			if (result)
-				if (1 != *result)
-					__debugbreak();
+			if (result) {
+				if (_id == (*result).first) {
+					if (_prev_value > (*result).second)
+						__debugbreak();
+					else
+						_prev_value = (*result).second;
+				}
+			}
+			else
+				i--;
 		}
 	}
 }
@@ -82,8 +90,8 @@ int main(void) noexcept {
 	HANDLE _handle0 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
 	HANDLE _handle1 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
 	HANDLE _handle2 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
-	HANDLE _handle3 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
-	HANDLE _handle4 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
+	//HANDLE _handle3 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
+	//HANDLE _handle4 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
 	//system("pause");
 	//ResumeThread(_handle0);
 	//ResumeThread(_handle1);

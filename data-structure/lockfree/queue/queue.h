@@ -61,7 +61,7 @@ namespace data_structure::lockfree {
 				node* address = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & tail);
 				unsigned long long next = address->_next;
 
-				if (0x10000 < next)
+				if (0x10000 <= next)
 					_InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_tail), next + (0xFFFF800000000000ULL & tail) + 0x0000800000000000ULL, tail);
 				else if (_nullptr == next && _nullptr == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&address->_next), (unsigned long long)current, _nullptr))
 					break;
@@ -80,7 +80,7 @@ namespace data_structure::lockfree {
 					node* tail_address = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & tail);
 					if (reinterpret_cast<unsigned long long>(tail_address) == reinterpret_cast<unsigned long long>(address)) {
 						unsigned long long tail_next = tail_address->_next;
-						if (0x10000 < tail_next)
+						if (0x10000 <= tail_next)
 							_InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_tail), tail_next + (0xFFFF800000000000ULL & tail) + 0x0000800000000000ULL, tail);
 					}
 					else {

@@ -43,15 +43,15 @@ public:
 			unsigned long long tail = _tail;
 			unsigned long long count = 0xFFFF800000000000ULL & tail;
 			node* address = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & tail);
-
 			unsigned long long next = address->_next;
 
-			if (_nullptr == (0x00007FFFFFFFFFFFULL & next) && count == (0xFFFF800000000000ULL & next)) {
+			if (0x10000 < (0x00007FFFFFFFFFFFULL & next))
+				_InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_tail), next, tail);
+			else if (_nullptr == (0x00007FFFFFFFFFFFULL & next) && count == (0xFFFF800000000000ULL & next)) {
 				unsigned long long next_count = count + 0x0000800000000000ULL;
 				unsigned long long next_tail = reinterpret_cast<unsigned long long>(current) + next_count;
 				current->_next = next_count + _nullptr;
 				if (next == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&address->_next), next_tail, next)) {
-					_tail = next_tail;
 					//{
 					//	auto order = _InterlockedIncrement(&_order) % 30000000;
 					//	_log[order]._thread_id = GetCurrentThreadId();
@@ -74,18 +74,27 @@ public:
 				if (head == _head)
 					__debugbreak();
 			}
-			else if (head != _tail) {
-				int result = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & next)->_value;
-				if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head)) {
-					//{
-					//	auto order = _InterlockedIncrement(&_order) % 30000000;
-					//	_log[order]._thread_id = GetCurrentThreadId();
-					//	_log[order]._action = L"pop : _head = next";
-					//	_log[order]._head = (void*)(head & 0x00007FFFFFFFFFFFULL);
-					//	_log[order]._next = (void*)(next & 0x00007FFFFFFFFFFFULL);
-					//}
-					_memory_pool.deallocate(*address);
-					return result;
+			else {
+				unsigned long long tail = _tail;
+				if (tail == head) {
+					node* tail_address = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & tail);
+					unsigned long long tail_next = tail_address->_next;
+					if (0x10000 < (0x00007FFFFFFFFFFFULL & tail_next))
+						_InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_tail), next, tail);
+				}
+				else {
+					int result = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & next)->_value;
+					if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head)) {
+						//{
+						//	auto order = _InterlockedIncrement(&_order) % 30000000;
+						//	_log[order]._thread_id = GetCurrentThreadId();
+						//	_log[order]._action = L"pop : _head = next";
+						//	_log[order]._head = (void*)(head & 0x00007FFFFFFFFFFFULL);
+						//	_log[order]._next = (void*)(next & 0x00007FFFFFFFFFFFULL);
+						//}
+						_memory_pool.deallocate(*address);
+						return result;
+					}
 				}
 			}
 		}

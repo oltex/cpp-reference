@@ -7,20 +7,23 @@
 
 lockfree_queue _lockfree_queue;
 volatile unsigned int _value = 0;
-
 inline static unsigned int __stdcall func(void* arg) noexcept {
-	//auto tsc = __rdtsc();
 	int count = 0;
+	unsigned int prev_value = 0;
 	for (;;) {
 		if (count++ == 100000) {
 			printf("thread : %d\n", GetCurrentThreadId());
 			count = 0;
 		}
 		for (int i = 0; i < 2; ++i) {
-			_lockfree_queue.push(1);
+			_lockfree_queue.push(_InterlockedIncrement(&_value));
 		}
 		for (int i = 0; i < 2; ++i) {
-			_lockfree_queue.pop();
+			auto value = _lockfree_queue.pop();
+			if (prev_value >= value)
+				__debugbreak();
+			else
+				prev_value = value;
 		}
 	}
 }
