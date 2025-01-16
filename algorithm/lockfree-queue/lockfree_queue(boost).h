@@ -17,7 +17,6 @@ private:
 	struct log final {
 		unsigned long _thread_id;
 		wchar_t const* _action;
-
 		void* _head = 0;
 		void* _tail = 0;
 		void* _current = 0;
@@ -70,11 +69,11 @@ public:
 			node* address = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & head);
 			unsigned long long next = address->_next;
 
-			if (0x10000 > (0x00007FFFFFFFFFFFULL & next)) {
+			if (_nullptr == (0x00007FFFFFFFFFFFULL & next)) {
 				if (head == _head)
 					__debugbreak();
 			}
-			else {
+			else if (0x10000 <= (0x00007FFFFFFFFFFFULL & next)) {
 				unsigned long long tail = _tail;
 				if (tail == head) {
 					node* tail_address = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & tail);
