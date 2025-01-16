@@ -1,4 +1,4 @@
-#include "lockfree_queue_old.h"
+#include "lockfree_queue(boost).h"
 #include <thread>
 #include <intrin.h>
 #include <Windows.h>
@@ -13,7 +13,7 @@ inline static unsigned int __stdcall func(void* arg) noexcept {
 	int count = 0;
 	for (;;) {
 		if (count++ == 100000) {
-			std::cout << "thread :" << GetCurrentThreadId() << /*"time :" << ctsc - tsc <<*/ std::endl;
+			printf("thread : %d\n", GetCurrentThreadId());
 			count = 0;
 		}
 		for (int i = 0; i < 2; ++i) {
@@ -74,9 +74,9 @@ inline static unsigned int __stdcall func_pop(void* arg) noexcept {
 int main(void) noexcept {
 	HANDLE _handle0 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
 	HANDLE _handle1 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
-	//HANDLE _handle2 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
-	//HANDLE _handle3 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
-	//HANDLE _handle4 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
+	HANDLE _handle2 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
+	HANDLE _handle3 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
+	HANDLE _handle4 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
 	//system("pause");
 	//ResumeThread(_handle0);
 	//ResumeThread(_handle1);

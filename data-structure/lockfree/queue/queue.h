@@ -1,6 +1,5 @@
 #pragma once
 #include "../memory-pool/memory_pool.h"
-#include <utility>
 #include <optional>
 #include <Windows.h>
 
@@ -17,8 +16,8 @@ namespace data_structure::lockfree {
 			inline auto operator=(node const&) noexcept = delete;
 			inline auto operator=(node&&) noexcept = delete;
 			inline ~node(void) noexcept = delete;
-			type _value;
 			unsigned long long _next;
+			type _value;
 		};
 	public:
 		inline explicit queue(void) noexcept {
@@ -62,9 +61,9 @@ namespace data_structure::lockfree {
 				node* address = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & tail);
 				unsigned long long next = address->_next;
 
-				if (_nullptr != next)
+				if (0x10000 < next)
 					_InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_tail), next + (0xFFFF800000000000ULL & tail) + 0x0000800000000000ULL, tail);
-				else if (_nullptr == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&address->_next), (unsigned long long)current, _nullptr))
+				else if (_nullptr == next && _nullptr == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&address->_next), (unsigned long long)current, _nullptr))
 					break;
 			}
 		}
@@ -74,18 +73,18 @@ namespace data_structure::lockfree {
 				node* address = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & head);
 				unsigned long long next = address->_next;
 
-				if (_nullptr == next || 0 == next)
+				if (0x10000 > next)
 					return std::nullopt;
 				else {
 					unsigned long long tail = _tail;
 					node* tail_address = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & tail);
 					if (reinterpret_cast<unsigned long long>(tail_address) == reinterpret_cast<unsigned long long>(address)) {
 						unsigned long long tail_next = tail_address->_next;
-						if (_nullptr != tail_next)
+						if (0x10000 < tail_next)
 							_InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_tail), tail_next + (0xFFFF800000000000ULL & tail) + 0x0000800000000000ULL, tail);
 					}
 					else {
-						type result = reinterpret_cast<node*>(next)->_value; // next 다른 숫자일때 추가적인 작업이 필요함
+						type result = reinterpret_cast<node*>(next)->_value;
 						unsigned long long change = next + (0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
 						if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), change, head)) {
 							if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)

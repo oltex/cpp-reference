@@ -1,6 +1,5 @@
 #pragma once
-#include "../../data-structure/lockfree-object-pool/lockfree_object_pool.h"
-#include "../../data-structure/lockfree-memory-pool/lockfree_memory_pool.h"
+#include "../../data-structure/lockfree/memory-pool/memory_pool.h"
 
 class lockfree_queue final {
 private:
@@ -46,9 +45,9 @@ public:
 			node* address = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & tail);
 			unsigned long long next = address->_next;
 
-			if (_nullptr != next)
+			if (0x10000 < next)
 				_InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_tail), next + (0xFFFF800000000000ULL & tail) + 0x0000800000000000ULL, tail);
-			else if (_nullptr == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&address->_next), (unsigned long long)current, _nullptr)) {
+			else if (_nullptr == next && _nullptr == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&address->_next), (unsigned long long)current, _nullptr)) {
 				//{
 				//	auto order = _InterlockedIncrement(&_order) % 30000000;
 				//	_log[order]._thread_id = GetCurrentThreadId();
@@ -73,9 +72,9 @@ public:
 			unsigned long long tail = _tail;
 			node* tail_address = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & tail);
 			if (reinterpret_cast<unsigned long long>(tail_address) == reinterpret_cast<unsigned long long>(address)) {
-				unsigned long long next2 = tail_address->_next;
-				if (_nullptr != next2)
-					_InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_tail), next2 + (0xFFFF800000000000ULL & tail) + 0x0000800000000000ULL, tail);
+				unsigned long long tail_next = tail_address->_next;
+				if (_nullptr != tail_next)
+					_InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_tail), tail_next + (0xFFFF800000000000ULL & tail) + 0x0000800000000000ULL, tail);
 			}
 			else {
 				int result = reinterpret_cast<node*>(next)->_value;

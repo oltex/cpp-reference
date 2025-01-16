@@ -1,6 +1,5 @@
 #pragma once
-#include "../../data-structure/lockfree-object-pool/lockfree_object_pool.h"
-#include "../../data-structure/lockfree-memory-pool/lockfree_memory_pool.h"
+#include "../../data-structure/lockfree/memory-pool/memory_pool.h"
 
 class lockfree_queue final {
 private:
@@ -26,8 +25,8 @@ private:
 	};
 public:
 	inline explicit lockfree_queue(void) noexcept {
-		node* current = &_object_pool.allocate();
-		current->_next = 0;
+		node* current = &_memory_pool.allocate();
+		current->_next = _nullptr = _InterlockedIncrement(&_static_nullptr);
 		_head = _tail = reinterpret_cast<unsigned long long>(current);
 	}
 	inline explicit lockfree_queue(lockfree_queue const& rhs) noexcept = delete;
@@ -37,23 +36,22 @@ public:
 	inline ~lockfree_queue(void) noexcept = default;
 public:
 	inline void push(int value) noexcept {
-		node* current = &_object_pool.allocate();
+		node* current = &_memory_pool.allocate();
 		current->_value = value;
 
 		for (;;) {
 			unsigned long long tail = _tail;
 			unsigned long long count = 0xFFFF800000000000ULL & tail;
 			node* address = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & tail);
-			if (current == address)
-				continue;
+
 			unsigned long long next = address->_next;
 
-			if (0 == (0x00007FFFFFFFFFFFULL & next) && count == (0xFFFF800000000000ULL & next)) {
+			if (_nullptr == (0x00007FFFFFFFFFFFULL & next) && count == (0xFFFF800000000000ULL & next)) {
 				unsigned long long next_count = count + 0x0000800000000000ULL;
-				current->_next = next_count;
-				if (next == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&address->_next), (unsigned long long)current + next_count, next)) {
-					//_InterlockedExchange(reinterpret_cast<unsigned long long volatile*>(&_tail), reinterpret_cast<unsigned long long>(current) + next_count);
-					_tail = reinterpret_cast<unsigned long long>(current) + next_count;
+				unsigned long long next_tail = reinterpret_cast<unsigned long long>(current) + next_count;
+				current->_next = next_count + _nullptr;
+				if (next == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&address->_next), next_tail, next)) {
+					_tail = next_tail;
 					//{
 					//	auto order = _InterlockedIncrement(&_order) % 30000000;
 					//	_log[order]._thread_id = GetCurrentThreadId();
@@ -71,22 +69,8 @@ public:
 			unsigned long long head = _head;
 			node* address = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & head);
 			unsigned long long next = address->_next;
-			unsigned long long tail = _tail;
-			//if (head != tail) {
-			//	int result = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & next)->_value;
-			//	if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head)) {
-			//		//{
-			//		//	auto order = _InterlockedIncrement(&_order) % 30000000;
-			//		//	_log[order]._thread_id = GetCurrentThreadId();
-			//		//	_log[order]._action = L"pop : _head = next";
-			//		//	_log[order]._head = (void*)(head & 0x00007FFFFFFFFFFFULL);
-			//		//	_log[order]._next = (void*)(next & 0x00007FFFFFFFFFFFULL);
-			//		//}
-			//		_object_pool.deallocate(*address);
-			//		return result;
-			//	}
-			//}
-			if (0 == (0x00007FFFFFFFFFFFULL & next)) {
+
+			if (0x10000 > (0x00007FFFFFFFFFFFULL & next)) {
 				if (head == _head)
 					__debugbreak();
 			}
@@ -100,7 +84,7 @@ public:
 					//	_log[order]._head = (void*)(head & 0x00007FFFFFFFFFFFULL);
 					//	_log[order]._next = (void*)(next & 0x00007FFFFFFFFFFFULL);
 					//}
-					_object_pool.deallocate(*address);
+					_memory_pool.deallocate(*address);
 					return result;
 				}
 			}
@@ -109,7 +93,9 @@ public:
 private:
 	unsigned long long _head;
 	unsigned long long _tail;
-	data_structure::lockfree::memory_pool<node> _object_pool;
+	unsigned long long _nullptr;
+	inline static unsigned long long _static_nullptr = 0;
+	data_structure::lockfree::memory_pool<node> _memory_pool;
 
 	volatile unsigned int _order = 0;
 	log* _log = new log[30000000];
