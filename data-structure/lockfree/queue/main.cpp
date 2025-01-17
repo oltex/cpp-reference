@@ -2,30 +2,29 @@
 #include <stdlib.h>
 #include <crtdbg.h>
 
-#include "queue.h"
+#include "queue(boost).h"
 #include <thread>
 #include <intrin.h>
 #include <iostream>
 
-data_structure::lockfree::queue<std::pair<int, unsigned int>> _lockfree_queue;
-static unsigned int _static_id = 0;
+
 inline static unsigned int __stdcall func(void* arg) noexcept {
+	auto& _lockfree_queue = *(data_structure::lockfree::queue<std::pair<unsigned long, unsigned int>>*)(arg);
 	int count = 0;
-	unsigned int _id = _InterlockedIncrement(&_static_id);
 	volatile unsigned int _value = 0;
 	volatile unsigned int _prev_value = 0;
-	for (;;) {
+	for (int i = 0; i < 100; ++i) {
 		if (count++ == 1000000) {
 			printf("thread : %d\n", GetCurrentThreadId());
 			count = 0;
 		}
-		for (int i = 0; i < 2; ++i) {
-			_lockfree_queue.push(std::pair<int, unsigned int>(_id, ++_value));
+		for (int i = 0; i < 2000; ++i) {
+			_lockfree_queue.push(std::pair<int, unsigned int>(GetCurrentThreadId(), ++_value));
 		}
-		for (int i = 0; i < 2; ++i) {
+		for (int i = 0; i < 2000; ++i) {
 			auto result = _lockfree_queue.pop();
 			if (result) {
-				if (_id == (*result).first) {
+				if (GetCurrentThreadId() == (*result).first) {
 					if (_prev_value >= (*result).second)
 						__debugbreak();
 					else
@@ -70,14 +69,16 @@ inline static unsigned int __stdcall func(void* arg) noexcept {
 //}
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	HANDLE _handle0 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
-	HANDLE _handle1 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
-	HANDLE _handle2 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
-	HANDLE _handle3 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
-	HANDLE _handle4 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
-	//system("pause");
+	data_structure::lockfree::queue<std::pair<unsigned long, unsigned int>> _lockfree_queue;
+
+	HANDLE _handle0 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, (void*)&_lockfree_queue, 0, 0));
+	HANDLE _handle1 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, (void*)&_lockfree_queue, 0, 0));
+	HANDLE _handle2 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, (void*)&_lockfree_queue, 0, 0));
+	HANDLE _handle3 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, (void*)&_lockfree_queue, 0, 0));
+	HANDLE _handle4 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, (void*)&_lockfree_queue, 0, 0));
+	system("pause");
 	//ResumeThread(_handle0);
 	//ResumeThread(_handle1);
-	Sleep(INFINITE);
+	//Sleep(INFINITE);
 	return 0;
 }

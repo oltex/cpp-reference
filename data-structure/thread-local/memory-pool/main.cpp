@@ -4,7 +4,6 @@
 
 #include <iostream>
 #include "memory_pool.h"
-#include "temp/CTlsObjectPool.h"
 #include "../../my_class.h"
 #include "../../lockfree/queue/queue.h"
 #include "../../lockfree/stack/stack.h"
@@ -17,36 +16,34 @@ struct my_struct {
 	unsigned long long _value[128];
 };
 
-CTlsObjectPool<my_struct, false> tls_object_pool;
-
-data_structure::lockfree::queue<int*> _queue;
-data_structure::lockfree::stack<int*> _stack;
-volatile unsigned long long _stack_size = 0;
-
+//data_structure::lockfree::queue<int*> _queue;
+//data_structure::lockfree::stack<int*> _stack;
+//volatile unsigned long long _stack_size = 0;
 
 inline static unsigned int __stdcall func_pool(void* arg) noexcept {
 	auto& instance = data_structure::_thread_local::memory_pool<my_struct>::instance();
 	my_struct** _array = (my_struct**)malloc(sizeof(my_struct*) * 1000000);
 
-
-	for (;;) {
+	for (int i = 0; i < 10; ++i) {
 		auto _rdtsc = __rdtsc();
 
 		for (auto i = 0; i < 1000000; ++i) {
-			_array[i] = tls_object_pool.Alloc();
-			//_array[i] = &instance.allocate();
+			//_array[i] = tls_object_pool.Alloc();
+			_array[i] = &instance.allocate();
 		}
 		//for (auto i = 0; i < 1000000; ++i)
 		//	if (11 != ++(*_array[i]))
 		//		__debugbreak();
 		for (auto i = 0; i < 1000000; ++i) {
-			tls_object_pool.Free(_array[i]);
-			//instance.deallocate(*_array[i]);
+			//tls_object_pool.Free(_array[i]);
+			instance.deallocate(*_array[i]);
 		}
 
 		auto result = __rdtsc() - _rdtsc;
 		printf("pool : %llu\n", result);
 	}
+
+	free(_array);
 	return 0;
 }
 inline static unsigned int __stdcall func_new(void* arg) noexcept {
@@ -125,6 +122,7 @@ int main(void) noexcept {
 
 	//HANDLE _handle0 = (HANDLE)_beginthreadex(nullptr, 0, func_dealloc, nullptr, 0, 0);
 	//HANDLE _handle1 = (HANDLE)_beginthreadex(nullptr, 0, func_alloc, nullptr, 0, 0);
-	Sleep(INFINITE);
+	//Sleep(5000);
+	system("pause");
 	return 0;
 }
