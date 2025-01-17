@@ -62,7 +62,6 @@ namespace data_structure::_thread_local {
 						}
 						_node = _node->_next;
 					}
-
 					_memory_pool.deallocate(*head);
 					head = next;
 				}
@@ -122,9 +121,9 @@ namespace data_structure::_thread_local {
 		inline auto operator=(memory_pool&& rhs) noexcept -> memory_pool & = delete;
 		inline ~memory_pool(void) noexcept {
 			if (_size > bucket_size) {
-				_stack.push(_head, bucket_size);
+				_stack.push(_head, _size - bucket_size);
 				_head = _break;
-				_size -= bucket_size;
+				_size = bucket_size;
 			}
 			if (_size > bucket_size)
 				__debugbreak();

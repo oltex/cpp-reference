@@ -46,29 +46,29 @@ inline static unsigned int __stdcall func_pool(void* arg) noexcept {
 	free(_array);
 	return 0;
 }
-inline static unsigned int __stdcall func_new(void* arg) noexcept {
-	auto& instance = data_structure::_thread_local::memory_pool<int>::instance();
-	my_struct** _array = (my_struct**)malloc(sizeof(my_struct*) * 1000000);
-	for (;;) {
-		auto _rdtsc = __rdtsc();
-
-		for (auto i = 0; i < 1000000; ++i) {
-			//_array[i] = new my_struct;
-			_array[i] = (my_struct*)malloc(sizeof(my_struct));
-		}
-		//for (auto i = 0; i < 1000000; ++i)
-		//	if (11 != ++(*_array[i]))
-		//		__debugbreak();
-		for (auto i = 0; i < 1000000; ++i) {
-			//delete _array[i];
-			free(_array[i]);
-		}
-
-		auto result = __rdtsc() - _rdtsc;
-		printf("new : %llu\n", result);
-	}
-	return 0;
-}
+//inline static unsigned int __stdcall func_new(void* arg) noexcept {
+//	auto& instance = data_structure::_thread_local::memory_pool<int>::instance();
+//	my_struct** _array = (my_struct**)malloc(sizeof(my_struct*) * 1000000);
+//	for (;;) {
+//		auto _rdtsc = __rdtsc();
+//
+//		for (auto i = 0; i < 1000000; ++i) {
+//			//_array[i] = new my_struct;
+//			_array[i] = (my_struct*)malloc(sizeof(my_struct));
+//		}
+//		//for (auto i = 0; i < 1000000; ++i)
+//		//	if (11 != ++(*_array[i]))
+//		//		__debugbreak();
+//		for (auto i = 0; i < 1000000; ++i) {
+//			//delete _array[i];
+//			free(_array[i]);
+//		}
+//
+//		auto result = __rdtsc() - _rdtsc;
+//		printf("new : %llu\n", result);
+//	}
+//	return 0;
+//}
 
 //inline static unsigned int __stdcall func_alloc(void* arg) noexcept {
 //	auto& instance = data_structure::_thread_local::memory_pool<int>::instance();
@@ -116,9 +116,9 @@ int main(void) noexcept {
 	//HANDLE _handle2 = (HANDLE)_beginthreadex(nullptr, 0, func_new, nullptr, 0, 0);
 	//HANDLE _handle3 = (HANDLE)_beginthreadex(nullptr, 0, func_new, nullptr, 0, 0);
 	HANDLE _handle4 = (HANDLE)_beginthreadex(nullptr, 0, func_pool, nullptr, 0, 0);
-	HANDLE _handle5 = (HANDLE)_beginthreadex(nullptr, 0, func_pool, nullptr, 0, 0);
-	HANDLE _handle6 = (HANDLE)_beginthreadex(nullptr, 0, func_pool, nullptr, 0, 0);
-	HANDLE _handle7 = (HANDLE)_beginthreadex(nullptr, 0, func_pool, nullptr, 0, 0);
+	//HANDLE _handle5 = (HANDLE)_beginthreadex(nullptr, 0, func_pool, nullptr, 0, 0);
+	//HANDLE _handle6 = (HANDLE)_beginthreadex(nullptr, 0, func_pool, nullptr, 0, 0);
+	//HANDLE _handle7 = (HANDLE)_beginthreadex(nullptr, 0, func_pool, nullptr, 0, 0);
 
 	//HANDLE _handle0 = (HANDLE)_beginthreadex(nullptr, 0, func_dealloc, nullptr, 0, 0);
 	//HANDLE _handle1 = (HANDLE)_beginthreadex(nullptr, 0, func_alloc, nullptr, 0, 0);
