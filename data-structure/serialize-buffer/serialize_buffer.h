@@ -12,6 +12,7 @@ namespace data_structure {
 	private:
 		using byte = unsigned char;
 		using size_type = unsigned int;
+		using iterator = byte*;
 	public:
 		inline explicit serialize_buffer(void) noexcept {
 			reserve(1024);
@@ -129,6 +130,13 @@ namespace data_structure {
 		template<string_size type>
 		inline void pop(std::wstring const& value) noexcept {
 			_front += sizeof(type) + sizeof(std::wstring::value_type) * value.size();
+		}
+
+		inline auto begin(void) noexcept -> iterator {
+			return _array + _front;
+		}
+		inline auto end(void) noexcept -> iterator {
+			return _array + _rear;
 		}
 	public:
 #ifdef debug
