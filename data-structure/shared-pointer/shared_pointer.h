@@ -26,14 +26,13 @@ namespace data_structure {
 		inline constexpr shared_pointer(nullptr_t) noexcept
 			: _value(nullptr), _reference(nullptr) {
 		};
-		inline explicit shared_pointer(type* value) noexcept {
-			_value = value;
+		inline explicit shared_pointer(type* value) noexcept 
+			: _value(value) {
 			_reference = static_cast<reference*>(malloc(sizeof(reference)));
 			_reference->_use = 1;
 			_reference->_weak = 0;
 		}
 		template<typename... argument>
-			requires (!std::same_as<std::decay_t<argument>, shared_pointer> && ...)
 		inline explicit shared_pointer(argument&&... arg) noexcept {
 			_value = static_cast<type*>(malloc(sizeof(type)));
 			_reference = static_cast<reference*>(malloc(sizeof(reference)));
@@ -47,7 +46,7 @@ namespace data_structure {
 			_reference->_use = 1;
 			_reference->_weak = 0;
 		}
-		inline shared_pointer(shared_pointer const& rhs) noexcept
+		inline shared_pointer(shared_pointer& rhs) noexcept
 			: _value(rhs._value), _reference(rhs._reference) {
 			if (nullptr != _reference)
 				++_reference->_use;
@@ -76,12 +75,11 @@ namespace data_structure {
 		}
 	public:
 		inline auto operator*(void) noexcept -> type& {
-			return _value;
+			return *_value;
 		}
 		inline auto operator->(void) noexcept -> type* {
 			return _value;
 		}
-	public:
 		inline void swap(shared_pointer& rhs) noexcept {
 			{
 				auto temp = _value;
@@ -100,17 +98,17 @@ namespace data_structure {
 		inline auto get(void) const noexcept -> type* {
 			return _value;
 		}
-		//template <class type>
-		//friend inline bool operator==(shared_pointer<type> const& value, nullptr_t) noexcept {
-		//	return value._value == nullptr;
-		//}
+		template <class type>
+		friend inline bool operator==(shared_pointer<type> const& value, nullptr_t) noexcept {
+			return value._value == nullptr;
+		}
 	private:
 		type* _value;
 		reference* _reference;
 	};
 
-	template <class type>
-	inline bool operator==(shared_pointer<type> const& value, nullptr_t) noexcept {
-		return value.get() == nullptr;
-	}
+	//template <class type>
+	//inline bool operator==(shared_pointer<type> const& value, nullptr_t) noexcept {
+	//	return value.get() == nullptr;
+	//}
 }

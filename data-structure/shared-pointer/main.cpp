@@ -11,15 +11,14 @@ int main(void) noexcept {
 	std::shared_ptr<my_class> std_shard_ptr;
 	std::shared_ptr<my_class> std_shard_ptr2(std_shard_ptr);
 
-	my_class* a;
-
-	std_shard_ptr = a;
-
 	std_shard_ptr = nullptr;
 	//std_shard_ptr.use_count();
 	data_structure::shared_pointer<my_class> shared_pointer;
 	data_structure::shared_pointer<my_class> shared_pointer2(shared_pointer);
 	shared_pointer = nullptr;
+	if (shared_pointer == nullptr) {
+
+	}
 	//data_structure::shared_pointer<my_class> shared_pointer2(new my_class(2));
 	//shared_pointer = shared_pointer2;
 	//my_class* m = shared_pointer.release();
