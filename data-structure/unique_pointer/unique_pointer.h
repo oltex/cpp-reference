@@ -85,17 +85,6 @@ namespace data_structure {
 		inline unique_pointer(type* value) noexcept
 			: _value(value) {
 		}
-//		template<typename... argument>
-//		inline explicit unique_pointer(argument&&... arg) noexcept {
-//			_value = static_cast<type*>(malloc(sizeof(type)));
-//			if constexpr (std::is_class_v<type>) {
-//				if constexpr (std::is_constructible_v<type, argument...>)
-//					::new(reinterpret_cast<void*>(_value)) type(std::forward<argument>(arg)...);
-//			}
-//			else if constexpr (1 == sizeof...(arg))
-//#pragma warning(suppress: 6011)
-//				* _value = type(std::forward<argument>(arg)...);
-//		}
 		inline unique_pointer(unique_pointer&) noexcept = delete;
 		inline explicit unique_pointer(unique_pointer&& rhs) noexcept
 			: _value(rhs._value) {
