@@ -3,7 +3,7 @@
 #include "../predicate/predicate.h"
 
 namespace data_structure {
-	template<typename type, typename predicate = less<type>>
+	template<typename type, auto _predicate = less<type>>
 	class priority_queue final {
 	private:
 		using size_type = unsigned int;
@@ -75,6 +75,5 @@ namespace data_structure {
 		}
 	private:
 		vector<type> _vector;
-		inline static predicate const _predicate;
 	};
 }
