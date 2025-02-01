@@ -150,6 +150,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="queue(boost)2.h" />
     <ClInclude Include="queue.h" />
     <ClInclude Include="queue%28boost%29.h" />
   </ItemGroup>

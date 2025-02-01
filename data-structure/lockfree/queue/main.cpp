@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <crtdbg.h>
 
-#include "queue(boost).h"
+#include "queue(boost)2.h"
 #include <thread>
 #include <intrin.h>
 #include <iostream>
@@ -13,15 +13,15 @@ inline static unsigned int __stdcall func(void* arg) noexcept {
 	int count = 0;
 	volatile unsigned int _value = 0;
 	volatile unsigned int _prev_value = 0;
-	for (int i = 0; i < 100; ++i) {
-		if (count++ == 1000000) {
+	for (;;/*int i = 0; i < 100; ++i*/) {
+		if (count++ == 10000) {
 			printf("thread : %d\n", GetCurrentThreadId());
 			count = 0;
 		}
-		for (int i = 0; i < 2000; ++i) {
+		for (int i = 0; i < 2; ++i) {
 			_lockfree_queue.push(std::pair<int, unsigned int>(GetCurrentThreadId(), ++_value));
 		}
-		for (int i = 0; i < 2000; ++i) {
+		for (int i = 0; i < 2; ++i) {
 			auto result = _lockfree_queue.pop();
 			if (result) {
 				if (GetCurrentThreadId() == (*result).first) {
