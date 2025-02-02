@@ -4,52 +4,54 @@
 #include "../../data-structure/unique_pointer/unique_pointer.h"
 #include <Pdh.h>
 #pragma comment(lib,"pdh.lib")
-#include <unordered_map>
 #include <string>
-
+#include <list>
 #include <iostream>
 
-namespace utility {
-	class performance_monitor final : public design_pattern::singleton<performance_monitor> {
+namespace utility::performance_data_helper {
+	using counter = PDH_HCOUNTER;
+	using counter_value = PDH_FMT_COUNTERVALUE;
+	using counter_value_item = PDH_FMT_COUNTERVALUE_ITEM_W;
+	class query final : public design_pattern::singleton<query> {
 	private:
-		friend class design_pattern::singleton<performance_monitor>;
-		//using size_type = unsigned int;
+		friend class design_pattern::singleton<query>;
 	private:
-		inline explicit performance_monitor(void) noexcept {
+		inline explicit query(void) noexcept {
 			PdhOpenQueryW(nullptr, NULL, &_qurey);
 		};
-		inline explicit performance_monitor(performance_monitor const& rhs) noexcept = delete;
-		inline explicit performance_monitor(performance_monitor&& rhs) noexcept = delete;
-		inline auto operator=(performance_monitor const& rhs) noexcept -> performance_monitor & = delete;
-		inline auto operator=(performance_monitor&& rhs) noexcept -> performance_monitor & = delete;
-		inline ~performance_monitor(void) noexcept {
+		inline explicit query(query const&) noexcept = delete;
+		inline explicit query(query&&) noexcept = delete;
+		inline auto operator=(query const&) noexcept -> query & = delete;
+		inline auto operator=(query&&) noexcept -> query & = delete;
+		inline ~query(void) noexcept {
 			PdhCloseQuery(&_qurey);
 		}
 	public:
-		inline void add_counter(std::wstring_view const key, std::wstring_view const object, std::wstring_view const item, std::wstring_view const instance) noexcept {
+		inline auto add_counter(std::wstring_view const object, std::wstring_view const item, std::wstring_view const instance) noexcept -> counter {
 			size_t size = sizeof(wchar_t) * (object.size() + item.size() + instance.size() + 7);
 			wchar_t* path = reinterpret_cast<wchar_t*>(malloc(size));
 			swprintf_s(path, size / sizeof(wchar_t), L"\\%s(%s)\\%% %s", object.data(), instance.data(), item.data());
-			auto& iter = _counter.emplace(std::piecewise_construct, std::forward_as_tuple(key.data()), std::forward_as_tuple()).first->second;
-			PdhAddCounterW(_qurey, path, NULL, &iter);
+			counter counter_;
+			PdhAddCounterW(_qurey, path, NULL, &counter_);
 			free(path);
+			return counter_;
 		}
-		inline void add_counter(std::wstring_view const key, std::wstring_view const object, std::wstring_view const item) noexcept {
+		inline auto add_counter(std::wstring_view const object, std::wstring_view const item) noexcept -> counter {
 			size_t size = object.size() + item.size() + 5;
 			wchar_t* path = reinterpret_cast<wchar_t*>(malloc(sizeof(wchar_t) * size));
 			swprintf_s(path, size / sizeof(wchar_t), L"\\%s\\%% %s", object.data(), item.data());
-			auto& iter = _counter.emplace(std::piecewise_construct, std::forward_as_tuple(key), std::forward_as_tuple()).first->second;
-			PdhAddCounterW(_qurey, path, NULL, &iter);
+			counter counter_;
+			PdhAddCounterW(_qurey, path, NULL, &counter_);
 			free(path);
+			return counter_;
 		}
-		inline void add_counter(std::wstring_view const key, std::wstring_view const path) noexcept {
-			auto& iter = _counter.emplace(std::piecewise_construct, std::forward_as_tuple(key), std::forward_as_tuple()).first->second;
-			PdhAddCounterW(_qurey, path.data(), NULL, &iter);
+		inline auto add_counter(std::wstring_view const path) noexcept -> counter {
+			counter counter_;
+			PdhAddCounterW(_qurey, path.data(), NULL, &counter_);
+			return counter_;
 		}
-		inline void remove_counter(std::wstring_view const key) noexcept {
-			auto iter = _counter.find(key.data());
-			PdhRemoveCounter(_counter.find(key.data())->second);
-			_counter.erase(iter);
+		inline void remove_counter(counter const counter_) noexcept {
+			PdhRemoveCounter(counter_);
 		}
 		inline void collect_query_data(void) noexcept {
 			PdhCollectQueryData(_qurey);
@@ -57,25 +59,22 @@ namespace utility {
 		inline void collect_query_data_ex(void) noexcept {
 			//PdhCollectQueryDataEx()
 		}
-		inline auto get_formatted_counter_value(std::wstring_view const key, unsigned long format) noexcept -> PDH_FMT_COUNTERVALUE {
-			auto& iter = _counter.find(key.data())->second;
-			PDH_FMT_COUNTERVALUE counter_value;
-			PdhGetFormattedCounterValue(iter, format, nullptr, &counter_value);
-			return counter_value;
+		inline auto get_formatted_counter_value(counter const counter_, unsigned long format) noexcept -> counter_value {
+			counter_value counter_value_;
+			PdhGetFormattedCounterValue(counter_, format, nullptr, &counter_value_);
+			return counter_value_;
 		}
-		inline auto get_formatted_counter_array(std::wstring_view const key, unsigned long format) noexcept -> data_structure::pair<unsigned long, data_structure::unique_pointer<PDH_FMT_COUNTERVALUE_ITEM_W[]>> {
-			auto& iter = _counter.find(key.data())->second;
-
+		inline auto get_formatted_counter_array(counter const counter_, unsigned long format) noexcept -> data_structure::pair<unsigned long, data_structure::unique_pointer<counter_value_item[]>> {
 			unsigned long buffer_size = 0;
 			unsigned long item_count;
-			PDH_STATUS status1 = PdhGetFormattedCounterArrayW(iter, format, &buffer_size, &item_count, nullptr);
-			PDH_FMT_COUNTERVALUE_ITEM_W* counter_value_item = reinterpret_cast<PDH_FMT_COUNTERVALUE_ITEM_W*>(malloc(buffer_size));
-			PDH_STATUS status2 = PdhGetFormattedCounterArrayW(iter, format, &buffer_size, &item_count, counter_value_item);
+			PdhGetFormattedCounterArrayW(counter_, format, &buffer_size, &item_count, nullptr);
+			counter_value_item* counter_value_item_ = reinterpret_cast<counter_value_item*>(malloc(buffer_size));
+			PdhGetFormattedCounterArrayW(counter_, format, &buffer_size, &item_count, counter_value_item_);
 
-			return data_structure::pair<unsigned long, data_structure::unique_pointer<PDH_FMT_COUNTERVALUE_ITEM_W[]>>(item_count, counter_value_item);
+			return data_structure::pair<unsigned long, data_structure::unique_pointer<counter_value_item[]>>(item_count, counter_value_item_);
 		}
 	public:
-		inline auto enum_object(std::wstring_view const filter = L"*") noexcept -> std::list<std::wstring> {
+		inline auto enum_object(void) noexcept -> std::list<std::wstring> {
 			unsigned long object_size = 0;
 			PdhEnumObjectsW(nullptr, nullptr, nullptr, &object_size, PERF_DETAIL_WIZARD, TRUE);
 			wchar_t* object_buffer = reinterpret_cast<wchar_t*>(malloc(sizeof(wchar_t) * object_size));
@@ -83,15 +82,8 @@ namespace utility {
 			wchar_t const* object = object_buffer;
 
 			std::list<std::wstring> result;
-			if (L"*" == filter)
-				for (wchar_t const* object = object_buffer; *object != false; object += wcslen(object) + 1)
-					result.emplace_back(object);
-			else
-				for (wchar_t const* object = object_buffer; *object != false; object += wcslen(object) + 1) {
-					std::wstring current(object);
-					if (std::wstring::npos != current.find(filter))
-						result.emplace_back(object);
-				}
+			for (wchar_t const* object = object_buffer; *object != false; object += wcslen(object) + 1)
+				result.emplace_back(object);
 			free(object_buffer);
 
 			result.sort();
@@ -107,7 +99,7 @@ namespace utility {
 
 			std::pair<std::list<std::wstring>, std::list<std::wstring>> result;
 			for (wchar_t const* item = item_buffer; *item != false; item += wcslen(item) + 1)
-					result.first.emplace_back(item);
+				result.first.emplace_back(item);
 			for (wchar_t const* instance = instance_buffer; *instance != false; instance += wcslen(instance) + 1)
 				result.second.emplace_back(instance);
 
@@ -122,7 +114,6 @@ namespace utility {
 		}
 	private:
 		PDH_HQUERY _qurey;
-		std::unordered_map<std::wstring, PDH_HCOUNTER> _counter;
 	};
 }
 
