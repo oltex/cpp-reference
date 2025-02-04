@@ -86,6 +86,7 @@ namespace data_structure {
 	public:
 		inline explicit map(void) noexcept {
 			_root = _nil = reinterpret_cast<node*>(calloc(1, (sizeof(node*) * 3) + sizeof(color) + sizeof(bool)));
+#pragma warning(suppress: 6011)
 			_nil->_nil = true;
 			_nil->_parent = _nil->_left = _nil->_right = _nil;
 			_nil->_color = black;
