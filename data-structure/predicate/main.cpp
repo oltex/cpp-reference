@@ -14,17 +14,17 @@
 void compareInts(int a, int b) {
     std::strong_ordering result = a <=> b;
 
-    switch (result) {
-    case std::strong_ordering::less:
-        std::cout << a << " is less than " << b << std::endl;
-        break;
-    case std::strong_ordering::equal:
-        std::cout << a << " is equal to " << b << std::endl;
-        break;
-    case std::strong_ordering::greater:
-        std::cout << a << " is greater than " << b << std::endl;
-        break;
-    }
+    //switch (result) {
+    //case std::strong_ordering::less:
+    //    std::cout << a << " is less than " << b << std::endl;
+    //    break;
+    //case std::strong_ordering::equal:
+    //    std::cout << a << " is equal to " << b << std::endl;
+    //    break;
+    //case std::strong_ordering::greater:
+    //    std::cout << a << " is greater than " << b << std::endl;
+    //    break;
+    //}
 }
 
 int main() {
