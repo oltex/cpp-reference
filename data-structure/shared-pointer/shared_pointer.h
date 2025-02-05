@@ -29,6 +29,7 @@ namespace data_structure {
 		inline explicit shared_pointer(type* value) noexcept 
 			: _value(value) {
 			_reference = static_cast<reference*>(malloc(sizeof(reference)));
+#pragma warning(suppress: 6011)
 			_reference->_use = 1;
 			_reference->_weak = 0;
 		}

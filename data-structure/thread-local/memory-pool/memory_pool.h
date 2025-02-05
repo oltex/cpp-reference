@@ -19,7 +19,6 @@ namespace data_structure::_thread_local {
 			node* _next;
 			type _value;
 		};
-
 		class stack final {
 		private:
 			struct bucket final {

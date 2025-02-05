@@ -66,7 +66,7 @@ namespace data_structure {
 			_rear += length;
 		}
 		template<string_size type>
-		inline void push(std::string_view const value) noexcept  {
+		inline void push(std::string_view const value) noexcept {
 			operator<<(static_cast<type>(value.size()));
 			push((unsigned char*)value.data(), static_cast<size_type>(sizeof(std::string::value_type) * value.size()));
 		}
@@ -87,7 +87,7 @@ namespace data_structure {
 			_front += sizeof(type);
 			return *this;
 		}
-		inline void peek(byte* const buffer, size_type const length) noexcept {
+		inline void peek(byte* const buffer, size_type const length) const noexcept {
 #ifdef debug
 			if (_front + length > _rear) {
 				_fail = true;
@@ -131,7 +131,6 @@ namespace data_structure {
 		inline void pop(std::wstring const& value) noexcept {
 			_front += sizeof(type) + sizeof(std::wstring::value_type) * value.size();
 		}
-
 		inline auto begin(void) noexcept -> iterator {
 			return _array + _front;
 		}
@@ -181,7 +180,6 @@ namespace data_structure {
 		inline void move_rear(size_type const length) noexcept {
 			_rear += length;
 		}
-	public:
 		inline auto data(void) const noexcept -> byte* {
 			return _array;
 		}
