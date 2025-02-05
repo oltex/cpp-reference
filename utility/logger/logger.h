@@ -1,6 +1,6 @@
 #pragma once
 #include "../../design-pettern/singleton/singleton.h"
-#include "../../system-component/multi/critical_section.h"
+#include "../../system-component/multi/lock/critical_section.h"
 #include "../../system-component/file/file.h"
 #include <string_view>
 #include <optional>
@@ -24,7 +24,7 @@ private:
 			: _path(path) {
 		}
 		std::wstring _path;
-		multi::lock::critical_section _lock;
+		system_component::multi::lock::critical_section _lock;
 	};
 private:
 	inline explicit logger(void) noexcept {
@@ -36,7 +36,8 @@ private:
 	inline auto operator=(logger&& rhs) noexcept -> logger & = delete;
 	inline ~logger(void) noexcept = default;
 public:
-	inline void log_message(flag const output_, level const level_, std::wstring_view const key, wchar_t const* const format, ...) noexcept {
+	template <flag output_, level level_>
+	inline void log_message(std::wstring_view const key, wchar_t const* const format, ...) noexcept {
 		if (0 != _output && level_ >= _level) {
 			constexpr wchar_t const* const lm[] = { L"trace", L"debug", L"info", L"warning", L"error", L"fatal" };
 			__time64_t time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
@@ -51,9 +52,9 @@ public:
 			va_end(va_list_);
 			length += _snwprintf_s(string + length, 255 - length, 255 - length, L"\n");
 
-			if (static_cast<unsigned char>(output::console) & output_)
+			if constexpr (static_cast<unsigned char>(output::console) & output_)
 				wprintf(string);
-			if (static_cast<unsigned char>(output::file) & output_) {
+			if constexpr (static_cast<unsigned char>(output::file) & output_) {
 				auto& iter = _logged.find(key.data())->second;
 				iter._lock.enter();
 				HANDLE handle = CreateFileW(iter._path.data(), FILE_WRITE_DATA, FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_FLAG_WRITE_THROUGH, nullptr);
@@ -64,7 +65,8 @@ public:
 			}
 		}
 	}
-	inline void log_memory(flag const output_, level const level_, std::wstring_view const key, wchar_t const* const print, unsigned char* pointer, size_type size) noexcept {
+	template<flag output_, level level_>
+	inline void log_memory(std::wstring_view const key, wchar_t const* const print, unsigned char* pointer, size_type size, size_type const column) noexcept {
 		if (0 != _output && level_ >= _level) {
 			constexpr wchar_t const* const lm[] = { L"trace", L"debug", L"info", L"warning", L"error", L"fatal" };
 			__time64_t time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
@@ -76,15 +78,15 @@ public:
 			length += _snwprintf_s(string + length, 255 - length, 255 - length, L"%s", print);
 
 			for (size_type index = 0; index < size; index++) {
-				if (0 == index % _column)
+				if (0 == index % column)
 					length += _snwprintf_s(string + length, 255 - length, 255 - length, L"\n%p  ", pointer + index);
 				length += _snwprintf_s(string + length, 255 - length, 255 - length, L"%02x ", pointer[index]);
 			}
 			size += _snwprintf_s(string + length, 255 - length, 255 - length, L"\n");
 
-			if (static_cast<unsigned char>(output::console) & output_)
+			if constexpr (static_cast<unsigned char>(output::console) & output_)
 				wprintf(string);
-			if (static_cast<unsigned char>(output::file) & output_) {
+			if constexpr (static_cast<unsigned char>(output::file) & output_) {
 				auto& iter = _logged.find(key.data())->second;
 				iter._lock.enter();
 				HANDLE handle = CreateFileW(iter._path.data(), FILE_WRITE_DATA, FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_FLAG_WRITE_THROUGH, nullptr);
@@ -98,12 +100,6 @@ public:
 public:
 	inline void set_level(level const level) noexcept {
 		_level = level;
-	}
-	inline void set_output(flag const output) {
-		_output = output;
-	}
-	inline void set_column(size_type const column) noexcept {
-		_column = column;
 	}
 private:
 	inline void create_file(std::wstring_view key, std::wstring_view path) noexcept {
@@ -124,12 +120,9 @@ private:
 		}
 	}
 private:
-	flag _output = 0;
 	level _level = static_cast<level>(none);
 	std::unordered_map<std::wstring, logged> _logged;
-
 	volatile size_type _count = 0;
-	size_type _column = 4;
 };
 
 //TRACE
