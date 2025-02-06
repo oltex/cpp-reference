@@ -27,14 +27,14 @@ inline static unsigned int __stdcall func_pool(void* arg) noexcept {
 	for (int i = 0; i < 10; ++i) {
 		auto _rdtsc = __rdtsc();
 
-		for (auto i = 0; i < 1000000; ++i) {
+		for (auto i = 0; i < 200; ++i) {
 			//_array[i] = tls_object_pool.Alloc();
 			_array[i] = &instance.allocate();
 		}
 		//for (auto i = 0; i < 1000000; ++i)
 		//	if (11 != ++(*_array[i]))
 		//		__debugbreak();
-		for (auto i = 0; i < 1000000; ++i) {
+		for (auto i = 0; i < 200; ++i) {
 			//tls_object_pool.Free(_array[i]);
 			instance.deallocate(*_array[i]);
 		}
