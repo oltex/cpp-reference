@@ -2,14 +2,10 @@
 #include "../../design-pettern/singleton/singleton.h"
 #include "../../system-component/multi/lock/critical_section.h"
 #include "../../system-component/file/file.h"
-
 #include "../../system-component/time/unix.h"
 #include "../../system-component/time/date.h"
-
 #include <string_view>
-#include <optional>
 #include <chrono>
-
 #include <iostream>
 #include <Windows.h>
 #include <unordered_map>
@@ -39,10 +35,10 @@ namespace utility {
 		};
 	private:
 		inline explicit logger(void) noexcept = default;
-		inline explicit logger(logger const& rhs) noexcept = delete;
-		inline explicit logger(logger&& rhs) noexcept = delete;
-		inline auto operator=(logger const& rhs) noexcept -> logger & = delete;
-		inline auto operator=(logger&& rhs) noexcept -> logger & = delete;
+		inline explicit logger(logger const&) noexcept = delete;
+		inline explicit logger(logger&&) noexcept = delete;
+		inline auto operator=(logger const&) noexcept -> logger & = delete;
+		inline auto operator=(logger&&) noexcept -> logger & = delete;
 		inline ~logger(void) noexcept = default;
 	public:
 		template <level level_>
@@ -122,7 +118,7 @@ namespace utility {
 		inline void set_level(level const level_) noexcept {
 			_level = level_;
 		}
-		inline void set_output(output const output_) noexcept {
+		inline void set_output(unsigned char const output_) noexcept {
 			_output = output_;
 		}
 		inline auto get_level(void) const noexcept -> level {
