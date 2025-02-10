@@ -6,17 +6,21 @@
 
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	logger& logger = logger::instance();
-	logger.set_level(logger::level::info);
+	utility::logger& logger = utility::logger::instance();
+	logger.set_level(utility::logger::level::info);
+	logger.set_output(utility::logger::output::file);
 
-	struct MyStruct {
-		int a = 1;
-		int b = 0xffffffff;
-		int c = 3;
-	};
-	MyStruct mystr;
+	logger.create_file("test", L"test/test/test.log");
 
-	logger.log_message<logger::output::console, logger::level::info>(L"", L"bye : %d", 10);
-	logger.log_memory<logger::output::console, logger::level::info>(L"", L"data : ", (unsigned char*)&mystr, sizeof(MyStruct), 4);
+	//struct MyStruct {
+	//	int a = 1;
+	//	int b = 0xffffffff;
+	//	int c = 3;
+	//};
+	//MyStruct mystr;
+
+	//logger.log_message<logger::level::info>("test", L"bye : %d", 10);
+	log(logger::level::info, "test", L"bye : %d", 10);
+	//logger.log_memory<logger::output::console, logger::level::info>(L"", L"data : ", (unsigned char*)&mystr, sizeof(MyStruct), 4);
 	return 0;
 }

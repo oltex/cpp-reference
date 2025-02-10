@@ -1,8 +1,7 @@
 #pragma once
 #include <ctime>
-#include "date.h"
 
-namespace time {
+namespace system_component::time {
 	class unix final {
 	public:
 		inline explicit unix(void) noexcept = default;
@@ -26,10 +25,10 @@ namespace time {
 		inline void time(void) noexcept {
 			_time64(&_time_t);
 		}
-		inline auto local_time(void) const noexcept -> date {
+		inline auto local_time(void) const noexcept -> tm {
 			std::tm tm;
 			_localtime64_s(&tm, &_time_t);
-			return date(tm);
+			return tm;
 		}
 	public:
 		inline auto data(void) noexcept -> __time64_t& {
