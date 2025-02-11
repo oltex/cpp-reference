@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <crtdbg.h>
 
-#include "thread.h"
-
 #include "lock/spin.h"
 #include "lock/wait_on_address.h"
 #include "lock/critical_section.h"

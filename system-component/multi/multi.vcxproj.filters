@@ -4,7 +4,6 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="thread.h" />
     <ClInclude Include="event.h">
       <Filter>synchronize</Filter>
     </ClInclude>
