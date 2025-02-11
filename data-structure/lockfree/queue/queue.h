@@ -1,7 +1,6 @@
 #pragma once
 #include "../../thread-local/memory-pool/memory_pool.h"
 #include <optional>
-#include <Windows.h>
 
 namespace data_structure::lockfree {
 	template <typename type>

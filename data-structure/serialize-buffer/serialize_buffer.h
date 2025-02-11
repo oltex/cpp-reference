@@ -35,14 +35,12 @@ namespace data_structure {
 			_array(rhs._array) {
 			rhs._array = nullptr;
 		}
-		//not implemented
 		inline auto operator=(serialize_buffer const& rhs) noexcept -> serialize_buffer&;
-		//not implemented
 		inline auto operator=(serialize_buffer&& rhs) noexcept -> serialize_buffer&;
 		inline ~serialize_buffer(void) noexcept {
 			free(_array);
 		};
-	public:
+
 		template<typename type>
 		inline auto operator<<(type const& value) noexcept -> serialize_buffer& requires std::is_arithmetic_v<type> {
 #ifdef debug
@@ -95,7 +93,6 @@ namespace data_structure {
 		inline auto end(void) noexcept -> iterator {
 			return _array + _rear;
 		}
-	public:
 #ifdef debug
 		inline operator bool(void) const noexcept {
 			return !_fail;

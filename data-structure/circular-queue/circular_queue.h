@@ -71,9 +71,7 @@ namespace data_structure {
 			rhs._capacity = 0;
 			rhs._array = nullptr;
 		};
-		//not implemented
 		inline auto operator=(circular_queue const& rhs) noexcept -> circular_queue&;
-		//not implemented
 		inline auto operator=(circular_queue&& rhs) noexcept -> circular_queue&;
 		inline ~circular_queue(void) noexcept {
 			if constexpr (!std::is_trivially_destructible_v<type> && std::is_destructible_v<type>)

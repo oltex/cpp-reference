@@ -24,7 +24,6 @@ namespace data_structure {
 		inline auto end(void) const noexcept -> iterator {
 			return _arr + _size;
 		}
-	public:
 		inline auto size(void) const noexcept -> size_t {
 			return _size;
 		}
@@ -35,7 +34,6 @@ namespace data_structure {
 		inline void clear(void) noexcept {
 			memset(_arr, 0, sizeof(type) * _size);
 		}
-	public:
 		type _arr[_size];
 	};
 }
