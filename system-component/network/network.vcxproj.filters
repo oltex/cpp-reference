@@ -18,9 +18,6 @@
     <ClInclude Include="window_socket_api\function.h">
       <Filter>window_socket_api</Filter>
     </ClInclude>
-    <ClInclude Include="iocp\server.h">
-      <Filter>iocp</Filter>
-    </ClInclude>
     <ClInclude Include="select\poll.h">
       <Filter>select</Filter>
     </ClInclude>
@@ -40,9 +37,6 @@
   <ItemGroup>
     <Filter Include="select">
       <UniqueIdentifier>{b2adf759-0d47-455c-85c2-56ff88e6de14}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="iocp">
-      <UniqueIdentifier>{29c78510-960a-4674-84b0-efe6ea67fd09}</UniqueIdentifier>
     </Filter>
     <Filter Include="window_socket_api">
       <UniqueIdentifier>{39e58ec2-d7a8-420a-803b-5a91bc40b051}</UniqueIdentifier>

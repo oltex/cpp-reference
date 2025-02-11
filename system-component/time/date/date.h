@@ -23,7 +23,7 @@ namespace system_component::time {
 			_tm = rhs._tm;
 		}
 		inline ~date(void) noexcept = default;
-	public:
+
 		inline auto put_time(char const* const format) const noexcept {
 			return std::put_time(&_tm, format);
 		}

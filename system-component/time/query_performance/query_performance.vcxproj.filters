@@ -1,13 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="multimedia.h" />
     <ClInclude Include="query_performance.h" />
-    <ClInclude Include="system.h" />
-    <ClInclude Include="date.h" />
-    <ClInclude Include="unix.h" />
   </ItemGroup>
 </Project>
