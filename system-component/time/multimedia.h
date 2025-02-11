@@ -23,7 +23,6 @@ namespace system_component::time {
 		inline auto get_time(void) noexcept -> unsigned long {
 			return _time = timeGetTime();
 		}
-	public:
 		inline auto data(void) noexcept -> unsigned long& {
 			return _time;
 		}

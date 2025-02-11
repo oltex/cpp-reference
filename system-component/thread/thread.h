@@ -46,7 +46,7 @@ namespace system_component {
 			return *this;
 		};
 		inline virtual ~thread(void) noexcept override = default;
-	public:
+
 		template <typename function, typename... argument>
 		inline void begin(function&& func, unsigned int flag, argument&&... arg) noexcept {
 			using tuple = std::tuple<std::decay_t<function>, std::decay_t<argument>...>;
@@ -68,7 +68,6 @@ namespace system_component {
 		inline unsigned long id(void) noexcept {
 			GetThreadId(_handle);
 		}
-	public:
 		inline void set_affinity_mask(DWORD_PTR mask) noexcept {
 			SetThreadAffinityMask(_handle, mask);
 		}
@@ -90,7 +89,7 @@ namespace system_component {
 			GetExitCodeThread(_handle, &code);
 			return code;
 		}
-	public:
+
 		inline static void switch_to(void) noexcept {
 			SwitchToThread();
 		}
