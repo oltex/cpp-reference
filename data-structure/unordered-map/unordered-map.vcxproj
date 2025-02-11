@@ -143,7 +143,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="pair.h" />
     <ClInclude Include="unordered_map.h" />
   </ItemGroup>
   <ItemGroup>

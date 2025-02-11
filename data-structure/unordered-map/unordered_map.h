@@ -1,10 +1,10 @@
 #pragma once
 #include "../pair/pair.h"
-#include "../hash/hash.h"
+#include "../../algorithm/hash/hash.h"
 #include "../list/list.h"
 #include "../vector/vector.h"
 namespace data_structure {
-	template<typename key_type, typename type, class hash = hash<key_type>>
+	template<typename key_type, typename type, auto _hash = algorithm::hash<key_type>>
 	class unordered_map final {
 	private:
 		using size_type = unsigned int;
@@ -153,6 +153,5 @@ namespace data_structure {
 		vector<iterator> _vector;
 		list<pair> _list;
 		size_type _count = 8;
-		inline static hash const _hash;
 	};
 }

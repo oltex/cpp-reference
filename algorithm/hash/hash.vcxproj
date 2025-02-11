@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{53210a33-5ab3-4a25-9157-806f6ee5df06}</ProjectGuid>
-    <RootNamespace>predicate</RootNamespace>
+    <ProjectGuid>{e4fefaa1-eaf8-41c2-a149-35a87dda81b1}</ProjectGuid>
+    <RootNamespace>hash</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -143,7 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="predicate.h" />
+    <ClInclude Include="hash.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

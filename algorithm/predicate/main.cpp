@@ -1,19 +1,10 @@
-//#define _CRTDBG_MAP_ALLOC
-//#include <stdlib.h>
-//#include <crtdbg.h>
-//
-//int main(void) noexcept {
-//	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-//
-//	return 0;
-//}
-
-#include <iostream>
-#include <compare>
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+#include "predicate.h"
 
 void compareInts(int a, int b) {
     std::strong_ordering result = a <=> b;
-
     //switch (result) {
     //case std::strong_ordering::less:
     //    std::cout << a << " is less than " << b << std::endl;
@@ -27,7 +18,9 @@ void compareInts(int a, int b) {
     //}
 }
 
-int main() {
+int main(void) noexcept {
+    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
     int x = 5;
     int y = 10;
 
