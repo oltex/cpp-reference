@@ -25,6 +25,9 @@ namespace data_structure {
 			inline auto operator*(void) const noexcept -> type& {
 				return _array[_current];
 			}
+			inline auto operator->(void) const noexcept -> type* {
+				return _array + _current;
+			}
 			inline auto operator++(void) noexcept -> iterator& {
 				_current = (_current + 1) % _capacity;
 				return *this;

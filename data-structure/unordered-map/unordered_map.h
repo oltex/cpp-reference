@@ -15,13 +15,9 @@ namespace data_structure {
 		inline explicit unordered_map(void) noexcept {
 			rehash(_count);
 		}
-		//not implemented
 		inline explicit unordered_map(unordered_map const& rhs) noexcept;
-		//not implemented
 		inline explicit unordered_map(unordered_map&& rhs) noexcept;
-		//not implemented
 		inline auto operator=(unordered_map const& rhs) noexcept -> unordered_map&;
-		//not implemented
 		inline auto operator=(unordered_map&& rhs) noexcept -> unordered_map&;
 		inline ~unordered_map(void) noexcept = default;
 	public:

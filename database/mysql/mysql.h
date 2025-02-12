@@ -1,0 +1,104 @@
+#pragma once
+#pragma comment(lib, "library/mysqlclient.lib")
+#include "include/mysql.h"
+#include "include/errmsg.h"
+
+namespace database {
+	class mysql final {
+	public:
+		//MYSQL_FIELD_OFFSET
+			class result final {
+			using row = MYSQL_ROW;
+			public:
+				class iterator final {
+				public:
+					inline explicit iterator(MYSQL_RES* mysql_result) noexcept
+						: _mysql_result(mysql_result) {
+					};
+					inline explicit iterator(iterator const&) noexcept = delete;
+					inline explicit iterator(iterator&&) noexcept = delete;
+					inline auto operator=(iterator const&) noexcept -> iterator & = delete;
+					inline auto operator=(iterator&&) noexcept -> iterator & = delete;
+					inline ~iterator(void) noexcept = default;
+
+					inline auto operator*(void) noexcept -> row& {
+						return _mysql_row;
+					}
+					inline auto operator->(void) noexcept -> row* {
+						return &_mysql_row;
+					}
+					inline auto operator++(void) noexcept -> iterator& {
+						_mysql_row = mysql_fetch_row(_mysql_result);
+						return *this;
+					}
+				private:
+					MYSQL_ROW _mysql_row;
+					MYSQL_RES* _mysql_result;
+				};
+			public:
+				inline explicit result(MYSQL_RES* mysql_result) noexcept
+					: _mysql_result(mysql_result) {
+				};
+				inline explicit result(result const&) noexcept = delete;
+				inline explicit result(result&&) noexcept = delete;
+				inline auto operator=(result const&) noexcept -> result & = delete;
+				inline auto operator=(result&&) noexcept -> result & = delete;
+				inline ~result(void) noexcept {
+					mysql_free_result(_mysql_result);
+				};
+
+				inline auto fetch_row(void) noexcept -> row {
+					return mysql_fetch_row(_mysql_result);
+				}
+				inline auto fetch_length(void) noexcept -> unsigned long* {
+					return mysql_fetch_lengths(_mysql_result);
+				}
+
+				inline
+					inline auto num_field(void) noexcept -> unsigned int {
+					return mysql_num_fields(_mysql_result);
+				}
+				inline auto num_row(void) noexcept -> unsigned long long {
+					return mysql_num_rows(_mysql_result);
+				}
+			private:
+				MYSQL_RES* _mysql_result;
+		};
+	public:
+		inline explicit mysql(void) noexcept {
+			mysql_init(&_mysql);
+		};
+		inline explicit mysql(mysql const&) noexcept = delete;
+		inline explicit mysql(mysql&&) noexcept = delete;
+		inline auto operator=(mysql const&) noexcept -> mysql & = delete;
+		inline auto operator=(mysql&&) noexcept -> mysql & = delete;
+		inline ~mysql(void) noexcept {
+			mysql_close(&_mysql);
+		};
+
+		inline void connect(char const* host, char const* user, char const* password, char const* db, unsigned int port) noexcept {
+			mysql_real_connect(&_mysql, host, user, password, db, port, nullptr, 0);
+		}
+		inline auto query(char const* q) noexcept -> int {
+			mysql_query(&_mysql, q);
+		}
+		inline auto store_result(void) noexcept -> result {
+			return result(mysql_store_result(&_mysql));
+		}
+		inline auto use_result(void) noexcept {
+			return result(mysql_use_result(&_mysql));
+		}
+		inline auto insert_id(void) noexcept -> unsigned long long {
+			return mysql_insert_id(&_mysql);
+		}
+
+		inline static void initialize(void) noexcept {
+			mysql_server_init(0, nullptr, nullptr);
+		}
+		inline static void end(void) noexcept {
+			mysql_server_end();
+		}
+	private:
+		MYSQL _mysql;
+	};
+}

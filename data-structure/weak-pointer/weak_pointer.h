@@ -40,7 +40,7 @@ namespace data_structure {
 		}
 	public:
 		inline auto operator*(void) noexcept -> type& {
-			return _value;
+			return *_value;
 		}
 		inline auto operator->(void) noexcept -> type* {
 			return _value;

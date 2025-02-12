@@ -14,8 +14,17 @@
 
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//data_structure::list<my_class> list;
-	//list.emplace_back(0);
+	//std::list<my_class> a;
+	//std::list<my_class>::iterator b;
+	//(*b).function();
+	//b->function();
+
+	data_structure::list<my_class> c;
+	c.emplace_back();
+	data_structure::list<my_class>::iterator d = c.begin();
+	(*d).function();
+	d->function();
+
 
 	data_structure::list<int> list;
 	data_structure::list<int>::iterator iter;

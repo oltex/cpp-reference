@@ -37,6 +37,9 @@ namespace data_structure::intrusive {
 			inline auto operator*(void) const noexcept -> type& {
 				return static_cast<type&>(*_node);
 			}
+			inline auto operator->(void) noexcept -> type* {
+				return static_cast<type*>(_node);
+			}
 			inline auto operator++(void) noexcept -> iterator& {
 				_node = _node->_next;
 				return *this;

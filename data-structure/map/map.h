@@ -38,6 +38,9 @@ namespace data_structure {
 			inline auto operator*(void) const noexcept -> pair& {
 				return _node->_pair;
 			}
+			inline auto operator->(void) const noexcept -> pair* {
+				return &_node->_pair;
+			}
 			inline auto operator++(void) noexcept -> iterator& {
 				if (true == _node->_right->_nil) {
 					while (false == _node->_parent->_nil && _node->_parent->_right == _node)

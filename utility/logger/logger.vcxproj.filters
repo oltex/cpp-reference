@@ -5,6 +5,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="logger.h" />
-    <ClInclude Include="logger_singleton.h" />
+    <ClInclude Include="logger%28singleton%29.h" />
   </ItemGroup>
 </Project>

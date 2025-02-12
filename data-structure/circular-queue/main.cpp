@@ -45,6 +45,12 @@ int main(void) noexcept {
 		//	break;
 		}
 	}
+
+	std::cout << "for" << std::endl;
+	for (auto iter = queue.begin(); iter != queue.end(); iter++) {
+		std::cout << (*iter) << std::endl;
+	}
+
 	std::cout << "foreach" << std::endl;
 	for (auto& iter : queue) {
 		std::cout << iter << std::endl;

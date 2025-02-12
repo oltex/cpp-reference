@@ -33,15 +33,10 @@ public:
 	inline ~my_class(void) noexcept {
 		std::cout << "¼Ò¸êÀÚ" << std::endl;
 	};
+public:
+	inline void function(void) noexcept {
+		std::cout << "ÇÔ¼ö" << std::endl;
+	}
 private:
 	int _value;
 };
-
-namespace std {
-	template <>
-	struct hash<my_class> {
-		size_t operator()(const my_class& stu) const {
-			return 0;
-		}
-	};
-}

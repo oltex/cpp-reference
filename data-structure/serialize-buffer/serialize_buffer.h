@@ -5,9 +5,6 @@
 #include <string_view>
 
 namespace data_structure {
-	template<typename type>
-	concept string_size = std::_Is_any_of_v<type, unsigned char, unsigned short, unsigned int, unsigned long, unsigned long long>;
-
 	class serialize_buffer final {
 	private:
 		using byte = unsigned char;
