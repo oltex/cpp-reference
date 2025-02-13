@@ -6,63 +6,85 @@
 namespace database {
 	class mysql final {
 	public:
-		//MYSQL_FIELD_OFFSET
-			class result final {
+		class result final {
+		private:
 			using row = MYSQL_ROW;
+			using field = MYSQL_FIELD;
+			using field_offest = MYSQL_FIELD_OFFSET;
+			using row_offset = MYSQL_ROW_OFFSET;
+		public:
+			class iterator final {
 			public:
-				class iterator final {
-				public:
-					inline explicit iterator(MYSQL_RES* mysql_result) noexcept
-						: _mysql_result(mysql_result) {
-					};
-					inline explicit iterator(iterator const&) noexcept = delete;
-					inline explicit iterator(iterator&&) noexcept = delete;
-					inline auto operator=(iterator const&) noexcept -> iterator & = delete;
-					inline auto operator=(iterator&&) noexcept -> iterator & = delete;
-					inline ~iterator(void) noexcept = default;
-
-					inline auto operator*(void) noexcept -> row& {
-						return _mysql_row;
-					}
-					inline auto operator->(void) noexcept -> row* {
-						return &_mysql_row;
-					}
-					inline auto operator++(void) noexcept -> iterator& {
-						_mysql_row = mysql_fetch_row(_mysql_result);
-						return *this;
-					}
-				private:
-					MYSQL_ROW _mysql_row;
-					MYSQL_RES* _mysql_result;
+				inline explicit iterator(MYSQL_RES* mysql_result) noexcept
+					: _mysql_row(nullptr), _mysql_result(mysql_result) {
 				};
-			public:
-				inline explicit result(MYSQL_RES* mysql_result) noexcept
-					: _mysql_result(mysql_result) {
-				};
-				inline explicit result(result const&) noexcept = delete;
-				inline explicit result(result&&) noexcept = delete;
-				inline auto operator=(result const&) noexcept -> result & = delete;
-				inline auto operator=(result&&) noexcept -> result & = delete;
-				inline ~result(void) noexcept {
-					mysql_free_result(_mysql_result);
-				};
+				inline explicit iterator(iterator const&) noexcept = delete;
+				inline explicit iterator(iterator&&) noexcept = delete;
+				inline auto operator=(iterator const&) noexcept -> iterator & = delete;
+				inline auto operator=(iterator&&) noexcept -> iterator & = delete;
+				inline ~iterator(void) noexcept = default;
 
-				inline auto fetch_row(void) noexcept -> row {
-					return mysql_fetch_row(_mysql_result);
+				inline auto operator*(void) noexcept -> row& {
+					return _mysql_row;
 				}
-				inline auto fetch_length(void) noexcept -> unsigned long* {
-					return mysql_fetch_lengths(_mysql_result);
+				inline auto operator->(void) noexcept -> row* {
+					return &_mysql_row;
 				}
-
-				inline
-					inline auto num_field(void) noexcept -> unsigned int {
-					return mysql_num_fields(_mysql_result);
-				}
-				inline auto num_row(void) noexcept -> unsigned long long {
-					return mysql_num_rows(_mysql_result);
+				inline auto operator++(void) noexcept -> iterator& {
+					_mysql_row = mysql_fetch_row(_mysql_result);
+					return *this;
 				}
 			private:
+				MYSQL_ROW _mysql_row;
 				MYSQL_RES* _mysql_result;
+			};
+		public:
+			inline explicit result(MYSQL_RES* mysql_result) noexcept
+				: _mysql_result(mysql_result) {
+			};
+			inline explicit result(result const&) noexcept = delete;
+			inline explicit result(result&&) noexcept = delete;
+			inline auto operator=(result const&) noexcept -> result & = delete;
+			inline auto operator=(result&&) noexcept -> result & = delete;
+			inline ~result(void) noexcept {
+				mysql_free_result(_mysql_result);
+			};
+
+			inline auto fetch_length(void) noexcept -> unsigned long* {
+				return mysql_fetch_lengths(_mysql_result);
+			}
+
+			inline auto fetch_field(void) noexcept -> field* {
+				return mysql_fetch_fields(_mysql_result);
+			}
+			inline auto num_field(void) noexcept -> unsigned int {
+				return mysql_num_fields(_mysql_result);
+			}
+			inline auto field_tell(void) noexcept -> field_offest {
+				return mysql_field_tell(_mysql_result);
+			}
+			inline auto field_seek(field_offest offset) noexcept -> field_offest {
+				return mysql_field_seek(_mysql_result, offset);
+			}
+
+			inline auto fetch_row(void) noexcept -> row {
+				return mysql_fetch_row(_mysql_result);
+			}
+			inline auto row_tell(void) noexcept -> row_offset {
+				return mysql_row_tell(_mysql_result);
+			}
+			inline auto row_seek(row_offset offset) noexcept -> row_offset {
+				return mysql_row_seek(_mysql_result, offset);
+			}
+			inline auto num_row(void) noexcept -> unsigned long long {
+				return mysql_num_rows(_mysql_result);
+			}
+
+			inline void data_seek(unsigned long long offset) noexcept {
+				mysql_data_seek(_mysql_result, offset);
+			}
+		private:
+			MYSQL_RES* _mysql_result;
 		};
 	public:
 		inline explicit mysql(void) noexcept {
@@ -79,9 +101,19 @@ namespace database {
 		inline void connect(char const* host, char const* user, char const* password, char const* db, unsigned int port) noexcept {
 			mysql_real_connect(&_mysql, host, user, password, db, port, nullptr, 0);
 		}
+		inline void begin(void) noexcept {
+			query("begin");
+		}
+		inline void commit(void) noexcept {
+			query("commit");
+		}
+		inline void rollback(void) noexcept {
+			query("rollback");
+		}
 		inline auto query(char const* q) noexcept -> int {
 			mysql_query(&_mysql, q);
 		}
+
 		inline auto store_result(void) noexcept -> result {
 			return result(mysql_store_result(&_mysql));
 		}
@@ -90,6 +122,9 @@ namespace database {
 		}
 		inline auto insert_id(void) noexcept -> unsigned long long {
 			return mysql_insert_id(&_mysql);
+		}
+		inline auto ping(void) noexcept -> int {
+			return mysql_ping(&_mysql);
 		}
 
 		inline static void initialize(void) noexcept {
