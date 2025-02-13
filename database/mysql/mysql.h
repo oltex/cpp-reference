@@ -2,6 +2,7 @@
 #pragma comment(lib, "library/mysqlclient.lib")
 #include "include/mysql.h"
 #include "include/errmsg.h"
+#include <iostream>
 
 namespace database {
 	class mysql final {
@@ -15,8 +16,11 @@ namespace database {
 		public:
 			class iterator final {
 			public:
+				inline explicit iterator(void) noexcept
+					: _mysql_row(nullptr), _mysql_result(nullptr) {
+				};
 				inline explicit iterator(MYSQL_RES* mysql_result) noexcept
-					: _mysql_row(nullptr), _mysql_result(mysql_result) {
+					: _mysql_row(mysql_fetch_row(_mysql_result)), _mysql_result(mysql_result) {
 				};
 				inline explicit iterator(iterator const&) noexcept = delete;
 				inline explicit iterator(iterator&&) noexcept = delete;
@@ -50,10 +54,6 @@ namespace database {
 				mysql_free_result(_mysql_result);
 			};
 
-			inline auto fetch_length(void) noexcept -> unsigned long* {
-				return mysql_fetch_lengths(_mysql_result);
-			}
-
 			inline auto fetch_field(void) noexcept -> field* {
 				return mysql_fetch_fields(_mysql_result);
 			}
@@ -80,8 +80,18 @@ namespace database {
 				return mysql_num_rows(_mysql_result);
 			}
 
+			inline auto fetch_length(void) noexcept -> unsigned long* {
+				return mysql_fetch_lengths(_mysql_result);
+			}
 			inline void data_seek(unsigned long long offset) noexcept {
 				mysql_data_seek(_mysql_result, offset);
+			}
+
+			inline auto begin(void) noexcept -> iterator {
+				return iterator(_mysql_result);
+			}
+			inline auto end(void) noexcept -> iterator {
+				return iterator();
 			}
 		private:
 			MYSQL_RES* _mysql_result;
@@ -110,8 +120,13 @@ namespace database {
 		inline void rollback(void) noexcept {
 			query("rollback");
 		}
-		inline auto query(char const* q) noexcept -> int {
-			mysql_query(&_mysql, q);
+		inline auto query(char const* const format, ...) noexcept -> int {
+			char buffer[256]{};
+			va_list va_list_;
+			va_start(va_list_, format);
+			int length = _vsnprintf_s(buffer, 255, 255, format, va_list_);
+			va_end(va_list_);
+			return mysql_query(&_mysql, buffer);
 		}
 
 		inline auto store_result(void) noexcept -> result {
