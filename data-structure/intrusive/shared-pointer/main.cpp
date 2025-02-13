@@ -42,8 +42,8 @@ public:
 	//	if(--p->ref_count);
 	//    delete();
 	//}
-	friend inline static void destructor(my_class* rhs) {
-		delete rhs;
+	inline void destructor(void) noexcept {
+		delete this;
 	}
 public:
 	int _value;

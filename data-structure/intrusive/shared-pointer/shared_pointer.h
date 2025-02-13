@@ -24,28 +24,28 @@ namespace data_structure::intrusive {
 	class shared_pointer final {
 	private:
 		using size_type = unsigned int;
-		using node = shared_pointer_hook<index>;
-		static_assert(std::is_base_of<node, type>::value);
+		using hook = shared_pointer_hook<index>;
+		static_assert(std::is_base_of<hook, type>::value);
 	public:
 		inline constexpr explicit shared_pointer(void) noexcept
-			: _node(nullptr) {
+			: _pointer(nullptr) {
 		}
 		inline constexpr shared_pointer(nullptr_t) noexcept
-			: _node(nullptr) {
+			: _pointer(nullptr) {
 		};
 		inline explicit shared_pointer(type* value) noexcept {
-			_node = static_cast<node*>(value);
-			_node->_reference._use = 1;
-			_node->_reference._weak = 0;
+			_pointer = static_cast<hook*>(value);
+			_pointer->_reference._use = 1;
+			_pointer->_reference._weak = 0;
 		}
 		inline shared_pointer(shared_pointer const& rhs) noexcept
-			: _node(rhs._node) {
-			if (nullptr != _node)
-				++_node->_reference._use;
+			: _pointer(rhs._pointer) {
+			if (nullptr != _pointer)
+				++_pointer->_reference._use;
 		};
 		inline explicit shared_pointer(shared_pointer&& rhs) noexcept
-			: _node(rhs._node) {
-			rhs._node = nullptr;
+			: _pointer(rhs._pointer) {
+			rhs._pointer = nullptr;
 		};
 		inline auto operator=(shared_pointer const& rhs) noexcept -> shared_pointer& {
 			shared_pointer(rhs).swap(*this);
@@ -56,43 +56,42 @@ namespace data_structure::intrusive {
 			return *this;
 		};
 		inline ~shared_pointer(void) noexcept {
-			if (nullptr != _node && 0 == --_node->_reference._use)
-				destructor(static_cast<type*>(_node));
+			if (nullptr != _pointer && 0 == --_pointer->_reference._use)
+				static_cast<type*>(_pointer)->destructor();
 		}
 	public:
 		inline auto operator*(void) noexcept -> type& {
-			return static_cast<type&>(*_node);
+			return static_cast<type&>(*_pointer);
 		}
 		inline auto operator->(void) noexcept -> type* {
-			return static_cast<type*>(_node);
+			return static_cast<type*>(_pointer);
 		}
 	public:
 		inline void swap(shared_pointer& rhs) noexcept {
-			auto temp = _node;
-			_node = rhs._node;
-			rhs._node = temp;
+			auto temp = _pointer;
+			_pointer = rhs._pointer;
+			rhs._pointer = temp;
 		}
 		inline auto use_count(void) const noexcept -> size_type {
-			return _node->_reference._use;
+			return _pointer->_reference._use;
 		}
 		inline auto get(void) const noexcept -> type* {
-			return static_cast<type*>(_node);
+			return static_cast<type*>(_pointer);
 		}
-		//inline auto data(void) noexcept -> node* {
-		//	return _node;
+		//inline auto data(void) noexcept -> hook* {
+		//	return _pointer;
 		//}
 		inline void set(type* value) noexcept {
-			_node = static_cast<node*>(value);
+			_pointer = static_cast<hook*>(value);
 		}
 		inline void reset(void) noexcept {
-			_node = nullptr;
+			_pointer = nullptr;
+		}
+		template <class type, size_t index>
+		friend inline bool operator==(shared_pointer<type, index> const& rhs, nullptr_t) noexcept {
+			return rhs._pointer == nullptr;
 		}
 	private:
-		node* _node;
+		hook* _pointer;
 	};
-
-	template <class type, size_t index>
-	inline bool operator==(const shared_pointer<type, index>& value, nullptr_t) noexcept {
-		return value.get() == nullptr;
-	}
 }

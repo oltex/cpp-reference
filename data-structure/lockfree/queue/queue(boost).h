@@ -5,8 +5,8 @@
 namespace data_structure::lockfree {
 	template <typename type>
 		requires std::is_trivially_copy_constructible_v<type>&& std::is_trivially_destructible_v<type>
-	class queue final {
-	private:
+	class queue {
+	protected:
 		using size_type = unsigned int;
 		struct node final {
 			inline explicit node(void) noexcept = delete;
@@ -39,7 +39,7 @@ namespace data_structure::lockfree {
 				head = next;
 			}
 		};
-	public:
+
 		template<typename universal>
 		inline void push(universal&& value) noexcept {
 			emplace(std::forward<universal>(value));
@@ -94,7 +94,7 @@ namespace data_structure::lockfree {
 				}
 			}
 		}
-	private:
+	protected:
 		unsigned long long _head;
 		unsigned long long _tail;
 		unsigned long long _nullptr;
