@@ -1,6 +1,7 @@
 #pragma once
 #pragma comment(lib, "library/mysqlclient.lib")
 #include "include/mysql.h"
+#include "include/mysqld_error.h"
 #include "include/errmsg.h"
 #include <iostream>
 
@@ -109,7 +110,16 @@ namespace database {
 		};
 
 		inline void connect(char const* host, char const* user, char const* password, char const* db, unsigned int port) noexcept {
-			mysql_real_connect(&_mysql, host, user, password, db, port, nullptr, 0);
+			if (nullptr == mysql_real_connect(&_mysql, host, user, password, db, port, nullptr, 0)) {
+				auto error = mysql_errno(&_mysql);
+				switch (error) {
+				case ER_ACCESS_DENIED_ERROR:
+				case ER_BAD_DB_ERROR:
+				case CR_CONN_HOST_ERROR:
+				default:
+					__debugbreak();
+				}
+			}
 		}
 		inline void begin(void) noexcept {
 			query("begin");
@@ -120,13 +130,24 @@ namespace database {
 		inline void rollback(void) noexcept {
 			query("rollback");
 		}
-		inline auto query(char const* const format, ...) noexcept -> int {
+		inline void truncate_table(char const* const name) noexcept {
+			query("truncate table %s", name);
+		}
+		inline void query(char const* const format, ...) noexcept {
 			char buffer[256]{};
 			va_list va_list_;
 			va_start(va_list_, format);
 			int length = _vsnprintf_s(buffer, 255, 255, format, va_list_);
 			va_end(va_list_);
-			return mysql_query(&_mysql, buffer);
+			if (0 != mysql_query(&_mysql, buffer)) {
+				auto result = mysql_errno(&_mysql);
+				switch (result) {
+				case ER_PARSE_ERROR:
+				case CR_SERVER_LOST:
+				default:
+					__debugbreak();
+				}
+			}
 		}
 
 		inline auto store_result(void) noexcept -> result {
