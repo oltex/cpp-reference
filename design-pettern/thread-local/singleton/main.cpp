@@ -5,7 +5,9 @@
 #include "singleton.h"
 #include <iostream>
 
-class my_class : public design_pattern::_thread_local::singleton<my_class> {
+class my_class  {
+private:
+	friend class design_pattern::_thread_local::singleton<my_class>;
 private:
 	inline explicit my_class(void) noexcept = default;
 	inline virtual ~my_class(void) noexcept = default;
@@ -13,9 +15,16 @@ private:
 	inline auto operator=(my_class const& rhs) noexcept -> my_class & = delete;
 	inline explicit my_class(my_class&& rhs) noexcept = delete;
 	inline auto operator=(my_class&& rhs) noexcept -> my_class & = delete;
+public:
+	inline void test(void) noexcept {
+		std::cout << "hihi" << std::endl;
+	}
 };
 
 int main(void) noexcept {
+	auto& a = design_pattern::_thread_local::singleton<my_class>::instance();
+	a.test();
+	//my_class::instance();
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	return 0;
 }
