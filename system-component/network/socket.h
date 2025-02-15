@@ -5,6 +5,7 @@
 #include "socket_address.h"
 #include "../../data-structure/pair/pair.h"
 #include "../input_output/overlapped.h"
+#include <optional>
 
 namespace system_component::network {
 	class socket final {
@@ -257,16 +258,28 @@ namespace system_component::network {
 			if (SOCKET_ERROR == ioctlsocket(_socket, cmd, &arg))
 				__debugbreak();
 		}
-		inline auto get_local_socket_address(void) const noexcept -> socket_address_ipv4 {
+		inline auto get_local_socket_address(void) const noexcept -> std::optional<socket_address_ipv4> {
 			socket_address_ipv4 socket_address;
 			int length = socket_address.get_length();
-			getsockname(_socket, &socket_address.data(), &length);
+			if (SOCKET_ERROR == getsockname(_socket, &socket_address.data(), &length)) {
+				switch (GetLastError()) {
+				default:
+					break;
+				}
+				return std::nullopt;
+			}
 			return socket_address;
 		}
-		inline auto get_remote_socket_address(void) const noexcept -> socket_address_ipv4 {
+		inline auto get_remote_socket_address(void) const noexcept -> std::optional<socket_address_ipv4> {
 			socket_address_ipv4 socket_address;
 			int length = socket_address.get_length();
-			getpeername(_socket, &socket_address.data(), &length);
+			if (SOCKET_ERROR == getpeername(_socket, &socket_address.data(), &length)) {
+				switch (GetLastError()) {
+				default:
+					break;
+				}
+				return std::nullopt;
+			}
 			return socket_address;
 		}
 		inline auto data(void) noexcept -> SOCKET& {

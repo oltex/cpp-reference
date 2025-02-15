@@ -10,7 +10,56 @@ namespace database {
 	public:
 		class result final {
 		private:
-			using row = MYSQL_ROW;
+			class row final {
+			private:
+				using size_type = unsigned int;
+			public:
+				inline explicit row(void) noexcept
+					: _mysql_row(nullptr) {
+				};
+				inline explicit row(MYSQL_ROW  mysql_row) noexcept
+					: _mysql_row(mysql_row) {
+				};
+				inline explicit row(row const&) noexcept = delete;
+				inline explicit row(row&& rhs) noexcept
+					: _mysql_row(rhs._mysql_row) {
+				};
+				inline auto operator=(row const&) noexcept -> row & = delete;
+				inline auto operator=(row&& rhs) noexcept -> row& {
+					_mysql_row = rhs._mysql_row;
+					return *this;
+				};
+				inline ~row(void) noexcept = default;
+
+				inline auto get_char_pointer(size_type index) noexcept -> char* {
+					return _mysql_row[index];
+				}
+				inline auto get_int(size_type index) noexcept -> int {
+					return std::atoi(_mysql_row[index]);
+				}
+				inline auto get_unsigned_long_long(size_type index) noexcept -> unsigned long long {
+					return std::strtoull(_mysql_row[index], nullptr, 10);
+				}
+				inline auto get_float(size_type index) noexcept -> float {
+					return static_cast<float>(std::atof(_mysql_row[index]));
+				}
+				inline auto get_double(size_type index) noexcept -> double {
+					return std::atof(_mysql_row[index]);
+				}
+				inline auto get_bool(size_type index) noexcept -> bool {
+					if ("1" == _mysql_row[index])
+						return true;
+					return false;
+				}
+				inline bool operator==(row const& rhs) const noexcept {
+					return _mysql_row == rhs._mysql_row;
+				}
+				inline bool operator!=(row const& rhs) const noexcept {
+					return _mysql_row != rhs._mysql_row;
+				}
+			private:
+				MYSQL_ROW _mysql_row;
+			};
 			using field = MYSQL_FIELD;
 			using field_offest = MYSQL_FIELD_OFFSET;
 			using row_offset = MYSQL_ROW_OFFSET;
@@ -18,10 +67,10 @@ namespace database {
 			class iterator final {
 			public:
 				inline explicit iterator(void) noexcept
-					: _mysql_row(nullptr), _mysql_result(nullptr) {
+					: _mysql_row(), _mysql_result(nullptr) {
 				};
 				inline explicit iterator(MYSQL_RES* mysql_result) noexcept
-					: _mysql_row(mysql_fetch_row(_mysql_result)), _mysql_result(mysql_result) {
+					: _mysql_result(mysql_result), _mysql_row(mysql_fetch_row(_mysql_result)) {
 				};
 				inline explicit iterator(iterator const&) noexcept = delete;
 				inline explicit iterator(iterator&&) noexcept = delete;
@@ -36,12 +85,18 @@ namespace database {
 					return &_mysql_row;
 				}
 				inline auto operator++(void) noexcept -> iterator& {
-					_mysql_row = mysql_fetch_row(_mysql_result);
+					_mysql_row = row(mysql_fetch_row(_mysql_result));
 					return *this;
 				}
+				inline bool operator==(iterator const& rhs) const noexcept {
+					return _mysql_row == rhs._mysql_row;
+				}
+				inline bool operator!=(iterator const& rhs) const noexcept {
+					return _mysql_row != rhs._mysql_row;
+				}
 			private:
-				MYSQL_ROW _mysql_row;
 				MYSQL_RES* _mysql_result;
+				row _mysql_row;
 			};
 		public:
 			inline explicit result(MYSQL_RES* mysql_result) noexcept
@@ -69,7 +124,7 @@ namespace database {
 			}
 
 			inline auto fetch_row(void) noexcept -> row {
-				return mysql_fetch_row(_mysql_result);
+				return row(mysql_fetch_row(_mysql_result));
 			}
 			inline auto row_tell(void) noexcept -> row_offset {
 				return mysql_row_tell(_mysql_result);

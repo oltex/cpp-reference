@@ -30,7 +30,7 @@ public:
 		}
 		inline auto get_bool(size_type index) noexcept -> bool {
 			std::string& arg = _argument[index];
-			if (arg == "true" || arg == "on" || arg == "1")
+			if ("true" == arg || "on" == arg || "1" == arg)
 				return true;
 			return false;
 		}
