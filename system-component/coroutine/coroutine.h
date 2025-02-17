@@ -1,23 +1,68 @@
 #pragma once
 #include <coroutine>
+#include <iostream>
+#include <Windows.h>
 
 namespace system_component {
 	class coroutine final {
-	private:
+	public:
 		class promise final {
-			coroutine get_return_object(void) noexcept {
-				return coroutine{ std::coroutine_handle<promise>::from_promise(*this) };
+		public:
+			class suspend final {
+			public:
+				inline bool await_ready(void) noexcept {
+					printf("await ready\n");
+					return true;
+				}
+				inline void await_suspend(std::coroutine_handle<void> handle) noexcept {
+					printf("await suspend\n");
+					Sleep(1000);
+				}
+				inline int await_resume(void) noexcept {
+					printf("await resume\n");
+					return 10;
+				}
+			};
+		public:
+			inline explicit promise(void) noexcept = default;
+			inline explicit promise(promise const&) noexcept = delete;
+			inline explicit promise(promise&&) noexcept = delete;
+			inline auto operator=(promise const&) noexcept -> promise & = delete;
+			inline auto operator=(promise&&) noexcept -> promise & = delete;
+			inline ~promise(void) noexcept = default;
+
+			inline auto get_return_object(void) noexcept -> coroutine {
+				return coroutine(std::coroutine_handle<promise>::from_promise(*this));
 			}
-			std::suspend_never initial_suspend(void) noexcept {
-				return {};
+			inline auto initial_suspend(void) noexcept -> std::suspend_always {
+				return std::suspend_always();
 			}
-			std::suspend_never final_suspend() noexcept {
-				return {};
+			inline auto final_suspend(void) noexcept -> std::suspend_always {
+				return std::suspend_always();
+			}
+
+			inline auto yield_value(int result) noexcept -> std::suspend_always {
+				printf("yield value\n");
+				return std::suspend_always();
+			}
+			inline auto await_transform(int result) noexcept -> suspend {
+				printf("await transform\n");
+				return suspend();
+			}
+
+			inline void return_void(void) noexcept {
+				printf("return void\n");
+			}
+			//inline void return_value(int result) noexcept {
+			//	printf("return value\n");
+			//}
+			inline void unhandled_exception(void) noexcept {
+				printf("unhandled exception\n");
 			}
 		};
+		using promise_type = promise;
 	public:
-		inline explicit coroutine(void) noexcept = default;
-		inline explicit  coroutine(std::coroutine_handle<promise> handler) noexcept
+		inline explicit coroutine(std::coroutine_handle<promise> handler) noexcept
 			: _handle(handler) {
 		}
 		inline explicit coroutine(coroutine const&) noexcept = delete;
@@ -25,8 +70,15 @@ namespace system_component {
 		inline auto operator=(coroutine const&) noexcept -> coroutine & = delete;
 		inline auto operator=(coroutine&&) noexcept -> coroutine & = delete;
 		inline ~coroutine(void) noexcept {
+			_handle.destroy();
 		};
 
+		inline void resume(void) const noexcept {
+			_handle.resume();
+		}
+		inline bool done(void) noexcept {
+			return _handle.done();
+		}
 	private:
 		std::coroutine_handle<promise> _handle;
 	};
