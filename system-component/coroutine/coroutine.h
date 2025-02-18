@@ -12,7 +12,7 @@ namespace system_component {
 			public:
 				inline bool await_ready(void) noexcept {
 					printf("await ready\n");
-					return true;
+					return false;
 				}
 				inline void await_suspend(std::coroutine_handle<void> handle) noexcept {
 					printf("await suspend\n");
@@ -65,12 +65,19 @@ namespace system_component {
 		inline explicit coroutine(std::coroutine_handle<promise> handler) noexcept
 			: _handle(handler) {
 		}
-		inline explicit coroutine(coroutine const&) noexcept = delete;
-		inline explicit coroutine(coroutine&&) noexcept = delete;
+		inline explicit  coroutine(coroutine const& rhs) noexcept = delete;
+		inline coroutine(coroutine&& rhs) noexcept
+			: _handle(rhs._handle) {
+			rhs._handle = nullptr;
+		};
 		inline auto operator=(coroutine const&) noexcept -> coroutine & = delete;
-		inline auto operator=(coroutine&&) noexcept -> coroutine & = delete;
+		inline auto operator=(coroutine&& rhs) noexcept -> coroutine& {
+			_handle = rhs._handle;
+			rhs._handle = nullptr;
+		};
 		inline ~coroutine(void) noexcept {
-			_handle.destroy();
+			if (nullptr != _handle)
+				_handle.destroy();
 		};
 
 		inline void resume(void) const noexcept {
@@ -78,6 +85,9 @@ namespace system_component {
 		}
 		inline bool done(void) noexcept {
 			return _handle.done();
+		}
+		inline auto address(void) noexcept -> void* {
+			return _handle.address();
 		}
 	private:
 		std::coroutine_handle<promise> _handle;

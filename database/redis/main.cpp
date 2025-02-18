@@ -14,12 +14,17 @@ int main()
 	client.connect();
 
 	client.set("hello", "42");
-	client.get("hello", [](cpp_redis::reply& reply) {
-		std::cout << reply << std::endl;
-		});
+	client.commit();
+
+	//client.get("hello", [](cpp_redis::reply& reply) {
+	//	std::cout << reply << std::endl;
+	//	});
+	auto set_future = client.get("hello");
 	//! also support std::future
 	//! std::future<cpp_redis::reply> get_reply = client.get("hello");
 
-	client.sync_commit();
+	client.commit();
+	auto replay = set_future.get();
 	//! or client.commit(); for asynchronous call}
+	Sleep(1000);
 }
