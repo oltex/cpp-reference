@@ -65,7 +65,7 @@ namespace system_component {
 		inline explicit coroutine(std::coroutine_handle<promise> handler) noexcept
 			: _handle(handler) {
 		}
-		inline explicit  coroutine(coroutine const& rhs) noexcept = delete;
+		inline explicit coroutine(coroutine const& rhs) noexcept = delete;
 		inline coroutine(coroutine&& rhs) noexcept
 			: _handle(rhs._handle) {
 			rhs._handle = nullptr;
