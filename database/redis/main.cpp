@@ -6,16 +6,16 @@ int main(void) noexcept {
 	WSAStartup(version, &data);
 
 	database::redis client;
-	client.connect();
+	client.connect("127.0.0.1", 6379, nullptr, 0, 0, 0);
 
-	client.set("hello", "42");
+	//client.set("hello", "42");
+	client.get("1", [](cpp_redis::reply& reply) {
+		std::cout << reply << std::endl;
+		});
 	client.commit();
 
-	//client.get("hello", 10);
-	client.get([](cpp_redis::reply& reply) {
-		std::cout << reply << std::endl;
-		}, "hello", 10);
-	client.sync_commit();
+	Sleep(10000);
+	//client.sync_commit();k
 
 	//auto set_future = client.get("hello");
 	//! also support std::future
