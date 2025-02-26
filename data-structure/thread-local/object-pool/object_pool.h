@@ -113,12 +113,10 @@ namespace data_structure::_thread_local {
 		inline auto operator=(object_pool&& rhs) noexcept -> object_pool & = delete;
 		inline ~object_pool(void) noexcept {
 			if (_size > bucket_size) {
-				_stack.push(_head, bucket_size);
+				_stack.push(_head, _size - bucket_size);
 				_head = _break;
-				_size -= bucket_size;
+				_size = bucket_size;
 			}
-			if (_size > bucket_size)
-				__debugbreak();
 			_stack.push(_head, _size);
 		};
 	public:
