@@ -159,8 +159,14 @@ namespace data_structure::_thread_local {
 		inline void deallocate(type& value) noexcept {
 			if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
 				value.~type();
-			reinterpret_cast<node*>(&value)->_next = _head;
-			_head = reinterpret_cast<node*>(&value);
+			if constexpr (true == use_union) {
+				reinterpret_cast<node*>(&value)->_next = _head;
+				_head = reinterpret_cast<node*>(&value);
+			}
+			else {
+				reinterpret_cast<node*>(reinterpret_cast<uintptr_t*>(&value) - 1)->_next = _head;
+				_head = reinterpret_cast<node*>(reinterpret_cast<uintptr_t*>(&value) - 1);
+			}
 			++_size;
 
 			if (bucket_size == _size)
