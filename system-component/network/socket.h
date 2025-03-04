@@ -4,7 +4,7 @@
 #include <intrin.h>
 #include "socket_address.h"
 #include "../../data-structure/pair/pair.h"
-#include "../input_output/overlapped.h"
+#include "../overlapped.h"
 #include <optional>
 
 namespace system_component::network {
@@ -19,6 +19,7 @@ namespace system_component::network {
 				switch (GetLastError()) {
 				default:
 					__debugbreak();
+#pragma warning(suppress: 4065)
 				}
 			}
 		}
@@ -47,6 +48,7 @@ namespace system_component::network {
 				switch (GetLastError()) {
 				default:
 					__debugbreak();
+#pragma warning(suppress: 4065)
 				}
 			}
 		}
@@ -150,7 +152,7 @@ namespace system_component::network {
 			}
 			return result;
 		}
-		inline auto wsa_send(WSABUF* buffer, unsigned long count, unsigned long flag, input_output::overlapped& overlapped) noexcept -> int {
+		inline auto wsa_send(WSABUF* buffer, unsigned long count, unsigned long flag, overlapped& overlapped) noexcept -> int {
 			int result = WSASend(_socket, buffer, count, nullptr, flag, &overlapped.data(), nullptr);
 			if (SOCKET_ERROR == result) {
 				switch (GetLastError()) {
