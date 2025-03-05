@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include <intrin.h>
 #include <iostream>
+#include <Windows.h>
 
 struct my {
 	int a;
@@ -53,37 +54,38 @@ int main(void) noexcept {
 	//}
 	//std::cout << "sum :" << sum << std::endl;
 
-
+	//data_structure::unordered_map<int, int> map;
+	//for (int i = 0; i < 10000; ++i)
+	//	map.emplace(i, i);
 	std::unordered_map<int, int> std_map;
 	for (int i = 0; i < 10000; ++i)
-		std_map.emplace(1, 1);
+		std_map.emplace(i, i);
 
-	data_structure::unordered_map<int, int> map;
-	for (int i = 0; i < 10000; ++i)
-		map.emplace(1, 1);
-
+	//{
+	//	auto rdtsc = __rdtsc();
+	//	for (int i = 0; i < 100000; ++i) {
+	//		for (auto& iter : map) {
+	//		}
+	//	}
+	//	rdtsc = __rdtsc() - rdtsc;
+	//	printf("my  umap %llu\n", rdtsc);
+	//}
 	{
-		auto rdtsc = __rdtsc();
-		for (int i = 0; i < 1000000000; ++i) {
-			for (auto& iter : map) {
+		auto time = GetTickCount();
+		int count = 0;
+		for (;;) {
 
-			}
-		}
-		rdtsc = __rdtsc() - rdtsc;
-		printf("my  umap %llu\n", rdtsc);
-	}
-
-
-	{
-		auto rdtsc = __rdtsc();
-		for (int i = 0; i < 1000000000; ++i) {
 			for (auto& iter : std_map) {
-
+			}
+			count++;
+			if (GetTickCount() - time > 1000) {
+				printf("%d \n", count);
+				count = 0;
+				time = GetTickCount();
 			}
 		}
-		rdtsc = __rdtsc() - rdtsc;
-		printf("std umap %llu", rdtsc);
 	}
+
 
 
 	return 0;
