@@ -5,7 +5,7 @@
 #include "../handle/handle.h"
 #include "../../data-structure/tuple/tuple.h"
 
-namespace system_component::input_output {
+namespace system_component {
 	class completion_port final : public handle {
 	public:
 		inline explicit completion_port(void) noexcept = default;
