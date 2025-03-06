@@ -4,9 +4,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="socket.h" />
     <ClInclude Include="domain.h" />
-    <ClInclude Include="socket_address.h" />
     <ClInclude Include="select.h" />
     <ClInclude Include="file_descriptor.h" />
     <ClInclude Include="window_socket_api\initialize.h">

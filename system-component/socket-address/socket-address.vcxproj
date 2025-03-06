@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{121fc81b-ca09-4aa3-afbb-77bbed661787}</ProjectGuid>
-    <RootNamespace>network</RootNamespace>
+    <ProjectGuid>{7ac8e688-90fc-4576-959c-d418b71a5517}</ProjectGuid>
+    <RootNamespace>socketaddress</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -143,23 +143,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="socket_address.h" />
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="file_descriptor.h" />
-    <ClInclude Include="select\poll.h" />
-    <ClInclude Include="select\rpc.h" />
-    <ClInclude Include="select\server.h" />
-    <ClInclude Include="select\server_v2.h" />
-    <ClInclude Include="select\session.h" />
-    <ClInclude Include="domain.h" />
-    <ClInclude Include="select.h" />
-    <ClInclude Include="window_socket_api\async.h" />
-    <ClInclude Include="window_socket_api\function.h" />
-    <ClInclude Include="window_socket_api\initialize.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="select\rpc.py" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

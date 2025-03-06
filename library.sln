@@ -171,6 +171,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "exchange", "algorithm\excha
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "overlapped", "system-component\overlapped\overlapped.vcxproj", "{FD90700A-9C7F-4072-9707-BECE90FA3706}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "socket", "system-component\socket\socket.vcxproj", "{55BD7FD7-5D94-4D30-AE3D-B9A5A3EA346C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "socket-address", "system-component\socket-address\socket-address.vcxproj", "{7AC8E688-90FC-4576-959C-D418B71A5517}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -723,6 +727,22 @@ Global
 		{FD90700A-9C7F-4072-9707-BECE90FA3706}.Release|x64.Build.0 = Release|x64
 		{FD90700A-9C7F-4072-9707-BECE90FA3706}.Release|x86.ActiveCfg = Release|Win32
 		{FD90700A-9C7F-4072-9707-BECE90FA3706}.Release|x86.Build.0 = Release|Win32
+		{55BD7FD7-5D94-4D30-AE3D-B9A5A3EA346C}.Debug|x64.ActiveCfg = Debug|x64
+		{55BD7FD7-5D94-4D30-AE3D-B9A5A3EA346C}.Debug|x64.Build.0 = Debug|x64
+		{55BD7FD7-5D94-4D30-AE3D-B9A5A3EA346C}.Debug|x86.ActiveCfg = Debug|Win32
+		{55BD7FD7-5D94-4D30-AE3D-B9A5A3EA346C}.Debug|x86.Build.0 = Debug|Win32
+		{55BD7FD7-5D94-4D30-AE3D-B9A5A3EA346C}.Release|x64.ActiveCfg = Release|x64
+		{55BD7FD7-5D94-4D30-AE3D-B9A5A3EA346C}.Release|x64.Build.0 = Release|x64
+		{55BD7FD7-5D94-4D30-AE3D-B9A5A3EA346C}.Release|x86.ActiveCfg = Release|Win32
+		{55BD7FD7-5D94-4D30-AE3D-B9A5A3EA346C}.Release|x86.Build.0 = Release|Win32
+		{7AC8E688-90FC-4576-959C-D418B71A5517}.Debug|x64.ActiveCfg = Debug|x64
+		{7AC8E688-90FC-4576-959C-D418B71A5517}.Debug|x64.Build.0 = Debug|x64
+		{7AC8E688-90FC-4576-959C-D418B71A5517}.Debug|x86.ActiveCfg = Debug|Win32
+		{7AC8E688-90FC-4576-959C-D418B71A5517}.Debug|x86.Build.0 = Debug|Win32
+		{7AC8E688-90FC-4576-959C-D418B71A5517}.Release|x64.ActiveCfg = Release|x64
+		{7AC8E688-90FC-4576-959C-D418B71A5517}.Release|x64.Build.0 = Release|x64
+		{7AC8E688-90FC-4576-959C-D418B71A5517}.Release|x86.ActiveCfg = Release|Win32
+		{7AC8E688-90FC-4576-959C-D418B71A5517}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -806,6 +826,8 @@ Global
 		{1FFBADF7-3E48-4FB4-B1C2-3DBAA7CEF275} = {638B906C-1177-49D6-86F1-FCF8F6BED5FE}
 		{751A6C9F-B541-4211-9769-DCB34426A238} = {88033A2C-B20C-4143-A6D8-0A943F34408E}
 		{FD90700A-9C7F-4072-9707-BECE90FA3706} = {1AA55DD9-5821-4C5B-980D-997F42D8264C}
+		{55BD7FD7-5D94-4D30-AE3D-B9A5A3EA346C} = {1AA55DD9-5821-4C5B-980D-997F42D8264C}
+		{7AC8E688-90FC-4576-959C-D418B71A5517} = {1AA55DD9-5821-4C5B-980D-997F42D8264C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C69985D6-20AB-4E9A-AD82-08BFBE490891}

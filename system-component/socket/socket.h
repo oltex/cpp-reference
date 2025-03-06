@@ -2,12 +2,12 @@
 #pragma comment(lib,"ws2_32.lib")
 #include <WinSock2.h>
 #include <intrin.h>
-#include "socket_address.h"
-#include "../../data-structure/pair/pair.h"
-#include "../overlapped.h"
 #include <optional>
+#include "../socket-address/socket_address.h"
+#include "../overlapped/overlapped.h"
+#include "../../data-structure/pair/pair.h"
 
-namespace system_component::network {
+namespace system_component {
 	class socket final {
 	public:
 		inline explicit socket(void) noexcept
@@ -206,7 +206,7 @@ namespace system_component::network {
 			}
 			return result;
 		}
-		inline auto wsa_receive(WSABUF* buffer, unsigned long count, unsigned long* flag, input_output::overlapped& overlapped) noexcept -> int {
+		inline auto wsa_receive(WSABUF* buffer, unsigned long count, unsigned long* flag, overlapped& overlapped) noexcept -> int {
 			int result = WSARecv(_socket, buffer, count, nullptr, flag, &overlapped.data(), nullptr);
 			if (SOCKET_ERROR == result) {
 				switch (GetLastError()) {
@@ -227,10 +227,10 @@ namespace system_component::network {
 		inline void cancel_io_ex(void) const noexcept {
 			CancelIoEx(reinterpret_cast<HANDLE>(_socket), nullptr);
 		}
-		inline void cancel_io_ex(input_output::overlapped overlapped) const noexcept {
+		inline void cancel_io_ex(overlapped overlapped) const noexcept {
 			CancelIoEx(reinterpret_cast<HANDLE>(_socket), &overlapped.data());
 		}
-		inline bool wsa_get_overlapped_result(input_output::overlapped& overlapped, unsigned long* transfer, bool const wait, unsigned long* flag) noexcept {
+		inline bool wsa_get_overlapped_result(overlapped& overlapped, unsigned long* transfer, bool const wait, unsigned long* flag) noexcept {
 			return WSAGetOverlappedResult(_socket, &overlapped.data(), transfer, wait, flag);
 		}
 		inline void set_tcp_nodelay(int const enable) const noexcept {
@@ -267,6 +267,7 @@ namespace system_component::network {
 				switch (GetLastError()) {
 				default:
 					break;
+#pragma warning(suppress: 4065)
 				}
 				return std::nullopt;
 			}
@@ -279,6 +280,7 @@ namespace system_component::network {
 				switch (GetLastError()) {
 				default:
 					break;
+#pragma warning(suppress: 4065)
 				}
 				return std::nullopt;
 			}
