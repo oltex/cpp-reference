@@ -1,16 +1,16 @@
 #pragma once
 #include <Windows.h>
 
-namespace system_component::multi::lock {
+namespace system_component::lock {
 	class slim_read_write final {
 	public:
 		inline explicit slim_read_write(void) noexcept {
 			InitializeSRWLock(&_srwlock);
 		};
-		inline explicit slim_read_write(slim_read_write const& rhs) noexcept = delete;
-		inline explicit slim_read_write(slim_read_write&& rhs) noexcept = delete;
-		inline auto operator=(slim_read_write const& rhs) noexcept -> slim_read_write & = delete;
-		inline auto operator=(slim_read_write&& rhs) noexcept -> slim_read_write & = delete;
+		inline explicit slim_read_write(slim_read_write const&) noexcept = delete;
+		inline explicit slim_read_write(slim_read_write&&) noexcept = delete;
+		inline auto operator=(slim_read_write const&) noexcept -> slim_read_write & = delete;
+		inline auto operator=(slim_read_write&&) noexcept -> slim_read_write & = delete;
 		inline ~slim_read_write(void) noexcept = default;
 	public:
 		inline void acquire_exclusive(void) noexcept {
