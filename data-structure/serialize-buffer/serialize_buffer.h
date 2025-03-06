@@ -52,7 +52,7 @@ namespace data_structure {
 		}
 		inline void push(byte* const buffer, size_type const length) noexcept {
 #ifdef debug
-			if (_rear + length > _capacity) {
+			if (length + _rear > _capacity) {
 				_fail = true;
 				return;
 			}

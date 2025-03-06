@@ -16,6 +16,14 @@ namespace data_structure::intrusive {
 			size_type _use;
 			size_type _weak;
 		};
+	public:
+		inline explicit shared_pointer_hook(void) noexcept = default;
+		inline explicit shared_pointer_hook(shared_pointer_hook const&) noexcept = default;
+		inline explicit shared_pointer_hook(shared_pointer_hook&&) noexcept = default;
+		inline auto operator=(shared_pointer_hook const&) noexcept -> shared_pointer_hook & = default;
+		inline auto operator=(shared_pointer_hook&&) noexcept -> shared_pointer_hook & = default;
+		inline ~shared_pointer_hook(void) noexcept = default;
+
 	private:
 		reference _reference;
 	};
