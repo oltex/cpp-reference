@@ -21,9 +21,7 @@ namespace system_component {
 			return &invoke<tuple, index...>;
 		}
 	public:
-		inline explicit thread(void) noexcept
-			: handle(GetCurrentThread()) {
-		}
+		inline explicit thread(void) noexcept = default;
 		template <typename function, typename... argument>
 		inline explicit thread(function&& func, unsigned int flag, argument&&... arg) noexcept {
 			using tuple = std::tuple<std::decay_t<function>, std::decay_t<argument>...>;
@@ -59,21 +57,6 @@ namespace system_component {
 			else
 				__debugbreak();
 		}
-		inline void join(unsigned long milli_second) noexcept {
-			WaitForSingleObject(_handle, milli_second);
-		}
-		inline void detach(void) noexcept {
-			CloseHandle(_handle);
-		}
-		inline unsigned long id(void) noexcept {
-			GetThreadId(_handle);
-		}
-		inline void set_affinity_mask(DWORD_PTR mask) noexcept {
-			SetThreadAffinityMask(_handle, mask);
-		}
-		inline void set_priority(int const priority) noexcept {
-			SetThreadPriority(_handle, priority);
-		}
 		inline void suspend(void) noexcept {
 			SuspendThread(_handle);
 		}
@@ -84,16 +67,28 @@ namespace system_component {
 #pragma warning(suppress: 6258)
 			TerminateThread(_handle, 0);
 		}
+		inline void get_current(void) noexcept {
+			_handle = GetCurrentThread();
+		}
+		inline auto get_id(void) noexcept -> unsigned long {
+			GetThreadId(_handle);
+		}
 		inline auto get_exit_code(void) noexcept -> unsigned long {
 			unsigned long code;
 			GetExitCodeThread(_handle, &code);
 			return code;
 		}
+		inline void set_affinity_mask(DWORD_PTR mask) noexcept {
+			SetThreadAffinityMask(_handle, mask);
+		}
+		inline void set_priority(int const priority) noexcept {
+			SetThreadPriority(_handle, priority);
+		}
 
 		inline static void switch_to(void) noexcept {
 			SwitchToThread();
 		}
-		inline static auto current_id(void) noexcept {
+		inline static auto get_current_id(void) noexcept {
 			return GetCurrentThreadId();
 		}
 	};
