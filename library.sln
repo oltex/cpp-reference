@@ -189,8 +189,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "critical-section", "system-
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "slim-read-write", "system-component\lock\slim-read-write\slim-read-write.vcxproj", "{4E8CBE43-1626-4BAE-B3E7-DDAD978A8E7D}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "inputoutput-completion-port", "inputoutput-completion-port\inputoutput-completion-port.vcxproj", "{0CE5BC67-57DD-40DF-A415-D94A2C63BF4A}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -775,14 +773,6 @@ Global
 		{4E8CBE43-1626-4BAE-B3E7-DDAD978A8E7D}.Release|x64.Build.0 = Release|x64
 		{4E8CBE43-1626-4BAE-B3E7-DDAD978A8E7D}.Release|x86.ActiveCfg = Release|Win32
 		{4E8CBE43-1626-4BAE-B3E7-DDAD978A8E7D}.Release|x86.Build.0 = Release|Win32
-		{0CE5BC67-57DD-40DF-A415-D94A2C63BF4A}.Debug|x64.ActiveCfg = Debug|x64
-		{0CE5BC67-57DD-40DF-A415-D94A2C63BF4A}.Debug|x64.Build.0 = Debug|x64
-		{0CE5BC67-57DD-40DF-A415-D94A2C63BF4A}.Debug|x86.ActiveCfg = Debug|Win32
-		{0CE5BC67-57DD-40DF-A415-D94A2C63BF4A}.Debug|x86.Build.0 = Debug|Win32
-		{0CE5BC67-57DD-40DF-A415-D94A2C63BF4A}.Release|x64.ActiveCfg = Release|x64
-		{0CE5BC67-57DD-40DF-A415-D94A2C63BF4A}.Release|x64.Build.0 = Release|x64
-		{0CE5BC67-57DD-40DF-A415-D94A2C63BF4A}.Release|x86.ActiveCfg = Release|Win32
-		{0CE5BC67-57DD-40DF-A415-D94A2C63BF4A}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -870,7 +860,6 @@ Global
 		{C1C6D55F-7B88-4679-B8BF-89BEC51E04E7} = {1AA55DD9-5821-4C5B-980D-997F42D8264C}
 		{C2859633-A77A-42DE-9490-127755CE3652} = {C1C6D55F-7B88-4679-B8BF-89BEC51E04E7}
 		{4E8CBE43-1626-4BAE-B3E7-DDAD978A8E7D} = {C1C6D55F-7B88-4679-B8BF-89BEC51E04E7}
-		{0CE5BC67-57DD-40DF-A415-D94A2C63BF4A} = {1AA55DD9-5821-4C5B-980D-997F42D8264C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C69985D6-20AB-4E9A-AD82-08BFBE490891}
