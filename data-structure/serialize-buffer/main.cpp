@@ -12,9 +12,7 @@ int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	data_structure::serialize_buffer serialize_buffer;
 	{
-		std::string str = "hello";
 		serialize_buffer << 0xaaaaaaaa << true << 'c';
-		serialize_buffer.push<unsigned char>(str);
 		//if (!serialize_buffer)
 		//	__debugbreak();
 	}
@@ -25,7 +23,6 @@ int main(void) noexcept {
 		std::string str;
 
 		serialize_buffer >> a >> b >> c;
-		serialize_buffer.pop<unsigned char>(str);
 		//if(!serialize_buffer)
 		//	__debugbreak();
 	}

@@ -39,7 +39,8 @@ namespace data_structure {
 		};
 
 		template<typename type>
-		inline auto operator<<(type const& value) noexcept -> serialize_buffer& requires std::is_arithmetic_v<type> {
+			requires std::is_arithmetic_v<type>
+		inline auto operator<<(type const& value) noexcept -> serialize_buffer&  {
 #ifdef debug
 			if (sizeof(type) + _rear > _capacity) {
 				_fail = true;
@@ -61,7 +62,8 @@ namespace data_structure {
 			_rear += length;
 		}
 		template<typename type>
-		inline auto operator>>(type& value) noexcept -> serialize_buffer& requires std::is_arithmetic_v<type> {
+			requires std::is_arithmetic_v<type>
+		inline auto operator>>(type& value) noexcept -> serialize_buffer&  {
 #ifdef debug
 			if (sizeof(type) + _front > _rear) {
 				_fail = true;

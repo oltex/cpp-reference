@@ -70,14 +70,14 @@ namespace data_structure {
 		inline auto begin(void) const noexcept -> typename iterator {
 			return _list.begin();
 		}
-		inline auto begin(size_type const idx) const noexcept -> iterator {
-			return _vector[idx << 1];
+		inline auto begin(size_type const index) const noexcept -> iterator {
+			return _vector[index << 1];
 		}
 		inline auto end(void) const noexcept -> typename iterator {
 			return _list.end();
 		}
-		inline auto end(size_type const idx) const noexcept -> iterator {
-			auto iter = _vector[(idx << 1) + 1];
+		inline auto end(size_type const index) const noexcept -> iterator {
+			auto iter = _vector[(index << 1) + 1];
 			if (_list.end() != iter)
 				iter++;
 			return iter;
@@ -87,7 +87,7 @@ namespace data_structure {
 			return _list.size();
 		}
 		//not implemented (bucket size)
-		inline auto size(size_type const idx) const noexcept -> size_type;
+		inline auto size(size_type const index) const noexcept -> size_type;
 		inline bool empty(void) const noexcept {
 			return  _list.empty();
 		}
