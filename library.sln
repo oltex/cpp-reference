@@ -194,6 +194,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "greatest-common-divisor", "
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "least-common-multiple", "algorithm\least-common-multiple\least-common-multiple.vcxproj", "{8349FA8A-59AB-416E-9DAF-282063B8453D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "registered-inputouput", "system-component\registered-inputouput\registered-inputouput.vcxproj", "{2468C369-619D-4042-AAD4-5135E4612BAA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -802,6 +804,14 @@ Global
 		{8349FA8A-59AB-416E-9DAF-282063B8453D}.Release|x64.Build.0 = Release|x64
 		{8349FA8A-59AB-416E-9DAF-282063B8453D}.Release|x86.ActiveCfg = Release|Win32
 		{8349FA8A-59AB-416E-9DAF-282063B8453D}.Release|x86.Build.0 = Release|Win32
+		{2468C369-619D-4042-AAD4-5135E4612BAA}.Debug|x64.ActiveCfg = Debug|x64
+		{2468C369-619D-4042-AAD4-5135E4612BAA}.Debug|x64.Build.0 = Debug|x64
+		{2468C369-619D-4042-AAD4-5135E4612BAA}.Debug|x86.ActiveCfg = Debug|Win32
+		{2468C369-619D-4042-AAD4-5135E4612BAA}.Debug|x86.Build.0 = Debug|Win32
+		{2468C369-619D-4042-AAD4-5135E4612BAA}.Release|x64.ActiveCfg = Release|x64
+		{2468C369-619D-4042-AAD4-5135E4612BAA}.Release|x64.Build.0 = Release|x64
+		{2468C369-619D-4042-AAD4-5135E4612BAA}.Release|x86.ActiveCfg = Release|Win32
+		{2468C369-619D-4042-AAD4-5135E4612BAA}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -891,6 +901,7 @@ Global
 		{D5175263-B4E3-4C93-B1BE-71E36438F7A5} = {638B906C-1177-49D6-86F1-FCF8F6BED5FE}
 		{11055375-144E-43BF-A4D1-CD939D7AA138} = {88033A2C-B20C-4143-A6D8-0A943F34408E}
 		{8349FA8A-59AB-416E-9DAF-282063B8453D} = {88033A2C-B20C-4143-A6D8-0A943F34408E}
+		{2468C369-619D-4042-AAD4-5135E4612BAA} = {1AA55DD9-5821-4C5B-980D-997F42D8264C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C69985D6-20AB-4E9A-AD82-08BFBE490891}
