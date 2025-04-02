@@ -243,27 +243,27 @@ namespace system_component {
 		inline bool wsa_get_overlapped_result(overlapped& overlapped, unsigned long* transfer, bool const wait, unsigned long* flag) noexcept {
 			return WSAGetOverlappedResult(_socket, &overlapped.data(), transfer, wait, flag);
 		}
-		inline void set_tcp_nodelay(int const enable) const noexcept {
+		inline void set_option_tcp_nodelay(int const enable) const noexcept {
 			set_option(IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<char const*>(&enable), sizeof(int));
 		}
-		inline void set_linger(unsigned short const onoff, unsigned short const time) const noexcept {
+		inline void set_option_linger(unsigned short const onoff, unsigned short const time) const noexcept {
 			LINGER linger{ onoff , time };
 			set_option(SOL_SOCKET, SO_LINGER, reinterpret_cast<char const*>(&linger), sizeof(LINGER));
 		}
-		inline void set_broadcast(unsigned long const enable) const noexcept {
+		inline void set_option_broadcast(unsigned long const enable) const noexcept {
 			set_option(SOL_SOCKET, SO_BROADCAST, reinterpret_cast<char const*>(&enable), sizeof(unsigned long));
 		}
-		inline void set_send_buffer(int const size) const noexcept {
+		inline void set_option_send_buffer(int const size) const noexcept {
 			set_option(SOL_SOCKET, SO_SNDBUF, reinterpret_cast<char const*>(&size), sizeof(size));
 		}
-		inline void set_receive_buffer(int const size) const noexcept {
+		inline void set_option_receive_buffer(int const size) const noexcept {
 			set_option(SOL_SOCKET, SO_RCVBUF, reinterpret_cast<char const*>(&size), sizeof(size));
 		}
 		inline void set_option(int const level, int const name, char const* value, int const length) const noexcept {
 			if (SOCKET_ERROR == setsockopt(_socket, level, name, value, length))
 				__debugbreak();
 		}
-		inline void set_nonblocking(unsigned long const enable) const noexcept {
+		inline void set_io_control_nonblocking(unsigned long const enable) const noexcept {
 			set_io_control(FIONBIO, enable);
 		}
 		inline void set_io_control(long const cmd, unsigned long arg) const noexcept {
