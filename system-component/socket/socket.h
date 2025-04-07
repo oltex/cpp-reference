@@ -1,6 +1,8 @@
 #pragma once
 #pragma comment(lib,"ws2_32.lib")
 #include <WinSock2.h>
+#pragma comment(lib, "mswsock.lib")
+#include <MSWSock.h>
 #include <intrin.h>
 #include <optional>
 #include "../socket-address/socket_address.h"
@@ -102,6 +104,10 @@ namespace system_component {
 				}
 			}
 			return data_structure::pair<socket, socket_address_ipv4>(socket(sock), socket_address);
+		}
+		inline auto accept_ex(socket& socket_, void* output_buffer, unsigned long address_length, unsigned long remote_address_length, overlapped& overlapeed_) noexcept {
+			if (SOCKET_ERROR == _accept_ex(_socket, socket_.data(), output_buffer, 0, address_length, remote_address_length, nullptr, &overlapeed_.data()))
+				__debugbreak();
 		}
 		inline auto connect(socket_address& socket_address) noexcept -> int {
 			int result = ::connect(_socket, &socket_address.data(), socket_address.get_length());
@@ -259,15 +265,32 @@ namespace system_component {
 		inline void set_option_receive_buffer(int const size) const noexcept {
 			set_option(SOL_SOCKET, SO_RCVBUF, reinterpret_cast<char const*>(&size), sizeof(size));
 		}
+		inline void set_option_update_accept_context(socket& socket_) const noexcept {
+			set_option(SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT, reinterpret_cast<char*>(&socket_.data()), sizeof(SOCKET));
+		}
 		inline void set_option(int const level, int const name, char const* value, int const length) const noexcept {
 			if (SOCKET_ERROR == setsockopt(_socket, level, name, value, length))
 				__debugbreak();
 		}
-		inline void set_io_control_nonblocking(unsigned long const enable) const noexcept {
-			set_io_control(FIONBIO, enable);
+		inline void io_control_nonblocking(unsigned long const enable) const noexcept {
+			io_control(FIONBIO, enable);
 		}
-		inline void set_io_control(long const cmd, unsigned long arg) const noexcept {
+		inline void io_control(long const cmd, unsigned long arg) const noexcept {
 			if (SOCKET_ERROR == ioctlsocket(_socket, cmd, &arg))
+				__debugbreak();
+		}
+		inline void wsa_io_control_acccept_ex(void) noexcept {
+			GUID guid = WSAID_ACCEPTEX;
+			unsigned long byte_returned;
+			wsa_io_control(SIO_GET_EXTENSION_FUNCTION_POINTER, reinterpret_cast<void*>(&guid), sizeof(GUID), reinterpret_cast<void*>(&_accept_ex), sizeof(LPFN_ACCEPTEX), byte_returned);
+		}
+		inline void wsa_io_control_disconnect_ex(void) noexcept {
+			GUID guid = WSAID_DISCONNECTEX;
+			unsigned long byte_returned;
+			wsa_io_control(SIO_GET_EXTENSION_FUNCTION_POINTER, reinterpret_cast<void*>(&guid), sizeof(GUID), reinterpret_cast<void*>(&_disconnect_ex), sizeof(LPFN_DISCONNECTEX), byte_returned);
+		}
+		inline void wsa_io_control(unsigned long control_code, void* in_buffer, unsigned long in_buffer_size, void* out_buffer, unsigned long out_buffer_size, unsigned long& byte_returned) noexcept {
+			if (SOCKET_ERROR == ::WSAIoctl(_socket, control_code, in_buffer, in_buffer_size, out_buffer, out_buffer_size, &byte_returned, nullptr, nullptr))
 				__debugbreak();
 		}
 		inline auto get_local_socket_address(void) const noexcept -> std::optional<socket_address_ipv4> {
@@ -301,5 +324,212 @@ namespace system_component {
 		}
 	private:
 		SOCKET _socket;
+		inline static LPFN_ACCEPTEX _accept_ex;
+		inline static LPFN_DISCONNECTEX _disconnect_ex;
 	};
 }
+
+
+//class SocketUtils
+//{
+//public:
+//	//네트워크 Init 함수
+//	static void WSAInit();
+//	static bool WSAClear();
+//	static bool SocketWIndowsFunction(SOCKET socket, GUID guid, LPVOID* fn);
+//
+//
+//	static SOCKET CreateSocket();
+//	static bool Bind(SOCKET socket, SOCKADDR_IN& server_addr);
+//	static bool BindAnyAddr(SOCKET socket, uint16 port);
+//	static bool Listen(SOCKET socket, int32 backlog = SOMAXCONN);
+//	static bool Connect(SOCKET socket, SOCKADDR_IN& server_addr);
+//
+//	static bool SetLinger(SOCKET socket, uint16 onoff, uint16 timeout);
+//	static bool SetKeepAlive(SOCKET socket, bool onoff);
+//	static bool SetSendBufferSize(SOCKET socket, int buf_size);
+//	static bool SetRecvBufferSize(SOCKET socket, int buf_size);
+//	static bool SetNagle(SOCKET socket, bool onoff);
+//
+//	__forceinline static bool CopySocketAttribute(SOCKET client_socket, SOCKET listen_socket)
+//	{
+//		return ::setsockopt(client_socket, SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT, reinterpret_cast<char*>(&listen_socket), sizeof(SOCKET)) != SOCKET_ERROR;
+//	}
+//
+//public:
+//	static LPFN_DISCONNECTEX   DisconnectEx;
+//	static LPFN_ACCEPTEX      AcceptEx;
+//
+//};
+//
+//LPFN_DISCONNECTEX   SocketUtils::DisconnectEx = nullptr;
+//LPFN_ACCEPTEX      SocketUtils::AcceptEx = nullptr;
+//
+//void SocketUtils::WSAInit()
+//{
+//	int32 err_code;
+//	WSADATA wsa_data;
+//
+//	if (WSAStartup(MAKEWORD(2, 2), &wsa_data) != 0)
+//	{
+//		WCHAR log_buff[df_LOG_BUFF_SIZE];
+//		err_code = WSAGetLastError();
+//		wsprintf(log_buff, L"WSAStartUp Fail [ErrCode:%d]", err_code);
+//		g_logutils->Log(NET_LOG_DIR, NET_FILE_NAME, L"WSAStartUp Success");
+//		__debugbreak();
+//	}
+//
+//	g_logutils->Log(NET_LOG_DIR, NET_FILE_NAME, L"WSAStartUp Success");
+//
+//	SOCKET socket = CreateSocket();
+//
+//	if (SocketWIndowsFunction(socket, WSAID_ACCEPTEX, reinterpret_cast<LPVOID*>(&AcceptEx)) == false)
+//	{
+//		WCHAR log_buff[df_LOG_BUFF_SIZE];
+//		err_code = WSAGetLastError();
+//		wsprintf(log_buff, L"AcceptEx Function Setting Fail [ErrCode:%d]", err_code);
+//		wcout << log_buff << '\n';
+//		__debugbreak();
+//	}
+//
+//	if (SocketWIndowsFunction(socket, WSAID_DISCONNECTEX, reinterpret_cast<LPVOID*>(&DisconnectEx)) == false)
+//	{
+//		WCHAR log_buff[df_LOG_BUFF_SIZE];
+//		err_code = WSAGetLastError();
+//		wsprintf(log_buff, L"DisconnectEx Function Setting Fail [ErrCode:%d]", err_code);
+//		wcout << log_buff << '\n';
+//		__debugbreak();
+//	}
+//
+//	closesocket(socket);
+//
+//	return;
+//}
+//
+//bool SocketUtils::WSAClear()
+//{
+//	return ::WSACleanup();
+//}
+//
+//bool SocketUtils::SocketWIndowsFunction(SOCKET socket, GUID guid, LPVOID* fn)
+//{
+//	DWORD bytes = 0;
+//	return SOCKET_ERROR != ::WSAIoctl(socket, SIO_GET_EXTENSION_FUNCTION_POINTER, &guid, sizeof(guid), fn, sizeof(*fn), &bytes, NULL, NULL);
+//}
+//
+//SOCKET SocketUtils::CreateSocket()
+//{
+//	return ::socket(AF_INET, SOCK_STREAM, 0);
+//}
+//
+//bool SocketUtils::Bind(SOCKET socket, SOCKADDR_IN& server_addr)
+//{
+//	return SOCKET_ERROR != ::bind(socket, reinterpret_cast<SOCKADDR*>(&server_addr), sizeof(SOCKADDR_IN));
+//}
+//
+//bool SocketUtils::BindAnyAddr(SOCKET socket, uint16 port)
+//{
+//	SOCKADDR_IN sock_addr;
+//	sock_addr.sin_port = ::htons(port);
+//	sock_addr.sin_addr.s_addr = ::htonl(INADDR_ANY);
+//	sock_addr.sin_family = AF_INET;
+//
+//	return SOCKET_ERROR != ::bind(socket, reinterpret_cast<SOCKADDR*>(&sock_addr), sizeof(SOCKADDR_IN));
+//}
+//
+//bool SocketUtils::Listen(SOCKET socket, int32 backlog)
+//{
+//	return SOCKET_ERROR != ::listen(socket, backlog);
+//}
+//
+//bool SocketUtils::Connect(SOCKET socket, SOCKADDR_IN& server_addr)
+//{
+//	return SOCKET_ERROR != connect(socket, reinterpret_cast<SOCKADDR*>(&server_addr), sizeof(SOCKADDR_IN));
+//}
+//
+//bool SocketUtils::SetLinger(SOCKET socket, uint16 onoff, uint16 timeout)
+//{
+//	LINGER linger;
+//	linger.l_onoff = onoff;
+//	linger.l_linger = timeout;
+//	return SOCKET_ERROR != ::setsockopt(socket, SOL_SOCKET, SO_LINGER, reinterpret_cast<char*>(&linger), sizeof(LINGER));
+//}
+//
+//bool SocketUtils::SetKeepAlive(SOCKET socket, bool onoff)
+//{
+//	return SOCKET_ERROR != ::setsockopt(socket, SOL_SOCKET, SO_KEEPALIVE, reinterpret_cast<char*>(&onoff), sizeof(onoff));
+//}
+//
+//bool SocketUtils::SetSendBufferSize(SOCKET socket, int buf_size)
+//{
+//	return SOCKET_ERROR != ::setsockopt(socket, SOL_SOCKET, SO_SNDBUF, reinterpret_cast<char*>(&buf_size), sizeof(buf_size));
+//}
+//
+//bool SocketUtils::SetRecvBufferSize(SOCKET socket, int buf_size)
+//{
+//	return SOCKET_ERROR != ::setsockopt(socket, SOL_SOCKET, SO_RCVBUF, reinterpret_cast<char*>(&buf_size), sizeof(buf_size));
+//}
+//
+//bool SocketUtils::SetNagle(SOCKET socket, bool onoff)
+//{
+//	return SOCKET_ERROR != ::setsockopt(socket, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<char*>(&onoff), sizeof(onoff));
+//}
+//
+//
+//
+//
+//
+////Session MAX를 stack size로 처리하고 있다.
+//if (_session_idx_stack.pop(session_idx) == false)
+//{
+//	session = _session_pool->Alloc();
+//	//소켓 생성 및 RecvBuffer 할당만 이루어진다.
+//	session->SessionNetTempInit();
+//
+//	if (_iocp_core.Register(session) == false)
+//	{
+//		API_BREAKLOG(dfLOG_LEVEL_SYSTEM, session->_session_id, err_code, L"IOCP Core Socket Register Fail");
+//	}
+//}
+//else
+//{
+//	session = &_sessions[session_idx];
+//
+//	//Data초기화 및 AcceptOverlapped 설정, socket 생성
+//	session->SessionNetPreInit((session_idx) | ((AtomicIncrement64(&_session_cnt) - 1) << 16));
+//	if (_iocp_core.Register(session) == false)
+//	{
+//		API_BREAKLOG(dfLOG_LEVEL_SYSTEM, session->_session_id, err_code, L"IOCP Core Socket Register Fail");
+//	}
+//}
+//
+//
+//if (SocketUtils::AcceptEx(_listen_socket, session->_socket, session->_recv_buf->GetWritePos(), 0, sizeof(SOCKADDR_IN) + 16, sizeof(SOCKADDR_IN) + 16, &transferred, &session->_recv_overlapped) == false)
+//{
+//	err_code = ::WSAGetLastError();
+//
+//	if (err_code != WSA_IO_PENDING)
+//	{
+//		if (InterlockedAnd8(&_exit_flag, 1) == 1)
+//		{
+//			AtomicDecrement64(&_alloc_session_num);
+//			_session_idx_stack.push(session_idx);
+//			return;
+//		}
+//		LIB_BREAKLOG(dfLOG_LEVEL_SYSTEM, session->_session_id, err_code, L"AcceptEx Fail");
+//	}
+//
+//}
+//
+////listen_socket으로 부터 특성 상속받기
+//if (SocketUtils::CopySocketAttribute(session->_socket, _listen_socket) == false)
+//{
+//	API_LOG(dfLOG_LEVEL_SYSTEM, session->_session_id, err_code, L"ClientSocket Copy Attributes Fail");
+//	return false;
+//}
+//
+//if (::getpeername(session->_socket, reinterpret_cast<SOCKADDR*>(&client_addr), &sock_addr_len) == SOCKET_ERROR)
+//{
+//	API_LOG(dfLOG_LEVEL_SYSTEM, session->_session_id, err_code, L"ClientSocket Peer Name Fail");
+//	return false;
+//}
