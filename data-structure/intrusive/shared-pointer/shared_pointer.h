@@ -67,14 +67,14 @@ namespace library::data_structure::intrusive {
 			if (nullptr != _pointer && 0 == --_pointer->_reference._use)
 				static_cast<type*>(_pointer)->destructor();
 		}
-	public:
+
 		inline auto operator*(void) noexcept -> type& {
 			return static_cast<type&>(*_pointer);
 		}
 		inline auto operator->(void) noexcept -> type* {
 			return static_cast<type*>(_pointer);
 		}
-	public:
+
 		inline void swap(shared_pointer& rhs) noexcept {
 			auto temp = _pointer;
 			_pointer = rhs._pointer;
