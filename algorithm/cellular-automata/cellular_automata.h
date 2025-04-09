@@ -64,5 +64,5 @@ public:
 		}
 	}
 private:
-	data_structure::bit_grid<long long> _bit_grid;
+	library::data_structure::bit_grid<long long> _bit_grid;
 };

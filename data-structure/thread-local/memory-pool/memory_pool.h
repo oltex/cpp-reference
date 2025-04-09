@@ -3,11 +3,11 @@
 #include "../../lockfree/memory-pool/memory_pool.h"
 #include "../../pair/pair.h"
 
-namespace data_structure::_thread_local {
+namespace library::data_structure::_thread_local {
 	template<typename type, size_t bucket_size = 1024, bool use_union = true>
-	class memory_pool final : public design_pattern::_thread_local::singleton<memory_pool<type, bucket_size>> {
+	class memory_pool final : public design_pattern::_thread_local::singleton<memory_pool<type, bucket_size, use_union>> {
 	private:
-		friend class design_pattern::_thread_local::singleton<memory_pool<type, bucket_size>>;
+		friend class design_pattern::_thread_local::singleton<memory_pool<type, bucket_size, use_union>>;
 		using size_type = unsigned int;
 		union union_node final {
 			inline explicit union_node(void) noexcept = delete;
@@ -79,7 +79,7 @@ namespace data_structure::_thread_local {
 					_aligned_free(_node_array[index]);
 				free(_node_array);
 			};
-		public:
+
 			inline void push(node* value, size_type size) noexcept {
 				bucket* current = &_memory_pool.allocate();
 				current->_value = value;

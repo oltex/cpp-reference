@@ -83,7 +83,7 @@ public:
 private:
 	unsigned long long _head;
 	unsigned long long _tail;
-	data_structure::lockfree::object_pool<node> _object_pool;
+	library::data_structure::lockfree::object_pool<node> _object_pool;
 
 
 	volatile unsigned int _order = 0;

@@ -8,7 +8,7 @@
 
 void func(void) noexcept {
 	srand(6530985434);
-	data_structure::ring_buffer ring;
+	library::data_structure::ring_buffer ring;
 	unsigned char str[] = "!1234567890 abcdefghijklmnopqrstuvwxyz 1234567890 abcdefghijklmnopqrstuvwxyz 1234567890 abcdefghijklmnopqrstuvwz 123456!";
 	unsigned int index = 0;
 
@@ -42,7 +42,7 @@ void func(void) noexcept {
 
 //void func(void) noexcept {
 //	srand(653098543432);
-//	data_structure::ring_buffer ring;
+//	library::data_structure::ring_buffer ring;
 //	unsigned char str[] = "!1234567890 abcdefghijklmnopqrstuvwxyz 1234567890 abcdefghijklmnopqrstuvwxyz 1234567890 abcdefghijklmnopqrstuvwz 123456!";
 //	int index = 0;
 //

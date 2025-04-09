@@ -18,8 +18,8 @@ int main(void) noexcept {
 	//	return *this;
 	//}
 
-	data_structure::shared_pointer<int> shard_ptr(1);
-	data_structure::weak_pointer<int> weak_ptr;
+	library::data_structure::shared_pointer<int> shard_ptr(1);
+	library::data_structure::weak_pointer<int> weak_ptr;
 
 	weak_ptr = shard_ptr;
 	return 0;

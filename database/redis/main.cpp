@@ -5,7 +5,7 @@ int main(void) noexcept {
 	WSADATA data;
 	WSAStartup(version, &data);
 
-	database::redis client;
+	library::database::redis client;
 	client.connect("127.0.0.1", 6379, nullptr, 0, 0, 0);
 
 	//client.set("hello", "42");

@@ -2,7 +2,7 @@
 #include <utility>
 #include <type_traits>
 
-namespace data_structure {
+namespace library::data_structure {
 	template<typename... type>
 	class tuple;
 	template<>
@@ -54,18 +54,18 @@ namespace data_structure {
 }
 
 template <class... _Types>
-struct std::tuple_size<data_structure::tuple<_Types...>> : integral_constant<size_t, sizeof...(_Types)> {
+struct std::tuple_size<library::data_structure::tuple<_Types...>> : integral_constant<size_t, sizeof...(_Types)> {
 };
 template <size_t _Index>
-struct _MSVC_KNOWN_SEMANTICS std::tuple_element<_Index, data_structure::tuple<>> {
+struct _MSVC_KNOWN_SEMANTICS std::tuple_element<_Index, library::data_structure::tuple<>> {
 	static_assert(_Always_false<integral_constant<size_t, _Index>>, "tuple index out of bounds");
 };
 template <class _This, class... _Rest>
-struct _MSVC_KNOWN_SEMANTICS std::tuple_element<0, data_structure::tuple<_This, _Rest...>> {
+struct _MSVC_KNOWN_SEMANTICS std::tuple_element<0, library::data_structure::tuple<_This, _Rest...>> {
 	using type = _This;
 	using _Ttype = tuple<_This, _Rest...>;
 };
 template <size_t _Index, class _This, class... _Rest>
-struct _MSVC_KNOWN_SEMANTICS std::tuple_element<_Index, data_structure::tuple<_This, _Rest...>>
+struct _MSVC_KNOWN_SEMANTICS std::tuple_element<_Index, library::data_structure::tuple<_This, _Rest...>>
 	: tuple_element<_Index - 1, tuple<_Rest...>> {
 };

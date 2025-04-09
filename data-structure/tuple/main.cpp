@@ -12,15 +12,15 @@ int main(void) noexcept {
 
 	//std::tuple<int, int, int> std_tuple;
 	//std::tuple<my_class, my_class, my_class> std_tuple2(1, 2, 3);
-	data_structure::tuple<my_class, int, int> tuple(1, 2, 3);
-	//data_structure::tuple<my_class, int, int> tuple2(4, 5, 6);
+	library::data_structure::tuple<my_class, int, int> tuple(1, 2, 3);
+	//library::data_structure::tuple<my_class, int, int> tuple2(4, 5, 6);
 	//tuple = std::move(tuple2);
 
 	auto& [result, byte, key] = tuple;
 
 	//int b = byte;
 
-	//data_structure::pair<int, int> p;
+	//library::data_structure::pair<int, int> p;
 	////std::get<0>(p);
 	//auto b = tuple.get<0>();
 	//auto c = tuple2.get<0>();

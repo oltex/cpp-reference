@@ -10,7 +10,7 @@
 #include <vector>
 #include <intrin.h>
 
-data_structure::lockfree::stack<int> _stack;
+library::data_structure::lockfree::stack<int> _stack;
 volatile unsigned int _value = 0;
 //multi::lock::spin _spin;
 

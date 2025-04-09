@@ -3,7 +3,7 @@
 #include <iostream>
 #include <Windows.h>
 
-namespace system_component {
+namespace library::system_component {
 	template<typename _promise_type>
 	class coroutine final {
 	public:

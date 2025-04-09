@@ -16,12 +16,12 @@ struct my_struct {
 	unsigned long long _value[128];
 };
 
-//data_structure::lockfree::queue<int*> _queue;
-//data_structure::lockfree::stack<int*> _stack;
+//library::data_structure::lockfree::queue<int*> _queue;
+//library::data_structure::lockfree::stack<int*> _stack;
 //volatile unsigned long long _stack_size = 0;
 
 inline static unsigned int __stdcall func_pool(void* arg) noexcept {
-	auto& instance = data_structure::_thread_local::memory_pool<my_struct>::instance();
+	auto& instance = library::data_structure::_thread_local::memory_pool<my_struct>::instance();
 	my_struct** _array = (my_struct**)malloc(sizeof(my_struct*) * 1000000);
 
 	for (int i = 0; i < 10; ++i) {
@@ -47,7 +47,7 @@ inline static unsigned int __stdcall func_pool(void* arg) noexcept {
 	return 0;
 }
 //inline static unsigned int __stdcall func_new(void* arg) noexcept {
-//	auto& instance = data_structure::_thread_local::memory_pool<int>::instance();
+//	auto& instance = library::data_structure::_thread_local::memory_pool<int>::instance();
 //	my_struct** _array = (my_struct**)malloc(sizeof(my_struct*) * 1000000);
 //	for (;;) {
 //		auto _rdtsc = __rdtsc();
@@ -71,7 +71,7 @@ inline static unsigned int __stdcall func_pool(void* arg) noexcept {
 //}
 
 //inline static unsigned int __stdcall func_alloc(void* arg) noexcept {
-//	auto& instance = data_structure::_thread_local::memory_pool<int>::instance();
+//	auto& instance = library::data_structure::_thread_local::memory_pool<int>::instance();
 //	for (;;) {
 //		Sleep(0);
 //		//std::cout << "allocate" << std::endl;
@@ -83,7 +83,7 @@ inline static unsigned int __stdcall func_pool(void* arg) noexcept {
 //	return 0;
 //}
 //inline static unsigned int __stdcall func_dealloc(void* arg) noexcept {
-//	auto& instance = data_structure::_thread_local::memory_pool<int>::instance();
+//	auto& instance = library::data_structure::_thread_local::memory_pool<int>::instance();
 //
 //	for (;;) {
 //		auto value = _stack.pop();
@@ -100,7 +100,7 @@ inline static unsigned int __stdcall func_pool(void* arg) noexcept {
 
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//auto& instance = data_structure::_thread_local::memory_pool<int>::instance();
+	//auto& instance = library::data_structure::_thread_local::memory_pool<int>::instance();
 	//std::vector<int*> _vector;
 	//for (int i = 0; i < 4; ++i) {
 	//	_vector.emplace_back(&instance.allocate());

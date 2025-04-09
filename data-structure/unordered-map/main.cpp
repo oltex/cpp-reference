@@ -28,7 +28,7 @@ namespace std {
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-	//data_structure::unordered_map<int, int> map;
+	//library::data_structure::unordered_map<int, int> map;
 	//std::cout << sizeof(map);
 	//map.emplace(1, 1);
 	//map.emplace(1, 1);
@@ -54,7 +54,7 @@ int main(void) noexcept {
 	//}
 	//std::cout << "sum :" << sum << std::endl;
 
-	//data_structure::unordered_map<int, int> map;
+	//library::data_structure::unordered_map<int, int> map;
 	//for (int i = 0; i < 10000; ++i)
 	//	map.emplace(i, i);
 	std::unordered_map<int, int> std_map;

@@ -3,7 +3,7 @@
 #include <string_view>
 #include <Windows.h>
 
-namespace system_component {
+namespace library::system_component {
 	class file : public handle {
 	public:
 		inline explicit file(void) noexcept = default;

@@ -12,9 +12,9 @@
 #include "jump-point-search/grid.h"
 #include "jump-point-search/path.h"
 
-class client final : public design_pattern::singleton<client, design_pattern::member_static<client>> {
+class client final : public library::design_pattern::singleton<client, library::design_pattern::member_static<client>> {
 private:
-	friend class design_pattern::singleton<client, design_pattern::member_static<client>>;
+	friend class library::design_pattern::singleton<client, library::design_pattern::member_static<client>>;
 	using size_type = unsigned int;
 public:
 	inline static auto constructor(window::window&& window) noexcept -> client& {

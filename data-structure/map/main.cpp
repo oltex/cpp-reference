@@ -11,7 +11,7 @@
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-	data_structure::map<int, my_class> map;
+	library::data_structure::map<int, my_class> map;
 	map.emplace(8, 8);
 	map.emplace(4, 4);
 	map.emplace(2, 2);
@@ -33,7 +33,7 @@ int main(void) noexcept {
 	for (auto& iter : map)
 		std::cout << iter._first << std::endl;
 
-	data_structure::map<int, my_class>::iterator begin = map.begin();
+	library::data_structure::map<int, my_class>::iterator begin = map.begin();
 
 	auto iter = map.find(8);
 	if (iter != map.end())

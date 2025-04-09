@@ -4,7 +4,7 @@
 #include <string>
 #include <string_view>
 
-namespace data_structure {
+namespace library::data_structure {
 	class serialize_buffer final {
 	private:
 		using byte = unsigned char;

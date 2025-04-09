@@ -6,7 +6,7 @@
 #include "predicate.h"
 #include "pair.h"
 
-namespace data_structure {
+namespace library::data_structure {
 	template<typename key_type, typename type, typename predicate = less<key_type>>
 	class map final {
 	public:

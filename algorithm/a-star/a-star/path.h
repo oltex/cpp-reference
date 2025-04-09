@@ -14,7 +14,7 @@ namespace algorithm::a_star {
 		using size_type = unsigned int;
 		struct node final {
 		public:
-			inline explicit node(coordinate const& position, data_structure::shared_pointer<node> parent, coordinate const& destination) noexcept
+			inline explicit node(coordinate const& position, library::data_structure::shared_pointer<node> parent, coordinate const& destination) noexcept
 				: _position(position), _parent(parent) {
 				if (nullptr == _parent)
 					_ground = 0.f;
@@ -35,7 +35,7 @@ namespace algorithm::a_star {
 			float _ground;
 
 			coordinate _position;
-			data_structure::shared_pointer<node> _parent;
+			library::data_structure::shared_pointer<node> _parent;
 		};
 		class heap final {
 		public:
@@ -100,7 +100,7 @@ namespace algorithm::a_star {
 			inline auto top(void) const noexcept -> path::node* {
 				return _vector.front()->_node;
 			};
-			inline auto shift_up(coordinate& position, data_structure::shared_pointer<path::node> parent) const noexcept {
+			inline auto shift_up(coordinate& position, library::data_structure::shared_pointer<path::node> parent) const noexcept {
 				auto find = (*_umap.find(position))._second;
 				float ground = parent->_ground + find->_node->_position.distance_euclidean(parent->_position);
 				if (ground >= find->_node->_ground)
@@ -138,8 +138,8 @@ namespace algorithm::a_star {
 				return _vector.empty();
 			}
 		public:
-			data_structure::vector<node*> _vector;
-			data_structure::unordered_map<coordinate const, node*> _umap;
+			library::data_structure::vector<node*> _vector;
+			library::data_structure::unordered_map<coordinate const, node*> _umap;
 		};
 	public:
 		inline explicit path(void) noexcept
@@ -162,7 +162,7 @@ namespace algorithm::a_star {
 			_heap.push(new node(_source, nullptr, _destination));
 			_open.set_bit(_source._x, _source._y, true);
 			while (!_heap.empty()) {
-				data_structure::shared_pointer<node>current(_heap.top());
+				library::data_structure::shared_pointer<node>current(_heap.top());
 				_heap.pop();
 				_close.set_bit(current->_position._x, current->_position._y, true);
 
@@ -193,7 +193,7 @@ namespace algorithm::a_star {
 				_parent.emplace_back(current);
 			}
 		}
-		inline auto result(void) noexcept -> data_structure::list<coordinate>& {
+		inline auto result(void) noexcept -> library::data_structure::list<coordinate>& {
 			return _result;
 		}
 	public:
@@ -209,15 +209,15 @@ namespace algorithm::a_star {
 			_destination = position;
 		}
 	public:
-		data_structure::bit_grid<long long> _close;
-		data_structure::bit_grid<long long> _open;
+		library::data_structure::bit_grid<long long> _close;
+		library::data_structure::bit_grid<long long> _open;
 		heap _heap;
-		data_structure::list<data_structure::weak_pointer<node>> _parent;
+		library::data_structure::list<library::data_structure::weak_pointer<node>> _parent;
 
 		grid const* _grid;
 		coordinate _source{};
 		coordinate _destination{};
-		data_structure::list<coordinate> _result;
-		data_structure::list<coordinate> _bresenham;
+		library::data_structure::list<coordinate> _result;
+		library::data_structure::list<coordinate> _bresenham;
 	};
 }

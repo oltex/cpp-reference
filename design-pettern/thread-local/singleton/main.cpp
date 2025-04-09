@@ -7,7 +7,7 @@
 
 class my_class  {
 private:
-	friend class design_pattern::_thread_local::singleton<my_class>;
+	friend class library::design_pattern::_thread_local::singleton<my_class>;
 private:
 	inline explicit my_class(void) noexcept = default;
 	inline virtual ~my_class(void) noexcept = default;
@@ -22,7 +22,7 @@ public:
 };
 
 int main(void) noexcept {
-	auto& a = design_pattern::_thread_local::singleton<my_class>::instance();
+	auto& a = library::design_pattern::_thread_local::singleton<my_class>::instance();
 	a.test();
 	//my_class::instance();
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);

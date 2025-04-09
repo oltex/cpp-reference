@@ -64,7 +64,7 @@ public:
 			break;
 		case state::run:
 			if (!path._heap.empty()) {
-				data_structure::shared_pointer<algorithm::a_star::path::node>current(path._heap.top());
+				library::data_structure::shared_pointer<algorithm::a_star::path::node>current(path._heap.top());
 				path._heap.pop();
 				path._close.set_bit(current->_position._x, current->_position._y, true);
 
@@ -161,7 +161,7 @@ public:
 		case state::run:
 			for (size_type skip = 0; skip < _skip; ++skip) {
 				if (!path._heap.empty()) {
-					data_structure::shared_pointer<algorithm::a_star::path::node>current(path._heap.top());
+					library::data_structure::shared_pointer<algorithm::a_star::path::node>current(path._heap.top());
 					path._heap.pop();
 					path._close.set_bit(current->_position._x, current->_position._y, true);
 

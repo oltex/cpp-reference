@@ -4,7 +4,7 @@
 #include <malloc.h>
 #include "../memory-pool/memory_pool.h"
 
-namespace data_structure {
+namespace library::data_structure {
 	template<typename type, typename allocator = memory_pool<type>>
 	class list final {
 	private:

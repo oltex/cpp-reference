@@ -8,7 +8,7 @@
 #include <vector>
 #include <intrin.h>
 
-data_structure::lockfree::object_pool<int> _object_pool;
+library::data_structure::lockfree::object_pool<int> _object_pool;
 
 inline static unsigned int __stdcall func(void* arg) noexcept {
 	std::vector<int*> _vector;

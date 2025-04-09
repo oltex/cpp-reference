@@ -103,7 +103,7 @@ private:
 	unsigned long long _tail;
 	unsigned long long _nullptr;
 	inline static unsigned long long _static_nullptr = 0;
-	data_structure::lockfree::memory_pool<node> _memory_pool;
+	library::data_structure::lockfree::memory_pool<node> _memory_pool;
 
 	volatile unsigned int _order = 0;
 	log* _log = new log[30000000];

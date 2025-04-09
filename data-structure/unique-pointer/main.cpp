@@ -20,7 +20,7 @@ int main(void) noexcept {
 	std::unique_ptr<int> std_unique_ptr3 = std::move(std_unique_ptr);
 
 
-	data_structure::unique_pointer<int[]> a;
+	library::data_structure::unique_pointer<int[]> a;
 
 	return 0;
 }

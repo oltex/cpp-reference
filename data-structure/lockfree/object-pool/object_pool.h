@@ -2,7 +2,7 @@
 #include <memory>
 #include <Windows.h>
 
-namespace data_structure::lockfree {
+namespace library::data_structure::lockfree {
 	template<typename type>
 	class object_pool final {
 	private:

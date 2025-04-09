@@ -1,7 +1,7 @@
 #pragma once
 #include <Windows.h>
 
-namespace system_component::multi::lock {
+namespace library::system_component::multi::lock {
 	class spin final {
 	public:
 		inline explicit spin(void) noexcept = default;

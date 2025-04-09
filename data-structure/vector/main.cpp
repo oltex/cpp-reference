@@ -37,14 +37,14 @@ struct sss {
 };
 
 int main(void) noexcept {
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	unsigned long long a{};
 	//std::
 	int result = ((my_str2*)&a)->_id;
 	//int result2 = ((my_str3)a)._id;
 
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	std::vector<my_class> std_vector;
-	data_structure::vector<my_class> vector;
+	jun::vector<my_class> vector;
 	vector.emplace_back(2);
 	vector.emplace_back(2);
 	vector.emplace_back(2);

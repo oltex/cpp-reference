@@ -9,7 +9,7 @@
 #include "../overlapped/overlapped.h"
 #include "../../data-structure/pair/pair.h"
 
-namespace system_component {
+namespace library::system_component {
 	inline static void wsa_start_up(void) noexcept {
 		WSAData wsadata;
 		if (0 != WSAStartup(0x0202, &wsadata))
@@ -88,7 +88,7 @@ namespace system_component {
 			}
 			return result;
 		}
-		inline auto accept(void) const noexcept -> data_structure::pair<socket, socket_address_ipv4> {
+		inline auto accept(void) const noexcept -> library::data_structure::pair<socket, socket_address_ipv4> {
 			socket_address_ipv4 socket_address;
 			int length = sizeof(sockaddr_in);
 			SOCKET sock = ::accept(_socket, &socket_address.data(), &length);
@@ -103,7 +103,7 @@ namespace system_component {
 					__debugbreak();
 				}
 			}
-			return data_structure::pair<socket, socket_address_ipv4>(socket(sock), socket_address);
+			return library::data_structure::pair<socket, socket_address_ipv4>(socket(sock), socket_address);
 		}
 		inline auto accept_ex(socket& socket_, void* output_buffer, unsigned long address_length, unsigned long remote_address_length, overlapped& overlapeed_) noexcept {
 			if (FALSE == _accept_ex(_socket, socket_.data(), output_buffer, 0, address_length, remote_address_length, nullptr, &overlapeed_.data())) {

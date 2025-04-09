@@ -1,6 +1,6 @@
 #pragma once
 
-namespace data_structure {
+namespace library::data_structure {
 	class reference_count {
 	private:
 		using size_type = unsigned int;

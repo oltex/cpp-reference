@@ -5,7 +5,7 @@
 #include "../handle/handle.h"
 #include "../../data-structure/tuple/tuple.h"
 
-namespace system_component {
+namespace library::system_component {
 	class inputoutput_completion_port final : public handle {
 	public:
 		inline explicit inputoutput_completion_port(void) noexcept = default;
@@ -40,8 +40,8 @@ namespace system_component {
 			result._result = GetQueuedCompletionStatus(_handle, &result._transferred, &result._key, &result._overlapped, milli_second);
 			return result;
 		}
-		inline auto get_queue_state_tuple(unsigned long milli_second) noexcept -> data_structure::tuple<bool, DWORD, ULONG_PTR, OVERLAPPED*> {
-			data_structure::tuple<bool, DWORD, ULONG_PTR, OVERLAPPED*> result;
+		inline auto get_queue_state_tuple(unsigned long milli_second) noexcept -> library::data_structure::tuple<bool, DWORD, ULONG_PTR, OVERLAPPED*> {
+			library::data_structure::tuple<bool, DWORD, ULONG_PTR, OVERLAPPED*> result;
 			result.get<0>() = GetQueuedCompletionStatus(_handle, &result.get<1>(), &result.get<2>(), &result.get<3>(), milli_second);
 			return result;
 		}

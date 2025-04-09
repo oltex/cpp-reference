@@ -10,9 +10,9 @@
 #define cache_simulator_access(identifier) \
 cache_simulator::instance().access(__FILE__, __LINE__, #identifier, (void*)&identifier)
 
-class cache_simulator final : public design_pattern::singleton<cache_simulator> {
+class cache_simulator final : public library::design_pattern::singleton<cache_simulator> {
 private:
-	friend class design_pattern::singleton<cache_simulator>;
+	friend class library::design_pattern::singleton<cache_simulator>;
 	struct cache_key final {
 		char const* const _file;
 		int const _line;
@@ -87,7 +87,7 @@ private:
 			return parent - size;
 		}
 	private:
-		data_structure::vector<cache_line> _line;
+		library::data_structure::vector<cache_line> _line;
 		unsigned long const _shift;
 		unsigned short _bit = 0;
 	};
@@ -108,7 +108,7 @@ private:
 			return _way[idx]->access(address);
 		}
 	private:
-		data_structure::vector<cache_way*> _way;
+		library::data_structure::vector<cache_way*> _way;
 		size_t const _mask;
 		unsigned long const _shift;
 	};
@@ -165,7 +165,7 @@ public:
 	}
 private:
 	cache_set* _set;
-	data_structure::unordered_map<cache_key, cache_value> _result;
+	library::data_structure::unordered_map<cache_key, cache_value> _result;
 };
 
 // (((reg.ebx & 0xffc00000) >> 22) + 1) * (((reg.ebx & 0x3ff000) >> 12) + 1) * ((reg.ebx & 0xfff) + 1) * (reg.ecx + 1);

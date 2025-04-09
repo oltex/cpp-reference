@@ -1,7 +1,7 @@
 #pragma once
 #include <concepts>
 
-namespace algorithm {
+namespace library::algorithm {
 	template <typename type>
 	inline constexpr auto greatest_common_divisor(type first, type second) noexcept {
 		while (second != 0) {

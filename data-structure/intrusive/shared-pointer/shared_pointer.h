@@ -3,7 +3,7 @@
 #include <utility>
 #include <type_traits>
 
-namespace data_structure::intrusive {
+namespace library::data_structure::intrusive {
 	template<size_t index>
 	class shared_pointer_hook {
 	private:

@@ -1,7 +1,7 @@
 #pragma once
 #include "../shared-pointer/shared_pointer.h"
 
-namespace data_structure {
+namespace library::data_structure {
 	template<typename type>
 	class weak_pointer final {
 	private:

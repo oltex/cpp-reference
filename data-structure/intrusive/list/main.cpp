@@ -1,7 +1,7 @@
 #include "list.h"
 #include <iostream>
 
-class my_class : public data_structure::intrusive::list_hook<0>, public data_structure::intrusive::list_hook<1> {
+class my_class : public library::data_structure::intrusive::list_hook<0>, public library::data_structure::intrusive::list_hook<1> {
 public:
 	inline explicit my_class(int a) noexcept
 		: _a(a) {
@@ -22,8 +22,8 @@ public:
 int main(void) noexcept {
 
 
-	data_structure::intrusive::list<my_class, 1> list1;
-	data_structure::intrusive::list<my_class, 1> list2;
+	library::data_structure::intrusive::list<my_class, 1> list1;
+	library::data_structure::intrusive::list<my_class, 1> list2;
 	my_class myclass1(1);
 	my_class myclass2(2);
 	my_class myclass3(3);

@@ -3,7 +3,7 @@
 #include "../pair/pair.h"
 #include <memory>
 
-namespace data_structure {
+namespace library::data_structure {
 	template<typename type>
 	class bit_grid final {
 	private:

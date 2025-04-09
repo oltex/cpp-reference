@@ -3,7 +3,7 @@
 #include "lock/slim_read_write.h"
 #include <Windows.h>
 
-namespace system_component::multi {
+namespace library::system_component::multi {
 	class condition_variable final {
 	public:
 		inline explicit condition_variable(void) noexcept {

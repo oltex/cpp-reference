@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 
-namespace data_structure {
+namespace library::data_structure {
 	class ring_buffer final {
 	private:
 		using byte = unsigned char;

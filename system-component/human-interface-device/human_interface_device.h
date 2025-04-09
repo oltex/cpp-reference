@@ -3,7 +3,7 @@
 #pragma comment(lib, "hid.lib")
 #include <hidsdi.h>
 
-namespace system_component {
+namespace library::system_component {
 	class human_interface_device final : public file {
 	public:
 		class attribute final {

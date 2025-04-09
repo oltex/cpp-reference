@@ -32,6 +32,6 @@ namespace algorithm::a_star {
 		}
 	public:
 		size_type _width, _height;
-		data_structure::bit_grid<unsigned long long> _bit_grid;
+		library::data_structure::bit_grid<unsigned long long> _bit_grid;
 	};
 }

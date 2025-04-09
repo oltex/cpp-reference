@@ -18,8 +18,8 @@ inline static auto test(int a, int b) noexcept {
 
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	data_structure::priority_queue<int, algorithm::predicate::less<int>> queue;
-	data_structure::priority_queue<int, test> queue2;
+	library::data_structure::priority_queue<int, algorithm::predicate::less<int>> queue;
+	library::data_structure::priority_queue<int, test> queue2;
 
 	queue.emplace(4);
 	queue2.emplace(4);

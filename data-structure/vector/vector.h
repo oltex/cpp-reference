@@ -3,7 +3,7 @@
 #include <utility>
 #include <stdlib.h>
 
-namespace data_structure {
+namespace library::data_structure {
 	template<typename type>
 	class vector {
 	public:

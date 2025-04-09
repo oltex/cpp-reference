@@ -15,7 +15,7 @@ public:
 			_timer = false;
 		}
 	}
-	inline void run(data_structure::map<int,int>& map) noexcept {
+	inline void run(library::data_structure::map<int,int>& map) noexcept {
 		auto value = rand() % 40;
 		if (false == rand() % 2) {
 			map.emplace(value, 0);

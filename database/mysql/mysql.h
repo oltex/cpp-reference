@@ -5,7 +5,7 @@
 #include "include/errmsg.h"
 #include <iostream>
 
-namespace database {
+namespace library::database {
 	class mysql final {
 	public:
 		class result final {

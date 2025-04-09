@@ -8,7 +8,7 @@
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-	data_structure::circular_queue<int> queue;
+	library::data_structure::circular_queue<int> queue;
 
 	//queue.emplace(0);
 	//queue.emplace(1);

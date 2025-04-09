@@ -3,7 +3,7 @@
 #include "../../lockfree/memory-pool/memory_pool.h"
 #include "../../pair/pair.h"
 
-namespace data_structure::_thread_local {
+namespace library::data_structure::_thread_local {
 	template<typename type, size_t bucket_size = 1024>
 	class object_pool final : public design_pattern::_thread_local::singleton<object_pool<type, bucket_size>> {
 	private:

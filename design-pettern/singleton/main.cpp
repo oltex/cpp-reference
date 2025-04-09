@@ -5,8 +5,8 @@
 #include "singleton.h"
 #include <iostream>
 
-class my_class : public design_pattern::singleton<my_class, design_pattern::member_static<my_class>> {
-	friend class design_pattern::singleton<my_class, design_pattern::member_static<my_class>>;
+class my_class : public library::design_pattern::singleton<my_class, library::design_pattern::member_static<my_class>> {
+	friend class library::design_pattern::singleton<my_class, library::design_pattern::member_static<my_class>>;
 public:
 	inline static auto constructor(void) noexcept -> my_class& {
 		_instance = new my_class();

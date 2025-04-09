@@ -7,7 +7,7 @@
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-	data_structure::pair<int, int> pair;
+	library::data_structure::pair<int, int> pair;
 
 	pair._first = 0;
 	pair._second = 1;

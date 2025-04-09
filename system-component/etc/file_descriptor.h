@@ -3,7 +3,7 @@
 #include "socket.h"
 #include <WinSock2.h>
 
-namespace system_component::network {
+namespace library::system_component::network {
 	class file_descriptor final {
 	private:
 		using size_type = unsigned int;

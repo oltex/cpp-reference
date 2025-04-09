@@ -9,7 +9,7 @@
 #include <iostream>
 
 namespace utility::performance_data_helper {
-	class query final : public design_pattern::singleton<query> {
+	class query final : public library::design_pattern::singleton<query> {
 	public:
 		class counter final {
 		public:
@@ -37,14 +37,14 @@ namespace utility::performance_data_helper {
 				PdhGetFormattedCounterValue(_counter, format, nullptr, &counter_value_);
 				return counter_value_;
 			}
-			inline auto get_formatted_array(unsigned long format) noexcept -> data_structure::pair<unsigned long, data_structure::unique_pointer<value_item[]>> {
+			inline auto get_formatted_array(unsigned long format) noexcept -> library::data_structure::pair<unsigned long, library::data_structure::unique_pointer<value_item[]>> {
 				unsigned long buffer_size = 0;
 				unsigned long item_count;
 				PdhGetFormattedCounterArrayW(_counter, format, &buffer_size, &item_count, nullptr);
 				value_item* counter_value_item_ = reinterpret_cast<value_item*>(malloc(buffer_size));
 				PdhGetFormattedCounterArrayW(_counter, format, &buffer_size, &item_count, counter_value_item_);
 
-				return data_structure::pair<unsigned long, data_structure::unique_pointer<value_item[]>>(item_count, counter_value_item_);
+				return library::data_structure::pair<unsigned long, library::data_structure::unique_pointer<value_item[]>>(item_count, counter_value_item_);
 			}
 			inline auto data(void) noexcept -> PDH_HCOUNTER& {
 				return _counter;
@@ -54,7 +54,7 @@ namespace utility::performance_data_helper {
 		};
 
 	private:
-		friend class design_pattern::singleton<query>;
+		friend class library::design_pattern::singleton<query>;
 	private:
 		inline explicit query(void) noexcept {
 			PdhOpenQueryW(nullptr, NULL, &_qurey);

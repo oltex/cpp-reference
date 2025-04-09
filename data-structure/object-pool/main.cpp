@@ -13,7 +13,7 @@ int* save[10000000];
 int index = 0;
 
 void func(void) noexcept {
-	data_structure::object_pool<int> object_pool;
+	library::data_structure::object_pool<int> object_pool;
 	for (size_t i = 0; i < 10000000; i++)
 		object_pool.release(object_pool.allocate());
 	index = 0;
@@ -50,7 +50,7 @@ void func2(void) noexcept {
 	std::cout << "malloc      :" << tsc << std::endl;
 }
 
-//void func(data_structure::object_pool<int>& object_pool) {
+//void func(library::data_structure::object_pool<int>& object_pool) {
 //	__int64 tsc = __rdtsc();
 //	for (int i = 0; i < 100000000; ++i) {
 //		int& a = object_pool.get();
@@ -75,7 +75,7 @@ void func2(void) noexcept {
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	system("pause");
-	data_structure::object_pool<my_class> object_pool;
+	library::data_structure::object_pool<my_class> object_pool;
 	object_pool.release(object_pool.allocate());
 
 	//for (int i = 0; i < 10000000; ++i)

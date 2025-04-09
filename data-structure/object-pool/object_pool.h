@@ -4,7 +4,7 @@
 #include <intrin.h> 
 #endif
 
-namespace data_structure {
+namespace library::data_structure {
 	template<typename type>
 	class object_pool final {
 	private:

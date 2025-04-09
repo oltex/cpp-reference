@@ -19,15 +19,15 @@ int main(void) noexcept {
 	//(*b).function();
 	//b->function();
 
-	data_structure::list<my_class> c;
+	library::data_structure::list<my_class> c;
 	c.emplace_back();
-	data_structure::list<my_class>::iterator d = c.begin();
+	library::data_structure::list<my_class>::iterator d = c.begin();
 	(*d).function();
 	d->function();
 
 
-	data_structure::list<int> list;
-	data_structure::list<int>::iterator iter;
+	library::data_structure::list<int> list;
+	library::data_structure::list<int>::iterator iter;
 	list.push_back(40);
 	list.push_front(20);
 	list.push_back(50);
@@ -49,7 +49,7 @@ int main(void) noexcept {
 	list.insert(iter++, 100);
 	//list.erase(iter);
 
-	data_structure::list<int> list2;
+	library::data_structure::list<int> list2;
 	list2.swap(list);
 
 	for (iter = list2.begin(); iter != list2.end(); ++iter)
@@ -58,7 +58,7 @@ int main(void) noexcept {
 	//for (iter = list.begin(); iter != list.end();)
 	//	iter = list.erase(iter);
 
-	data_structure::list<int> list3(list);
-	data_structure::list<int> list4(std::move(list));
+	library::data_structure::list<int> list3(list);
+	library::data_structure::list<int> list4(std::move(list));
 	return 0;
 }

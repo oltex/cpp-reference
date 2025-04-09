@@ -12,9 +12,9 @@
 #include "library/data-structure/map.h"
 
 
-class client final : public design_pattern::singleton<client, design_pattern::member_static<client>> {
+class client final : public library::design_pattern::singleton<client, library::design_pattern::member_static<client>> {
 private:
-	friend class design_pattern::singleton<client, design_pattern::member_static<client>>;
+	friend class library::design_pattern::singleton<client, library::design_pattern::member_static<client>>;
 	using size_type = unsigned int;
 public:
 	inline static auto constructor(window::window&& window) noexcept -> client& {
@@ -124,7 +124,7 @@ public:
 				RECT ellipse{ LONG(i * _tree._ellipse_size), LONG(iter2._depth * _tree._ellipse_size), LONG((i + 1) * _tree._ellipse_size), LONG((iter2._depth + 1) * _tree._ellipse_size) };
 				ellipse = _camera.clinet_to_camrea(ellipse);
 
-				if (iter2._node->_color == data_structure::map<int, int>::color::red)
+				if (iter2._node->_color == library::data_structure::map<int, int>::color::red)
 					_dc.select_object(_tree._red);
 				else
 					_dc.select_object(_tree._black);
@@ -153,5 +153,5 @@ public:
 	test _test;
 	std::string _input;
 
-	data_structure::map<int, int> _map;
+	library::data_structure::map<int, int> _map;
 };

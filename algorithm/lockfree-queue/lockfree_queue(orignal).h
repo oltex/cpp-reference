@@ -98,7 +98,7 @@ public:
 private:
 	unsigned long long _head;
 	unsigned long long _tail;
-	data_structure::lockfree::memory_pool<node> _object_pool;
+	library::data_structure::lockfree::memory_pool<node> _object_pool;
 	inline static unsigned long long _nullptr;
 	inline static unsigned long long _static_nullptr = 0;
 

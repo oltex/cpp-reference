@@ -20,7 +20,7 @@ namespace utility {
 		inline ~parser(void) noexcept = default;
 	public:
 		inline void open(std::wstring_view path) noexcept {
-			system_component::file file(path, GENERIC_READ, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL);
+			library::system_component::file file(path, GENERIC_READ, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL);
 			auto size = file.get_size_ex().QuadPart;
 
 			char* buffer = reinterpret_cast<char*>(malloc(sizeof(char) * size + 1));

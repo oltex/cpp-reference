@@ -5,7 +5,7 @@
 #include <intrin.h>
 #include <optional>
 
-namespace data_structure::lockfree {
+namespace library::data_structure::lockfree {
 	template<typename type>
 	class stack final {
 	private:

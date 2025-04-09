@@ -2,7 +2,7 @@
 #include <memory>
 #include <type_traits>
 
-namespace data_structure {
+namespace library::data_structure {
 	template<typename type>
 	class circular_queue final {
 	private:
@@ -84,7 +84,7 @@ namespace data_structure {
 				}
 			free(_array);
 		}
-	public:
+
 		template<typename universal>
 		inline void push(universal&& value) noexcept {
 			emplace(std::forward<universal>(value));
@@ -117,7 +117,7 @@ namespace data_structure {
 				_front = (_front + 1) % _capacity;
 			}
 		}
-	public:
+
 		inline auto top(void) const noexcept -> type& {
 			return _array[_front];
 		};
@@ -127,7 +127,7 @@ namespace data_structure {
 		inline auto end(void) noexcept -> iterator {
 			return iterator(_array, _rear, _capacity);
 		}
-	public:
+
 		inline void clear(void) noexcept {
 			if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
 				while (!empty())
@@ -156,7 +156,6 @@ namespace data_structure {
 				_rear = _size;
 			}
 		}
-	public:
 		inline auto size(void) const noexcept -> size_type {
 			return (_rear + _capacity - _front) % _capacity;
 		}

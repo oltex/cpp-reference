@@ -13,11 +13,11 @@
 struct my_struct {
 	unsigned long long _value[128];
 };
-data_structure::lockfree::stack<int*> _stack;
+library::data_structure::lockfree::stack<int*> _stack;
 volatile unsigned long long _stack_size = 0;
 
 inline static unsigned int __stdcall func_pool(void* arg) noexcept {
-	auto& instance = data_structure::_thread_local::object_pool<my_struct>::instance();
+	auto& instance = library::data_structure::_thread_local::object_pool<my_struct>::instance();
 	my_struct** _array = (my_struct**)malloc(sizeof(my_struct*) * 1000000);
 
 	for (;;) {
@@ -65,7 +65,7 @@ inline static unsigned int __stdcall func_new(void* arg) noexcept {
 }
 
 inline static unsigned int __stdcall func_alloc(void* arg) noexcept {
-	auto& instance = data_structure::_thread_local::object_pool<int>::instance();
+	auto& instance = library::data_structure::_thread_local::object_pool<int>::instance();
 	for (;;) {
 		std::cout << "allocate" << std::endl;
 		Sleep(0);
@@ -82,7 +82,7 @@ inline static unsigned int __stdcall func_alloc(void* arg) noexcept {
 	return 0;
 }
 inline static unsigned int __stdcall func_dealloc(void* arg) noexcept {
-	auto& instance = data_structure::_thread_local::object_pool<int>::instance();
+	auto& instance = library::data_structure::_thread_local::object_pool<int>::instance();
 
 	for (;;) {
 		auto value = _stack.pop();
@@ -99,7 +99,7 @@ inline static unsigned int __stdcall func_dealloc(void* arg) noexcept {
 
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//auto& instance = data_structure::_thread_local::object_pool<my_class>::instance();
+	//auto& instance = library::data_structure::_thread_local::object_pool<my_class>::instance();
 	//std::vector<my_class*> _vector;
 	//for (int i = 0; i < 4; ++i) {
 	//	if (instance.empty())

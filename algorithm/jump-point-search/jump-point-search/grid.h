@@ -10,7 +10,7 @@ namespace algorithm::jump_point_search {
 	public:
 		inline explicit grid(size_type const width, size_type const height) noexcept
 			: _width(width), _height(height),
-			_bit_grid{ data_structure::bit_grid<unsigned long long>(width, height), data_structure::bit_grid<unsigned long long>(height, width) } {
+			_bit_grid{ library::data_structure::bit_grid<unsigned long long>(width, height), library::data_structure::bit_grid<unsigned long long>(height, width) } {
 		};
 		inline ~grid(void) noexcept = default;
 	public:
@@ -46,7 +46,7 @@ namespace algorithm::jump_point_search {
 			return _bit_grid[axis].get_word(index);
 		}
 		inline auto get_position(div_t const& div, axis const axis) const noexcept -> coordinate {
-			data_structure::pair<size_type, size_type> pair = _bit_grid[axis].get_pos(div);
+			library::data_structure::pair<size_type, size_type> pair = _bit_grid[axis].get_pos(div);
 			return coordinate(pair._first, pair._second);
 		}
 		inline bool in_bound(coordinate position) const noexcept {
@@ -59,7 +59,7 @@ namespace algorithm::jump_point_search {
 			_bit_grid[1].clear();
 		}
 	public:
-		data_structure::bit_grid<unsigned long long> _bit_grid[2];
+		library::data_structure::bit_grid<unsigned long long> _bit_grid[2];
 		size_type _width, _height;
 	};
 }

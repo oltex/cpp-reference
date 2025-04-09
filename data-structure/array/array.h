@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 
-namespace data_structure {
+namespace library::data_structure {
 	template<typename type, size_t _size>
 	class array final {
 	public:

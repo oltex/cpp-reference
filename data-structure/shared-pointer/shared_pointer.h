@@ -3,7 +3,7 @@
 #include <utility>
 #include <type_traits>
 
-namespace data_structure {
+namespace library::data_structure {
 	struct reference final {
 	private:
 		using size_type = unsigned int;
