@@ -40,10 +40,6 @@ namespace library::data_structure::lockfree {
 			}
 		};
 
-		template<typename universal>
-		inline void push(universal&& value) noexcept {
-			emplace(std::forward<universal>(value));
-		}
 		template<typename... argument>
 		inline void emplace(argument&&... arg) noexcept {
 			node* current = &_memory_pool::instance().allocate();
