@@ -3,7 +3,7 @@
 #include <optional>
 
 namespace library::data_structure::lockfree {
-	template <typename type>
+	template <typename type, bool multi_pop = true>
 		requires std::is_trivially_copy_constructible_v<type>&& std::is_trivially_destructible_v<type>
 	class queue {
 	protected:
@@ -72,7 +72,7 @@ namespace library::data_structure::lockfree {
 				}
 			}
 		}
-		inline auto pop(void) noexcept -> std::optional<type> {
+		inline auto pop(void) noexcept -> std::optional<type> requires (true == multi_pop) {
 			for (;;) {
 				unsigned long long head = _head;
 				node* address = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & head);
@@ -93,6 +93,30 @@ namespace library::data_structure::lockfree {
 					}
 				}
 			}
+		}
+		inline auto pop(void) noexcept -> type requires (false == multi_pop) {
+			unsigned long long head = _head;
+			node* address = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & head);
+			unsigned long long next = address->_next;
+
+			if (0x10000 > (0x00007FFFFFFFFFFFULL & next))
+				__debugbreak();
+			unsigned long long tail = _tail;
+			if (tail == head)
+				_InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_tail), next, tail);
+
+			type result = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & next)->_value;
+			_head = next;
+			_memory_pool::instance().deallocate(*address);
+			return result;
+		}
+		inline auto empty(void) const noexcept requires (false == multi_pop) {
+			unsigned long long head = _head;
+			node* address = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & head);
+			unsigned long long next = address->_next;
+			if (_nullptr == (0x00007FFFFFFFFFFFULL & next))
+				return true;
+			return false;
 		}
 	protected:
 		unsigned long long _head;

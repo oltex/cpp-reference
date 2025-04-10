@@ -77,21 +77,15 @@ namespace library::data_structure::lockfree {
 					return std::nullopt;
 				else if (0x10000 <= next) {
 					unsigned long long tail = _tail;
-					node* tail_address = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & tail);
-					if (reinterpret_cast<unsigned long long>(tail_address) == reinterpret_cast<unsigned long long>(address)) {
-						unsigned long long tail_next = tail_address->_next;
-						if (0x10000 <= tail_next)
-							_InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_tail), tail_next + (0xFFFF800000000000ULL & tail) + 0x0000800000000000ULL, tail);
-					}
-					else {
-						type result = reinterpret_cast<node*>(next)->_value;
-						unsigned long long change = next + (0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
-						if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), change, head)) {
-							if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
-								address->_value.~type();
-							_memory_pool::instance().deallocate(*address);
-							return result;
-						}
+					if (head == tail)
+						_InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_tail), next + (0xFFFF800000000000ULL & tail) + 0x0000800000000000ULL, tail);
+					type result = reinterpret_cast<node*>(next)->_value;
+					unsigned long long change = next + (0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
+					if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), change, head)) {
+						if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
+							address->_value.~type();
+						_memory_pool::instance().deallocate(*address);
+						return result;
 					}
 				}
 			}
@@ -103,3 +97,10 @@ namespace library::data_structure::lockfree {
 		inline static unsigned long long _static_nullptr = 0;
 	};
 }
+
+//node* tail_address = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & tail);
+//if (reinterpret_cast<unsigned long long>(tail_address) == reinterpret_cast<unsigned long long>(address)) {
+	//unsigned long long tail_next = tail_address->_next;
+	//if (0x10000 <= tail_next)
+//		_InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_tail), tail_next + (0xFFFF800000000000ULL & tail) + 0x0000800000000000ULL, tail);
+//}
