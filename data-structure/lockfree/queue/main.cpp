@@ -77,7 +77,7 @@ inline static unsigned int __stdcall func_push(void* arg) noexcept {
 	for (;;/*int i = 0; i < 100000000; ++i*/) {
 		if (count == 1000000) {
 			rdtsc = __rdtsc() - rdtsc;
-			printf("thread_push : %d, %lld, %lld\n", GetCurrentThreadId(), rdtsc, _lockfree_queue._cnt);
+			printf("thread_push : %d, %lld\n", GetCurrentThreadId(), rdtsc);
 			rdtsc = __rdtsc();
 			count = 0;
 		}
@@ -92,12 +92,12 @@ inline static unsigned int __stdcall func_pop(void* arg) noexcept {
 	auto rdtsc = __rdtsc();
 	unsigned long long _value = 0;
 	for (;;) {
-		//if (count == 1000000) {
-		//	rdtsc = __rdtsc() - rdtsc;
-		//	printf("thread_pop  : %d, %lld, %lld, %lld, %lld\n", GetCurrentThreadId(), rdtsc, _lockfree_queue._cnt2, _lockfree_queue._cnt3, _lockfree_queue._cnt4);
-		//	rdtsc = __rdtsc();
-		//	count = 0;
-		//}
+		if (count == 1000000) {
+			rdtsc = __rdtsc() - rdtsc;
+			printf("thread_pop  : %d, %lld\n", GetCurrentThreadId(), rdtsc);
+			rdtsc = __rdtsc();
+			count = 0;
+		}
 		//if (!_lockfree_queue.empty()) {
 		//	unsigned long long result = _lockfree_queue.pop();
 		//	//if (_value > result)
