@@ -14,21 +14,10 @@
 
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//std::list<my_class> a;
-	//std::list<my_class>::iterator b;
-	//(*b).function();
-	//b->function();
 
-	library::data_structure::list<my_class> c;
-	c.emplace_back();
-	library::data_structure::list<my_class>::iterator d = c.begin();
-	(*d).function();
-	d->function();
-
-
-	library::data_structure::list<int> list;
-	library::data_structure::list<int>::iterator iter;
-	list.push_back(40);
+	library::data_structure::list<my_class> list;
+	library::data_structure::list<my_class>::iterator iter;
+	list.emplace_back(40);
 	list.push_front(20);
 	list.push_back(50);
 	list.push_front(10);
@@ -38,27 +27,28 @@ int main(void) noexcept {
 
 	iter = list.begin();
 	for (size_t i = 0; i < list.size(); ++i) {
-		std::cout << (*iter) << std::endl;
+		(*iter).function();
+		//std::cout << (*iter).function() << std::endl;
 		++iter;
 	}
 
-	iter = list.begin();
-	++iter;
-	++iter;
-	--iter;
-	list.insert(iter++, 100);
-	//list.erase(iter);
+	//iter = list.begin();
+	//++iter;
+	//++iter;
+	//--iter;
+	//list.insert(iter++, 100);
+	////list.erase(iter);
 
-	library::data_structure::list<int> list2;
-	list2.swap(list);
+	//library::data_structure::list<int> list2;
+	//list2.swap(list);
 
-	for (iter = list2.begin(); iter != list2.end(); ++iter)
-		std::cout << *iter << std::endl;
+	//for (iter = list2.begin(); iter != list2.end(); ++iter)
+	//	std::cout << *iter << std::endl;
 
-	//for (iter = list.begin(); iter != list.end();)
-	//	iter = list.erase(iter);
+	////for (iter = list.begin(); iter != list.end();)
+	////	iter = list.erase(iter);
 
-	library::data_structure::list<int> list3(list);
-	library::data_structure::list<int> list4(std::move(list));
+	//library::data_structure::list<int> list3(list);
+	//library::data_structure::list<int> list4(std::move(list));
 	return 0;
 }

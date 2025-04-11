@@ -1,20 +1,31 @@
 #pragma once
-#include <memory>
+#include "../../system-component/memory/memory.h"
 
 namespace library::data_structure {
-	template<typename type>
+	template<typename type, bool placement = true, bool compress = true>
 	class memory_pool final {
 	private:
-		union node final {
-			inline explicit node(void) noexcept = delete;
-			inline explicit node(node const&) noexcept = delete;
-			inline explicit node(node&&) noexcept = delete;
-			inline auto operator=(node const&) noexcept = delete;
-			inline auto operator=(node&&) noexcept = delete;
-			inline ~node(void) noexcept = delete;
-			node* _next;
+		union union_node final {
+			inline explicit union_node(void) noexcept = delete;
+			inline explicit union_node(union_node const&) noexcept = delete;
+			inline explicit union_node(union_node&&) noexcept = delete;
+			inline auto operator=(union_node const&) noexcept = delete;
+			inline auto operator=(union_node&&) noexcept = delete;
+			inline ~union_node(void) noexcept = delete;
+			union_node* _next;
 			type _value;
 		};
+		struct strcut_node {
+			inline explicit strcut_node(void) noexcept = delete;
+			inline explicit strcut_node(strcut_node const&) noexcept = delete;
+			inline explicit strcut_node(strcut_node&&) noexcept = delete;
+			inline auto operator=(strcut_node const&) noexcept = delete;
+			inline auto operator=(strcut_node&&) noexcept = delete;
+			inline ~strcut_node(void) noexcept = delete;
+			strcut_node* _next;
+			type _value;
+		};
+		using node = typename std::conditional<compress, union union_node, struct strcut_node>::type;
 	public:
 		template <typename other>
 		using rebind = memory_pool<other>;
@@ -34,7 +45,7 @@ namespace library::data_structure {
 			while (nullptr != _head) {
 #pragma warning(suppress: 6001)
 				node* next = _head->_next;
-				free(_head);
+				system_component::memory::deallocate(_head);
 				_head = next;
 			}
 		}
@@ -43,27 +54,21 @@ namespace library::data_structure {
 		inline auto allocate(argument&&... arg) noexcept -> type& {
 			node* current;
 			if (nullptr == _head)
-				current = static_cast<node*>(malloc(sizeof(node)));
+				current = system_component::memory::allocate<node>();
 			else {
 				current = _head;
 				_head = current->_next;
 			}
-
-			if constexpr (std::is_class_v<type>) {
-				if constexpr (std::is_constructible_v<type, argument...>)
-					::new(reinterpret_cast<void*>(&current->_value)) type(std::forward<argument>(arg)...);
-			}
-			else if constexpr (1 == sizeof...(arg))
-#pragma warning(suppress: 6011)
-				current->_value = type(std::forward<argument>(arg)...);
-#pragma warning(suppress: 6011)
+			if constexpr (true == placement)
+				system_component::memory::construct(current->_value, std::forward<argument>(arg)...);
 			return current->_value;
 		}
 		inline void deallocate(type& value) noexcept {
-			if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
-				value.~type();
-			reinterpret_cast<node*>(&value)->_next = _head;
-			_head = reinterpret_cast<node*>(&value);
+			if constexpr (true == placement)
+				system_component::memory::destruct(value);
+			node* current = reinterpret_cast<node*>(reinterpret_cast<unsigned char*>(&value) - offsetof(node, _value));
+			current->_next = _head;
+			_head = current;
 		}
 	public:
 		inline void swap(memory_pool& rhs) noexcept {

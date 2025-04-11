@@ -2,6 +2,7 @@
 #include <initializer_list>
 #include <utility>
 #include <stdlib.h>
+#include "../../system-component/memory/memory.h"
 
 namespace library::data_structure {
 	template<typename type>
@@ -51,8 +52,7 @@ namespace library::data_structure {
 				reserve(capacity);
 			}
 			type* element = _array + _size++;
-			//if constexpr (!std::is_trivially_constructible_v<type, argument...>)
-			//	int a = 10;
+
 			if constexpr (std::is_class_v<type>) {
 				if constexpr (std::is_constructible_v<type, argument...>)
 					::new(reinterpret_cast<void*>(element)) type(std::forward<argument>(arg)...);

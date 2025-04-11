@@ -198,6 +198,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "registered-inputouput", "sy
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "human-interface-device", "system-component\human-interface-device\human-interface-device.vcxproj", "{8A759BD1-1910-4825-96C7-0C5C0ED8C5B0}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "memory", "system-component\memory\memory.vcxproj", "{F826CDFB-9A05-43D0-8641-B5C153E7DD45}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -822,6 +824,14 @@ Global
 		{8A759BD1-1910-4825-96C7-0C5C0ED8C5B0}.Release|x64.Build.0 = Release|x64
 		{8A759BD1-1910-4825-96C7-0C5C0ED8C5B0}.Release|x86.ActiveCfg = Release|Win32
 		{8A759BD1-1910-4825-96C7-0C5C0ED8C5B0}.Release|x86.Build.0 = Release|Win32
+		{F826CDFB-9A05-43D0-8641-B5C153E7DD45}.Debug|x64.ActiveCfg = Debug|x64
+		{F826CDFB-9A05-43D0-8641-B5C153E7DD45}.Debug|x64.Build.0 = Debug|x64
+		{F826CDFB-9A05-43D0-8641-B5C153E7DD45}.Debug|x86.ActiveCfg = Debug|Win32
+		{F826CDFB-9A05-43D0-8641-B5C153E7DD45}.Debug|x86.Build.0 = Debug|Win32
+		{F826CDFB-9A05-43D0-8641-B5C153E7DD45}.Release|x64.ActiveCfg = Release|x64
+		{F826CDFB-9A05-43D0-8641-B5C153E7DD45}.Release|x64.Build.0 = Release|x64
+		{F826CDFB-9A05-43D0-8641-B5C153E7DD45}.Release|x86.ActiveCfg = Release|Win32
+		{F826CDFB-9A05-43D0-8641-B5C153E7DD45}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -913,6 +923,7 @@ Global
 		{8349FA8A-59AB-416E-9DAF-282063B8453D} = {88033A2C-B20C-4143-A6D8-0A943F34408E}
 		{2468C369-619D-4042-AAD4-5135E4612BAA} = {1AA55DD9-5821-4C5B-980D-997F42D8264C}
 		{8A759BD1-1910-4825-96C7-0C5C0ED8C5B0} = {1AA55DD9-5821-4C5B-980D-997F42D8264C}
+		{F826CDFB-9A05-43D0-8641-B5C153E7DD45} = {1AA55DD9-5821-4C5B-980D-997F42D8264C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C69985D6-20AB-4E9A-AD82-08BFBE490891}

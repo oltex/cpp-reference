@@ -4,7 +4,7 @@
 #include "../../pair/pair.h"
 
 namespace library::data_structure::_thread_local {
-	template<typename type, size_t bucket_size = 1024, bool use_union = true>
+	template<typename type, size_t bucket_size = 1024, bool placement = true, bool use_union = true>
 	class memory_pool final : public design_pattern::_thread_local::singleton<memory_pool<type, bucket_size, use_union>> {
 	private:
 		friend class design_pattern::_thread_local::singleton<memory_pool<type, bucket_size, use_union>>;
@@ -131,6 +131,8 @@ namespace library::data_structure::_thread_local {
 		inline auto operator=(memory_pool const& rhs) noexcept -> memory_pool & = delete;
 		inline auto operator=(memory_pool&& rhs) noexcept -> memory_pool & = delete;
 		inline ~memory_pool(void) noexcept {
+			if (0 == _size)
+				return;
 			if (_size > bucket_size) {
 				_stack.push(_head, _size - bucket_size);
 				_head = _break;
@@ -149,26 +151,20 @@ namespace library::data_structure::_thread_local {
 			}
 			current = _head;
 			_head = current->_next;
-			if constexpr (std::is_class_v<type>) {
-				if constexpr (std::is_constructible_v<type, argument...>)
+			if constexpr (true == placement && std::is_constructible_v<type, argument...>)
+				if constexpr (std::is_class_v<type>)
 					::new(reinterpret_cast<void*>(&current->_value)) type(std::forward<argument>(arg)...);
-			}
-			else if constexpr (1 == sizeof...(arg))
-				current->_value = type(std::forward<argument>(arg)...);
+				else
+					current->_value = type(std::forward<argument>(arg)...);
 			--_size;
 			return current->_value;
 		}
 		inline void deallocate(type& value) noexcept {
-			if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
+			if constexpr (true == placement && std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
 				value.~type();
-			if constexpr (true == use_union) {
-				reinterpret_cast<node*>(&value)->_next = _head;
-				_head = reinterpret_cast<node*>(&value);
-			}
-			else {
-				reinterpret_cast<node*>(reinterpret_cast<uintptr_t*>(&value) - 1)->_next = _head;
-				_head = reinterpret_cast<node*>(reinterpret_cast<uintptr_t*>(&value) - 1);
-			}
+			node* current = reinterpret_cast<node*>(reinterpret_cast<unsigned char*>(&value) - offsetof(node, _value));
+			current->_next = _head;
+			_head = current;
 			++_size;
 
 			if (bucket_size == _size)

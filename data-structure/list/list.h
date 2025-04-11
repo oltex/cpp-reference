@@ -3,9 +3,10 @@
 #include <stdlib.h>
 #include <malloc.h>
 #include "../memory-pool/memory_pool.h"
+#include "../../system-component/memory/memory.h"
 
 namespace library::data_structure {
-	template<typename type, typename allocator = memory_pool<type>>
+	template<typename type, typename allocator = memory_pool<type>, bool placement = true>
 	class list final {
 	private:
 		using size_type = unsigned int;
@@ -90,9 +91,7 @@ namespace library::data_structure {
 			: list() {
 			swap(rhs);
 		}
-		//not implemented
 		inline auto operator=(list const& rhs) noexcept;
-		//not implemented
 		inline auto operator=(list&& rhs) noexcept;
 		inline ~list(void) noexcept {
 			clear();
@@ -122,14 +121,8 @@ namespace library::data_structure {
 		template<typename... argument>
 		inline auto emplace(iterator const& iter, argument&&... arg) noexcept -> iterator {
 			auto current = &_allocator.allocate();
-			//auto current = reinterpret_cast<node*>(malloc(sizeof(node)));
-			if constexpr (std::is_class_v<type>) {
-				if constexpr (std::is_constructible_v<type, argument...>)
-					::new(reinterpret_cast<void*>(&current->_value)) type(std::forward<argument>(arg)...);
-			}
-			else if constexpr (1 == sizeof...(arg))
-#pragma warning(suppress: 6011)
-				current->_value = type(std::forward<argument>(arg)...);
+			if constexpr (true == placement)
+				system_component::memory::construct(current->_value, std::forward<argument>(arg)...);
 			auto next = iter._node;
 			auto prev = next->_prev;
 
@@ -155,8 +148,8 @@ namespace library::data_structure {
 			prev->_next = next;
 			next->_prev = prev;
 
-			if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
-				current->_value.~type();
+			if constexpr (true == placement)
+				system_component::memory::destruct(current->_value);
 			_allocator.deallocate(*current);
 			--_size;
 			return iterator(next);
@@ -190,8 +183,8 @@ namespace library::data_structure {
 			auto current = _head->_next;
 			for (auto next = current; current != _head; current = next) {
 				next = next->_next;
-				if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
-					current->_value.~type();
+				if constexpr (true == placement)
+					system_component::memory::destruct(current->_value);
 				_allocator.deallocate(*current);
 			}
 			_head->_next = _head->_prev = _head;
