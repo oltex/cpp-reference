@@ -70,7 +70,8 @@ namespace library::data_structure {
 		};
 	public:
 		inline explicit list(void) noexcept
-			: _head(reinterpret_cast<node*>(calloc(1, sizeof(node*) * 2))) {
+			: _head(reinterpret_cast<node*>(system_component::memory::allocate(sizeof(node*) * 2))) {
+			
 #pragma warning(suppress: 6011)
 			_head->_next = _head->_prev = _head;
 		}
@@ -95,7 +96,7 @@ namespace library::data_structure {
 		inline auto operator=(list&& rhs) noexcept;
 		inline ~list(void) noexcept {
 			clear();
-			free(_head);
+			system_component::memory::deallocate(reinterpret_cast<void*>(_head));
 		}
 	public:
 		template<typename universal>

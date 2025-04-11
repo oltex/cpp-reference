@@ -25,30 +25,44 @@ namespace library::system_component::memory {
 		else
 			return reinterpret_cast<type*>(::_aligned_malloc(sizeof(type) * size, alignof(type)));
 	}
-	inline auto deallocate(void* const value) noexcept {
-		::free(value);
+
+	inline auto reallocate(void* pointer, size_t const size) noexcept -> void* {
+		return reinterpret_cast<void*>(realloc(pointer, size));
 	}
 	template<typename type>
 		requires (!std::is_void_v<type>)
-	inline auto deallocate(type* const value) noexcept {
+	inline auto reallocate(type* pointer, size_t const size) noexcept -> type* {
 		if constexpr (16 >= alignof(type))
-			::free(value);
+			return reinterpret_cast<type*>(::realloc(pointer, sizeof(type) * size));
 		else
-			::_aligned_free(value);
+			return reinterpret_cast<type*>(::_aligned_realloc(pointer, sizeof(type) * size, alignof(type)));
 	}
-	template<typename type, typename... argument>
-	inline auto construct(type& value, argument&&... arg) noexcept {
-		if constexpr (std::is_constructible_v<type, argument...>)
-			if constexpr (std::is_class_v<type>)
-				::new(reinterpret_cast<void*>(&value)) type(std::forward<argument>(arg)...);
-			else
-#pragma warning(suppress: 6011)
-				value = type(std::forward<argument>(arg)...);
+
+	inline auto deallocate(void* const pointer) noexcept {
+		::free(pointer);
 	}
 	template<typename type>
-	inline auto destruct(type& value) noexcept {
+		requires (!std::is_void_v<type>)
+	inline auto deallocate(type* const pointer) noexcept {
+		if constexpr (16 >= alignof(type))
+			::free(pointer);
+		else
+			::_aligned_free(pointer);
+	}
+
+	template<typename type, typename... argument>
+	inline auto construct(type& instance, argument&&... arg) noexcept {
+		if constexpr (std::is_constructible_v<type, argument...>)
+			if constexpr (std::is_class_v<type>)
+				::new(reinterpret_cast<void*>(&instance)) type(std::forward<argument>(arg)...);
+			else
+#pragma warning(suppress: 6011)
+				instance = type(std::forward<argument>(arg)...);
+	}
+	template<typename type>
+	inline auto destruct(type& instance) noexcept {
 		if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
-			value.~type();
+			instance.~type();
 	}
 }
 

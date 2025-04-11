@@ -1,21 +1,33 @@
 #pragma once
+#include "../../../system-component/memory/memory.h"
 #include <memory>
 #include <Windows.h>
 
 namespace library::data_structure::lockfree {
-	template<typename type>
+	template<typename type, bool placement = true, bool compress = true>
 	class memory_pool final {
 	private:
-		union node final {
-			inline explicit node(void) noexcept = delete;
-			inline explicit node(node const&) noexcept = delete;
-			inline explicit node(node&&) noexcept = delete;
-			inline auto operator=(node const&) noexcept = delete;
-			inline auto operator=(node&&) noexcept = delete;
-			inline ~node(void) noexcept = delete;
-			node* _next;
+		union union_node final {
+			inline explicit union_node(void) noexcept = delete;
+			inline explicit union_node(union_node const&) noexcept = delete;
+			inline explicit union_node(union_node&&) noexcept = delete;
+			inline auto operator=(union_node const&) noexcept = delete;
+			inline auto operator=(union_node&&) noexcept = delete;
+			inline ~union_node(void) noexcept = delete;
+			union_node* _next;
 			type _value;
 		};
+		struct strcut_node {
+			inline explicit strcut_node(void) noexcept = delete;
+			inline explicit strcut_node(strcut_node const&) noexcept = delete;
+			inline explicit strcut_node(strcut_node&&) noexcept = delete;
+			inline auto operator=(strcut_node const&) noexcept = delete;
+			inline auto operator=(strcut_node&&) noexcept = delete;
+			inline ~strcut_node(void) noexcept = delete;
+			strcut_node* _next;
+			type _value;
+		};
+		using node = typename std::conditional<compress, union union_node, struct strcut_node>::type;
 	public:
 		inline explicit memory_pool(void) noexcept
 			: _head(0) {
@@ -46,7 +58,7 @@ namespace library::data_structure::lockfree {
 				unsigned long long head = _head;
 				current = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & head);
 				if (nullptr == current) {
-					current = reinterpret_cast<node*>(malloc(sizeof(node)));
+					current = system_component::memory::allocate<node>();
 					break;
 				}
 				unsigned long long next = reinterpret_cast<unsigned long long>(current->_next) + (0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
@@ -54,23 +66,18 @@ namespace library::data_structure::lockfree {
 					break;
 			}
 
-			if constexpr (std::is_class_v<type>) {
-				if constexpr (std::is_constructible_v<type, argument...>)
-					::new(reinterpret_cast<void*>(&current->_value)) type(std::forward<argument>(arg)...);
-			}
-			else if constexpr (1 == sizeof...(arg))
-				current->_value = type(std::forward<argument>(arg)...);
-#pragma warning(suppress: 6011)
+			if constexpr (true == placement)
+				system_component::memory::construct(current->_value, std::forward<argument>(arg)...);
 			return current->_value;
 		}
 		inline void deallocate(type& value) noexcept {
-			if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
-				value.~type();
-
+			if constexpr (true == placement)
+				system_component::memory::destruct(value);
+			node* current = reinterpret_cast<node*>(reinterpret_cast<unsigned char*>(&value) - offsetof(node, _value));
 			for (;;) {
 				unsigned long long head = _head;
-				reinterpret_cast<node&>(value)._next = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & head);
-				unsigned long long next = reinterpret_cast<unsigned long long>(&value) + (0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
+				current->_next = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & head);
+				unsigned long long next = reinterpret_cast<unsigned long long>(current) + (0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
 				if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head))
 					break;
 			}
