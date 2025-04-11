@@ -45,7 +45,7 @@ namespace library::data_structure {
 			while (nullptr != _head) {
 #pragma warning(suppress: 6001)
 				node* next = _head->_next;
-				system_component::memory::deallocate(_head);
+				system_component::memory::deallocate<node>(_head);
 				_head = next;
 			}
 		}

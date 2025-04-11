@@ -46,7 +46,7 @@ namespace library::data_structure::lockfree {
 			node* head = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & _head);
 			while (nullptr != head) {
 				node* next = head->_next;
-				free(head);
+				system_component::memory::deallocate<node>(head);
 				head = next;
 			}
 		}
