@@ -15,20 +15,19 @@
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-	library::data_structure::list<my_class> list;
-	library::data_structure::list<my_class>::iterator iter;
-	list.emplace_back(40);
+	library::data_structure::list<int> list;
+	library::data_structure::list<int>::iterator iter;
+	list.emplace_back(30);
 	list.push_front(20);
-	list.push_back(50);
+	list.push_back(40);
 	list.push_front(10);
 
-	list.pop_front();
-	list.pop_back();
+	//list.pop_front();
+	//list.pop_back();
 
 	iter = list.begin();
 	for (size_t i = 0; i < list.size(); ++i) {
-		(*iter).function();
-		//std::cout << (*iter).function() << std::endl;
+		std::cout << (*iter) << std::endl;
 		++iter;
 	}
 
@@ -39,11 +38,13 @@ int main(void) noexcept {
 	//list.insert(iter++, 100);
 	////list.erase(iter);
 
-	//library::data_structure::list<int> list2;
-	//list2.swap(list);
+	library::data_structure::list<int> list2;
+	list2.swap(list);
 
-	//for (iter = list2.begin(); iter != list2.end(); ++iter)
-	//	std::cout << *iter << std::endl;
+	for (iter = list.begin(); iter != list.end(); ++iter)
+		std::cout << *iter << std::endl;
+	for (iter = list2.begin(); iter != list2.end(); ++iter)
+		std::cout << *iter << std::endl;
 
 	////for (iter = list.begin(); iter != list.end();)
 	////	iter = list.erase(iter);

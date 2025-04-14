@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{7ac8e688-90fc-4576-959c-d418b71a5517}</ProjectGuid>
-    <RootNamespace>socketaddress</RootNamespace>
+    <ProjectGuid>{5b880ae5-0e64-43d7-b2a2-8ec475c9f4dd}</ProjectGuid>
+    <RootNamespace>swap</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -143,7 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="socket_address.h" />
+    <ClInclude Include="swap.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

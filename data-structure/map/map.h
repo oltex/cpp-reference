@@ -94,13 +94,9 @@ namespace library::data_structure {
 			_nil->_parent = _nil->_left = _nil->_right = _nil;
 			_nil->_color = black;
 		}
-		//not implemented
 		inline explicit map(map const& rhs) noexcept;
-		//not implemented
 		inline explicit map(map&& rhs) noexcept;
-		//not implemented
 		inline auto operator=(map const& rhs) noexcept -> map&;
-		//not implemented
 		inline auto operator=(map&& rhs) noexcept -> map&;
 		inline ~map(void) noexcept {
 			clear();

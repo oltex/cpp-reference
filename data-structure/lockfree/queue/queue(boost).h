@@ -1,4 +1,5 @@
 #pragma once
+#include "../../../system-component/memory/memory.h"
 #include "../../thread-local/memory-pool/memory_pool.h"
 #include <optional>
 
@@ -25,16 +26,14 @@ namespace library::data_structure::lockfree {
 			current->_next = _nullptr = _InterlockedIncrement(&_static_nullptr);
 			_head = _tail = reinterpret_cast<unsigned long long>(current);
 		}
-		inline explicit queue(queue const& rhs) noexcept = delete;
-		inline explicit queue(queue&& rhs) noexcept = delete;
-		inline auto operator=(queue const& rhs) noexcept -> queue & = delete;
-		inline auto operator=(queue&& rhs) noexcept -> queue & = delete;
+		inline explicit queue(queue const&) noexcept = delete;
+		inline explicit queue(queue&&) noexcept = delete;
+		inline auto operator=(queue const&) noexcept -> queue & = delete;
+		inline auto operator=(queue&&) noexcept -> queue & = delete;
 		inline ~queue(void) noexcept {
 			node* head = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & _head);
 			while (_nullptr != reinterpret_cast<unsigned long long>(head)) {
 				node* next = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & head->_next);
-				if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
-					head->_value.~type();
 				_memory_pool::instance().deallocate(*head);
 				head = next;
 			}
@@ -43,13 +42,7 @@ namespace library::data_structure::lockfree {
 		template<typename... argument>
 		inline void emplace(argument&&... arg) noexcept {
 			node* current = &_memory_pool::instance().allocate();
-			if constexpr (std::is_class_v<type>) {
-				if constexpr (std::is_constructible_v<type, argument...>)
-					::new(reinterpret_cast<void*>(&current->_value)) type(std::forward<argument>(arg)...);
-			}
-			else if constexpr (1 == sizeof...(arg))
-#pragma warning(suppress: 6011)
-				current->_value = type(std::forward<argument>(arg)...);
+			system_component::memory::construct<type>(current->_value, std::forward<argument>(arg)...);
 
 			for (;;) {
 				unsigned long long tail = _tail;
@@ -82,8 +75,6 @@ namespace library::data_structure::lockfree {
 						_InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_tail), next, tail);
 					type result = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & next)->_value;
 					if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head)) {
-						if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
-							address->_value.~type();
 						_memory_pool::instance().deallocate(*address);
 						return result;
 					}

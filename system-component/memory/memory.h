@@ -55,7 +55,7 @@ namespace library::system_component::memory {
 		if constexpr (std::is_constructible_v<type, argument...>)
 			if constexpr (std::is_class_v<type>)
 				::new(reinterpret_cast<void*>(&instance)) type(std::forward<argument>(arg)...);
-			else
+			else if constexpr (0 < sizeof...(arg))
 #pragma warning(suppress: 6011)
 				instance = type(std::forward<argument>(arg)...);
 	}

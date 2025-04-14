@@ -60,21 +60,15 @@ namespace library::data_structure {
 				_head = current->_next;
 			}
 			if constexpr (true == placement)
-				system_component::memory::construct(current->_value, std::forward<argument>(arg)...);
+				system_component::memory::construct<type>(current->_value, std::forward<argument>(arg)...);
 			return current->_value;
 		}
 		inline void deallocate(type& value) noexcept {
 			if constexpr (true == placement)
-				system_component::memory::destruct(value);
+				system_component::memory::destruct<type>(value);
 			node* current = reinterpret_cast<node*>(reinterpret_cast<unsigned char*>(&value) - offsetof(node, _value));
 			current->_next = _head;
 			_head = current;
-		}
-	public:
-		inline void swap(memory_pool& rhs) noexcept {
-			auto head = _head;
-			_head = rhs._head;
-			rhs._head = head;
 		}
 	private:
 		node* _head = nullptr;

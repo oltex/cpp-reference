@@ -69,58 +69,93 @@
 //}
 
 
-library::data_structure::lockfree::queue<unsigned long long> _lockfree_queue;
-inline static unsigned int __stdcall func_push(void* arg) noexcept {
+//library::data_structure::lockfree::queue<unsigned long long> _lockfree_queue;
+//inline static unsigned int __stdcall func_push(void* arg) noexcept {
+//	int count = 0;
+//	auto rdtsc = __rdtsc();
+//	unsigned long long _value = 0;
+//	for (int i = 0; i < 100000000; ++i) {
+//		if (count == 1000000) {
+//			rdtsc = __rdtsc() - rdtsc;
+//			printf("thread_push : %d, %lld\n", GetCurrentThreadId(), rdtsc);
+//			rdtsc = __rdtsc();
+//			count = 0;
+//		}
+//		_lockfree_queue.emplace(_value++);
+//		count++;
+//	}
+//	return 0;
+//}
+//
+//inline static unsigned int __stdcall func_pop(void* arg) noexcept {
+//	int count = 0;
+//	auto rdtsc = __rdtsc();
+//	unsigned long long _value = 0;
+//	for (;;) {
+//		if (count == 1000000) {
+//			rdtsc = __rdtsc() - rdtsc;
+//			printf("thread_pop  : %d, %lld\n", GetCurrentThreadId(), rdtsc);
+//			rdtsc = __rdtsc();
+//			count = 0;
+//		}
+//		//if (!_lockfree_queue.empty()) {
+//		//	unsigned long long result = _lockfree_queue.pop();
+//		//	//if (_value > result)
+//		//	//	__debugbreak();
+//		//	_value = result;
+//		//	count++;
+//		//}
+//
+//		auto result = _lockfree_queue.pop();
+//		if (result) {
+//			if (_value > result)
+//				__debugbreak();
+//			_value = *result;
+//			count++;
+//		}
+//	}
+//}
+
+inline static unsigned int __stdcall func(void* arg) noexcept {
+	library::data_structure::lockfree::queue<unsigned long long>& _lockfree_queue = *(library::data_structure::lockfree::queue<unsigned long long>*)(arg);
+
 	int count = 0;
 	auto rdtsc = __rdtsc();
 	unsigned long long _value = 0;
-	for (;;/*int i = 0; i < 100000000; ++i*/) {
+	for (int i = 0; i < 10000000; ++i) {
 		if (count == 1000000) {
 			rdtsc = __rdtsc() - rdtsc;
 			printf("thread_push : %d, %lld\n", GetCurrentThreadId(), rdtsc);
 			rdtsc = __rdtsc();
 			count = 0;
 		}
-		_lockfree_queue.emplace(_value++);
+		for (int j = 0; j < 2; ++j)
+			_lockfree_queue.emplace(_value++);
+		for (int j = 0; j < 2;) {
+			auto result = _lockfree_queue.pop();
+			if (result) {
+				//if (_value > result)
+				//	__debugbreak();
+				//_value = *result;
+				j++;
+			}
+		}
+
+
 		count++;
 	}
 	return 0;
 }
 
-inline static unsigned int __stdcall func_pop(void* arg) noexcept {
-	int count = 0;
-	auto rdtsc = __rdtsc();
-	unsigned long long _value = 0;
-	for (;;) {
-		if (count == 1000000) {
-			rdtsc = __rdtsc() - rdtsc;
-			printf("thread_pop  : %d, %lld\n", GetCurrentThreadId(), rdtsc);
-			rdtsc = __rdtsc();
-			count = 0;
-		}
-		//if (!_lockfree_queue.empty()) {
-		//	unsigned long long result = _lockfree_queue.pop();
-		//	//if (_value > result)
-		//	//	__debugbreak();
-		//	_value = result;
-		//	count++;
-		//}
 
-		auto result = _lockfree_queue.pop();
-		if (result) {
-			if (_value > result)
-				__debugbreak();
-			_value = *result;
-			count++;
-		}
-	}
-}
+
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	library::data_structure::lockfree::queue<unsigned long long> _lockfree_queue;
 
-	HANDLE _handle0 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func_push, nullptr, 0, 0));
+	HANDLE _handle0 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, (void*)&_lockfree_queue, 0, 0));
 	//HANDLE _handle1 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func_push, nullptr, 0, 0));
-	HANDLE _handle2 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func_pop, nullptr, 0, 0));
+	HANDLE _handle2 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, (void*)&_lockfree_queue, 0, 0));
 	//HANDLE _handle3 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func_pop, nullptr, 0, 0));
 	//HANDLE _handle4 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func_pop, nullptr, 0, 0));
 	//HANDLE _handle4 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));

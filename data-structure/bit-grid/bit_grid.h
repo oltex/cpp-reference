@@ -21,13 +21,9 @@ namespace library::data_structure {
 				++_div.quot;
 			_vector.assign(_div.quot, 0);
 		}
-		//not implemented
 		inline explicit bit_grid(bit_grid const& rhs) noexcept;
-		//not implemented
 		inline explicit bit_grid(bit_grid&& rhs) noexcept;
-		//not implemented
 		inline auto operator=(bit_grid const& rhs) noexcept -> bit_grid&;
-		//not implemented
 		inline auto operator=(bit_grid&& rhs) noexcept -> bit_grid&;
 		inline ~bit_grid(void) noexcept = default;
 	public:

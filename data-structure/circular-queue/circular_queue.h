@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include <type_traits>
+#include "../../system-component/memory/memory.h"
 
 namespace library::data_structure {
 	template<typename type>
@@ -59,12 +60,12 @@ namespace library::data_structure {
 		};
 	public:
 		inline explicit circular_queue(void) noexcept {
-			_array = static_cast<type*>(malloc(sizeof(type) * 11));
+			_array = system_component::memory::allocate<type>(11);
 			_capacity = 11;
 		};
 		inline explicit circular_queue(circular_queue const& rhs) noexcept
 			: _capacity(rhs._capacity), _front(rhs._front), _rear(rhs._rear) {
-			_array = reinterpret_cast<type*>(malloc(sizeof(type) * _capacity));
+			_array = system_component::memory::allocate<type>(_capacity);
 #pragma warning(suppress: 6387)
 			memcpy(_array, rhs._array, _capacity);
 		};
@@ -82,7 +83,7 @@ namespace library::data_structure {
 					_array[_front].~type();
 					_front = (_front + 1) % _capacity;
 				}
-			free(_array);
+			system_component::memory::deallocate<type>(_array);
 		}
 
 		template<typename universal>
@@ -97,23 +98,16 @@ namespace library::data_structure {
 			//		++capacity;
 			//	reserve(capacity);
 			//}
-			type* element = _array + _rear;
+			type& element = _array[_rear];
 			if (!full()) {
-				if constexpr (std::is_class_v<type>) {
-					if constexpr (std::is_constructible_v<type, argument...>)
-						::new(reinterpret_cast<void*>(element)) type(std::forward<argument>(arg)...);
-				}
-				else if constexpr (1 == sizeof...(arg))
-#pragma warning(suppress: 6011)
-					* element = type(std::forward<argument>(arg)...);
+				system_component::memory::construct<type>(element, std::forward<argument>(arg)...);
 				_rear = (_rear + 1) % _capacity;
 			}
-			return *element;
+			return element;
 		}
 		inline void pop(void) noexcept {
 			if (!empty()) {
-				if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
-					_array[_front].~type();
+				system_component::memory::destruct<type>(_array[_front]);
 				_front = (_front + 1) % _capacity;
 			}
 		}
@@ -139,7 +133,7 @@ namespace library::data_structure {
 			capacity += 1;
 			size_type _size = size();
 			if (_size < capacity) {
-				type* array_ = reinterpret_cast<type*>(malloc(sizeof(type) * capacity));
+				type* array_ = system_component::memory::allocate<type>(capacity);
 
 				size_type once = _capacity - _front;
 				if (_size <= once)
@@ -149,7 +143,7 @@ namespace library::data_structure {
 					memcpy(array_ + once, _array, sizeof(type) * (_size - once));
 				}
 
-				free(_array);
+				system_component::memory::deallocate<type>(_array);
 				_array = array_;
 				_capacity = capacity;
 				_front = 0;

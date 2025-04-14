@@ -2,6 +2,7 @@
 #include <malloc.h>
 #include <utility>
 #include <type_traits>
+#include "../../system-component/memory/memory.h"
 
 namespace library::data_structure {
 	struct reference final {
@@ -28,22 +29,16 @@ namespace library::data_structure {
 		};
 		inline explicit shared_pointer(type* pointer) noexcept 
 			: _pointer(pointer) {
-			_reference = static_cast<reference*>(malloc(sizeof(reference)));
+			_reference = system_component::memory::allocate<reference>();
 #pragma warning(suppress: 6011)
 			_reference->_use = 1;
 			_reference->_weak = 0;
 		}
 		template<typename... argument>
 		inline explicit shared_pointer(argument&&... arg) noexcept {
-			_pointer = static_cast<type*>(malloc(sizeof(type)));
-			_reference = static_cast<reference*>(malloc(sizeof(reference)));
-			if constexpr (std::is_class_v<type>) {
-				if constexpr (std::is_constructible_v<type, argument...>)
-					::new(reinterpret_cast<void*>(_pointer)) type(std::forward<argument>(arg)...);
-			}
-			else if constexpr (1 == sizeof...(arg))
-#pragma warning(suppress: 6011)
-				* _pointer = type(std::forward<argument>(arg)...);
+			_pointer = system_component::memory::allocate<type>();
+			_reference = system_component::memory::allocate<reference>();
+			system_component::memory::construct(*_pointer, std::forward<argument>(arg)...);
 			_reference->_use = 1;
 			_reference->_weak = 0;
 		}
@@ -67,11 +62,10 @@ namespace library::data_structure {
 		};
 		inline ~shared_pointer(void) noexcept {
 			if (nullptr != _reference && 0 == --_reference->_use) {
-				if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
-					_pointer->~type();
-				free(_pointer);
+				system_component::memory::destruct<type>(*_pointer);
+				system_component::memory::deallocate<type>(_pointer);
 				if (0 == _reference->_weak)
-					free(_reference);
+					system_component::memory::deallocate<reference>(_reference);
 			}
 		}
 	public:

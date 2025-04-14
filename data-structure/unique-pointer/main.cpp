@@ -15,12 +15,11 @@ int main(void) noexcept {
 
 	std::unique_ptr<int> std_unique_ptr;
     //std_unique_ptr[10];
-    std_unique_ptr.
 	std::unique_ptr<int> std_unique_ptr2(std::move(std_unique_ptr));
 	std::unique_ptr<int> std_unique_ptr3 = std::move(std_unique_ptr);
 
 
-	library::data_structure::unique_pointer<int[]> a;
-
+	library::data_structure::unique_pointer<int> a(10);
+    
 	return 0;
 }

@@ -152,17 +152,14 @@ namespace library::data_structure::_thread_local {
 			}
 			current = _head;
 			_head = current->_next;
-			if constexpr (true == placement && std::is_constructible_v<type, argument...>)
-				if constexpr (std::is_class_v<type>)
-					::new(reinterpret_cast<void*>(&current->_value)) type(std::forward<argument>(arg)...);
-				else
-					current->_value = type(std::forward<argument>(arg)...);
+			if constexpr (true == placement)
+				system_component::memory::construct<type>(current->_value);
 			--_size;
 			return current->_value;
 		}
 		inline void deallocate(type& value) noexcept {
-			if constexpr (true == placement && std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
-				value.~type();
+			if constexpr (true == placement)
+				system_component::memory::destruct<type>(value);
 			node* current = reinterpret_cast<node*>(reinterpret_cast<unsigned char*>(&value) - offsetof(node, _value));
 			current->_next = _head;
 			_head = current;

@@ -3,6 +3,7 @@
 #include <utility>
 #include <stdlib.h>
 #include "../../system-component/memory/memory.h"
+#include "../../algorithm/swap/swap.h"
 
 namespace library::data_structure {
 	template<typename type, bool placement = true>
@@ -36,7 +37,7 @@ namespace library::data_structure {
 		inline auto operator=(vector&& rhs) noexcept -> vector&;
 		inline ~vector(void) noexcept {
 			clear();
-			free(_array);
+			system_component::memory::deallocate<type>(_array);
 		}
 
 		template<typename universal>
@@ -86,7 +87,6 @@ namespace library::data_structure {
 				_capacity = capacity;
 #pragma warning(suppress: 6308)
 				_array = system_component::memory::reallocate<type>(_array, _capacity);
-				//_array = reinterpret_cast<type*>(realloc(_array, sizeof(type) * _capacity));
 			}
 		}
 		template<typename... argument>
@@ -100,29 +100,16 @@ namespace library::data_structure {
 						while (size != _size)
 							system_component::memory::construct(_array[_size++], std::forward<argument>(arg)...);
 					else
-						_size = size;
-				else
-					if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
-						while (size != _size)
-							pop_back();
-					else
-						_size = size;
+						if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
+							while (size != _size)
+								pop_back();
 			}
-			else
-				_size = size;
+			_size = size;
 		}
 		inline void swap(vector& rhs) noexcept {
-			size_type size = _size;
-			_size = rhs._size;
-			rhs._size = size;
-
-			size_type capacity = _capacity;
-			_capacity = rhs._capacity;
-			rhs._capacity = capacity;
-
-			type* arr = _array;
-			_array = rhs._array;
-			rhs._array = arr;
+			algorithm::swap(_size, rhs._size);
+			algorithm::swap(_capacity, rhs._capacity);
+			algorithm::swap(_array, rhs._array);
 		}
 		//not implemented
 		inline void assign(size_type const size, type const& value) noexcept {

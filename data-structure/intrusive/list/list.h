@@ -2,6 +2,7 @@
 #include <utility>
 #include <stdlib.h>
 #include <malloc.h>
+#include "../../../algorithm/swap/swap.h"
 
 namespace library::data_structure::intrusive {
 	template<size_t index>
@@ -133,13 +134,8 @@ namespace library::data_structure::intrusive {
 			next = rhs._head._next;
 			next->_prev = rhs._head._prev->_next = &_head;
 
-			node head = _head;
-			_head = rhs._head;
-			rhs._head = head;
-
-			size_type size = _size;
-			_size = rhs._size;
-			rhs._size = size;
+			algorithm::swap(_head, rhs._head);
+			algorithm::swap(_size, rhs._size);
 		}
 		inline void clear(void) noexcept {
 			_head._next = _head._prev = &_head;
