@@ -23,9 +23,7 @@ namespace library::data_structure {
 			rhs._capacity = 0;
 			rhs._array = nullptr;
 		}
-		//not implemented
 		inline auto operator=(ring_buffer const& rhs) noexcept -> ring_buffer&;
-		//not implemented
 		inline auto operator=(ring_buffer&& rhs) noexcept -> ring_buffer&;
 		inline ~ring_buffer(void) noexcept {
 			free(_array);

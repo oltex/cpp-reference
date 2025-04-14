@@ -3,6 +3,7 @@
 #include <memory>
 #include <string>
 #include <string_view>
+#include "../../system-component/memory/memory.h"
 
 namespace library::data_structure {
 	class serialize_buffer final {
@@ -35,7 +36,7 @@ namespace library::data_structure {
 		inline auto operator=(serialize_buffer const& rhs) noexcept -> serialize_buffer&;
 		inline auto operator=(serialize_buffer&& rhs) noexcept -> serialize_buffer&;
 		inline ~serialize_buffer(void) noexcept {
-			free(_array);
+			system_component::memory::deallocate<byte>(_array);
 		};
 
 		template<typename type>
