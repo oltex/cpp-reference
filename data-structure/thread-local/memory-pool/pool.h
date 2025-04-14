@@ -1,14 +1,14 @@
 #pragma once
 #include "../../../system-component/memory/memory.h"
 #include "../../../design-pettern/thread-local/singleton/singleton.h"
-#include "../../lockfree/memory-pool/memory_pool.h"
+#include "../../lockfree/pool/pool.h"
 #include "../../pair/pair.h"
 
 namespace library::data_structure::_thread_local {
 	template<typename type, size_t bucket_size = 1024, bool placement = true, bool use_union = true>
-	class memory_pool final : public design_pattern::_thread_local::singleton<memory_pool<type, bucket_size, use_union>> {
+	class pool final : public design_pattern::_thread_local::singleton<pool<type, bucket_size, use_union>> {
 	private:
-		friend class design_pattern::_thread_local::singleton<memory_pool<type, bucket_size, use_union>>;
+		friend class design_pattern::_thread_local::singleton<pool<type, bucket_size, use_union>>;
 		using size_type = unsigned int;
 		union union_node final {
 			inline explicit union_node(void) noexcept = delete;
@@ -73,7 +73,7 @@ namespace library::data_structure::_thread_local {
 						}
 						_node = _node->_next;
 					}
-					_memory_pool.deallocate(*head);
+					_pool.deallocate(*head);
 					head = next;
 				}
 
@@ -83,7 +83,7 @@ namespace library::data_structure::_thread_local {
 			};
 
 			inline void push(node* value, size_type size) noexcept {
-				bucket* current = &_memory_pool.allocate();
+				bucket* current = &_pool.allocate();
 				current->_value = value;
 				current->_size = size;
 
@@ -115,7 +115,7 @@ namespace library::data_structure::_thread_local {
 					unsigned long long next = reinterpret_cast<unsigned long long>(address->_next) + (0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
 					if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head)) {
 						pair<node*, size_type> result{ address->_value, address->_size };
-						_memory_pool.deallocate(*address);
+						_pool.deallocate(*address);
 						return result;
 					}
 				}
@@ -123,15 +123,15 @@ namespace library::data_structure::_thread_local {
 		private:
 			unsigned long long _head;
 			size_type _capacity = 0;
-			lockfree::memory_pool<bucket> _memory_pool;
+			lockfree::pool<bucket> _pool;
 		};
 	private:
-		inline explicit memory_pool(void) noexcept = default;
-		inline explicit memory_pool(memory_pool const& rhs) noexcept = delete;
-		inline explicit memory_pool(memory_pool&& rhs) noexcept = delete;
-		inline auto operator=(memory_pool const& rhs) noexcept -> memory_pool & = delete;
-		inline auto operator=(memory_pool&& rhs) noexcept -> memory_pool & = delete;
-		inline ~memory_pool(void) noexcept {
+		inline explicit pool(void) noexcept = default;
+		inline explicit pool(pool const& rhs) noexcept = delete;
+		inline explicit pool(pool&& rhs) noexcept = delete;
+		inline auto operator=(pool const& rhs) noexcept -> pool & = delete;
+		inline auto operator=(pool&& rhs) noexcept -> pool & = delete;
+		inline ~pool(void) noexcept {
 			if (0 == _size)
 				return;
 			if (_size > bucket_size) {
@@ -141,7 +141,7 @@ namespace library::data_structure::_thread_local {
 			}
 			_stack.push(_head, _size);
 		};
-	public:
+
 		template<typename... argument>
 		inline auto allocate(argument&&... arg) noexcept -> type& {
 			node* current;

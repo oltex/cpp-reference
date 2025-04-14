@@ -21,7 +21,7 @@ struct my_struct {
 //volatile unsigned long long _stack_size = 0;
 
 inline static unsigned int __stdcall func_pool(void* arg) noexcept {
-	auto& instance = library::data_structure::_thread_local::memory_pool<my_struct>::instance();
+	auto& instance = library::data_structure::_thread_local::pool<my_struct>::instance();
 	my_struct** _array = (my_struct**)malloc(sizeof(my_struct*) * 1000000);
 
 	for (int i = 0; i < 10; ++i) {
@@ -116,7 +116,7 @@ int main(void) noexcept {
 	//HANDLE _handle2 = (HANDLE)_beginthreadex(nullptr, 0, func_new, nullptr, 0, 0);
 	//HANDLE _handle3 = (HANDLE)_beginthreadex(nullptr, 0, func_new, nullptr, 0, 0);
 	HANDLE _handle4 = (HANDLE)_beginthreadex(nullptr, 0, func_pool, nullptr, 0, 0);
-	//HANDLE _handle5 = (HANDLE)_beginthreadex(nullptr, 0, func_pool, nullptr, 0, 0);
+	HANDLE _handle5 = (HANDLE)_beginthreadex(nullptr, 0, func_pool, nullptr, 0, 0);
 	//HANDLE _handle6 = (HANDLE)_beginthreadex(nullptr, 0, func_pool, nullptr, 0, 0);
 	//HANDLE _handle7 = (HANDLE)_beginthreadex(nullptr, 0, func_pool, nullptr, 0, 0);
 

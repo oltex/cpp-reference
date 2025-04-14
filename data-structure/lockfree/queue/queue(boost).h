@@ -19,10 +19,10 @@ namespace library::data_structure::lockfree {
 			unsigned long long _next;
 			type _value;
 		};
-		using _memory_pool = _thread_local::memory_pool<node>;
+		using _pool = _thread_local::pool<node>;
 	public:
 		inline explicit queue(void) noexcept {
-			node* current = &_memory_pool::instance().allocate();
+			node* current = &_pool::instance().allocate();
 			current->_next = _nullptr = _InterlockedIncrement(&_static_nullptr);
 			_head = _tail = reinterpret_cast<unsigned long long>(current);
 		}
@@ -34,14 +34,14 @@ namespace library::data_structure::lockfree {
 			node* head = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & _head);
 			while (_nullptr != reinterpret_cast<unsigned long long>(head)) {
 				node* next = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & head->_next);
-				_memory_pool::instance().deallocate(*head);
+				_pool::instance().deallocate(*head);
 				head = next;
 			}
 		};
 
 		template<typename... argument>
 		inline void emplace(argument&&... arg) noexcept {
-			node* current = &_memory_pool::instance().allocate();
+			node* current = &_pool::instance().allocate();
 			system_component::memory::construct<type>(current->_value, std::forward<argument>(arg)...);
 
 			for (;;) {
@@ -75,7 +75,7 @@ namespace library::data_structure::lockfree {
 						_InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_tail), next, tail);
 					type result = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & next)->_value;
 					if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head)) {
-						_memory_pool::instance().deallocate(*address);
+						_pool::instance().deallocate(*address);
 						return result;
 					}
 				}
@@ -94,7 +94,7 @@ namespace library::data_structure::lockfree {
 
 			type result = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & next)->_value;
 			_head = next;
-			_memory_pool::instance().deallocate(*address);
+			_pool::instance().deallocate(*address);
 			return result;
 		}
 		inline auto empty(void) const noexcept requires (false == multi_pop) {

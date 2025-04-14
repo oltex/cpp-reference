@@ -1,6 +1,6 @@
 #pragma once
 #include "../../../system-component/memory/memory.h"
-#include "../memory-pool/memory_pool.h"
+#include "../pool/pool.h"
 #include <utility>
 #include <Windows.h>
 #include <intrin.h>
@@ -34,14 +34,14 @@ namespace library::data_structure::lockfree {
 			while (nullptr != head) {
 				node* next = head->_next;
 				system_component::memory::destruct<type>(head->_value);
-				_memory_pool.deallocate(*head);
+				_pool.deallocate(*head);
 				head = next;
 			}
 		};
 	public:
 		template<typename... argument>
 		inline void push(argument&&... arg) noexcept {
-			node* current = &_memory_pool.allocate();
+			node* current = &_pool.allocate();
 			system_component::memory::construct<type>(current->_value, std::forward<argument>(arg)...);
 
 			for (;;) {
@@ -62,13 +62,13 @@ namespace library::data_structure::lockfree {
 				if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head)) {
 					type result(std::move(address->_value));
 					system_component::memory::destruct<type>(address->_value);
-					_memory_pool.deallocate(*address);
+					_pool.deallocate(*address);
 					return result;
 				}
 			}
 		}
 	private:
 		unsigned long long _head;
-		memory_pool<node> _memory_pool;
+		pool<node> _pool;
 	};
 }
