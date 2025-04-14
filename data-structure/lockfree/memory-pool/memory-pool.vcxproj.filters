@@ -4,6 +4,6 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="memory_pool.h" />
+    <ClInclude Include="pool.h" />
   </ItemGroup>
 </Project>

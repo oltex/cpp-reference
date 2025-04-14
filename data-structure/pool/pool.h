@@ -3,7 +3,7 @@
 
 namespace library::data_structure {
 	template<typename type, bool placement = true, bool compress = true>
-	class memory_pool final {
+	class pool final {
 	private:
 		union union_node final {
 			inline explicit union_node(void) noexcept = delete;
@@ -28,20 +28,20 @@ namespace library::data_structure {
 		using node = typename std::conditional<compress, union union_node, struct strcut_node>::type;
 	public:
 		template <typename other>
-		using rebind = memory_pool<other>;
+		using rebind = pool<other>;
 	public:
-		inline explicit memory_pool(void) noexcept = default;
-		inline explicit memory_pool(memory_pool const&) noexcept = delete;
-		inline explicit memory_pool(memory_pool&& rhs) noexcept
+		inline explicit pool(void) noexcept = default;
+		inline explicit pool(pool const&) noexcept = delete;
+		inline explicit pool(pool&& rhs) noexcept
 			: _head(rhs._head) {
 			rhs._head = nullptr;
 		};
-		inline auto operator=(memory_pool const&) noexcept = delete;
-		inline auto operator=(memory_pool&& rhs) noexcept {
+		inline auto operator=(pool const&) noexcept = delete;
+		inline auto operator=(pool&& rhs) noexcept {
 			_head = rhs._head;
 			rhs._head = nullptr;
 		}
-		inline ~memory_pool(void) noexcept {
+		inline ~pool(void) noexcept {
 			while (nullptr != _head) {
 #pragma warning(suppress: 6001)
 				node* next = _head->_next;
@@ -49,7 +49,7 @@ namespace library::data_structure {
 				_head = next;
 			}
 		}
-	public:
+
 		template<typename... argument>
 		inline auto allocate(argument&&... arg) noexcept -> type& {
 			node* current;

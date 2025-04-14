@@ -5,7 +5,7 @@
 
 namespace library::data_structure::lockfree {
 	template<typename type, bool placement = true, bool compress = true>
-	class memory_pool final {
+	class pool final {
 	private:
 		union union_node final {
 			inline explicit union_node(void) noexcept = delete;
@@ -29,20 +29,20 @@ namespace library::data_structure::lockfree {
 		};
 		using node = typename std::conditional<compress, union union_node, struct strcut_node>::type;
 	public:
-		inline explicit memory_pool(void) noexcept
+		inline explicit pool(void) noexcept
 			: _head(0) {
 		};
-		inline explicit memory_pool(memory_pool const&) noexcept = delete;
-		inline explicit memory_pool(memory_pool&& rhs) noexcept
+		inline explicit pool(pool const&) noexcept = delete;
+		inline explicit pool(pool&& rhs) noexcept
 			: _head(rhs._head) {
 			rhs._head = nullptr;
 		};
-		inline auto operator=(memory_pool const&) noexcept = delete;
-		inline auto operator=(memory_pool&& rhs) noexcept {
+		inline auto operator=(pool const&) noexcept = delete;
+		inline auto operator=(pool&& rhs) noexcept {
 			_head = rhs._head;
 			rhs._head = nullptr;
 		}
-		inline ~memory_pool(void) noexcept {
+		inline ~pool(void) noexcept {
 			node* head = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & _head);
 			while (nullptr != head) {
 				node* next = head->_next;

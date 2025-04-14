@@ -2,12 +2,12 @@
 #include <utility>
 #include <stdlib.h>
 #include <malloc.h>
-#include "../memory-pool/memory_pool.h"
+#include "../pool/pool.h"
 #include "../../system-component/memory/memory.h"
 #include "../../algorithm/swap/swap.h"
 
 namespace library::data_structure {
-	template<typename type, typename allocator = memory_pool<type>, bool placement = true>
+	template<typename type, typename allocator = pool<type>, bool placement = true>
 	class list final {
 	private:
 		using size_type = unsigned int;
