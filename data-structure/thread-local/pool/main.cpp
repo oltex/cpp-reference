@@ -3,7 +3,7 @@
 #include <crtdbg.h>
 
 #include <iostream>
-#include "memory_pool.h"
+#include "pool.h"
 #include "../../my_class.h"
 #include "../../lockfree/queue/queue.h"
 #include "../../lockfree/stack/stack.h"

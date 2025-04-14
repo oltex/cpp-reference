@@ -1,6 +1,6 @@
 #pragma once
 #include "../../../system-component/memory/memory.h"
-#include "../../thread-local/memory-pool/memory_pool.h"
+#include "../../thread-local/pool/pool.h"
 #include <optional>
 
 namespace library::data_structure::lockfree {

@@ -141,7 +141,7 @@ namespace library::data_structure::_thread_local {
 			}
 			_stack.push(_head, _size);
 		};
-
+	public:
 		template<typename... argument>
 		inline auto allocate(argument&&... arg) noexcept -> type& {
 			node* current;
