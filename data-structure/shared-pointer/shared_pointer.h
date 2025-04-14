@@ -3,6 +3,7 @@
 #include <utility>
 #include <type_traits>
 #include "../../system-component/memory/memory.h"
+#include "../../algorithm/swap/swap.h"
 
 namespace library::data_structure {
 	struct reference final {
@@ -76,16 +77,8 @@ namespace library::data_structure {
 			return _pointer;
 		}
 		inline void swap(shared_pointer& rhs) noexcept {
-			{
-				auto temp = _pointer;
-				_pointer = rhs._pointer;
-				rhs._pointer = temp;
-			}
-			{
-				auto temp = _reference;
-				_reference = rhs._reference;
-				rhs._reference = temp;
-			}
+			algorithm::swap(_pointer, rhs._pointer);
+			algorithm::swap(_reference, rhs._reference);
 		}
 		inline auto use_count(void) const noexcept -> size_type {
 			return _reference->_use;

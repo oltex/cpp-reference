@@ -1,5 +1,7 @@
 #pragma once
 #include "../shared-pointer/shared_pointer.h"
+#include "../../system-component/memory/memory.h"
+#include "../../algorithm/swap/swap.h"
 
 namespace library::data_structure {
 	template<typename type>
@@ -8,21 +10,21 @@ namespace library::data_structure {
 		using size_type = unsigned int;
 	public:
 		inline constexpr explicit weak_pointer(void) noexcept
-			: _value(nullptr), _reference(nullptr) {
+			: _pointer(nullptr), _reference(nullptr) {
 		}
 		inline weak_pointer(shared_pointer<type> const& shared_ptr) noexcept
-			: _value(shared_ptr._value), _reference(shared_ptr._reference) {
+			: _pointer(shared_ptr._pointer), _reference(shared_ptr._reference) {
 			if (nullptr != _reference)
 				++_reference->_weak;
 		}
 		inline explicit weak_pointer(weak_pointer const& rhs) noexcept
-			: _value(rhs._value), _reference(rhs._reference) {
+			: _pointer(rhs._pointer), _reference(rhs._reference) {
 			if (nullptr != _reference)
 				++_reference->_weak;
 		};
 		inline explicit weak_pointer(weak_pointer&& rhs) noexcept
-			: _value(rhs._value), _reference(rhs._reference) {
-			rhs._value = nullptr;
+			: _pointer(rhs._pointer), _reference(rhs._reference) {
+			rhs._pointer = nullptr;
 			rhs._reference = nullptr;
 		};
 		inline auto operator=(weak_pointer const& rhs) noexcept -> weak_pointer& {
@@ -40,23 +42,15 @@ namespace library::data_structure {
 		}
 	public:
 		inline auto operator*(void) noexcept -> type& {
-			return *_value;
+			return *_pointer;
 		}
 		inline auto operator->(void) noexcept -> type* {
-			return _value;
+			return _pointer;
 		}
 	public:
 		inline void swap(weak_pointer& rhs) noexcept {
-			{
-				auto temp = _value;
-				_value = rhs._value;
-				rhs._value = temp;
-			}
-			{
-				auto temp = _reference;
-				_reference = rhs._reference;
-				rhs._reference = temp;
-			}
+			algorithm::swap(_pointer, rhs._pointer);
+			algorithm::swap(_reference, rhs._reference);
 		}
 		inline auto use_count(void) const noexcept -> size_type {
 			return _reference->_use;
@@ -65,10 +59,10 @@ namespace library::data_structure {
 			return 0 == _reference->_use;
 		}
 		inline auto get(void) const noexcept -> type* {
-			return _value;
+			return _pointer;
 		}
 	private:
-		type* _value;
+		type* _pointer;
 		reference* _reference;
 	};
 }
