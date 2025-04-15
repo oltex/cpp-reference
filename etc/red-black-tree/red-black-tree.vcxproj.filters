@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="library">
+      <UniqueIdentifier>{4ac2d162-71a0-4a71-babb-1731e76fadc2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="library\data-structure">
+      <UniqueIdentifier>{133a8e60-6afb-419e-ae04-c68f07a11f02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="client">
+      <UniqueIdentifier>{3762ef99-f00e-4ca3-a61f-9f05428c299d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="client.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="camera.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="tree.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="test.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="timer.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="library\data-structure\map.h">
+      <Filter>library\data-structure</Filter>
+    </ClInclude>
+    <ClInclude Include="library\data-structure\pair.h">
+      <Filter>library\data-structure</Filter>
+    </ClInclude>
+    <ClInclude Include="library\data-structure\predicate.h">
+      <Filter>library\data-structure</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
