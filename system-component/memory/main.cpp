@@ -28,22 +28,22 @@ int main() {
     //requirement.HighestEndingAddress = NULL;
     //requirement.Alignment = 4 * 1024 * 1024 * 1024; // align to 4GB boundary
 
-    //MEM_EXTENDED_PARAMETER xp[2];
+    MEM_EXTENDED_PARAMETER xp;
     //xp[0].Type = MemExtendedParameterAddressRequirements;
     //xp[0].Pointer = &requirement;
 
-    //xp[1].Type = MemExtendedParameterAttributeFlags;
-    //xp[1].ULong64 = MEM_EXTENDED_PARAMETER_NONPAGED_HUGE; // 1GB pages required
-    //size_t min, max;
-    //GetProcessWorkingSetSize(GetCurrentProcess(), &min, &max);
+    xp.Type = MemExtendedParameterAttributeFlags;
+    xp.ULong64 = MEM_EXTENDED_PARAMETER_NONPAGED_HUGE; // 1GB pages required
 
     //auto page = GetLargePageMinimum();
 
-    int size = 0;
-    std::cin >> size;
-    auto a = VirtualAlloc(nullptr, GetLargePageMinimum() * size, MEM_LARGE_PAGES | MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
-    auto b = VirtualAlloc2(nullptr, nullptr, GetLargePageMinimum() * size, MEM_LARGE_PAGES | MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE, nullptr, 0);
-    printf("%p\n", b);
+    for (;;) {
+        int size = 0;
+        std::cin >> size;
+        //auto a = VirtualAlloc(nullptr, GetLargePageMinimum() * size, MEM_LARGE_PAGES | MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+        auto b = VirtualAlloc2(nullptr, nullptr, GetLargePageMinimum() * size, MEM_LARGE_PAGES | MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE, nullptr, 0);
+        printf("%p\n", b);
+    }
     auto c = GetLastError();
     system("pause");
 }

@@ -1,4 +1,5 @@
 #pragma once
+#pragma comment(lib, "onecore.lib")
 #include <malloc.h>
 #include <utility>
 #include <Windows.h>
@@ -66,21 +67,15 @@ namespace library::system::memory {
 			instance.~type();
 	}
 
-	inline auto virtual_allocate()
-
-	class virtual_memory final {
-	public:
-		inline explicit virtual_memory(void) noexcept = default;
-		inline explicit virtual_memory(virtual_memory const&) noexcept = delete;
-		inline explicit virtual_memory(virtual_memory&& rhs) noexcept = delete;
-		inline auto operator=(virtual_memory const&) noexcept -> virtual_memory & = delete;
-		inline auto operator=(virtual_memory&& rhs) noexcept -> virtual_memory & = delete;
-		inline ~virtual_memory(void) noexcept;
-
-		inline auto reserve(void) noexcept {
-			//VirtualAlloc2(nullptr, nullptr, 64 * 1024, MEM_RESERVE | MEM_LARGE_PAGES,  );
-		}
-	};
+	inline auto get_large_page_minimum(void) noexcept -> size_t {
+		return GetLargePageMinimum();
+	}
+	inline auto virtual_allocate(void* address, size_t size, unsigned long type, unsigned long protection) noexcept {
+		return VirtualAlloc2(nullptr, address, size, type, protection, nullptr, 0);
+	}
+	inline auto virtual_deallocate(void* address, size_t size, unsigned long type) noexcept {
+		VirtualFree(address, size, type);
+	}
 }
 
 //if constexpr (!std::is_trivially_constructible_v<type, argument...>)
