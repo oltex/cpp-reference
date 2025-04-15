@@ -1,5 +1,5 @@
 #pragma once
-#include "../../system-component/memory/memory.h"
+#include "../../system/memory/memory.h"
 
 namespace library::data_structure {
 	template<typename type, bool placement = true, bool compress = true>
