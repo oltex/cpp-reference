@@ -42,8 +42,8 @@ int main() {
     int size = 0;
     std::cin >> size;
     auto a = VirtualAlloc(nullptr, GetLargePageMinimum() * size, MEM_LARGE_PAGES | MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
-    printf("%p\n", a);
-    //auto b = VirtualAlloc2(nullptr, nullptr, GetLargePageMinimum(), MEM_LARGE_PAGES | MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE, xp, 2);
+    auto b = VirtualAlloc2(nullptr, nullptr, GetLargePageMinimum() * size, MEM_LARGE_PAGES | MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE, nullptr, 0);
+    printf("%p\n", b);
     auto c = GetLastError();
     system("pause");
 }

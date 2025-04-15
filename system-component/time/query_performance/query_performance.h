@@ -1,7 +1,7 @@
 #pragma once
 #include <Windows.h>
 
-namespace library::system_component::time {
+namespace library::system::time {
 	class query_performance final {
 	public:
 		enum class initialize : unsigned char { counter, frequency };

@@ -3,7 +3,7 @@
 #include <Windows.h>
 #include <utility>
 
-namespace library::system_component {
+namespace library::system {
 	class event final : public handle {
 	public:
 		inline explicit event(void) noexcept = default;

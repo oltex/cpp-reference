@@ -36,7 +36,7 @@ namespace library::data_structure {
 		inline auto operator=(serialize_buffer const& rhs) noexcept -> serialize_buffer&;
 		inline auto operator=(serialize_buffer&& rhs) noexcept -> serialize_buffer&;
 		inline ~serialize_buffer(void) noexcept {
-			system_component::memory::deallocate<byte>(_array);
+			system::memory::deallocate<byte>(_array);
 		};
 
 		template<typename type>

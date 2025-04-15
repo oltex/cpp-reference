@@ -19,8 +19,8 @@ namespace library::data_structure {
 		}
 		template<typename... argument>
 		inline explicit unique_pointer(argument&&... arg) noexcept {
-			_pointer = system_component::memory::allocate<type>();
-			system_component::memory::construct<type>(*_pointer, std::forward<argument>(arg)...);
+			_pointer = system::memory::allocate<type>();
+			system::memory::construct<type>(*_pointer, std::forward<argument>(arg)...);
 		}
 		inline unique_pointer(unique_pointer&) noexcept = delete;
 		inline explicit unique_pointer(unique_pointer&& rhs) noexcept
@@ -35,8 +35,8 @@ namespace library::data_structure {
 		};
 		inline ~unique_pointer(void) noexcept {
 			if (nullptr != _pointer) {
-				system_component::memory::destruct<type>(*_pointer);
-				system_component::memory::deallocate<type>(_pointer);
+				system::memory::destruct<type>(*_pointer);
+				system::memory::deallocate<type>(_pointer);
 			}
 		}
 	public:

@@ -12,21 +12,21 @@ namespace utility {
 	private:
 		using size_type = unsigned int;
 		struct profile final {
-			library::system_component::time::query_performance _timer;
-			library::system_component::time::query_performance _pause;
+			library::system::time::query_performance _timer;
+			library::system::time::query_performance _pause;
 			double _sum, _minimum = DBL_MAX, _maximum = -DBL_MAX;
 			size_type _count;
 		};
 	private:
 		inline explicit profiler(void) noexcept {
-			library::system_component::time::multimedia::begin_period(1);
+			library::system::time::multimedia::begin_period(1);
 		}
 		inline explicit profiler(profiler const&) noexcept = delete;
 		inline explicit profiler(profiler&&) noexcept = delete;
 		inline auto operator=(profiler const&) noexcept -> profiler & = delete;
 		inline auto operator=(profiler&&) noexcept -> profiler & = delete;
 		inline ~profiler(void) noexcept {
-			library::system_component::time::multimedia::end_period(1);
+			library::system::time::multimedia::end_period(1);
 		}
 	public:
 		inline void start(char const* const tag) noexcept {
@@ -35,14 +35,14 @@ namespace utility {
 			profile_._timer.counter();
 		}
 		inline void stop(char const* const tag) const noexcept {
-			library::system_component::time::query_performance timer;
+			library::system::time::query_performance timer;
 			timer.counter();
 
 			profile& profile_ = (*_profile.find(tag))._second;
 			profile_._pause += timer - profile_._timer;
 			profile_._timer.clear();
 
-			double time = static_cast<double>(profile_._pause.data().QuadPart) / library::system_component::time::_frequency.data().QuadPart;
+			double time = static_cast<double>(profile_._pause.data().QuadPart) / library::system::time::_frequency.data().QuadPart;
 			if (profile_._minimum > time)
 				profile_._minimum = time;
 			if (profile_._maximum < time)
@@ -51,7 +51,7 @@ namespace utility {
 			++profile_._count;
 		}
 		inline void pause(char const* const tag) const noexcept {
-			library::system_component::time::query_performance timer;
+			library::system::time::query_performance timer;
 			timer.counter();
 			profile& profile_ = (*_profile.find(tag))._second;
 			profile_._pause += timer - profile_._timer;

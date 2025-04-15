@@ -3,7 +3,7 @@
 #include <utility>
 #include <Windows.h>
 
-namespace library::system_component::memory {
+namespace library::system::memory {
 	inline auto allocate(size_t const size) noexcept -> void* {
 		return reinterpret_cast<void*>(::malloc(size));
 	}
@@ -65,6 +65,8 @@ namespace library::system_component::memory {
 		if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
 			instance.~type();
 	}
+
+	inline auto virtual_allocate()
 
 	class virtual_memory final {
 	public:

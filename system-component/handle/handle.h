@@ -4,7 +4,7 @@
 #include <Windows.h>
 #include <concepts>
 
-namespace library::system_component {
+namespace library::system {
 	class handle {
 	public:
 		inline explicit handle(void) noexcept

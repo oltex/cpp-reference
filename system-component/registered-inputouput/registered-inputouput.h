@@ -9,7 +9,7 @@
 
 #include "../socket/socket.h"
 
-namespace library::system_component {
+namespace library::system {
 	class registered_inputouput final {
 	public:
 		inline explicit registered_inputouput(void) noexcept {

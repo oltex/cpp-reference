@@ -3,7 +3,7 @@
 #include <intrin.h>
 #include <Windows.h>
 
-namespace library::system_component::multi {
+namespace library::system::multi {
 	namespace barrier {
 		inline static void read(void) noexcept {
 			_ReadBarrier();

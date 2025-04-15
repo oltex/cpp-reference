@@ -1,7 +1,7 @@
 #pragma once
 #include <Windows.h>
 
-namespace library::system_component::interlocked {
+namespace library::system::interlocked {
 	inline auto increment(long& addend) noexcept -> long {
 		return _InterlockedIncrement(&addend);
 	}

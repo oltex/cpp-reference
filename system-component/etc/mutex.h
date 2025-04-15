@@ -3,7 +3,7 @@
 #include <Windows.h>
 #include <utility>
 
-namespace library::system_component::multi {
+namespace library::system::multi {
 	class mutex final : public kernel::object {
 	public:
 		inline explicit mutex(bool const initial_owner) noexcept

@@ -71,7 +71,7 @@ namespace library::data_structure {
 		};
 	public:
 		inline explicit list(void) noexcept
-			: _head(reinterpret_cast<node*>(system_component::memory::allocate(sizeof(node*) * 2))) {
+			: _head(reinterpret_cast<node*>(system::memory::allocate(sizeof(node*) * 2))) {
 			
 #pragma warning(suppress: 6011)
 			_head->_next = _head->_prev = _head;
@@ -97,7 +97,7 @@ namespace library::data_structure {
 		inline auto operator=(list&& rhs) noexcept;
 		inline ~list(void) noexcept {
 			clear();
-			system_component::memory::deallocate(reinterpret_cast<void*>(_head));
+			system::memory::deallocate(reinterpret_cast<void*>(_head));
 		}
 	public:
 		template<typename universal>
@@ -124,7 +124,7 @@ namespace library::data_structure {
 		inline auto emplace(iterator const& iter, argument&&... arg) noexcept -> iterator {
 			auto current = &_allocator.allocate();
 			if constexpr (true == placement)
-				system_component::memory::construct<type>(current->_value, std::forward<argument>(arg)...);
+				system::memory::construct<type>(current->_value, std::forward<argument>(arg)...);
 			auto next = iter._node;
 			auto prev = next->_prev;
 
@@ -151,7 +151,7 @@ namespace library::data_structure {
 			next->_prev = prev;
 
 			if constexpr (true == placement)
-				system_component::memory::destruct<type>(current->_value);
+				system::memory::destruct<type>(current->_value);
 			_allocator.deallocate(*current);
 			--_size;
 			return iterator(next);
@@ -180,7 +180,7 @@ namespace library::data_structure {
 			for (auto next = current; current != _head; current = next) {
 				next = next->_next;
 				if constexpr (true == placement)
-					system_component::memory::destruct<type>(current->_value);
+					system::memory::destruct<type>(current->_value);
 				_allocator.deallocate(*current);
 			}
 			_head->_next = _head->_prev = _head;

@@ -42,7 +42,7 @@ namespace library::data_structure::lockfree {
 		template<typename... argument>
 		inline void emplace(argument&&... arg) noexcept {
 			node* current = &_pool::instance().allocate();
-			system_component::memory::construct<type>(current->_value, std::forward<argument>(arg)...);
+			system::memory::construct<type>(current->_value, std::forward<argument>(arg)...);
 
 			for (;;) {
 				unsigned long long tail = _tail;

@@ -60,12 +60,12 @@ namespace library::data_structure {
 		};
 	public:
 		inline explicit circular_queue(void) noexcept {
-			_array = system_component::memory::allocate<type>(11);
+			_array = system::memory::allocate<type>(11);
 			_capacity = 11;
 		};
 		inline explicit circular_queue(circular_queue const& rhs) noexcept
 			: _capacity(rhs._capacity), _front(rhs._front), _rear(rhs._rear) {
-			_array = system_component::memory::allocate<type>(_capacity);
+			_array = system::memory::allocate<type>(_capacity);
 #pragma warning(suppress: 6387)
 			memcpy(_array, rhs._array, _capacity);
 		};
@@ -83,7 +83,7 @@ namespace library::data_structure {
 					_array[_front].~type();
 					_front = (_front + 1) % _capacity;
 				}
-			system_component::memory::deallocate<type>(_array);
+			system::memory::deallocate<type>(_array);
 		}
 
 		template<typename universal>
@@ -100,14 +100,14 @@ namespace library::data_structure {
 			//}
 			type& element = _array[_rear];
 			if (!full()) {
-				system_component::memory::construct<type>(element, std::forward<argument>(arg)...);
+				system::memory::construct<type>(element, std::forward<argument>(arg)...);
 				_rear = (_rear + 1) % _capacity;
 			}
 			return element;
 		}
 		inline void pop(void) noexcept {
 			if (!empty()) {
-				system_component::memory::destruct<type>(_array[_front]);
+				system::memory::destruct<type>(_array[_front]);
 				_front = (_front + 1) % _capacity;
 			}
 		}
@@ -133,7 +133,7 @@ namespace library::data_structure {
 			capacity += 1;
 			size_type _size = size();
 			if (_size < capacity) {
-				type* array_ = system_component::memory::allocate<type>(capacity);
+				type* array_ = system::memory::allocate<type>(capacity);
 
 				size_type once = _capacity - _front;
 				if (_size <= once)
@@ -143,7 +143,7 @@ namespace library::data_structure {
 					memcpy(array_ + once, _array, sizeof(type) * (_size - once));
 				}
 
-				system_component::memory::deallocate<type>(_array);
+				system::memory::deallocate<type>(_array);
 				_array = array_;
 				_capacity = capacity;
 				_front = 0;

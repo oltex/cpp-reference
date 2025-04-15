@@ -1,7 +1,7 @@
 #pragma once
 #include <Windows.h>
 
-namespace library::system_component::time {
+namespace library::system::time {
 	class system_32 final {
 	public:
 		inline explicit system_32(void) noexcept = default;

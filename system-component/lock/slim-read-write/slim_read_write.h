@@ -1,7 +1,7 @@
 #pragma once
 #include <Windows.h>
 
-namespace library::system_component::lock {
+namespace library::system::lock {
 	class slim_read_write final {
 	public:
 		inline explicit slim_read_write(void) noexcept {

@@ -2,7 +2,7 @@
 #include <Windows.h>
 #pragma comment(lib, "Winmm.lib")
 
-namespace library::system_component::time::multimedia {
+namespace library::system::time::multimedia {
 	inline static auto get_time(void) noexcept -> unsigned long {
 		return timeGetTime();
 	}

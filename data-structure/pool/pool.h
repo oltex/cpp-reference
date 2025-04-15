@@ -45,7 +45,7 @@ namespace library::data_structure {
 			while (nullptr != _head) {
 #pragma warning(suppress: 6001)
 				node* next = _head->_next;
-				system_component::memory::deallocate<node>(_head);
+				system::memory::deallocate<node>(_head);
 				_head = next;
 			}
 		}
@@ -54,18 +54,18 @@ namespace library::data_structure {
 		inline auto allocate(argument&&... arg) noexcept -> type& {
 			node* current;
 			if (nullptr == _head)
-				current = system_component::memory::allocate<node>();
+				current = system::memory::allocate<node>();
 			else {
 				current = _head;
 				_head = current->_next;
 			}
 			if constexpr (true == placement)
-				system_component::memory::construct<type>(current->_value, std::forward<argument>(arg)...);
+				system::memory::construct<type>(current->_value, std::forward<argument>(arg)...);
 			return current->_value;
 		}
 		inline void deallocate(type& value) noexcept {
 			if constexpr (true == placement)
-				system_component::memory::destruct<type>(value);
+				system::memory::destruct<type>(value);
 			node* current = reinterpret_cast<node*>(reinterpret_cast<unsigned char*>(&value) - offsetof(node, _value));
 			current->_next = _head;
 			_head = current;

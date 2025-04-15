@@ -32,12 +32,12 @@ namespace utility {
 		inline ~logger(void) noexcept = default;
 	public:
 		inline void create(std::wstring path) noexcept {
-			unsigned long attribute = library::system_component::file::get_attribute(path.data());
+			unsigned long attribute = library::system::file::get_attribute(path.data());
 			if (attribute == INVALID_FILE_ATTRIBUTES || (attribute & FILE_ATTRIBUTE_DIRECTORY)) {
 				for (size_type index = 0; index < path.size(); ++index) {
 					if (L'\\' == path[index]) {
 						path[index] = L'\0';
-						library::system_component::file::create_directory(path.data());
+						library::system::file::create_directory(path.data());
 						path[index] = L'\\';
 					}
 				}
@@ -53,8 +53,8 @@ namespace utility {
 		template <level level_>
 		inline void log_message(wchar_t const* const format, ...) noexcept {
 			//if (0 != _output && level_ >= _level) {
-			library::system_component::time::unix unix(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()));
-			library::system_component::time::date date(unix.local_time());
+			library::system::time::unix unix(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()));
+			library::system::time::date date(unix.local_time());
 
 			wchar_t buffer[256];
 			int length = _snwprintf_s(buffer, 255, 255, L"[%d-%02d-%02d %02d:%02d:%02d / %s / %08d] ", date.year(), date.month(), date.day_of_month(), date.hour(), date.minute(), date.second(), lm[static_cast<unsigned char>(level_)], _InterlockedIncrement(&_count));
@@ -76,8 +76,8 @@ namespace utility {
 		template<level level_>
 		inline void log_memory(std::string_view const key, wchar_t const* const print, unsigned char* pointer, size_type size, size_type const column) noexcept {
 			if (0 != _output && level_ >= _level) {
-				library::system_component::time::unix unix(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()));
-				library::system_component::time::date date(unix.local_time());
+				library::system::time::unix unix(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()));
+				library::system::time::date date(unix.local_time());
 
 				wchar_t buffer[256];
 				int length = _snwprintf_s(buffer, 255, 255, L"[%d-%02d-%02d %02d:%02d:%02d / %s / %08d] ", date.year(), date.month(), date.day_of_month(), date.hour(), date.minute(), date.second(), lm[static_cast<unsigned char>(level_)], _InterlockedIncrement(&_count));
@@ -112,8 +112,8 @@ namespace utility {
 			return _level;
 		}
 	private:
-		library::system_component::file _file;
-		library::system_component::multi::lock::critical_section _lock;
+		library::system::file _file;
+		library::system::multi::lock::critical_section _lock;
 
 		inline static unsigned char _output;
 		inline static level _level = static_cast<level>(none);

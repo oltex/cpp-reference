@@ -2,7 +2,7 @@
 
 int main(void) noexcept {
 	unsigned int a;
-	library::system_component::interlocked::increment(a);
+	library::system::interlocked::increment(a);
 
 	return 0;
 }

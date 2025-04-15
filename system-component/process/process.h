@@ -1,7 +1,7 @@
 #pragma once
 #include "../handle/handle.h"
 
-namespace library::system_component {
+namespace library::system {
 	class token final : public handle {
 	public:
 		inline explicit token(void) noexcept = default;
@@ -29,7 +29,7 @@ namespace library::system_component {
 			privileges.PrivilegeCount = 1;
 			privileges.Privileges[0].Luid = luid;
 			privileges.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
-			if(0 != AdjustTokenPrivileges(_handle, false, &privileges, sizeof(TOKEN_PRIVILEGES), nullptr, nullptr))
+			if(0 == AdjustTokenPrivileges(_handle, false, &privileges, sizeof(TOKEN_PRIVILEGES), nullptr, nullptr))
 				__debugbreak();
 			else {
 				switch (GetLastError()) {

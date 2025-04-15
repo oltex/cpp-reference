@@ -33,7 +33,7 @@ namespace library::data_structure::lockfree {
 			node* head = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & _head);
 			while (nullptr != head) {
 				node* next = head->_next;
-				system_component::memory::destruct<type>(head->_value);
+				system::memory::destruct<type>(head->_value);
 				_pool.deallocate(*head);
 				head = next;
 			}
@@ -42,7 +42,7 @@ namespace library::data_structure::lockfree {
 		template<typename... argument>
 		inline void push(argument&&... arg) noexcept {
 			node* current = &_pool.allocate();
-			system_component::memory::construct<type>(current->_value, std::forward<argument>(arg)...);
+			system::memory::construct<type>(current->_value, std::forward<argument>(arg)...);
 
 			for (;;) {
 				unsigned long long head = _head;
@@ -61,7 +61,7 @@ namespace library::data_structure::lockfree {
 				unsigned long long next = reinterpret_cast<unsigned long long>(address->_next) + (0xFFFF800000000000ULL & head) /*+ 0x0000800000000000ULL*/;
 				if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head)) {
 					type result(std::move(address->_value));
-					system_component::memory::destruct<type>(address->_value);
+					system::memory::destruct<type>(address->_value);
 					_pool.deallocate(*address);
 					return result;
 				}

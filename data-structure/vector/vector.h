@@ -37,7 +37,7 @@ namespace library::data_structure {
 		inline auto operator=(vector&& rhs) noexcept -> vector&;
 		inline ~vector(void) noexcept {
 			clear();
-			system_component::memory::deallocate<type>(_array);
+			system::memory::deallocate<type>(_array);
 		}
 
 		template<typename universal>
@@ -54,13 +54,13 @@ namespace library::data_structure {
 			}
 			type& element = _array[_size++];
 			if (true == placement)
-				system_component::memory::construct(element, std::forward<argument>(arg)...);
+				system::memory::construct(element, std::forward<argument>(arg)...);
 			return element;
 		}
 		inline void pop_back(void) noexcept {
 			--_size;
 			if (true == placement)
-				system_component::memory::destruct(_array[_size]);
+				system::memory::destruct(_array[_size]);
 		}
 	public:
 		inline auto front(void) const noexcept ->type& {
@@ -86,7 +86,7 @@ namespace library::data_structure {
 			if (_size <= capacity) {
 				_capacity = capacity;
 #pragma warning(suppress: 6308)
-				_array = system_component::memory::reallocate<type>(_array, _capacity);
+				_array = system::memory::reallocate<type>(_array, _capacity);
 			}
 		}
 		template<typename... argument>
@@ -98,7 +98,7 @@ namespace library::data_structure {
 				if (size > _size)
 					if constexpr (std::is_constructible_v<type, argument...>)
 						while (size != _size)
-							system_component::memory::construct(_array[_size++], std::forward<argument>(arg)...);
+							system::memory::construct(_array[_size++], std::forward<argument>(arg)...);
 					else
 						if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
 							while (size != _size)

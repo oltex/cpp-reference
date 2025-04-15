@@ -153,13 +153,13 @@ namespace library::data_structure::_thread_local {
 			current = _head;
 			_head = current->_next;
 			if constexpr (true == placement)
-				system_component::memory::construct<type>(current->_value);
+				system::memory::construct<type>(current->_value);
 			--_size;
 			return current->_value;
 		}
 		inline void deallocate(type& value) noexcept {
 			if constexpr (true == placement)
-				system_component::memory::destruct<type>(value);
+				system::memory::destruct<type>(value);
 			node* current = reinterpret_cast<node*>(reinterpret_cast<unsigned char*>(&value) - offsetof(node, _value));
 			current->_next = _head;
 			_head = current;

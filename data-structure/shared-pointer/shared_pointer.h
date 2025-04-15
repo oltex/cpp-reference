@@ -30,16 +30,16 @@ namespace library::data_structure {
 		};
 		inline explicit shared_pointer(type* pointer) noexcept 
 			: _pointer(pointer) {
-			_reference = system_component::memory::allocate<reference>();
+			_reference = system::memory::allocate<reference>();
 #pragma warning(suppress: 6011)
 			_reference->_use = 1;
 			_reference->_weak = 0;
 		}
 		template<typename... argument>
 		inline explicit shared_pointer(argument&&... arg) noexcept {
-			_pointer = system_component::memory::allocate<type>();
-			_reference = system_component::memory::allocate<reference>();
-			system_component::memory::construct(*_pointer, std::forward<argument>(arg)...);
+			_pointer = system::memory::allocate<type>();
+			_reference = system::memory::allocate<reference>();
+			system::memory::construct(*_pointer, std::forward<argument>(arg)...);
 			_reference->_use = 1;
 			_reference->_weak = 0;
 		}
@@ -63,10 +63,10 @@ namespace library::data_structure {
 		};
 		inline ~shared_pointer(void) noexcept {
 			if (nullptr != _reference && 0 == --_reference->_use) {
-				system_component::memory::destruct<type>(*_pointer);
-				system_component::memory::deallocate<type>(_pointer);
+				system::memory::destruct<type>(*_pointer);
+				system::memory::deallocate<type>(_pointer);
 				if (0 == _reference->_weak)
-					system_component::memory::deallocate<reference>(_reference);
+					system::memory::deallocate<reference>(_reference);
 			}
 		}
 	public:

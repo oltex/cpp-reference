@@ -1,7 +1,7 @@
 #pragma once
 #include <ctime>
 
-namespace library::system_component::time {
+namespace library::system::time {
 	class unix final {
 	public:
 		inline explicit unix(void) noexcept = default;

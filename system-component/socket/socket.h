@@ -10,7 +10,7 @@
 #include "../overlapped/overlapped.h"
 #include "../../data-structure/pair/pair.h"
 
-namespace library::system_component {
+namespace library::system {
 	inline static void wsa_start_up(void) noexcept {
 		WSAData wsadata;
 		if (0 != WSAStartup(0x0202, &wsadata))

@@ -3,7 +3,7 @@
 class Base {
 public:
 	virtual ~Base() = default;
-	virtual library::system_component::coroutine<library::system_component::promise> coroutineFunction() {
+	virtual library::system::coroutine<library::system::promise> coroutineFunction() {
 		co_return;
 	};
 	virtual void coroutineFunction2() {
@@ -14,7 +14,7 @@ public:
 
 class Derived : public Base {
 //public:
-	//library::system_component::coroutine<library::system_component::promise> coroutineFunction() override {
+	//library::system::coroutine<library::system::promise> coroutineFunction() override {
 	//	int a = 10;
 	//	co_return;
 	//}
@@ -42,7 +42,7 @@ class Derived : public Base {
 //	delete obj;
 //}
 
-library::system_component::coroutine<library::system_component::promise> test(void) {
+library::system::coroutine<library::system::promise> test(void) {
 	//1
 	co_await; //string //디비 요청
 	//3
