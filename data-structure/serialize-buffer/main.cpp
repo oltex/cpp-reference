@@ -10,7 +10,7 @@
 
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	library::library::data_structure::serialize_buffer serialize_buffer;
+	library::data_structure::serialize_buffer serialize_buffer;
 	{
 		serialize_buffer << 0xaaaaaaaa << true << 'c';
 		//if (!serialize_buffer)

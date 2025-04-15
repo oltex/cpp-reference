@@ -1,6 +1,7 @@
 #pragma once
 #include <malloc.h>
 #include <utility>
+#include <Windows.h>
 
 namespace library::system_component::memory {
 	inline auto allocate(size_t const size) noexcept -> void* {
@@ -64,6 +65,20 @@ namespace library::system_component::memory {
 		if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
 			instance.~type();
 	}
+
+	class virtual_memory final {
+	public:
+		inline explicit virtual_memory(void) noexcept = default;
+		inline explicit virtual_memory(virtual_memory const&) noexcept = delete;
+		inline explicit virtual_memory(virtual_memory&& rhs) noexcept = delete;
+		inline auto operator=(virtual_memory const&) noexcept -> virtual_memory & = delete;
+		inline auto operator=(virtual_memory&& rhs) noexcept -> virtual_memory & = delete;
+		inline ~virtual_memory(void) noexcept;
+
+		inline auto reserve(void) noexcept {
+			//VirtualAlloc2(nullptr, nullptr, 64 * 1024, MEM_RESERVE | MEM_LARGE_PAGES,  );
+		}
+	};
 }
 
 //if constexpr (!std::is_trivially_constructible_v<type, argument...>)

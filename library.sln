@@ -47,7 +47,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "logger", "utility\logger\lo
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "profiler", "utility\profiler\profiler.vcxproj", "{12FF0685-339D-4A07-BDE3-B1D6F4EDCB73}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "system-component", "system-component", "{1AA55DD9-5821-4C5B-980D-997F42D8264C}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "system", "system", "{1AA55DD9-5821-4C5B-980D-997F42D8264C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "algorithm", "algorithm", "{88033A2C-B20C-4143-A6D8-0A943F34408E}"
 EndProject
@@ -199,6 +199,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pool", "data-structure\lockfree\pool\pool.vcxproj", "{B1810833-73C7-4CA4-AF4B-AFF097390F1A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pool", "data-structure\thread-local\pool\pool.vcxproj", "{0F739725-F22B-4E8D-BEC8-FE12A801EAD0}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "process", "system-component\process\process.vcxproj", "{EA3F548D-BC49-407E-BB50-D2240F3F4396}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -832,6 +834,14 @@ Global
 		{0F739725-F22B-4E8D-BEC8-FE12A801EAD0}.Release|x64.Build.0 = Release|x64
 		{0F739725-F22B-4E8D-BEC8-FE12A801EAD0}.Release|x86.ActiveCfg = Release|Win32
 		{0F739725-F22B-4E8D-BEC8-FE12A801EAD0}.Release|x86.Build.0 = Release|Win32
+		{EA3F548D-BC49-407E-BB50-D2240F3F4396}.Debug|x64.ActiveCfg = Debug|x64
+		{EA3F548D-BC49-407E-BB50-D2240F3F4396}.Debug|x64.Build.0 = Debug|x64
+		{EA3F548D-BC49-407E-BB50-D2240F3F4396}.Debug|x86.ActiveCfg = Debug|Win32
+		{EA3F548D-BC49-407E-BB50-D2240F3F4396}.Debug|x86.Build.0 = Debug|Win32
+		{EA3F548D-BC49-407E-BB50-D2240F3F4396}.Release|x64.ActiveCfg = Release|x64
+		{EA3F548D-BC49-407E-BB50-D2240F3F4396}.Release|x64.Build.0 = Release|x64
+		{EA3F548D-BC49-407E-BB50-D2240F3F4396}.Release|x86.ActiveCfg = Release|Win32
+		{EA3F548D-BC49-407E-BB50-D2240F3F4396}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -924,6 +934,7 @@ Global
 		{1E8EED34-0B14-4673-8549-E6486550F088} = {638B906C-1177-49D6-86F1-FCF8F6BED5FE}
 		{B1810833-73C7-4CA4-AF4B-AFF097390F1A} = {AC45BA54-4F8F-40BA-A97B-25E230AAE4C5}
 		{0F739725-F22B-4E8D-BEC8-FE12A801EAD0} = {C5C55FE0-4A9C-4660-8830-EB3B7001A411}
+		{EA3F548D-BC49-407E-BB50-D2240F3F4396} = {1AA55DD9-5821-4C5B-980D-997F42D8264C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C69985D6-20AB-4E9A-AD82-08BFBE490891}

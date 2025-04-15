@@ -1,33 +1,49 @@
-#include "memory.h"
+//#include "memory.h"
 #include "iostream"
-struct my_struct {
-	int a;
-};
+#pragma comment(lib, "onecore.lib")
+#include <Windows.h>
+
+int main() {
+    HANDLE token;
+    if (!OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &token))
+        return false;
+
+    LUID luid;
+    if (!LookupPrivilegeValueW(nullptr, SE_LOCK_MEMORY_NAME, &luid))
+        return false;
+
+    TOKEN_PRIVILEGES privileges;
+    privileges.PrivilegeCount = 1;
+    privileges.Privileges[0].Luid = luid;
+    privileges.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
+    BOOL result = AdjustTokenPrivileges(token, false, &privileges, sizeof(TOKEN_PRIVILEGES), nullptr, nullptr);
+    if (1300 == GetLastError())
+        printf("error");
+    //CloseHandle(hToken);
+    //ERROR_SUCCESS
 
 
-int main(void) noexcept {
+    //MEM_ADDRESS_REQUIREMENTS requirement;
+    //requirement.LowestStartingAddress = NULL;
+    //requirement.HighestEndingAddress = NULL;
+    //requirement.Alignment = 4 * 1024 * 1024 * 1024; // align to 4GB boundary
 
-	for (;;) {
-		//int* a = reinterpret_cast<int*>(::malloc(sizeof(int)));
-		int* a = reinterpret_cast<int*>(::_aligned_malloc(sizeof(int), 4));
-		printf("%p\n", a);
-	}
-	//int* a1 = reinterpret_cast<int*>(::_aligned_malloc(sizeof(int), 4));
-	//int* a2 = reinterpret_cast<int*>(::_aligned_malloc(sizeof(int), 4));
-	//int* a3 = reinterpret_cast<int*>(::_aligned_malloc(sizeof(int), 4));
-	//int* a4 = reinterpret_cast<int*>(::_aligned_malloc(sizeof(int), 4));
-	//int* a5 = reinterpret_cast<int*>(::_aligned_malloc(sizeof(int), 4));
-	//int* a6 = reinterpret_cast<int*>(::_aligned_malloc(sizeof(int), 4));
+    //MEM_EXTENDED_PARAMETER xp[2];
+    //xp[0].Type = MemExtendedParameterAddressRequirements;
+    //xp[0].Pointer = &requirement;
 
-	//my_struct* a = reinterpret_cast<my_struct*>(::malloc(sizeof(my_struct)));
-	//my_struct* a1 = reinterpret_cast<my_struct*>(::malloc(sizeof(my_struct)));
-	//my_struct* a2 = reinterpret_cast<my_struct*>(::malloc(sizeof(my_struct)));
-	//my_struct* a3 = reinterpret_cast<my_struct*>(::malloc(sizeof(my_struct)));
-	//my_struct* a4 = reinterpret_cast<my_struct*>(::malloc(sizeof(my_struct)));
-	//my_struct* a5 = reinterpret_cast<my_struct*>(::malloc(sizeof(my_struct)));
-	//my_struct* a6 = reinterpret_cast<my_struct*>(::malloc(sizeof(my_struct)));
+    //xp[1].Type = MemExtendedParameterAttributeFlags;
+    //xp[1].ULong64 = MEM_EXTENDED_PARAMETER_NONPAGED_HUGE; // 1GB pages required
+    //size_t min, max;
+    //GetProcessWorkingSetSize(GetCurrentProcess(), &min, &max);
 
-	//auto a = library::system_component::memory::allocate(10);
-	//library::system_component::memory::deallocate(a);
-	return 0;
+    //auto page = GetLargePageMinimum();
+
+    int size = 0;
+    std::cin >> size;
+    auto a = VirtualAlloc(nullptr, GetLargePageMinimum() * size, MEM_LARGE_PAGES | MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+    printf("%p\n", a);
+    //auto b = VirtualAlloc2(nullptr, nullptr, GetLargePageMinimum(), MEM_LARGE_PAGES | MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE, xp, 2);
+    auto c = GetLastError();
+    system("pause");
 }
