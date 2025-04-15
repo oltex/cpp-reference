@@ -3,4 +3,7 @@
   <ItemGroup>
     <ClInclude Include="process.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
 </Project>
