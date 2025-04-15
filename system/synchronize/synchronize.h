@@ -6,7 +6,7 @@
 #include <utility>
 #define x64
 
-namespace library::synchronize {
+namespace library::system::synchronize {
 	namespace barrier {
 		inline void read(void) noexcept {
 			_ReadBarrier();
