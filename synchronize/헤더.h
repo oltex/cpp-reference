@@ -1,6 +1,6 @@
 #pragma once
 #pragma comment(lib, "Synchronization.lib")
-#include "../handle/handle.h"
+#include "../system/handle/handle.h"
 #include <Windows.h>
 #include <intrin.h>
 #include <utility>

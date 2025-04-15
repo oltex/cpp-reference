@@ -5,7 +5,7 @@
 #include <iomanip>
 #include <ctime>
 
-namespace library::system::time {
+namespace library::time {
 	namespace multimidia {
 		inline void begin_period(unsigned int const peroid) noexcept {
 			timeBeginPeriod(peroid);
