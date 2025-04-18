@@ -86,7 +86,7 @@ namespace library::data_structure::lockfree {
 			node* address = reinterpret_cast<node*>(0x00007FFFFFFFFFFEULL & head);
 			unsigned long long next = address->_next;
 
-			if (1 == (0x1ULL & next))
+			if (0 == (0x1ULL & next))
 				__debugbreak();
 			unsigned long long tail = _tail;
 			if (tail == head)
