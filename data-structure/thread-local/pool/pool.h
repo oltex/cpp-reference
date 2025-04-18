@@ -1,5 +1,5 @@
 #pragma once
-#include "../../../system-component/memory/memory.h"
+#include "../../../system/memory/memory.h"
 #include "../../../design-pettern/thread-local/singleton/singleton.h"
 #include "../../lockfree/pool/pool.h"
 #include "../../pair/pair.h"

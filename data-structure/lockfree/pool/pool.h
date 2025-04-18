@@ -1,5 +1,5 @@
 #pragma once
-#include "../../../system-component/memory/memory.h"
+#include "../../../system/memory/memory.h"
 #include <memory>
 #include <Windows.h>
 

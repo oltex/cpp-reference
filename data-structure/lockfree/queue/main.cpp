@@ -14,7 +14,7 @@
 //	volatile unsigned int _value = 0;
 //	volatile unsigned int _prev_value = 0;
 //	for (;;/*int i = 0; i < 100; ++i*/) {
-//		if (count++ == 10000) {
+//		if (count++ == 1000000) {
 //			printf("thread : %d\n", GetCurrentThreadId());
 //			count = 0;
 //		}
@@ -25,10 +25,10 @@
 //			auto result = _lockfree_queue.pop();
 //			if (result) {
 //				if (GetCurrentThreadId() == (*result).first) {
-//					//if (_prev_value >= (*result).second)
-//					//	__debugbreak();
-//					//else
-//					//	_prev_value = (*result).second;
+//					if (_prev_value >= (*result).second)
+//						__debugbreak();
+//					else
+//						_prev_value = (*result).second;
 //				}
 //			}
 //			else
@@ -38,7 +38,7 @@
 //	return 0;
 //}
 
-//library::data_structure::lockfree::queue<unsigned int> _lockfree_queue_array[5];
+//library::data_structure::lockfree::queue<unsigned long long> _lockfree_queue_array[5];
 //unsigned int _lockfree_queue_index = 0;
 //inline static unsigned int __stdcall func_tls(void* arg) noexcept {
 //	unsigned int _id = _InterlockedIncrement(&_lockfree_queue_index) - 1;
@@ -46,20 +46,22 @@
 //	volatile unsigned int _value = 0;
 //	int count = 0;
 //	for (;;) {
-//		if (count++ == 1000) {
+//		if (count++ == 100000) {
 //			printf("thread : %d\n", GetCurrentThreadId());
 //			count = 0;
 //		}
-//		for (int i = 0; i < 1024; ++i) {
-//			_lockfree_queue_array[_id].push(++_value);
+//		for (int i = 0; i < 2; ++i) {
+//			_lockfree_queue_array[_id].emplace(GetCurrentThreadId());
 //		}
-//		for (int i = 0; i < 1024; ++i) {
+//		for (int i = 0; i < 2; ++i) {
 //			auto result = _lockfree_queue_array[_id].pop();
 //			if (result) {
-//				if (_prev_value >= (*result))
+//				if(GetCurrentThreadId() != (*result))
 //					__debugbreak();
-//				else
-//					_prev_value = (*result);
+//				//if (_prev_value >= (*result))
+//				//	__debugbreak();
+//				//else
+//				//	_prev_value = (*result);
 //			}
 //			else
 //				i--;
@@ -118,7 +120,6 @@
 
 inline static unsigned int __stdcall func(void* arg) noexcept {
 	library::data_structure::lockfree::queue<unsigned long long>& _lockfree_queue = *(library::data_structure::lockfree::queue<unsigned long long>*)(arg);
-
 	int count = 0;
 	auto rdtsc = __rdtsc();
 	unsigned long long _value = 0;
@@ -154,8 +155,9 @@ int main(void) noexcept {
 	library::data_structure::lockfree::queue<unsigned long long> _lockfree_queue;
 
 	HANDLE _handle0 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, (void*)&_lockfree_queue, 0, 0));
-	//HANDLE _handle1 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func_push, nullptr, 0, 0));
+	HANDLE _handle1 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, (void*)&_lockfree_queue, 0, 0));
 	HANDLE _handle2 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, (void*)&_lockfree_queue, 0, 0));
+	HANDLE _handle3 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, (void*)&_lockfree_queue, 0, 0));
 	//HANDLE _handle3 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func_pop, nullptr, 0, 0));
 	//HANDLE _handle4 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func_pop, nullptr, 0, 0));
 	//HANDLE _handle4 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));

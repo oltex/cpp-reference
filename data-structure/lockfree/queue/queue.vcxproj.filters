@@ -6,5 +6,6 @@
   <ItemGroup>
     <ClInclude Include="queue.h" />
     <ClInclude Include="queue%28boost%29.h" />
+    <ClInclude Include="queue(boost)old.h" />
   </ItemGroup>
 </Project>
