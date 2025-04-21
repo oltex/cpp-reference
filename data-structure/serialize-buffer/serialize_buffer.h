@@ -3,7 +3,7 @@
 #include <memory>
 #include <string>
 #include <string_view>
-#include "../../system-component/memory/memory.h"
+#include "../../system/memory/memory.h"
 
 namespace library::data_structure {
 	class serialize_buffer final {
@@ -41,7 +41,7 @@ namespace library::data_structure {
 
 		template<typename type>
 			requires std::is_arithmetic_v<type>
-		inline auto operator<<(type const& value) noexcept -> serialize_buffer&  {
+		inline auto operator<<(type const value) noexcept -> serialize_buffer&  {
 #ifdef debug
 			if (sizeof(type) + _rear > _capacity) {
 				_fail = true;

@@ -160,7 +160,8 @@ namespace library::data_structure::_thread_local {
 		inline void deallocate(type& value) noexcept {
 			if constexpr (true == placement)
 				system::memory::destruct<type>(value);
-			node* current = reinterpret_cast<node*>(reinterpret_cast<unsigned char*>(&value) - offsetof(node, _value));
+			node* current = reinterpret_cast<node*>
+				(reinterpret_cast<unsigned char*>(&value) - offsetof(node, _value));
 			current->_next = _head;
 			_head = current;
 			++_size;
