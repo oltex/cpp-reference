@@ -28,14 +28,12 @@ inline static unsigned int __stdcall func_pool(void* arg) noexcept {
 		auto _rdtsc = __rdtsc();
 
 		for (auto i = 0; i < 200; ++i) {
-			//_array[i] = tls_object_pool.Alloc();
 			_array[i] = &instance.allocate();
 		}
 		//for (auto i = 0; i < 1000000; ++i)
 		//	if (11 != ++(*_array[i]))
 		//		__debugbreak();
 		for (auto i = 0; i < 200; ++i) {
-			//tls_object_pool.Free(_array[i]);
 			instance.deallocate(*_array[i]);
 		}
 
@@ -97,6 +95,28 @@ inline static unsigned int __stdcall func_pool(void* arg) noexcept {
 //	}
 //	return 0;
 //}
+
+
+
+inline static unsigned int __stdcall func(void* arg) noexcept {
+	auto& instance = library::data_structure::_thread_local::pool<my_struct>::instance();
+	my_struct** _array = (my_struct**)malloc(sizeof(my_struct*) * 1000000);
+
+	for (int i = 0; i < 10; ++i) {
+		auto _rdtsc = __rdtsc();
+
+		for (auto i = 0; i < 200; ++i)
+			_array[i] = &instance.allocate();
+		for (auto i = 0; i < 200; ++i)
+			instance.deallocate(*_array[i]);
+
+		auto result = __rdtsc() - _rdtsc;
+		printf("pool : %llu\n", result);
+	}
+
+	free(_array);
+	return 0;
+}
 
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);

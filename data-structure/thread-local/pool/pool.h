@@ -100,8 +100,8 @@ namespace library::data_structure::_thread_local {
 					unsigned long long head = _head;
 					bucket* address = reinterpret_cast<bucket*>(0x00007FFFFFFFFFFFULL & head);
 					if (nullptr == address) {
-						pair<node*, size_type> result{ reinterpret_cast<node*>(_aligned_malloc(sizeof(node) * bucket_size, _align)), bucket_size };
-						_InterlockedIncrement(&_capacity);
+						pair<node*, size_type> result{ reinterpret_cast<node*>
+							(_aligned_malloc(sizeof(node) * bucket_size, _align)), bucket_size };
 
 						node* current = result._first;
 						node* next = current + 1;
@@ -112,7 +112,8 @@ namespace library::data_structure::_thread_local {
 
 						return result;
 					}
-					unsigned long long next = reinterpret_cast<unsigned long long>(address->_next) + (0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
+					unsigned long long next = reinterpret_cast<unsigned long long>(address->_next)
+						+ (0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
 					if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head)) {
 						pair<node*, size_type> result{ address->_value, address->_size };
 						_pool.deallocate(*address);
@@ -127,10 +128,10 @@ namespace library::data_structure::_thread_local {
 		};
 	private:
 		inline explicit pool(void) noexcept = default;
-		inline explicit pool(pool const& rhs) noexcept = delete;
-		inline explicit pool(pool&& rhs) noexcept = delete;
-		inline auto operator=(pool const& rhs) noexcept -> pool & = delete;
-		inline auto operator=(pool&& rhs) noexcept -> pool & = delete;
+		inline explicit pool(pool const&) noexcept = delete;
+		inline explicit pool(pool&&) noexcept = delete;
+		inline auto operator=(pool const&) noexcept -> pool & = delete;
+		inline auto operator=(pool&&) noexcept -> pool & = delete;
 		inline ~pool(void) noexcept {
 			if (0 == _size)
 				return;
