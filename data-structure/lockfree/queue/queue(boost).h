@@ -52,8 +52,7 @@ namespace library::data_structure::lockfree {
 
 				if (1 == (0x1ULL & next))
 					_InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_tail), next, tail);
-				else if (reinterpret_cast<unsigned long long>(this) == (0x00007FFFFFFFFFFFULL & next) 
-					&& count == (0xFFFF800000000000ULL & next)) {
+				else if (reinterpret_cast<unsigned long long>(this) == (0x00007FFFFFFFFFFFULL & next) && count == (0xFFFF800000000000ULL & next)) {
 					unsigned long long next_count = count + 0x0000800000000000ULL;
 					unsigned long long next_tail = reinterpret_cast<unsigned long long>(current) + next_count + 1;
 					current->_next = next_count + reinterpret_cast<unsigned long long>(this);
