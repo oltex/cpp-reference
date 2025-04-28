@@ -6,6 +6,9 @@
 #include <thread>
 #include <intrin.h>
 #include <iostream>
+#include <mutex>
+#include <queue>
+#include <Windows.h>
 
 
 //library::data_structure::lockfree::queue<std::pair<unsigned long, unsigned int>> _lockfree_queue;
@@ -69,7 +72,6 @@
 //	}
 //	return 0;
 //}
-
 
 //library::data_structure::lockfree::queue<unsigned long long> _lockfree_queue;
 //inline static unsigned int __stdcall func_push(void* arg) noexcept {
@@ -150,20 +152,95 @@ inline static unsigned int __stdcall func(void* arg) noexcept {
 
 
 
-int main(void) noexcept {
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	library::data_structure::lockfree::queue<unsigned long long> _lockfree_queue;
 
-	HANDLE _handle0 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, (void*)&_lockfree_queue, 0, 0));
-	HANDLE _handle1 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, (void*)&_lockfree_queue, 0, 0));
-	HANDLE _handle2 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, (void*)&_lockfree_queue, 0, 0));
-	HANDLE _handle3 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, (void*)&_lockfree_queue, 0, 0));
-	//HANDLE _handle3 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func_pop, nullptr, 0, 0));
-	//HANDLE _handle4 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func_pop, nullptr, 0, 0));
-	//HANDLE _handle4 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
-	system("pause");
-	//ResumeThread(_handle0);
-	//ResumeThread(_handle1);
-	//Sleep(INFINITE);
+
+library::data_structure::lockfree::queue<unsigned long long> _lockfree_queue;
+std::queue<int> _std_queue;
+std::mutex _std_mutex;
+LARGE_INTEGER _frequency;
+
+inline static unsigned int __stdcall func1(void* arg) noexcept {
+	LARGE_INTEGER _start;
+	LARGE_INTEGER _end;
+	unsigned long long sum = 0;
+	unsigned long long count = 0;
+	for (;;) {
+		QueryPerformanceCounter(&_start);
+		for (int j = 0; j < 10000; ++j) {
+			for (int i = 0; i < 500; ++i)
+				_lockfree_queue.emplace(i);
+			for (int i = 0; i < 500; ++i)
+				_lockfree_queue.pop();
+		}
+		QueryPerformanceCounter(&_end);
+		sum += _end.QuadPart - _start.QuadPart;
+		count++;
+		printf("%f\n", (sum / count) / static_cast<double>(_frequency.QuadPart) * 1000.);
+	}
 	return 0;
 }
+inline static unsigned int __stdcall func2(void* arg) noexcept {
+	LARGE_INTEGER _start;
+	LARGE_INTEGER _end;
+	unsigned long long sum = 0;
+	unsigned long long count = 0;
+	for (;;) {
+		QueryPerformanceCounter(&_start);
+		for (int j = 0; j < 10000; ++j) {
+			for (int i = 0; i < 500; ++i) {
+				_std_mutex.lock();
+				_std_queue.emplace(i);
+				_std_mutex.unlock();
+			}
+			for (int i = 0; i < 500; ++i) {
+				_std_mutex.lock();
+				_std_queue.pop();
+				_std_mutex.unlock();
+			}
+		}
+		QueryPerformanceCounter(&_end);
+		sum += _end.QuadPart - _start.QuadPart;
+		count++;
+		printf("%f\n", (sum / count) / static_cast<double>(_frequency.QuadPart) * 1000.);
+	}
+	return 0;
+}
+
+int main(void) noexcept {
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	QueryPerformanceFrequency(&_frequency);
+	HANDLE _handle0 = (HANDLE)_beginthreadex(nullptr, 0, func2, nullptr, 0, 0);
+	HANDLE _handle1 = (HANDLE)_beginthreadex(nullptr, 0, func2, nullptr, 0, 0);
+	HANDLE _handle2 = (HANDLE)_beginthreadex(nullptr, 0, func2, nullptr, 0, 0);
+	HANDLE _handle3 = (HANDLE)_beginthreadex(nullptr, 0, func2, nullptr, 0, 0);
+	HANDLE _handle4 = (HANDLE)_beginthreadex(nullptr, 0, func2, nullptr, 0, 0);
+	HANDLE _handle5 = (HANDLE)_beginthreadex(nullptr, 0, func2, nullptr, 0, 0);
+	HANDLE _handle6 = (HANDLE)_beginthreadex(nullptr, 0, func2, nullptr, 0, 0);
+	HANDLE _handle7 = (HANDLE)_beginthreadex(nullptr, 0, func2, nullptr, 0, 0);
+	HANDLE _handle8 = (HANDLE)_beginthreadex(nullptr, 0, func2, nullptr, 0, 0);
+	HANDLE _handle9 = (HANDLE)_beginthreadex(nullptr, 0, func2, nullptr, 0, 0);
+	HANDLE _handle10 = (HANDLE)_beginthreadex(nullptr, 0, func2, nullptr, 0, 0);
+	HANDLE _handle11 = (HANDLE)_beginthreadex(nullptr, 0, func2, nullptr, 0, 0);
+	Sleep(INFINITE);
+	return 0;
+}
+
+
+
+//int main(void) noexcept {
+//	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+//	library::data_structure::lockfree::queue<unsigned long long> _lockfree_queue;
+//
+//	HANDLE _handle0 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, (void*)&_lockfree_queue, 0, 0));
+//	HANDLE _handle1 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, (void*)&_lockfree_queue, 0, 0));
+//	HANDLE _handle2 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, (void*)&_lockfree_queue, 0, 0));
+//	HANDLE _handle3 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, (void*)&_lockfree_queue, 0, 0));
+//	//HANDLE _handle3 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func_pop, nullptr, 0, 0));
+//	//HANDLE _handle4 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func_pop, nullptr, 0, 0));
+//	//HANDLE _handle4 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
+//	system("pause");
+//	//ResumeThread(_handle0);
+//	//ResumeThread(_handle1);
+//	//Sleep(INFINITE);
+//	return 0;
+//}

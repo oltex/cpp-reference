@@ -1,6 +1,6 @@
 #pragma once
 #include "../../../system/memory/memory.h"
-#include "../pool/pool.h"
+#include "../../thread-local/pool/pool.h"
 #include <utility>
 #include <Windows.h>
 #include <intrin.h>
@@ -21,6 +21,7 @@ namespace library::data_structure::lockfree {
 			node* _next;
 			type _value;
 		};
+		using _pool = _thread_local::pool<node>;
 	public:
 		inline explicit stack(void) noexcept
 			: _head(0) {
@@ -34,20 +35,21 @@ namespace library::data_structure::lockfree {
 			while (nullptr != head) {
 				node* next = head->_next;
 				system::memory::destruct<type>(head->_value);
-				_pool.deallocate(*head);
+				_pool::instance().deallocate(*head);
 				head = next;
 			}
 		};
 	public:
 		template<typename... argument>
 		inline void push(argument&&... arg) noexcept {
-			node* current = &_pool.allocate();
+			node* current = &_pool::instance().allocate();
 			system::memory::construct<type>(current->_value, std::forward<argument>(arg)...);
 
 			for (;;) {
 				unsigned long long head = _head;
 				current->_next = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & head);
-				unsigned long long next = reinterpret_cast<unsigned long long>(current) + (0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
+				unsigned long long next = reinterpret_cast<unsigned long long>(current) + 
+					(0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
 				if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head))
 					break;
 			}
@@ -58,17 +60,17 @@ namespace library::data_structure::lockfree {
 				node* address = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & head);
 				if (nullptr == address)
 					return std::nullopt;
-				unsigned long long next = reinterpret_cast<unsigned long long>(address->_next) + (0xFFFF800000000000ULL & head);
+				unsigned long long next = reinterpret_cast<unsigned long long>(address->_next) + 
+					(0xFFFF800000000000ULL & head);
 				if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head)) {
 					type result(std::move(address->_value));
 					system::memory::destruct<type>(address->_value);
-					_pool.deallocate(*address);
+					_pool::instance().deallocate(*address);
 					return result;
 				}
 			}
 		}
 	private:
-		unsigned long long _head;
-		pool<node> _pool;
+		alignas(64) unsigned long long _head;
 	};
 }

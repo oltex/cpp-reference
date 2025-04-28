@@ -106,7 +106,7 @@ namespace library::data_structure::lockfree {
 			return false;
 		}
 	protected:
-		unsigned long long _head;
-		unsigned long long _tail;
+		alignas(64) unsigned long long _head;
+		alignas(64) unsigned long long _tail;
 	};
 }
