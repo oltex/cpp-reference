@@ -19,7 +19,7 @@ public:
 public:
 	inline void lock(void) noexcept {
 		while (1 == _lock || 1 == _interlockedbittestandset(&_lock, 0)) {
-				YieldProcessor();
+			YieldProcessor();
 		}
 	}
 	//inline void lock(void) noexcept {
@@ -139,17 +139,21 @@ inline static unsigned int __stdcall func3(void* arg) noexcept {
 	int tid = GetCurrentThreadId();
 	for (;;) {
 		QueryPerformanceCounter(&_start);
-		for (int j = 0; j < 10000; ++j) {
+		for (int j = 0; j < 100000; ++j) {
 			for (int i = 0; i < 500; ++i) {
 				AcquireSRWLockExclusive(&_srw);
 				//_stack.push(i);
 				_log[_logcnt++ % 30000000] = tid;
+				//for (int k = 0; k < 10000; ++k) {
+				//}
 				ReleaseSRWLockExclusive(&_srw);
 			}
 			for (int i = 0; i < 500; ++i) {
 				AcquireSRWLockExclusive(&_srw);
 				//_stack.pop();
 				_log[_logcnt++ % 30000000] = tid;
+				//for (int k = 0; k < 10000; ++k) {
+				//}
 				ReleaseSRWLockExclusive(&_srw);
 			}
 		}
@@ -161,6 +165,26 @@ inline static unsigned int __stdcall func3(void* arg) noexcept {
 	return 0;
 }
 
+
+inline static unsigned int __stdcall func4(void* arg) noexcept {
+	LARGE_INTEGER _start;
+	LARGE_INTEGER _end;
+	unsigned long long sum = 0;
+	unsigned long long count = 0;
+	int tid = GetCurrentThreadId();
+	for (;;) {
+		//_spin.lock();
+		AcquireSRWLockExclusive(&_srw);
+		_log[_logcnt++ % 30000000] = tid;
+		for (int k = 0; k < 10000; ++k) {
+		}
+		ReleaseSRWLockExclusive(&_srw);
+		//_spin.unlock();
+
+	}
+	return 0;
+}
+
 int main(void) noexcept {
 	InitializeSRWLock(&_srw);
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -168,10 +192,10 @@ int main(void) noexcept {
 	_interlockedbittestandset(&a, 0);
 	QueryPerformanceFrequency(&_frequency);
 
-	HANDLE _handle0 = (HANDLE)_beginthreadex(nullptr, 0, func2, nullptr, 0, 0);
-	HANDLE _handle1 = (HANDLE)_beginthreadex(nullptr, 0, func2, nullptr, 0, 0);
-	HANDLE _handle2 = (HANDLE)_beginthreadex(nullptr, 0, func2, nullptr, 0, 0);
-	HANDLE _handle3 = (HANDLE)_beginthreadex(nullptr, 0, func2, nullptr, 0, 0);
+	HANDLE _handle0 = (HANDLE)_beginthreadex(nullptr, 0, func4, nullptr, 0, 0);
+	HANDLE _handle1 = (HANDLE)_beginthreadex(nullptr, 0, func4, nullptr, 0, 0);
+	HANDLE _handle2 = (HANDLE)_beginthreadex(nullptr, 0, func4, nullptr, 0, 0);
+	HANDLE _handle3 = (HANDLE)_beginthreadex(nullptr, 0, func4, nullptr, 0, 0);
 	//HANDLE _handle4 = (HANDLE)_beginthreadex(nullptr, 0, func1, nullptr, 0, 0);
 	//HANDLE _handle5 = (HANDLE)_beginthreadex(nullptr, 0, func1, nullptr, 0, 0);
 	//HANDLE _handle6 = (HANDLE)_beginthreadex(nullptr, 0, func1, nullptr, 0, 0);
