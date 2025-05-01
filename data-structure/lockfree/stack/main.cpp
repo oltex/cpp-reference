@@ -19,7 +19,7 @@ public:
 	inline ~spin(void) noexcept = default;
 public:
 	inline void lock(void) noexcept {
-		while (1 == _lock || 1 == _interlockedbittestandset(&_lock, 0)) {
+		while (/*1 == _lock ||*/ 1 == _InterlockedExchange(&_lock, 1)) {
 			YieldProcessor();
 		}
 	}
@@ -33,16 +33,16 @@ public:
 	//		}
 	//		for (int k = 0; k < 10000; ++k) {
 	//		}
-	//		if(0 == _interlockedbittestandset(&_lock, 0))
+	//		if (0 == _interlockedbittestandset(&_lock, 0))
 	//			break;
 	//	}
 	//}
 	inline void unlock(void) noexcept {
-		_interlockedbittestandreset(&_lock, 0);
+		_InterlockedExchange(&_lock, 0);
 		//_lock = 0;
 	}
 public:
-	alignas(64) volatile long _lock = 0;
+	alignas(64) long _lock = 0;
 };
 class wait_on_address final {
 public:
@@ -71,6 +71,7 @@ private:
 	volatile long _address = 0;
 };
 
+bool _run = false;
 library::data_structure::lockfree::stack<int> _lockfree_stack;
 library::data_structure::stack<int> _stack;
 std::stack<int> _std_stack;
@@ -83,65 +84,73 @@ int* _log = new int[30000000];
 unsigned long long _logcnt = 0;
 
 inline static unsigned int __stdcall func1(void* arg) noexcept {
-	LARGE_INTEGER _start;
-	LARGE_INTEGER _end;
-	unsigned long long sum = 0;
-	unsigned long long count = 0;
-	int tid = GetCurrentThreadId();
-	for (;;) {
-		QueryPerformanceCounter(&_start);
-		for (int j = 0; j < 1000; ++j) {
-			for (int i = 0; i < 500; ++i) {
-				_lockfree_stack.push(0);
-				//_log[_logcnt++ % 30000000] = tid;
-				//Sleep(0);
-			}
-			for (int i = 0; i < 500; ++i) {
-				_lockfree_stack.pop();
-				//_log[_logcnt++ % 30000000] = tid;
-				//Sleep(0);
-			}
-		}
-		QueryPerformanceCounter(&_end);
-		sum += _end.QuadPart - _start.QuadPart;
-		count++;
-		printf("%f\n", (static_cast<double>(sum) / count) / static_cast<double>(_frequency.QuadPart) * 1e6);
+	while (!_run) {
 	}
-	return 0;
-}
-inline static unsigned int __stdcall func2(void* arg) noexcept {
 	LARGE_INTEGER _start;
 	LARGE_INTEGER _end;
 	unsigned long long _sum = 0;
 	unsigned long long _count = 0;
 	int tid = GetCurrentThreadId();
+	unsigned long long _rdtsc;
 	for (;;) {
 		QueryPerformanceCounter(&_start);
-		for (int j = 0; j < 1000; ++j) {
+		for (int j = 0; j < 10000; ++j) {
 			for (int i = 0; i < 500; ++i) {
-				AcquireSRWLockExclusive(&_srw);
-				_stack.push(0);
-				//_log[_logcnt++ % 30000000] = tid;
-				ReleaseSRWLockExclusive(&_srw);
+				_lockfree_stack.push(0);
+				_log[_logcnt++ % 30000000] = tid;
 				//Sleep(0);
 			}
 			for (int i = 0; i < 500; ++i) {
-				AcquireSRWLockExclusive(&_srw);
-				_stack.pop();
-				//_log[_logcnt++ % 30000000] = tid;
-				ReleaseSRWLockExclusive(&_srw);
+				_lockfree_stack.pop();
+				_log[_logcnt++ % 30000000] = tid;
 				//Sleep(0);
 			}
 		}
 		QueryPerformanceCounter(&_end);
 		_sum += _end.QuadPart - _start.QuadPart;
 		_count++;
-		printf("%f\n", (static_cast<double>(_sum) / _count) / static_cast<double>(_frequency.QuadPart) * 1e6);
+		printf("%f\n", (static_cast<double>(_sum) / _count) / static_cast<double>(_frequency.QuadPart) * 1e3);
+	}
+	return 0;
+}
+inline static unsigned int __stdcall func2(void* arg) noexcept {
+	while (!_run) {
+	}
+	LARGE_INTEGER _start;
+	LARGE_INTEGER _end;
+	unsigned long long _sum = 0;
+	unsigned long long _count = 0;
+	int tid = GetCurrentThreadId();
+	unsigned long long _rdtsc;
+	for (;;) {
+		QueryPerformanceCounter(&_start);
+		for (int j = 0; j < 10000; ++j) {
+			for (int i = 0; i < 500; ++i) {
+				_spin.lock();
+				//AcquireSRWLockExclusive(&_srw);
+				_stack.push(0);
+				_log[_logcnt++ % 30000000] = tid;
+				//ReleaseSRWLockExclusive(&_srw);
+				_spin.unlock();
+			}
+			for (int i = 0; i < 500; ++i) {
+				_spin.lock();
+				//AcquireSRWLockExclusive(&_srw);
+				_stack.pop();
+				_log[_logcnt++ % 30000000] = tid;
+				//ReleaseSRWLockExclusive(&_srw);
+				_spin.unlock();
+			}
+		}
+		QueryPerformanceCounter(&_end);
+		_sum += _end.QuadPart - _start.QuadPart;
+		_count++;
+		printf("%f\n", (static_cast<double>(_sum) / _count) / static_cast<double>(_frequency.QuadPart) * 1e3);
 	}
 	return 0;
 }
 
-inline static unsigned int __stdcall func4(void* arg) noexcept {
+inline static unsigned int __stdcall func3(void* arg) noexcept {
 	int a = 10;
 	for (;;) {
 		a++;
@@ -154,26 +163,12 @@ int main(void) noexcept {
 	InitializeSRWLock(&_srw);
 	QueryPerformanceFrequency(&_frequency);
 
-	HANDLE _handle0 = (HANDLE)_beginthreadex(nullptr, 0, func1, nullptr, 0, 0);
-	HANDLE _handle1 = (HANDLE)_beginthreadex(nullptr, 0, func1, nullptr, 0, 0);
-	HANDLE _handle2 = (HANDLE)_beginthreadex(nullptr, 0, func1, nullptr, 0, 0);
-	HANDLE _handle3 = (HANDLE)_beginthreadex(nullptr, 0, func1, nullptr, 0, 0);
-	HANDLE _handle4 = (HANDLE)_beginthreadex(nullptr, 0, func1, nullptr, 0, 0);
-	HANDLE _handle5 = (HANDLE)_beginthreadex(nullptr, 0, func1, nullptr, 0, 0);
-	HANDLE _handle6 = (HANDLE)_beginthreadex(nullptr, 0, func1, nullptr, 0, 0);
-	HANDLE _handle7 = (HANDLE)_beginthreadex(nullptr, 0, func1, nullptr, 0, 0);
-	//HANDLE _handle8 = (HANDLE)_beginthreadex(nullptr, 0, func5, nullptr, 0, 0);
-	//HANDLE _handle9 = (HANDLE)_beginthreadex(nullptr, 0, func5, nullptr, 0, 0);
-	//HANDLE _handle10 = (HANDLE)_beginthreadex(nullptr, 0, func5, nullptr, 0, 0);
-	//HANDLE _handle11 = (HANDLE)_beginthreadex(nullptr, 0, func5, nullptr, 0, 0);
-	//HANDLE _handle12 = (HANDLE)_beginthreadex(nullptr, 0, func5, nullptr, 0, 0);
-	//HANDLE _handle13 = (HANDLE)_beginthreadex(nullptr, 0, func5, nullptr, 0, 0);
-	//HANDLE _handle14 = (HANDLE)_beginthreadex(nullptr, 0, func5, nullptr, 0, 0);
-	//HANDLE _handle15 = (HANDLE)_beginthreadex(nullptr, 0, func5, nullptr, 0, 0);
-	//HANDLE _handle16 = (HANDLE)_beginthreadex(nullptr, 0, func5, nullptr, 0, 0);
-	//HANDLE _handle17 = (HANDLE)_beginthreadex(nullptr, 0, func5, nullptr, 0, 0);
-	//HANDLE _handle18 = (HANDLE)_beginthreadex(nullptr, 0, func5, nullptr, 0, 0);
-	//HANDLE _handle19 = (HANDLE)_beginthreadex(nullptr, 0, func5, nullptr, 0, 0);
+	for (int i = 0; i < 8; ++i)
+		(HANDLE)_beginthreadex(nullptr, 0, func1, nullptr, 0, 0);
+	//for (int i = 0; i < 32; ++i)
+	//	(HANDLE)_beginthreadex(nullptr, 0, func3, nullptr, 0, 0);
+	system("pause");
+	_run = true;
 	Sleep(INFINITE);
 	return 0;
 }
