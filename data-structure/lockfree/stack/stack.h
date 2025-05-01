@@ -50,8 +50,9 @@ namespace library::data_structure::lockfree {
 				current->_next = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & head);
 				unsigned long long next = reinterpret_cast<unsigned long long>(current) + 
 					(0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
-				if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head))
+				if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head)) {
 					break;
+				}
 			}
 		}
 		inline auto pop(void) noexcept -> std::optional<type> {

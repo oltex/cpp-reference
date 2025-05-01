@@ -64,10 +64,11 @@ namespace library::data_structure::lockfree {
 		inline auto pop(void) noexcept -> std::optional<type> requires (true == multi_pop) {
 			for (;;) {
 				unsigned long long head = _head;
+				unsigned long long count = 0xFFFF800000000000ULL & head;
 				node* address = reinterpret_cast<node*>(0x00007FFFFFFFFFFEULL & head);
 				unsigned long long next = address->_next;
 
-				if (reinterpret_cast<unsigned long long>(this) == (0x00007FFFFFFFFFFFULL & next))
+				if (reinterpret_cast<unsigned long long>(this) == (0x00007FFFFFFFFFFFULL & next) && count == (0xFFFF800000000000ULL & next))
 					return std::nullopt;
 				else if (1 == (0x1ULL & next)) {
 					unsigned long long tail = _tail;
@@ -99,9 +100,10 @@ namespace library::data_structure::lockfree {
 		}
 		inline auto empty(void) const noexcept requires (false == multi_pop) {
 			unsigned long long head = _head;
+			unsigned long long count = 0xFFFF800000000000ULL & head;
 			node* address = reinterpret_cast<node*>(0x00007FFFFFFFFFFEULL & head);
 			unsigned long long next = address->_next;
-			if (reinterpret_cast<unsigned long long>(this) == (0x00007FFFFFFFFFFFULL & next))
+			if (reinterpret_cast<unsigned long long>(this) == (0x00007FFFFFFFFFFFULL & next) && count == (0xFFFF800000000000ULL & next))
 				return true;
 			return false;
 		}

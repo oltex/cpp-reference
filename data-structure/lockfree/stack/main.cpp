@@ -2,8 +2,10 @@
 #include <stdlib.h>
 #include <crtdbg.h>
 
+#include "../queue/queue(boost).h"
 #include "stack.h"
 #include "normal_stack.h"
+#include "normal_queue.h"
 #include <thread>
 #include <stack>
 #include <mutex>
@@ -44,44 +46,21 @@ public:
 public:
 	alignas(64) long _lock = 0;
 };
-class wait_on_address final {
-public:
-	inline explicit wait_on_address(void) noexcept = default;
-	inline explicit wait_on_address(wait_on_address const& rhs) noexcept = delete;
-	inline explicit wait_on_address(wait_on_address&& rhs) noexcept = delete;
-	inline auto operator=(wait_on_address const& rhs) noexcept -> wait_on_address & = delete;
-	inline auto operator=(wait_on_address&& rhs) noexcept -> wait_on_address & = delete;
-	inline ~wait_on_address(void) noexcept = default;
-public:
-	inline void lock(void) noexcept {
-		volatile long compare = 1;
-		int cnt = 0;
-		while (1 == _address || 1 == _InterlockedExchange(&_address, 1)) {
-			if (cnt++ == 66) {
-				cnt = 0;
-				WaitOnAddress(&_address, (void*)&compare, sizeof(long), INFINITE);
-			}
-		}
-	}
-	inline void unlock(void) noexcept {
-		_address = 0;
-		WakeByAddressSingle((void*)&_address);
-	}
-private:
-	volatile long _address = 0;
-};
 
 bool _run = false;
+library::data_structure::lockfree::queue<int> _lockfree_queue;
 library::data_structure::lockfree::stack<int> _lockfree_stack;
 library::data_structure::stack<int> _stack;
+library::data_structure::queue<int> _queue;
+spin _spin;
 std::stack<int> _std_stack;
 std::mutex _std_mutex;
-spin _spin;
-wait_on_address _wait;
-SRWLOCK _srw;
+alignas(64) SRWLOCK _srw;
+alignas(64) CRITICAL_SECTION cs;
 LARGE_INTEGER _frequency;
 int* _log = new int[30000000];
 unsigned long long _logcnt = 0;
+//_log[_logcnt++ % 30000000] = _tid;
 
 inline static unsigned int __stdcall func1(void* arg) noexcept {
 	while (!_run) {
@@ -90,20 +69,17 @@ inline static unsigned int __stdcall func1(void* arg) noexcept {
 	LARGE_INTEGER _end;
 	unsigned long long _sum = 0;
 	unsigned long long _count = 0;
-	int tid = GetCurrentThreadId();
-	unsigned long long _rdtsc;
+	int _tid = GetCurrentThreadId();
 	for (;;) {
 		QueryPerformanceCounter(&_start);
 		for (int j = 0; j < 10000; ++j) {
 			for (int i = 0; i < 500; ++i) {
 				_lockfree_stack.push(0);
-				_log[_logcnt++ % 30000000] = tid;
-				//Sleep(0);
+				//_lockfree_queue.emplace(0);
 			}
 			for (int i = 0; i < 500; ++i) {
 				_lockfree_stack.pop();
-				_log[_logcnt++ % 30000000] = tid;
-				//Sleep(0);
+				//_lockfree_queue.pop();
 			}
 		}
 		QueryPerformanceCounter(&_end);
@@ -113,6 +89,8 @@ inline static unsigned int __stdcall func1(void* arg) noexcept {
 	}
 	return 0;
 }
+
+
 inline static unsigned int __stdcall func2(void* arg) noexcept {
 	while (!_run) {
 	}
@@ -120,26 +98,32 @@ inline static unsigned int __stdcall func2(void* arg) noexcept {
 	LARGE_INTEGER _end;
 	unsigned long long _sum = 0;
 	unsigned long long _count = 0;
-	int tid = GetCurrentThreadId();
-	unsigned long long _rdtsc;
+	int _tid = GetCurrentThreadId();
 	for (;;) {
 		QueryPerformanceCounter(&_start);
 		for (int j = 0; j < 10000; ++j) {
 			for (int i = 0; i < 500; ++i) {
-				_spin.lock();
+				//_spin.lock();
+				EnterCriticalSection(&cs);
 				//AcquireSRWLockExclusive(&_srw);
 				_stack.push(0);
-				_log[_logcnt++ % 30000000] = tid;
+				//_log[_logcnt++ % 30000000] = _tid;
+				//_queue.push(0);
+				LeaveCriticalSection(&cs);
 				//ReleaseSRWLockExclusive(&_srw);
-				_spin.unlock();
+				//_spin.unlock();
 			}
 			for (int i = 0; i < 500; ++i) {
-				_spin.lock();
+				//_spin.lock();
+				EnterCriticalSection(&cs);
 				//AcquireSRWLockExclusive(&_srw);
 				_stack.pop();
-				_log[_logcnt++ % 30000000] = tid;
+				//_log[_logcnt++ % 30000000] = _tid;
+
+				//_queue.pop();
+				LeaveCriticalSection(&cs);
 				//ReleaseSRWLockExclusive(&_srw);
-				_spin.unlock();
+				//_spin.unlock();
 			}
 		}
 		QueryPerformanceCounter(&_end);
@@ -161,10 +145,11 @@ inline static unsigned int __stdcall func3(void* arg) noexcept {
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	InitializeSRWLock(&_srw);
+	InitializeCriticalSection(&cs);
 	QueryPerformanceFrequency(&_frequency);
 
-	for (int i = 0; i < 8; ++i)
-		(HANDLE)_beginthreadex(nullptr, 0, func1, nullptr, 0, 0);
+	for (int i = 0; i < 4; ++i)
+		(HANDLE)_beginthreadex(nullptr, 0, func2, nullptr, 0, 0);
 	//for (int i = 0; i < 32; ++i)
 	//	(HANDLE)_beginthreadex(nullptr, 0, func3, nullptr, 0, 0);
 	system("pause");

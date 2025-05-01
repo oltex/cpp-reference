@@ -4,7 +4,7 @@
 
 namespace library::data_structure {
 	template<typename type>
-	class stack {
+	class queue {
 	private:
 		struct node final {
 			inline explicit node(void) noexcept = delete;
@@ -18,30 +18,33 @@ namespace library::data_structure {
 		};
 		using _pool = _thread_local::pool<node>;
 	public:
-		inline stack(void) noexcept
-			: _head(nullptr) {
+		inline queue(void) noexcept {
+			node* current = &_pool::instance().allocate();
+			current->_next = nullptr;
+			_head = _tail = current;
 		}
+		inline ~queue(void) noexcept = default;
 
 		template<typename... argument>
 		inline void push(argument&&... arg) noexcept {
 			node* current = &_pool::instance().allocate();
 			system::memory::construct<type>(current->_value, std::forward<argument>(arg)...);
 
-			current->_next = _head;
-			_head = current;
+			current->_next = nullptr;
+			_tail->_next = current;
+			_tail = current;
 		}
 		inline auto pop(void) noexcept -> type {
 			node* current = _head;
 
-			if (current == nullptr)
-				__debugbreak();
-
+			type result = current->_next->_value;
 			_head = current->_next;
-			type result = current->_value;
 			_pool::instance().deallocate(*current);
+
 			return result;
 		}
 	private:
 		alignas(64) node* _head;
+		alignas(64) node* _tail;
 	};
 }
