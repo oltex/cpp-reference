@@ -26,10 +26,10 @@ namespace library::data_structure::lockfree {
 		inline explicit stack(void) noexcept
 			: _head(0) {
 		}
-		inline explicit stack(stack const& rhs) noexcept = delete;
-		inline explicit stack(stack&& rhs) noexcept = delete;
-		inline auto operator=(stack const& rhs) noexcept -> stack & = delete;
-		inline auto operator=(stack&& rhs) noexcept -> stack & = delete;
+		inline explicit stack(stack const&) noexcept = delete;
+		inline explicit stack(stack&&) noexcept = delete;
+		inline auto operator=(stack const&) noexcept -> stack & = delete;
+		inline auto operator=(stack&&) noexcept -> stack & = delete;
 		inline ~stack(void) noexcept {
 			node* head = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & _head);
 			while (nullptr != head) {
@@ -48,11 +48,9 @@ namespace library::data_structure::lockfree {
 			for (;;) {
 				unsigned long long head = _head;
 				current->_next = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & head);
-				unsigned long long next = reinterpret_cast<unsigned long long>(current) + 
-					(0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
-				if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head)) {
+				unsigned long long next = reinterpret_cast<unsigned long long>(current) + (0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
+				if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head))
 					break;
-				}
 			}
 		}
 		inline auto pop(void) noexcept -> std::optional<type> {
@@ -61,11 +59,9 @@ namespace library::data_structure::lockfree {
 				node* address = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & head);
 				if (nullptr == address)
 					return std::nullopt;
-				unsigned long long next = reinterpret_cast<unsigned long long>(address->_next) + 
-					(0xFFFF800000000000ULL & head);
+				unsigned long long next = reinterpret_cast<unsigned long long>(address->_next) + (0xFFFF800000000000ULL & head);
 				if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head)) {
 					type result(std::move(address->_value));
-					system::memory::destruct<type>(address->_value);
 					_pool::instance().deallocate(*address);
 					return result;
 				}

@@ -118,8 +118,40 @@ inline static unsigned int __stdcall func(void* arg) noexcept {
 	return 0;
 }
 
+template<bool use_union>
+struct node {
+	inline explicit node(void) noexcept = default;
+	inline explicit node(node const&) noexcept = delete;
+	inline explicit node(node&&) noexcept = delete;
+	inline auto operator=(node const&) noexcept = delete;
+	inline auto operator=(node&&) noexcept = delete;
+	inline ~node(void) noexcept = default;
+	node* _next;
+	int _value;
+};
+template<>
+struct node<true> final {
+	inline explicit node(void) noexcept = default;
+	inline explicit node(node const&) noexcept = delete;
+	inline explicit node(node&&) noexcept = delete;
+	inline auto operator=(node const&) noexcept = delete;
+	inline auto operator=(node&&) noexcept = delete;
+	inline ~node(void) noexcept = default;
+	union
+	{
+		node* _next;
+		int _value;
+	};
+};
+
 int main(void) noexcept {
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
+	node<true> a;
+	a._next = nullptr;
+	a._value = 20;
+
+
+		_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	//auto& instance = library::data_structure::_thread_local::memory_pool<int>::instance();
 	//std::vector<int*> _vector;
 	//for (int i = 0; i < 4; ++i) {

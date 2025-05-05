@@ -20,7 +20,7 @@ namespace library::data_structure::_thread_local {
 			union_node* _next;
 			type _value;
 		};
-		struct strcut_node {
+		struct strcut_node final {
 			inline explicit strcut_node(void) noexcept = delete;
 			inline explicit strcut_node(strcut_node const&) noexcept = delete;
 			inline explicit strcut_node(strcut_node&&) noexcept = delete;
@@ -31,7 +31,7 @@ namespace library::data_structure::_thread_local {
 			type _value;
 		};
 		using node = typename std::conditional<use_union, union union_node, struct strcut_node>::type;
-		class stack final {
+		class global final {
 		private:
 			struct bucket final {
 				inline explicit bucket(void) noexcept = delete;
@@ -49,14 +49,12 @@ namespace library::data_structure::_thread_local {
 			}
 			static constexpr size_type _align = power_of_two(sizeof(node) * bucket_size);
 		public:
-			inline explicit stack(void) noexcept
-				: _head(0) {
-			}
-			inline explicit stack(stack const& rhs) noexcept = delete;
-			inline explicit stack(stack&& rhs) noexcept = delete;
-			inline auto operator=(stack const& rhs) noexcept -> stack & = delete;
-			inline auto operator=(stack&& rhs) noexcept -> stack & = delete;
-			inline ~stack(void) noexcept {
+			inline explicit global(void) noexcept = default;
+			inline explicit global(global const&) noexcept = delete;
+			inline explicit global(global&&) noexcept = delete;
+			inline auto operator=(global const&) noexcept -> global & = delete;
+			inline auto operator=(global&&) noexcept -> global & = delete;
+			inline ~global(void) noexcept {
 				node** _node_array = reinterpret_cast<node**>(malloc(sizeof(node*) * _capacity));
 				size_type _node_array_index = 0;
 
@@ -112,8 +110,7 @@ namespace library::data_structure::_thread_local {
 
 						return result;
 					}
-					unsigned long long next = reinterpret_cast<unsigned long long>(address->_next)
-						+ (0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
+					unsigned long long next = reinterpret_cast<unsigned long long>(address->_next) + (0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
 					if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head)) {
 						pair<node*, size_type> result{ address->_value, address->_size };
 						_pool.deallocate(*address);
@@ -122,36 +119,34 @@ namespace library::data_structure::_thread_local {
 				}
 			}
 		private:
-			unsigned long long _head;
+			unsigned long long _head = 0;
 			size_type _capacity = 0;
 			lockfree::pool<bucket> _pool;
 		};
-	private:
+
 		inline explicit pool(void) noexcept = default;
 		inline explicit pool(pool const&) noexcept = delete;
 		inline explicit pool(pool&&) noexcept = delete;
 		inline auto operator=(pool const&) noexcept -> pool & = delete;
 		inline auto operator=(pool&&) noexcept -> pool & = delete;
 		inline ~pool(void) noexcept {
-			if (0 == _size)
-				return;
-			if (_size > bucket_size) {
-				_stack.push(_head, _size - bucket_size);
+			if (bucket_size < _size) {
+				_global.push(_head, _size - bucket_size);
 				_head = _break;
 				_size = bucket_size;
 			}
-			_stack.push(_head, _size);
+			if (0 < _size)
+				_global.push(_head, _size);
 		};
 	public:
 		template<typename... argument>
 		inline auto allocate(argument&&... arg) noexcept -> type& {
-			node* current;
 			if (0 == _size) {
-				auto [value, size] = _stack.pop();
+				auto [value, size] = _global.pop();
 				_head = value;
 				_size = size;
 			}
-			current = _head;
+			node* current = _head;
 			_head = current->_next;
 			if constexpr (true == placement)
 				system::memory::construct<type>(current->_value);
@@ -161,8 +156,7 @@ namespace library::data_structure::_thread_local {
 		inline void deallocate(type& value) noexcept {
 			if constexpr (true == placement)
 				system::memory::destruct<type>(value);
-			node* current = reinterpret_cast<node*>
-				(reinterpret_cast<unsigned char*>(&value) - offsetof(node, _value));
+			node* current = reinterpret_cast<node*>(reinterpret_cast<unsigned char*>(&value) - offsetof(node, _value));
 			current->_next = _head;
 			_head = current;
 			++_size;
@@ -170,13 +164,13 @@ namespace library::data_structure::_thread_local {
 			if (bucket_size == _size)
 				_break = _head;
 			else if (bucket_size * 2 == _size) {
-				_stack.push(_head, bucket_size);
+				_global.push(_head, bucket_size);
 				_head = _break;
 				_size -= bucket_size;
 			}
 		}
 	private:
-		inline static stack _stack;
+		inline static global _global;
 		node* _head = nullptr;
 		node* _break = nullptr;
 		size_type _size = 0;

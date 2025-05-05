@@ -61,7 +61,7 @@ namespace library::data_structure::lockfree {
 					current = system::memory::allocate<node>();
 					break;
 				}
-				unsigned long long next = reinterpret_cast<unsigned long long>(current->_next) + (0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
+				unsigned long long next = reinterpret_cast<unsigned long long>(current->_next) + (0xFFFF800000000000ULL & head);
 				if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head))
 					break;
 			}
