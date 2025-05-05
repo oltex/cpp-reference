@@ -156,14 +156,79 @@
 //	return 0;
 //}
 
+library::data_structure::lockfree::queue<int> _lockfree_queue;
+std::queue<int> _queue;
+alignas(64) SRWLOCK _srw;
+alignas(64) CRITICAL_SECTION _cs;
+
+LARGE_INTEGER _frequency;
+long long _sum = 0;
+long long _count = 0;
+
+inline static unsigned int __stdcall func(void* arg) noexcept {
+	LARGE_INTEGER _start;
+	LARGE_INTEGER _end;
+	for (;;) {
+		QueryPerformanceCounter(&_start);
+		for (int i = 0; i < 100000; ++i) {
+			for (auto j = 0; j < 500; ++j)
+				_lockfree_queue.emplace();
+			for (auto j = 0; j < 500; ++j)
+				_lockfree_queue.pop();
+		}
+		QueryPerformanceCounter(&_end);
+		auto sum = _interlockedadd64(&_sum, _end.QuadPart - _start.QuadPart);
+		auto count = _InterlockedIncrement64(&_count);
+		printf("%f\n", (static_cast<double>(sum) / count) / static_cast<double>(_frequency.QuadPart) * 1e3);
+	}
+	return 0;
+}
+inline static unsigned int __stdcall func2(void* arg) noexcept {
+	LARGE_INTEGER _start;
+	LARGE_INTEGER _end;
+	for (;;) {
+		QueryPerformanceCounter(&_start);
+		for (int i = 0; i < 100000; ++i) {
+			for (int j = 0; j < 500; ++j) {
+				//EnterCriticalSection(&_cs);
+				AcquireSRWLockExclusive(&_srw);
+				_queue.push(0);
+				//LeaveCriticalSection(&_cs);
+				ReleaseSRWLockExclusive(&_srw);
+			}
+			for (int j = 0; j < 500; ++j) {
+				//_spin.lock();
+				//EnterCriticalSection(&_cs);
+				AcquireSRWLockExclusive(&_srw);
+				_queue.pop();
+				//LeaveCriticalSection(&_cs);
+				ReleaseSRWLockExclusive(&_srw);
+			}
+		}
+		QueryPerformanceCounter(&_end);
+		auto sum = _interlockedadd64(&_sum, _end.QuadPart - _start.QuadPart);
+		auto count = _InterlockedIncrement64(&_count);
+		printf("%f\n", (static_cast<double>(sum) / count) / static_cast<double>(_frequency.QuadPart) * 1e3);
+	}
+	return 0;
+}
+
+
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	library::data_structure::lockfree::queue<unsigned long long> _lockfree_queue;
+	QueryPerformanceFrequency(&_frequency);
+	InitializeSRWLock(&_srw);
+	InitializeCriticalSection(&_cs);
 
-	HANDLE _handle0 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, (void*)&_lockfree_queue, 0, 0));
-	HANDLE _handle1 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, (void*)&_lockfree_queue, 0, 0));
-	HANDLE _handle2 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, (void*)&_lockfree_queue, 0, 0));
-	HANDLE _handle3 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, (void*)&_lockfree_queue, 0, 0));
+	int count;
+	scanf_s("%d", &count);
+	for (int i = 0; i < count; ++i) {
+		(HANDLE)_beginthreadex(nullptr, 0, func2, nullptr, 0, 0);
+	}
+	//HANDLE _handle0 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, (void*)&_lockfree_queue, 0, 0));
+	//HANDLE _handle1 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, (void*)&_lockfree_queue, 0, 0));
+	//HANDLE _handle2 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, (void*)&_lockfree_queue, 0, 0));
+	//HANDLE _handle3 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, (void*)&_lockfree_queue, 0, 0));
 	//HANDLE _handle3 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func_pop, nullptr, 0, 0));
 	//HANDLE _handle4 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func_pop, nullptr, 0, 0));
 	//HANDLE _handle4 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));

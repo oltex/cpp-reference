@@ -74,12 +74,12 @@ inline static unsigned int __stdcall func1(void* arg) noexcept {
 		QueryPerformanceCounter(&_start);
 		for (int j = 0; j < 10000; ++j) {
 			for (int i = 0; i < 500; ++i) {
-				_lockfree_stack.push(0);
-				//_lockfree_queue.emplace(0);
+				//_lockfree_stack.push(0);
+				_lockfree_queue.emplace(0);
 			}
 			for (int i = 0; i < 500; ++i) {
-				_lockfree_stack.pop();
-				//_lockfree_queue.pop();
+				//_lockfree_stack.pop();
+				_lockfree_queue.pop();
 			}
 		}
 		QueryPerformanceCounter(&_end);
@@ -104,25 +104,24 @@ inline static unsigned int __stdcall func2(void* arg) noexcept {
 		for (int j = 0; j < 10000; ++j) {
 			for (int i = 0; i < 500; ++i) {
 				//_spin.lock();
-				EnterCriticalSection(&cs);
-				//AcquireSRWLockExclusive(&_srw);
-				_stack.push(0);
+				//EnterCriticalSection(&cs);
+				AcquireSRWLockExclusive(&_srw);
+				//_stack.push(0);
+				_queue.push(0);
 				//_log[_logcnt++ % 30000000] = _tid;
-				//_queue.push(0);
-				LeaveCriticalSection(&cs);
-				//ReleaseSRWLockExclusive(&_srw);
+				//LeaveCriticalSection(&cs);
+				ReleaseSRWLockExclusive(&_srw);
 				//_spin.unlock();
 			}
 			for (int i = 0; i < 500; ++i) {
 				//_spin.lock();
-				EnterCriticalSection(&cs);
-				//AcquireSRWLockExclusive(&_srw);
-				_stack.pop();
+				//EnterCriticalSection(&cs);
+				AcquireSRWLockExclusive(&_srw);
+				//_stack.pop();
+				_queue.pop();
 				//_log[_logcnt++ % 30000000] = _tid;
-
-				//_queue.pop();
-				LeaveCriticalSection(&cs);
-				//ReleaseSRWLockExclusive(&_srw);
+				//LeaveCriticalSection(&cs);
+				ReleaseSRWLockExclusive(&_srw);
 				//_spin.unlock();
 			}
 		}

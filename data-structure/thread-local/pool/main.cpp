@@ -121,15 +121,7 @@ inline static unsigned int __stdcall func2(void* arg) noexcept {
 	return 0;
 }
 
-using namespace library::data_structure;
-
 int main(void) noexcept {
-	auto& pool = _thread_local::pool<int>::instance();
-	int& value = pool.allocate(0);
-	// use memeory
-	pool.deallocate(value);
-
-
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	QueryPerformanceFrequency(&_frequency);
 
