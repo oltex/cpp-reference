@@ -83,6 +83,6 @@ namespace library::data_structure::lockfree {
 			}
 		}
 	private:
-		unsigned long long _head;
+		alignas(64) unsigned long long _head;
 	};
 }

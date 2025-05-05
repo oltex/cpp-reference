@@ -24,7 +24,7 @@ inline static unsigned int __stdcall func_pool(void* arg) noexcept {
 	auto& instance = library::data_structure::_thread_local::pool<my_struct>::instance();
 	my_struct** _array = (my_struct**)malloc(sizeof(my_struct*) * 1000000);
 
-	for (int i = 0; i < 10; ++i) {
+	for (int i = 0; i < 1000; ++i) {
 		auto _rdtsc = __rdtsc();
 
 		for (auto i = 0; i < 200; ++i) {
@@ -137,8 +137,8 @@ int main(void) noexcept {
 	//HANDLE _handle3 = (HANDLE)_beginthreadex(nullptr, 0, func_new, nullptr, 0, 0);
 	HANDLE _handle4 = (HANDLE)_beginthreadex(nullptr, 0, func_pool, nullptr, 0, 0);
 	HANDLE _handle5 = (HANDLE)_beginthreadex(nullptr, 0, func_pool, nullptr, 0, 0);
-	//HANDLE _handle6 = (HANDLE)_beginthreadex(nullptr, 0, func_pool, nullptr, 0, 0);
-	//HANDLE _handle7 = (HANDLE)_beginthreadex(nullptr, 0, func_pool, nullptr, 0, 0);
+	HANDLE _handle6 = (HANDLE)_beginthreadex(nullptr, 0, func_pool, nullptr, 0, 0);
+	HANDLE _handle7 = (HANDLE)_beginthreadex(nullptr, 0, func_pool, nullptr, 0, 0);
 
 	//HANDLE _handle0 = (HANDLE)_beginthreadex(nullptr, 0, func_dealloc, nullptr, 0, 0);
 	//HANDLE _handle1 = (HANDLE)_beginthreadex(nullptr, 0, func_alloc, nullptr, 0, 0);

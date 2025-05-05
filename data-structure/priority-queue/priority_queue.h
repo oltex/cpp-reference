@@ -14,11 +14,7 @@ namespace library::data_structure {
 		inline auto operator=(priority_queue const& rhs) noexcept -> priority_queue&;
 		inline auto operator=(priority_queue&& rhs) noexcept -> priority_queue&;
 		inline ~priority_queue(void) noexcept = default;
-	public:
-		template<typename universal>
-		inline void push(universal&& value) noexcept {
-			emplace(std::forward<universal>(value));
-		};
+
 		template<typename... argument>
 		inline void emplace(argument&&... arg) noexcept {
 			_vector.emplace_back(std::forward<argument>(arg)...);
@@ -56,7 +52,7 @@ namespace library::data_structure {
 			_vector[parent] = leaf;
 			_vector.pop_back();
 		}
-	public:
+
 		inline auto top(void) const noexcept -> type& {
 			return _vector.front();
 		};

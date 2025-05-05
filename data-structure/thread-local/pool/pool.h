@@ -117,7 +117,7 @@ namespace library::data_structure::_thread_local {
 				}
 			}
 		private:
-			unsigned long long _head = 0;
+			alignas(64) unsigned long long _head = 0;
 			size_type _capacity = 0;
 			lockfree::pool<bucket> _pool;
 		};
