@@ -5,10 +5,10 @@
 #include "../../pair/pair.h"
 
 namespace library::data_structure::_thread_local {
-	template<typename type, size_t bucket_size = 1024, bool placement = true, bool use_union = true>
-	class pool final : public design_pattern::_thread_local::singleton<pool<type, bucket_size, use_union>> {
+	template<typename type, size_t bucket_size = 1024, bool placement = true, bool compress = true>
+	class pool final : public design_pattern::_thread_local::singleton<pool<type, bucket_size, compress>> {
 	private:
-		friend class design_pattern::_thread_local::singleton<pool<type, bucket_size, use_union>>;
+		friend class design_pattern::_thread_local::singleton<pool<type, bucket_size, compress>>;
 		using size_type = unsigned int;
 		union union_node final {
 			inline explicit union_node(void) noexcept = delete;
@@ -30,7 +30,7 @@ namespace library::data_structure::_thread_local {
 			strcut_node* _next;
 			type _value;
 		};
-		using node = typename std::conditional<use_union, union union_node, struct strcut_node>::type;
+		using node = typename std::conditional<compress, union union_node, struct strcut_node>::type;
 		class global final {
 		private:
 			struct bucket final {
