@@ -80,26 +80,13 @@ namespace library::data_structure::_thread_local {
 				free(_node_array);
 			};
 
-			inline void push(node* value, size_type size) noexcept {
-				bucket* current = &_pool.allocate();
-				current->_value = value;
-				current->_size = size;
-
-				for (;;) {
-					unsigned long long head = _head;
-					current->_next = reinterpret_cast<bucket*>(0x00007FFFFFFFFFFFULL & head);
-					unsigned long long next = reinterpret_cast<unsigned long long>(current) + (0xFFFF800000000000ULL & head);
-					if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head))
-						break;
-				}
-			}
-			inline auto pop(void) noexcept -> pair<node*, size_type> {
+			inline auto allocate(void) noexcept -> pair<node*, size_type> {
 				for (;;) {
 					unsigned long long head = _head;
 					bucket* address = reinterpret_cast<bucket*>(0x00007FFFFFFFFFFFULL & head);
 					if (nullptr == address) {
-						pair<node*, size_type> result{ reinterpret_cast<node*>
-							(_aligned_malloc(sizeof(node) * bucket_size, _align)), bucket_size };
+						pair<node*, size_type> result{ reinterpret_cast<node*>(_aligned_malloc(sizeof(node) * bucket_size, _align)), bucket_size };
+						_InterlockedIncrement(&_capacity);
 
 						node* current = result._first;
 						node* next = current + 1;
@@ -118,6 +105,19 @@ namespace library::data_structure::_thread_local {
 					}
 				}
 			}
+			inline void deallocate(node* value, size_type size) noexcept {
+				bucket* current = &_pool.allocate();
+				current->_value = value;
+				current->_size = size;
+
+				for (;;) {
+					unsigned long long head = _head;
+					current->_next = reinterpret_cast<bucket*>(0x00007FFFFFFFFFFFULL & head);
+					unsigned long long next = reinterpret_cast<unsigned long long>(current) + (0xFFFF800000000000ULL & head);
+					if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head))
+						break;
+				}
+			}
 		private:
 			unsigned long long _head = 0;
 			size_type _capacity = 0;
@@ -131,18 +131,18 @@ namespace library::data_structure::_thread_local {
 		inline auto operator=(pool&&) noexcept -> pool & = delete;
 		inline ~pool(void) noexcept {
 			if (bucket_size < _size) {
-				_global.push(_head, _size - bucket_size);
+				_global.deallocate(_head, _size - bucket_size);
 				_head = _break;
 				_size = bucket_size;
 			}
 			if (0 < _size)
-				_global.push(_head, _size);
+				_global.deallocate(_head, _size);
 		};
 	public:
 		template<typename... argument>
 		inline auto allocate(argument&&... arg) noexcept -> type& {
 			if (0 == _size) {
-				auto [value, size] = _global.pop();
+				auto [value, size] = _global.allocate();
 				_head = value;
 				_size = size;
 			}
@@ -164,7 +164,7 @@ namespace library::data_structure::_thread_local {
 			if (bucket_size == _size)
 				_break = _head;
 			else if (bucket_size * 2 == _size) {
-				_global.push(_head, bucket_size);
+				_global.deallocate(_head, bucket_size);
 				_head = _break;
 				_size -= bucket_size;
 			}
