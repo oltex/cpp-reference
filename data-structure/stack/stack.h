@@ -43,6 +43,7 @@ namespace library::data_structure {
 
 			current->_next = _head;
 			_head = current;
+			++_size;
 		}
 		inline void pop(void) noexcept {
 			node* current = _head;
@@ -50,6 +51,7 @@ namespace library::data_structure {
 			if constexpr (true == placement)
 				system::memory::destruct(current->_value);
 			_allocator.deallocate(*current);
+			--_size;
 		}
 
 		inline auto top(void) noexcept -> type& {
