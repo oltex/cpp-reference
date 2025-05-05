@@ -64,11 +64,9 @@ namespace library::data_structure::_thread_local {
 
 					node* _node = head->_value;
 					for (size_type index = 0; index < head->_size; ++index) {
-						if (0 == (reinterpret_cast<uintptr_t>(_node) & (_align - 1))) {
+						if (0 == (reinterpret_cast<uintptr_t>(_node) & (_align - 1)))
 #pragma warning(suppress: 6011)
-							_node_array[_node_array_index] = _node;
-							_node_array_index++;
-						}
+							_node_array[_node_array_index++] = _node;
 						_node = _node->_next;
 					}
 					_pool.deallocate(*head);

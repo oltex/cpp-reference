@@ -1,8 +1,8 @@
 #pragma once
-#include "../memory-pool/memory_pool.h"
+#include "../pool/pool.h"
 
 namespace library::data_structure {
-	template<typename type, typename allocator = memory_pool<type>>
+	template<typename type, typename allocator = pool<type>, bool placement = true>
 	class queue final {
 	private:
 		using size_type = unsigned int;
@@ -18,33 +18,61 @@ namespace library::data_structure {
 		};
 		using rebind_allocator = allocator::template rebind<node>;
 	public:
-		inline explicit queue(void) noexcept = default;
+		inline explicit queue(void) noexcept {
+			node* current = &_allocator.allocate();
+			current->_next = nullptr;
+			_head = _tail = current;
+		};
 		inline explicit queue(queue const& rhs) noexcept = delete;
 		inline explicit queue(queue&& rhs) noexcept = delete;
 		inline auto operator=(queue const& rhs) noexcept -> queue & = delete;
 		inline auto operator=(queue&& rhs) noexcept -> queue & = delete;
-		inline ~queue(void) noexcept = default;
-	public:
-		template<typename universal>
-		inline void push(universal&& value) noexcept {
-		
-		}
+		inline ~queue(void) noexcept {
+			node* current = _head;
+			node* next = current->_next;
+			while (nullptr != next) {
+				_allocator.deallocate(*current);
+				if constexpr (true == placement)
+					system::memory::destruct(next->_value);
+				current = next;
+				next = current->_next;
+			}
+			_allocator.deallocate(*current);
+		};
+
 		template<typename... argument>
 		inline void emplace(argument&&... arg) noexcept {
+			node* current = &_allocator.allocate();
+			if constexpr (true == placement)
+				system::memory::construct<type>(current->_value, std::forward<argument>(arg)...);
 
+			current->_next = nullptr;
+			_tail->_next = current;
+			_tail = current;
+			++_size;
 		}
 		inline void pop(void) noexcept {
+			node* current = _head;
+			_head = current->_next;
+			_allocator.deallocate(*current);
+			if constexpr (true == placement)
+				system::memory::destruct(_head->_value);
+			--_size;
+		}
 
+		inline auto front(void) noexcept -> type& {
+			return _head->_next->_value;
 		}
-	public:
-		inline auto front(void) noexcept -> type {
-		}
-		inline auto back(void) noexcept -> type {
+		inline auto back(void) noexcept -> type& {
+			return _tail->_value;
 		}
 		inline auto size(void) const noexcept -> size_type {
 			return _size;
 		}
-	public:
+		inline auto empty(void) const noexcept -> bool {
+			return 0 == _size;
+		}
+	private:
 		node* _head;
 		node* _tail;
 		rebind_allocator _allocator;

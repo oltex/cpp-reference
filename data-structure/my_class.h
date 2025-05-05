@@ -5,7 +5,7 @@ class my_class final {
 public:
 	inline explicit my_class(int value) noexcept
 		: _value(value) {
-		std::cout << "생성자" << std::endl;
+		std::cout << "생성자: " << _value << std::endl;
 	}
 	inline my_class(const my_class& rhs) noexcept
 		: _value(rhs._value) {
@@ -31,11 +31,11 @@ public:
 		return false;
 	}
 	inline ~my_class(void) noexcept {
-		std::cout << "소멸자" << std::endl;
+		std::cout << "소멸자: " << _value << std::endl;
 	};
 public:
 	inline void function(void) noexcept {
-		std::cout << "함수" << std::endl;
+		std::cout << "함수: " << _value << std::endl;
 	}
 private:
 	int _value;

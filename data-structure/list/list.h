@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <malloc.h>
 #include "../pool/pool.h"
-#include "../../system-component/memory/memory.h"
+#include "../../system/memory/memory.h"
 #include "../../algorithm/swap/swap.h"
 
 namespace library::data_structure {
@@ -72,7 +72,6 @@ namespace library::data_structure {
 	public:
 		inline explicit list(void) noexcept
 			: _head(reinterpret_cast<node*>(system::memory::allocate(sizeof(node*) * 2))) {
-			
 #pragma warning(suppress: 6011)
 			_head->_next = _head->_prev = _head;
 		}
@@ -100,18 +99,6 @@ namespace library::data_structure {
 			system::memory::deallocate(reinterpret_cast<void*>(_head));
 		}
 	public:
-		template<typename universal>
-		inline void push_front(universal&& value) noexcept {
-			emplace(begin(), std::forward<universal>(value));
-		}
-		template<typename universal>
-		inline void push_back(universal&& value) noexcept {
-			emplace(end(), std::forward<universal>(value));
-		}
-		template<typename universal>
-		inline auto insert(iterator const& iter, universal&& value) noexcept -> iterator {
-			return emplace(iter, std::forward<universal>(value));
-		}
 		template<typename... argument>
 		inline auto emplace_front(argument&&... arg) noexcept -> type& {
 			return *emplace(begin(), std::forward<argument>(arg)...);
@@ -156,7 +143,6 @@ namespace library::data_structure {
 			--_size;
 			return iterator(next);
 		}
-	public:
 		inline auto front(void) const noexcept -> type& {
 			return _head->_next->_value;
 		}
@@ -169,7 +155,6 @@ namespace library::data_structure {
 		inline auto end(void) const noexcept -> iterator {
 			return iterator(_head);
 		}
-	public:
 		inline void swap(list& rhs) noexcept {
 			algorithm::swap(_head, rhs._head);
 			algorithm::swap(_size, rhs._size);
@@ -177,11 +162,13 @@ namespace library::data_structure {
 		}
 		inline void clear(void) noexcept {
 			auto current = _head->_next;
-			for (auto next = current; current != _head; current = next) {
-				next = next->_next;
+			auto next = current->_next;
+			while (current != _head) {
 				if constexpr (true == placement)
 					system::memory::destruct<type>(current->_value);
 				_allocator.deallocate(*current);
+				current = next;
+				next = current->_next;
 			}
 			_head->_next = _head->_prev = _head;
 			_size = 0;

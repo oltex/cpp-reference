@@ -18,9 +18,10 @@ int main(void) noexcept {
 	library::data_structure::list<int> list;
 	library::data_structure::list<int>::iterator iter;
 	list.emplace_back(30);
-	list.push_front(20);
-	list.push_back(40);
-	list.push_front(10);
+	list.emplace_front(20);
+	list.emplace_back(40);
+	list.emplace_front(10);
+	list.clear();
 
 	//list.pop_front();
 	//list.pop_back();
@@ -38,13 +39,13 @@ int main(void) noexcept {
 	//list.insert(iter++, 100);
 	////list.erase(iter);
 
-	library::data_structure::list<int> list2;
-	list2.swap(list);
+	//library::data_structure::list<int> list2;
+	//list2.swap(list);
 
-	for (iter = list.begin(); iter != list.end(); ++iter)
-		std::cout << *iter << std::endl;
-	for (iter = list2.begin(); iter != list2.end(); ++iter)
-		std::cout << *iter << std::endl;
+	//for (iter = list.begin(); iter != list.end(); ++iter)
+	//	std::cout << *iter << std::endl;
+	//for (iter = list2.begin(); iter != list2.end(); ++iter)
+	//	std::cout << *iter << std::endl;
 
 	////for (iter = list.begin(); iter != list.end();)
 	////	iter = list.erase(iter);
