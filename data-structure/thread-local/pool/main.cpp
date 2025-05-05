@@ -126,6 +126,7 @@ using namespace library::data_structure;
 int main(void) noexcept {
 	auto& pool = _thread_local::pool<int>::instance();
 	int& value = pool.allocate(0);
+	// use memeory
 	pool.deallocate(value);
 
 
