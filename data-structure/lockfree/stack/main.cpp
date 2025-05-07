@@ -147,7 +147,7 @@ int main(void) noexcept {
 	InitializeCriticalSection(&cs);
 	QueryPerformanceFrequency(&_frequency);
 
-	for (int i = 0; i < 4; ++i)
+	for (int i = 0; i < 2; ++i)
 		(HANDLE)_beginthreadex(nullptr, 0, func2, nullptr, 0, 0);
 	//for (int i = 0; i < 32; ++i)
 	//	(HANDLE)_beginthreadex(nullptr, 0, func3, nullptr, 0, 0);

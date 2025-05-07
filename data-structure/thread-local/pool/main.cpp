@@ -78,9 +78,15 @@ LARGE_INTEGER _frequency;
 long long _sum = 0;
 long long _count = 0;
 
+struct my_str {
+	inline explicit my_str(void) noexcept = delete;
+	inline ~my_str(void) noexcept = delete;
+	unsigned char _buffer[256];
+};
+
 inline static unsigned int __stdcall func(void* arg) noexcept {
-	auto& _pool = library::data_structure::_thread_local::pool<int>::instance();
-	int** _array = reinterpret_cast<int**>(malloc(sizeof(int*) * 10000));
+	auto& _pool = library::data_structure::_thread_local::pool<my_str>::instance();
+	my_str** _array = reinterpret_cast<my_str**>(malloc(sizeof(my_str*) * 10000));
 	LARGE_INTEGER _start;
 	LARGE_INTEGER _end;
 	for (;;) {
@@ -101,14 +107,14 @@ inline static unsigned int __stdcall func(void* arg) noexcept {
 }
 inline static unsigned int __stdcall func2(void* arg) noexcept {
 	auto& _pool = library::data_structure::_thread_local::pool<int>::instance();
-	int** _array = reinterpret_cast<int**>(malloc(sizeof(int*) * 10000));
+	my_str** _array = reinterpret_cast<my_str**>(malloc(sizeof(my_str*) * 10000));
 	LARGE_INTEGER _start;
 	LARGE_INTEGER _end;
 	for (;;) {
 		QueryPerformanceCounter(&_start);
 		for (int i = 0; i < 10000; ++i) {
 			for (auto j = 0; j < 5000; ++j)
-				_array[j] = reinterpret_cast<int*>(malloc(sizeof(int)));
+				_array[j] = reinterpret_cast<my_str*>(malloc(sizeof(my_str)));
 			for (auto j = 0; j < 5000; ++j)
 				free(_array[j]);
 		}
@@ -125,8 +131,8 @@ int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	QueryPerformanceFrequency(&_frequency);
 
-	int count;
-	scanf_s("%d", &count);
+	int count = 1;
+	//scanf_s("%d", &count);
 	for (int i = 0; i < count; ++i) {
 		(HANDLE)_beginthreadex(nullptr, 0, func, nullptr, 0, 0);
 	}
