@@ -77,6 +77,7 @@
 LARGE_INTEGER _frequency;
 long long _sum = 0;
 long long _count = 0;
+using namespace library::data_structure;
 
 struct my_str {
 	inline explicit my_str(void) noexcept = delete;
@@ -85,8 +86,10 @@ struct my_str {
 };
 
 inline static unsigned int __stdcall func(void* arg) noexcept {
-	auto& _pool = library::data_structure::_thread_local::pool<my_str>::instance();
+	auto& _pool = _thread_local::pool<my_str>::instance();
 	my_str** _array = reinterpret_cast<my_str**>(malloc(sizeof(my_str*) * 10000));
+	if (nullptr == _array)
+		__debugbreak();
 	LARGE_INTEGER _start;
 	LARGE_INTEGER _end;
 	for (;;) {
@@ -98,9 +101,8 @@ inline static unsigned int __stdcall func(void* arg) noexcept {
 				_pool.deallocate(*_array[j]);
 		}
 		QueryPerformanceCounter(&_end);
-		auto sum = _interlockedadd64(&_sum, _end.QuadPart - _start.QuadPart);
-		auto count = _InterlockedIncrement64(&_count);
-		printf("%f\n", (static_cast<double>(sum) / count) / static_cast<double>(_frequency.QuadPart) * 1e3);
+		printf("%f\n", (_end.QuadPart - _start.QuadPart) /
+			static_cast<double>(_frequency.QuadPart) * 1e3);
 	}
 	free(_array);
 	return 0;
@@ -108,6 +110,8 @@ inline static unsigned int __stdcall func(void* arg) noexcept {
 inline static unsigned int __stdcall func2(void* arg) noexcept {
 	auto& _pool = library::data_structure::_thread_local::pool<int>::instance();
 	my_str** _array = reinterpret_cast<my_str**>(malloc(sizeof(my_str*) * 10000));
+	if (nullptr == _array)
+		__debugbreak();
 	LARGE_INTEGER _start;
 	LARGE_INTEGER _end;
 	for (;;) {
@@ -119,9 +123,8 @@ inline static unsigned int __stdcall func2(void* arg) noexcept {
 				free(_array[j]);
 		}
 		QueryPerformanceCounter(&_end);
-		auto sum = _interlockedadd64(&_sum, _end.QuadPart - _start.QuadPart);
-		auto count = _InterlockedIncrement64(&_count);
-		printf("%f\n", (static_cast<double>(sum) / count) / static_cast<double>(_frequency.QuadPart) * 1e3);
+		printf("%f\n", (_end.QuadPart - _start.QuadPart) /
+			static_cast<double>(_frequency.QuadPart) * 1e3);
 	}
 	free(_array);
 	return 0;
