@@ -6,6 +6,5 @@
   <ItemGroup>
     <ClInclude Include="stack.h" />
     <ClInclude Include="normal_stack.h" />
-    <ClInclude Include="normal_queue.h" />
   </ItemGroup>
 </Project>

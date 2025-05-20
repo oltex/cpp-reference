@@ -177,12 +177,16 @@ inline static unsigned int __stdcall func1(void* arg) noexcept {
 				_lockfree_queue.emplace(0);
 				QueryPerformanceCounter(&_end);
 				_sum += _end.QuadPart - _start.QuadPart;
+				//for (volatile int k = 0; k < 64; ++k) {
+				//}
 			}
 			for (auto j = 0; j < 500; ++j) {
 				QueryPerformanceCounter(&_start);
 				_lockfree_queue.pop();
 				QueryPerformanceCounter(&_end);
 				_sum += _end.QuadPart - _start.QuadPart;
+				//for (volatile int k = 0; k < 64; ++k) {
+				//}
 			}
 		}
 		++_count;
@@ -201,23 +205,25 @@ inline static unsigned int __stdcall func2(void* arg) noexcept {
 				QueryPerformanceCounter(&_start);
 				//EnterCriticalSection(&_cs);
 				AcquireSRWLockExclusive(&_srw);
-				_queue.push(0);
+				_queue2.push(0);
 				ReleaseSRWLockExclusive(&_srw);
 				//LeaveCriticalSection(&_cs);
 				QueryPerformanceCounter(&_end);
 				_sum += _end.QuadPart - _start.QuadPart;
-				for (int k = 0; k < 64; ++k) {
-				}
+				//for (volatile int k = 0; k < 64; ++k) {
+				//}
 			}
 			for (auto j = 0; j < 500; ++j) {
 				QueryPerformanceCounter(&_start);
 				//EnterCriticalSection(&_cs);
 				AcquireSRWLockExclusive(&_srw);
-				_queue.pop();
+				_queue2.pop();
 				ReleaseSRWLockExclusive(&_srw);
 				//LeaveCriticalSection(&_cs);
 				QueryPerformanceCounter(&_end);
 				_sum += _end.QuadPart - _start.QuadPart;
+				//for (volatile int k = 0; k < 64; ++k) {
+				//}
 			}
 		}
 		++_count;

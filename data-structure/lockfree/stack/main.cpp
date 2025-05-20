@@ -2,10 +2,8 @@
 #include <stdlib.h>
 #include <crtdbg.h>
 
-#include "../queue/queue(boost).h"
 #include "stack.h"
 #include "normal_stack.h"
-#include "normal_queue.h"
 #include <thread>
 #include <stack>
 #include <mutex>
@@ -48,10 +46,8 @@ public:
 };
 
 bool _run = false;
-library::data_structure::lockfree::queue<int> _lockfree_queue;
 library::data_structure::lockfree::stack<int> _lockfree_stack;
 library::data_structure::stack<int> _stack;
-library::data_structure::queue<int> _queue;
 spin _spin;
 std::stack<int> _std_stack;
 std::mutex _std_mutex;
@@ -74,12 +70,10 @@ inline static unsigned int __stdcall func1(void* arg) noexcept {
 		QueryPerformanceCounter(&_start);
 		for (int j = 0; j < 10000; ++j) {
 			for (int i = 0; i < 500; ++i) {
-				//_lockfree_stack.push(0);
-				_lockfree_queue.emplace(0);
+				_lockfree_stack.push(0);
 			}
 			for (int i = 0; i < 500; ++i) {
-				//_lockfree_stack.pop();
-				_lockfree_queue.pop();
+				_lockfree_stack.pop();
 			}
 		}
 		QueryPerformanceCounter(&_end);
@@ -107,7 +101,6 @@ inline static unsigned int __stdcall func2(void* arg) noexcept {
 				//EnterCriticalSection(&cs);
 				AcquireSRWLockExclusive(&_srw);
 				//_stack.push(0);
-				_queue.push(0);
 				//_log[_logcnt++ % 30000000] = _tid;
 				//LeaveCriticalSection(&cs);
 				ReleaseSRWLockExclusive(&_srw);
@@ -118,7 +111,6 @@ inline static unsigned int __stdcall func2(void* arg) noexcept {
 				//EnterCriticalSection(&cs);
 				AcquireSRWLockExclusive(&_srw);
 				//_stack.pop();
-				_queue.pop();
 				//_log[_logcnt++ % 30000000] = _tid;
 				//LeaveCriticalSection(&cs);
 				ReleaseSRWLockExclusive(&_srw);
