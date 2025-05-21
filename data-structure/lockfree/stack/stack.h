@@ -10,7 +10,6 @@ namespace library::data_structure::lockfree {
 	template<typename type>
 	class stack final {
 	private:
-		using size_type = unsigned int;
 		struct node final {
 			inline explicit node(void) noexcept = delete;
 			inline explicit node(node const&) noexcept = delete;

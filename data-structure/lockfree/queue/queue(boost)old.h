@@ -5,10 +5,9 @@
 
 namespace library::data_structure::lockfree {
 	template <typename type, bool multi_pop = true>
-		requires std::is_trivially_copy_constructible_v<type>&& std::is_trivially_destructible_v<type>
+		requires std::is_trivially_copy_constructible_v<type> && std::is_trivially_destructible_v<type>
 	class queue {
 	protected:
-		using size_type = unsigned int;
 		struct node final {
 			inline explicit node(void) noexcept = delete;
 			inline explicit node(node const&) noexcept = delete;
