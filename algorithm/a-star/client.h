@@ -28,7 +28,7 @@ private:
 		_dc(_window.get_device_context().create_compatible_device_context()),
 		_bitmap(_window.get_device_context().create_compatible_bitmap(_window.get_client_rect().right, _window.get_client_rect().bottom)),
 		_background(RGB(30, 30, 30)),
-		_grid(100, 100), _path(_grid) {
+		_grid(200, 200), _path(_grid) {
 
 		_dc.select_object(_bitmap);
 		RECT rect = _window.get_client_rect();

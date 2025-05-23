@@ -15,6 +15,7 @@ public:
 	};
 public:
 	inline explicit test(void) noexcept {
+		QueryPerformanceFrequency(&_frequency);
 		srand(712389671);
 	}
 	inline ~test(void) noexcept = default;
@@ -159,7 +160,7 @@ public:
 			path._open.set_bit(path._source._x, path._source._y, true);
 			break;
 		case state::run:
-			for (size_type skip = 0; skip < _skip; ++skip) {
+			/*for (size_type skip = 0; skip < _skip; ++skip) {
 				if (!path._heap.empty()) {
 					library::data_structure::shared_pointer<algorithm::a_star::path::node>current(path._heap.top());
 					path._heap.pop();
@@ -196,9 +197,17 @@ public:
 					_state = test::state::end;
 					break;
 				}
-			}
-			//path.search();
-			//_state = test::state::end;
+			}*/
+		{
+			QueryPerformanceCounter(&_start);
+			path.search();
+			QueryPerformanceCounter(&_end);
+			_sum += _end.QuadPart - _start.QuadPart;
+			++_count;
+			auto result = (static_cast<double>(_sum) / _count) / static_cast<double>(_frequency.QuadPart) * 1e3;
+
+			_state = test::state::end;
+		}
 			break;
 		case state::end:
 			if (wait > _wait)
@@ -215,4 +224,9 @@ public:
 	size_type _repeat = 0;
 	size_type _skip = 20;
 	size_type _wait = 20;
+
+	long long _sum = 0;
+	long long _count = 0;
+	LARGE_INTEGER _frequency;
+	LARGE_INTEGER _start, _end;
 };
