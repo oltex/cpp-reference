@@ -197,6 +197,8 @@ public:
 					break;
 				}
 			}
+			//path.search();
+			//_state = test::state::end;
 			break;
 		case state::end:
 			if (wait > _wait)

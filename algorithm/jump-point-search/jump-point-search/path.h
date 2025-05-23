@@ -173,7 +173,7 @@ namespace algorithm::jump_point_search {
 
 				if (current->_position == _destination) {
 					while (nullptr != current) {
-						_result.push_front(current->_position);
+						_result.emplace_front(current->_position);
 						current = current->_parent;
 					}
 					return;

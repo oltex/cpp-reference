@@ -1,5 +1,5 @@
 #pragma once
-#include "../../system-component/window/window.h"
+#include "../../system/window/window.h"
 #include "jump-point-search/grid.h"
 #include "jump-point-search//path.h"
 
@@ -70,7 +70,7 @@ public:
 
 				if (current->_position == path._destination) {
 					while (nullptr != current) {
-						path._result.push_front(current->_position);
+						path._result.emplace_front(current->_position);
 						current = current->_parent;
 					}
 					_state = test::state::start;
@@ -170,7 +170,7 @@ public:
 
 					if (current->_position == path._destination) {
 						while (nullptr != current) {
-							path._result.push_front(current->_position);
+							path._result.emplace_front(current->_position);
 							current = current->_parent;
 						}
 						_state = test::state::goal;

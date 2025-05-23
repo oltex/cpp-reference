@@ -153,9 +153,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="normal_queue.h" />
-    <ClInclude Include="queue%28boost%29.h" />
-    <ClInclude Include="queue(boost)old.h" />
     <ClInclude Include="queue.h" />
+    <ClInclude Include="queue.boost.h" />
+    <ClInclude Include="queue.swap.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
