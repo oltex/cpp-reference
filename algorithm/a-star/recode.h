@@ -4,8 +4,8 @@
 #include "a-star/grid.h"
 #include "a-star/path.h"
 
-#include "../../system-component/window/device_context.h"
-#include "../../system-component/window/font.h"
+#include "../../system/window/device_context.h"
+#include "../../system/window/font.h"
 #include <string>
 
 class recode final {

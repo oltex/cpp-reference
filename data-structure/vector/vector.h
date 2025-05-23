@@ -2,7 +2,7 @@
 #include <initializer_list>
 #include <utility>
 #include <stdlib.h>
-#include "../../system-component/memory/memory.h"
+#include "../../system/memory/memory.h"
 #include "../../algorithm/swap/swap.h"
 
 namespace library::data_structure {

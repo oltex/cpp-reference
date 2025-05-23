@@ -1,6 +1,6 @@
 #pragma once
 #include "../shared-pointer/shared_pointer.h"
-#include "../../system-component/memory/memory.h"
+#include "../../system/memory/memory.h"
 #include "../../algorithm/swap/swap.h"
 
 namespace library::data_structure {

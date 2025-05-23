@@ -8,13 +8,13 @@ namespace window {
 		inline explicit window(HWND const hwnd) noexcept
 			: _hwnd(hwnd) {
 		}
-		inline explicit window(window const& rhs) noexcept = delete;
+		inline explicit window(window const&) noexcept = delete;
 		inline explicit window(window&& rhs) noexcept
 			: _hwnd(rhs._hwnd) {
 			rhs._hwnd = nullptr;
 		}
-		inline auto operator=(window const& rhs) noexcept -> window & = delete;
-		inline auto operator=(window&& rhs) noexcept -> window & = delete;
+		inline auto operator=(window const&) noexcept -> window & = delete;
+		inline auto operator=(window&&) noexcept -> window & = delete;
 		inline ~window(void) noexcept {
 			destroy();
 		};
@@ -40,7 +40,7 @@ namespace window {
 		inline void kill_timer(UINT_PTR IdEvent) noexcept {
 			KillTimer(_hwnd, IdEvent);
 		}
-	public:
+
 		inline void screen_to_client(LPPOINT const lpPoint) const noexcept {
 			ScreenToClient(_hwnd, lpPoint);
 		}

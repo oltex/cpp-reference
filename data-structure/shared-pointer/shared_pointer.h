@@ -2,7 +2,7 @@
 #include <malloc.h>
 #include <utility>
 #include <type_traits>
-#include "../../system-component/memory/memory.h"
+#include "../../system/memory/memory.h"
 #include "../../algorithm/swap/swap.h"
 
 namespace library::data_structure {
@@ -28,7 +28,7 @@ namespace library::data_structure {
 		inline constexpr shared_pointer(nullptr_t) noexcept
 			: _pointer(nullptr), _reference(nullptr) {
 		};
-		inline explicit shared_pointer(type* pointer) noexcept 
+		inline explicit shared_pointer(type* pointer) noexcept
 			: _pointer(pointer) {
 			_reference = system::memory::allocate<reference>();
 #pragma warning(suppress: 6011)
@@ -44,6 +44,9 @@ namespace library::data_structure {
 			_reference->_weak = 0;
 		}
 		inline shared_pointer(shared_pointer& rhs) noexcept
+			: shared_pointer(static_cast<shared_pointer const&>(rhs)) {
+		};
+		inline shared_pointer(shared_pointer const& rhs) noexcept
 			: _pointer(rhs._pointer), _reference(rhs._reference) {
 			if (nullptr != _reference)
 				++_reference->_use;
