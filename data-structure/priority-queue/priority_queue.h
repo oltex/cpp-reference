@@ -3,7 +3,7 @@
 #include "../../algorithm/predicate/predicate.h"
 
 namespace library::data_structure {
-	template<typename type, auto _predicate = algorithm::predicate::less<type>>
+	template<typename type, auto predicate = algorithm::predicate::less<type>>
 	class priority_queue final {
 	private:
 		using size_type = unsigned int;
@@ -23,7 +23,7 @@ namespace library::data_structure {
 			while (0 < child) {
 				auto parent = (child - 1) / 2;
 
-				if (0 > _predicate(_vector[parent], leaf))
+				if (std::strong_ordering::greater == predicate(_vector[parent], leaf))
 					break;
 				_vector[child] = _vector[parent];
 				child = parent;
@@ -41,9 +41,9 @@ namespace library::data_structure {
 					break;
 				auto right = left + 1;
 
-				if (size > right && 0 > _predicate(_vector[right], _vector[left]))
+				if (size > right && std::strong_ordering::greater == predicate(_vector[right], _vector[left]))
 					left = right;
-				if (0 > _predicate(leaf, _vector[left]))
+				if (std::strong_ordering::greater == predicate(leaf, _vector[left]))
 					break;
 
 				_vector[parent] = _vector[left];

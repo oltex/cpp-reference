@@ -1,6 +1,6 @@
 #pragma once
-#include "library/window/window.h"
-#include "library/data-structure/map.h"
+#include "../../system/window/window.h"
+#include "map/map.h"
 #include <map>
 
 class test final {

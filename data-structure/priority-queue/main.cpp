@@ -18,25 +18,24 @@ inline static auto test(int a, int b) noexcept {
 
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	library::data_structure::priority_queue<int, algorithm::predicate::less<int>> queue;
-	library::data_structure::priority_queue<int, test> queue2;
+	//std::priority_queue<int,> std_queue;
+	library::data_structure::priority_queue<int> queue;
 
 	queue.emplace(4);
-	queue2.emplace(4);
-	//queue.emplace(3);
-	//queue.emplace(2);
-	//queue.emplace(1);
-	//queue.emplace(0);
-	//queue.emplace(5);
-	//queue.emplace(6);
-	//queue.emplace(7);
-	//queue.emplace(8);
-	//queue.emplace(9);
+	queue.emplace(3);
+	queue.emplace(2);
+	queue.emplace(1);
+	queue.emplace(0);
+	queue.emplace(5);
+	queue.emplace(6);
+	queue.emplace(7);
+	queue.emplace(8);
+	queue.emplace(9);
 
-	//while (!queue.empty()) {
-	//	std::cout << queue.top() << std::endl;
-	//	queue.pop();
-	//}
+	while (!queue.empty()) {
+		std::cout << queue.top() << std::endl;
+		queue.pop();
+	}
 
 	return 0;
 }

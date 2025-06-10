@@ -1,7 +1,7 @@
 #pragma once
-#include "library/window/pen.h"
-#include "library/window/brush.h"
-#include "library/window/font.h"
+#include "../../system/window/pen.h"
+#include "../../system/window/brush.h"
+#include "../../system/window/font.h"
 
 class tree final {
 public:

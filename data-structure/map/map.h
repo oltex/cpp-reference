@@ -3,11 +3,12 @@
 #include <stdlib.h>
 #include <malloc.h>
 
+#include "../pool/pool.h"
 #include "predicate.h"
 #include "../pair/pair.h"
 
 namespace library::data_structure {
-	template<typename key_type, typename type, typename predicate = less<key_type>>
+	template<typename key_type, typename type, typename predicate = less<key_type>, typename allocator = pool<type>>
 	class map final {
 	private:
 		using size_type = unsigned int;

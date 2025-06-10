@@ -2,10 +2,10 @@
 #include <stdlib.h>
 #include <crtdbg.h>
 
-#include "library/window/instance.h"
-#include "library/window/cls.h"
-#include "library/window/sct.h"
-#include "library/window/window.h"
+#include "../../system/window/instance.h"
+#include "../../system/window/cls.h"
+#include "../../system/window/sct.h"
+#include "../../system/window/window.h"
 
 #include "client.h"
 //STL이랑 비교하고 (키, 벨류 값확인)

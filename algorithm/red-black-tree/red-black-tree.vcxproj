@@ -149,9 +149,7 @@
   <ItemGroup>
     <ClInclude Include="camera.h" />
     <ClInclude Include="client.h" />
-    <ClInclude Include="library\data-structure\map.h" />
-    <ClInclude Include="library\data-structure\pair.h" />
-    <ClInclude Include="library\data-structure\predicate.h" />
+    <ClInclude Include="map\map.h" />
     <ClInclude Include="test.h" />
     <ClInclude Include="timer.h" />
     <ClInclude Include="tree.h" />

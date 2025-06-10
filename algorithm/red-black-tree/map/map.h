@@ -5,8 +5,8 @@
 
 #include "predicate.h"
 #include "pair.h"
+#include "../../"
 
-namespace library::data_structure {
 	template<typename key_type, typename type, typename predicate = less<key_type>>
 	class map final {
 	public:
@@ -369,4 +369,3 @@ namespace library::data_structure {
 		size_type _size = 0;
 		inline static predicate const _predicate;
 	};
-}
