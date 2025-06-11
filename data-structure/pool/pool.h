@@ -29,7 +29,7 @@ namespace library::data_structure {
 	public:
 		template <typename other>
 		using rebind = pool<other>;
-	public:
+
 		inline explicit pool(void) noexcept = default;
 		inline explicit pool(pool const&) noexcept = delete;
 		inline explicit pool(pool&& rhs) noexcept

@@ -30,6 +30,11 @@ public:
 			return true;
 		return false;
 	}
+	inline bool operator < (const my_class& other) const noexcept {
+		if (_value < other._value)
+			return true;
+		return false;
+	}
 	inline ~my_class(void) noexcept {
 		std::cout << "¼Ò¸êÀÚ: " << _value << std::endl;
 	};

@@ -22,7 +22,7 @@ namespace library::data_structure {
 		template <size_t index, class _this, class... rest>
 		struct element<index, tuple<_this, rest...>> : element<index - 1, tuple<rest...>> {
 		};
-	public:
+
 		inline explicit constexpr tuple(void) noexcept = default;
 		template<typename type_argument, typename... rest_argument>
 		inline explicit constexpr tuple(type_argument&& type_arg, rest_argument&&... rest_arg) noexcept
@@ -43,12 +43,12 @@ namespace library::data_structure {
 			return *this;
 		}
 		inline ~tuple(void) noexcept = default;
-	public:
+
 		template <size_t index>
 		inline auto get(void) noexcept -> element<index, tuple>::type& {
 			return reinterpret_cast<element<index, tuple>::_Ttype&>(*this)._value;
 		}
-	public:
+
 		type _value;
 	};
 }

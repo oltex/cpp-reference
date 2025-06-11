@@ -9,6 +9,8 @@
 #include "../pair/pair.h"
 
 namespace library::data_structure {
+
+
 	template<typename key_type, typename type, auto predicate = algorithm::predicate::ordering<key_type>, typename allocator = pool<type>>
 	class map final {
 	private:
@@ -28,6 +30,19 @@ namespace library::data_structure {
 			bool _nil = false;
 			pair _pair;
 		};
+		using rebind_allocator = allocator::template rebind<node>;
+		template <typename key_type, typename... argument>
+		struct key_extract {
+			static constexpr bool able = false;
+		};
+		template <typename key_type, typename type>
+		struct key_extract<key_type, key_type, type> {
+			static constexpr bool able = true;
+			static auto execute(key_type const& key, type const& value) noexcept -> key_type const& {
+				return key;
+			}
+		};
+
 	public:
 		class iterator final {
 			friend map;
@@ -110,6 +125,19 @@ namespace library::data_structure {
 		inline ~map(void) noexcept {
 			clear();
 			system::memory::deallocate(reinterpret_cast<void*>(_root));
+		}
+
+		template<typename... argument>
+		inline auto emplace2(argument&&... arg) noexcept {
+			using key_extract = key_extract<key_type, std::remove_cvref_t<argument>...>;
+			if constexpr (true == key_extract::able)
+				auto& key = key_extract::execute(std::forward<argument>(arg)...);
+			else {
+				//auto current = &_allocator.allocate();
+				//	system::memory::construct<type>(current->_value, std::forward<argument>(arg)...);
+			}
+
+			node* cur = _root;
 		}
 
 		template<typename... argument>
@@ -343,5 +371,6 @@ namespace library::data_structure {
 		node* _root;
 		node* _nil;
 		size_type _size;
+		rebind_allocator _allocator;
 	};
 }

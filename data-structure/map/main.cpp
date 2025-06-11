@@ -8,12 +8,49 @@
 #include <iostream>
 #include <map>
 
+#include <iostream>
+#include <type_traits>
+#include <utility>
+#include <string>
+
+
+template <typename type, typename... argument>
+struct value_extract {
+};
+template <typename type, typename rest, typename... argument>
+struct value_extract<type, rest, argument...> {
+	static constexpr int count = std::is_constructible_v<type, rest, argument...> ? 1 + sizeof...(argument) : value_extract<type, argument...>::count;
+};
+template <typename type>
+struct value_extract<type> {
+	static constexpr int count = 0;
+};
+
+//static constexpr bool constructible = std::is_constructible_v<type, rest, argument...> ? true : value_extract<type, argument...>::constructible;
+
+class my_class2 {
+public:
+	my_class2(int a, int b)
+		: _a(a), _b(b) {
+	}
+	int _a;
+	int _b;
+};
+
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-	std::map<int, int> std_map;
+	//std_map.emplace(1, 2);
+	//std_map.emplace(std::piecewise_construct,
+	//	std::forward_as_tuple(1),
+	//	std::forward_as_tuple(1));
+	//std::forward_as_tuple()
+	library::data_structure::map<int, my_class2> map2;
+	map2.emplace2(8, 8, 7);
+
 
 	library::data_structure::map<int, my_class> map;
+
 	map.emplace(8, 8);
 	map.emplace(4, 4);
 	map.emplace(2, 2);
