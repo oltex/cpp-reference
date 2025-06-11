@@ -12,13 +12,9 @@ public:
 	int _a;
 };
 
-inline static auto test(int a, int b) noexcept {
-	return a < b;
-}
-
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//std::priority_queue<int,> std_queue;
+	std::priority_queue<int> std_queue;
 	library::data_structure::priority_queue<int> queue;
 
 	queue.emplace(4);

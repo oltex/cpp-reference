@@ -145,7 +145,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="predicate.h" />
     <ClInclude Include="map.h" />
   </ItemGroup>
   <ItemGroup>

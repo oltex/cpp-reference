@@ -23,7 +23,7 @@ namespace library::data_structure {
 			while (0 < child) {
 				auto parent = (child - 1) / 2;
 
-				if (std::strong_ordering::greater == predicate(_vector[parent], leaf))
+				if (predicate(_vector[parent], leaf))
 					break;
 				_vector[child] = _vector[parent];
 				child = parent;
@@ -41,9 +41,9 @@ namespace library::data_structure {
 					break;
 				auto right = left + 1;
 
-				if (size > right && std::strong_ordering::greater == predicate(_vector[right], _vector[left]))
+				if (size > right && predicate(_vector[right], _vector[left]))
 					left = right;
-				if (std::strong_ordering::greater == predicate(leaf, _vector[left]))
+				if (predicate(leaf, _vector[left]))
 					break;
 
 				_vector[parent] = _vector[left];

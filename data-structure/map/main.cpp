@@ -11,6 +11,8 @@
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
+	std::map<int, int> std_map;
+
 	library::data_structure::map<int, my_class> map;
 	map.emplace(8, 8);
 	map.emplace(4, 4);

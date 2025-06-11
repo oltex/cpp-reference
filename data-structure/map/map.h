@@ -3,12 +3,12 @@
 #include <stdlib.h>
 #include <malloc.h>
 
+#include "../../algorithm/predicate/predicate.h"
 #include "../pool/pool.h"
-#include "predicate.h"
 #include "../pair/pair.h"
 
 namespace library::data_structure {
-	template<typename key_type, typename type, typename predicate = less<key_type>, typename allocator = pool<type>>
+	template<typename key_type, typename type, auto predicate = algorithm::predicate::ordering<key_type>, typename allocator = pool<type>>
 	class map final {
 	private:
 		using size_type = unsigned int;
@@ -16,6 +16,12 @@ namespace library::data_structure {
 		enum color : bool { red, black };
 		enum direction : bool { left, right };
 		struct node final {
+			inline explicit node(void) noexcept = delete;
+			inline explicit node(node const&) noexcept = delete;
+			inline explicit node(node&&) noexcept = delete;
+			inline auto operator=(node const&) noexcept = delete;
+			inline auto operator=(node&&) noexcept = delete;
+			inline ~node(void) noexcept = delete;
 			node* _parent, * _left, * _right;
 			color _color = red;
 			bool _nil = false;
@@ -35,7 +41,7 @@ namespace library::data_structure {
 				_node = rhs._node;
 				return *this;
 			}
-		public:
+
 			inline auto operator*(void) const noexcept -> pair& {
 				return _node->_pair;
 			}
@@ -87,7 +93,7 @@ namespace library::data_structure {
 		private:
 			node* _node;
 		};
-	public:
+
 		inline explicit map(void) noexcept {
 			_root = _nil = reinterpret_cast<node*>(calloc(1, (sizeof(node*) * 3) + sizeof(color) + sizeof(bool)));
 #pragma warning(suppress: 6011)
@@ -103,27 +109,20 @@ namespace library::data_structure {
 			clear();
 			free(_nil);
 		}
-	public:
-		template<typename universal>
-		inline void insert(key_type const& key, universal&& value) const noexcept {
-			emplace(key, std::forward<universal>(value));
-		}
+
 		template<typename... argument>
 		inline auto emplace(key_type const& key, argument&&... arg) noexcept -> pair& {
 			node** cur = &_root;
 			node* parent = (*cur)->_parent;
 			while (false == (*cur)->_nil) {
 				parent = *cur;
-				switch (_predicate((*cur)->_pair._first, key)) {
-				case 0:
+				auto result = predicate((*cur)->_pair._first, key);
+				if (std::strong_ordering::equal == result)
 					return (*cur)->_pair;
-				case -1:
+				else if (std::strong_ordering::less == result)
 					cur = &(*cur)->_left;
-					break;
-				case 1:
+				else
 					cur = &(*cur)->_right;
-					break;
-				}
 			}
 			node* child = *cur;
 			node* ret = *cur = reinterpret_cast<node*>(malloc(sizeof(node)));
@@ -197,7 +196,7 @@ namespace library::data_structure {
 				blance(res);
 			--_size;
 		}
-	public:
+
 		inline auto begin(void) const noexcept -> iterator {
 			node* cur = _root;
 			while (true != cur->_nil && true != cur->_left->_nil)
@@ -210,30 +209,25 @@ namespace library::data_structure {
 		inline auto find(key_type const& key) const noexcept -> iterator {
 			node* cur = _root;
 			while (false == cur->_nil) {
-				switch (_predicate(cur->_pair._first, key)) {
-				case 0:
+				auto result = predicate(cur->_pair._first, key);
+				if (std::strong_ordering::equal == result)
 					return iterator(cur);
-				case -1:
+				else if (std::strong_ordering::less == result)
 					cur = cur->_left;
-					break;
-				case 1:
+				else
 					cur = cur->_right;
-					break;
-				}
 			}
 			return iterator(cur);
 		}
-	public:
-		inline void clear(void) noexcept {
-			while (0 != _size)
-				erase(iterator(_root));
-		}
-	public:
 		inline auto size(void) const noexcept -> size_type {
 			return _size;
 		}
 		inline bool empty(void) const noexcept {
 			return 0 == _size;
+		}
+		inline void clear(void) noexcept {
+			while (0 != _size)
+				erase(iterator(_root));
 		}
 	private:
 		inline void connect(node* const parent, node* const child, direction const dir) const noexcept {
@@ -347,6 +341,5 @@ namespace library::data_structure {
 		node* _root;
 		node* _nil;
 		size_type _size = 0;
-		inline static predicate const _predicate;
 	};
 }
