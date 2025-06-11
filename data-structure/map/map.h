@@ -4,6 +4,7 @@
 #include <malloc.h>
 
 #include "../../algorithm/predicate/predicate.h"
+#include "../../system/memory/memory.h"
 #include "../pool/pool.h"
 #include "../pair/pair.h"
 
@@ -94,12 +95,13 @@ namespace library::data_structure {
 			node* _node;
 		};
 
-		inline explicit map(void) noexcept {
-			_root = _nil = reinterpret_cast<node*>(calloc(1, (sizeof(node*) * 3) + sizeof(color) + sizeof(bool)));
+		inline explicit map(void) noexcept
+			: _size(0) {
+			_root = _nil = reinterpret_cast<node*>(system::memory::allocate(sizeof(node*) * 3 + sizeof(color) + sizeof(bool)));
 #pragma warning(suppress: 6011)
-			_nil->_nil = true;
 			_nil->_parent = _nil->_left = _nil->_right = _nil;
 			_nil->_color = black;
+			_nil->_nil = true;
 		}
 		inline explicit map(map const& rhs) noexcept;
 		inline explicit map(map&& rhs) noexcept;
@@ -107,7 +109,7 @@ namespace library::data_structure {
 		inline auto operator=(map&& rhs) noexcept -> map&;
 		inline ~map(void) noexcept {
 			clear();
-			free(_nil);
+			system::memory::deallocate(reinterpret_cast<void*>(_root));
 		}
 
 		template<typename... argument>
@@ -340,6 +342,6 @@ namespace library::data_structure {
 	private:
 		node* _root;
 		node* _nil;
-		size_type _size = 0;
+		size_type _size;
 	};
 }
