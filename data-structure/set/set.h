@@ -6,7 +6,6 @@
 #include "../../algorithm/predicate/predicate.h"
 #include "../../system/memory/memory.h"
 #include "../pool/pool.h"
-#include "../pair/pair.h"
 
 namespace library::data_structure {
 	template<typename type, auto predicate = algorithm::predicate::ordering<type>, typename allocator = pool<type>>
@@ -41,6 +40,71 @@ namespace library::data_structure {
 			}
 		};
 	public:
+		class iterator final {
+		public:
+			inline explicit iterator(node* const node = nullptr) noexcept
+				: _node(node) {
+			}
+			inline iterator(iterator const& rhs) noexcept
+				: _node{ rhs._node } {
+			}
+			inline auto operator=(iterator const& rhs) noexcept -> iterator& {
+				_node = rhs._node;
+				return *this;
+			}
+
+			inline auto operator*(void) const noexcept -> type& {
+				return _node->_value;
+			}
+			inline auto operator->(void) const noexcept -> type* {
+				return &_node->_value;
+			}
+			inline auto operator++(void) noexcept -> iterator& {
+				if (true == _node->_child[direction::right]->_nil) {
+					while (false == _node->_parent->_nil && _node->_parent->_child[direction::right] == _node)
+						_node = _node->_parent;
+					_node = _node->_parent;
+				}
+				else {
+					_node = _node->_child[direction::right];
+					while (false == _node->_child[direction::left]->_nil)
+						_node = _node->_child[direction::left];
+				}
+				return *this;
+			}
+			inline auto operator++(int) noexcept -> iterator {
+				iterator iter(*this);
+				operator++();
+				return iter;
+			}
+			inline auto operator--(void) noexcept -> iterator& {
+				if (true == _node->_child[direction::left]->_nil) {
+					while (false == _node->_parent->_nil && _node->_parent->_child[direction::left] == _node)
+						_node = _node->_parent;
+					_node = _node->_parent;
+				}
+				else {
+					_node = _node->_child[direction::left];
+					while (true != _node->_child[direction::right]->_nil)
+						_node = _node->_child[direction::right];
+				}
+				return *this;
+			}
+			inline auto operator--(int) noexcept -> iterator {
+				iterator iter(*this);
+				operator--();
+				return iter;
+			}
+			inline bool operator==(iterator const& rhs) const noexcept {
+				return _node == rhs._node;
+			}
+			inline bool operator!=(iterator const& rhs) const noexcept {
+				return _node != rhs._node;
+			}
+		private:
+			node* _node;
+		};
+
 		inline explicit set(void) noexcept
 			: _size(0) {
 			_root = _nil = reinterpret_cast<node*>(system::memory::allocate(sizeof(node*) * 3 + sizeof(color) + sizeof(bool)));
@@ -59,7 +123,7 @@ namespace library::data_structure {
 		}
 
 		template<typename... argument>
-		inline auto emplace(argument&&... arg) noexcept {
+		inline auto emplace(argument&&... arg) noexcept -> iterator {
 			//using extract = extract<type, std::remove_cvref_t<argument>...>;
 			//type const* value;
 			//if constexpr (true == extract::able)
@@ -80,7 +144,7 @@ namespace library::data_structure {
 					parent = *current;
 					auto result = predicate((*current)->_value, element->_value);
 					if (std::strong_ordering::equal == result)
-						return;
+						return iterator(*current);
 					else if (std::strong_ordering::less == result)
 						current = &(*current)->_child[direction::left];
 					else
@@ -91,10 +155,14 @@ namespace library::data_structure {
 			}
 			{
 				node* current = element;
-				while (_root != current) {
+				for (;;) {
+					if (_root == current) {
+						current->_color = color::black;
+						break;
+					}
 					node* parent = current->_parent;
 					if (color::black == parent->_color)
-						return;
+						break;
 					node* grand = parent->_parent;
 					node* uncle = parent == grand->_child[direction::left] ? grand->_child[direction::right] : grand->_child[direction::left];
 
@@ -108,16 +176,16 @@ namespace library::data_structure {
 						rotate(grand, dir);
 						parent->_color = color::black;
 						grand->_color = color::red;
-						return;
+						break;
 					}
 					parent->_color = color::black;
 					grand->_color = color::red;
 					uncle->_color = color::black;
 					current = grand;
 				}
-				current->_color = color::black;
 			}
 			++_size;
+			return iterator(element);
 		}
 
 		inline void rotate(node* const current, direction const dir) noexcept {
@@ -137,6 +205,15 @@ namespace library::data_structure {
 			parent->_child[dir] = child;
 			child->_parent = parent;
 		}
+
+		inline auto begin(void) const noexcept -> iterator {
+			node* current = _root;
+			while (false == current->_nil && false == current->_child[direction::left]->_nil)
+				current = current->_child[direction::left];
+			return iterator(current);
+		}
+
+
 	private:
 		node* _root;
 		node* _nil;

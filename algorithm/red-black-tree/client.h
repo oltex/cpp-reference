@@ -9,7 +9,7 @@
 #include "test.h"
 #include <string>
 
-#include "map/map.h"
+#include "tree/map.h"
 
 
 class client final : public library::design_pattern::singleton<client, library::design_pattern::member_static<client>> {
@@ -53,7 +53,7 @@ public:
 				if (_input.empty())
 					break;
 				int index = std::stoi(_input.c_str());
-				_map.emplace(index, 0);
+				_map.emplace(index);
 				_input.clear();
 			}
 			else if (VK_SHIFT == wparam) {
