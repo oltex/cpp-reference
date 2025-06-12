@@ -187,7 +187,14 @@ namespace library::data_structure {
 			++_size;
 			return iterator(element);
 		}
+		inline auto begin(void) const noexcept -> iterator {
+			node* current = _root;
+			while (false == current->_nil && false == current->_child[direction::left]->_nil)
+				current = current->_child[direction::left];
+			return iterator(current);
+		}
 
+	private:
 		inline void rotate(node* const current, direction const dir) noexcept {
 			node* child = current->_child[!dir];
 
@@ -205,16 +212,6 @@ namespace library::data_structure {
 			parent->_child[dir] = child;
 			child->_parent = parent;
 		}
-
-		inline auto begin(void) const noexcept -> iterator {
-			node* current = _root;
-			while (false == current->_nil && false == current->_child[direction::left]->_nil)
-				current = current->_child[direction::left];
-			return iterator(current);
-		}
-
-
-	private:
 		node* _root;
 		node* _nil;
 		size_type _size;

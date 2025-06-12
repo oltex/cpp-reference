@@ -27,5 +27,8 @@
     <ClInclude Include="timer.h">
       <Filter>client</Filter>
     </ClInclude>
+    <ClInclude Include="tree\set.h">
+      <Filter>tree</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
