@@ -142,7 +142,7 @@ namespace library::data_structure {
 				node* parent = _nil;
 				while (false == (*current)->_nil) {
 					parent = *current;
-					auto result = predicate((*current)->_value, element->_value);
+					auto result = predicate(element->_value, (*current)->_value);
 					if (std::strong_ordering::equal == result)
 						return iterator(*current);
 					else if (std::strong_ordering::less == result)
@@ -152,6 +152,7 @@ namespace library::data_structure {
 				}
 				element->_parent = parent;
 				element->_child[direction::left] = element->_child[direction::right] = *current;
+				*current = element;
 			}
 			{
 				node* current = element;
@@ -193,7 +194,12 @@ namespace library::data_structure {
 				current = current->_child[direction::left];
 			return iterator(current);
 		}
-
+		inline auto size(void) const noexcept -> size_type {
+			return _size;
+		}
+		inline bool empty(void) const noexcept {
+			return 0 == _size;
+		}
 	private:
 		inline void rotate(node* const current, direction const dir) noexcept {
 			node* child = current->_child[!dir];

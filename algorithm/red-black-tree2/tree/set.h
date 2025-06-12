@@ -7,12 +7,13 @@
 #include "../../../system/memory/memory.h"
 #include "../../../data-structure/pool/pool.h"
 
+enum class color : bool { red, black };
+enum direction : bool { left, right };
+
 template<typename type, auto predicate = library::algorithm::predicate::ordering<type>, typename allocator = library::data_structure::pool<type>>
 class set final {
-private:
+public:
 	using size_type = unsigned int;
-	enum class color : bool { red, black };
-	enum direction : bool { left, right };
 	struct node final {
 		inline explicit node(void) noexcept = delete;
 		inline explicit node(node const&) noexcept = delete;
@@ -25,6 +26,7 @@ private:
 		color _color;
 		bool _nil;
 		type _value;
+		POINT _position;
 	};
 	using rebind_allocator = allocator::template rebind<node>;
 	template <typename type, typename... argument>
@@ -44,6 +46,9 @@ public:
 		inline explicit iterator(node* const node = nullptr) noexcept
 			: _node(node) {
 		}
+		inline explicit iterator(node* node, size_type const depth) noexcept
+			: _node(node), _depth(depth) {
+		}
 		inline iterator(iterator const& rhs) noexcept
 			: _node{ rhs._node } {
 		}
@@ -60,14 +65,20 @@ public:
 		}
 		inline auto operator++(void) noexcept -> iterator& {
 			if (true == _node->_child[direction::right]->_nil) {
-				while (false == _node->_parent->_nil && _node->_parent->_child[direction::right] == _node)
+				while (false == _node->_parent->_nil && _node->_parent->_child[direction::right] == _node) {
 					_node = _node->_parent;
+					--_depth;
+				}
 				_node = _node->_parent;
+				--_depth;
 			}
 			else {
 				_node = _node->_child[direction::right];
-				while (false == _node->_child[direction::left]->_nil)
+				++_depth;
+				while (false == _node->_child[direction::left]->_nil) {
 					_node = _node->_child[direction::left];
+					++_depth;
+				}
 			}
 			return *this;
 		}
@@ -100,13 +111,14 @@ public:
 		inline bool operator!=(iterator const& rhs) const noexcept {
 			return _node != rhs._node;
 		}
-	private:
+	public:
 		node* _node;
+		size_type _depth;
 	};
 
 	inline explicit set(void) noexcept
 		: _size(0) {
-		_root = _nil = reinterpret_cast<node*>(system::memory::allocate(sizeof(node*) * 3 + sizeof(color) + sizeof(bool)));
+		_root = _nil = reinterpret_cast<node*>(library::system::memory::allocate(sizeof(node*) * 3 + sizeof(color) + sizeof(bool)));
 #pragma warning(suppress: 6011)
 		_nil->_parent = _nil->_child[direction::left] = _nil->_child[direction::right] = _nil;
 		_nil->_color = color::black;
@@ -118,7 +130,7 @@ public:
 	inline auto operator=(set&& rhs) noexcept -> set&;
 	inline ~set(void) noexcept {
 		//clear();
-		system::memory::deallocate(reinterpret_cast<void*>(_root));
+		library::system::memory::deallocate(reinterpret_cast<void*>(_root));
 	}
 
 	template<typename... argument>
@@ -132,7 +144,7 @@ public:
 		//}
 
 		auto element = &_allocator.allocate();
-		system::memory::construct<type>(element->_value, std::forward<argument>(arg)...);
+		library::system::memory::construct<type>(element->_value, std::forward<argument>(arg)...);
 		element->_color = color::red;
 		element->_nil = false;
 
@@ -141,7 +153,7 @@ public:
 			node* parent = _nil;
 			while (false == (*current)->_nil) {
 				parent = *current;
-				auto result = predicate((*current)->_value, element->_value);
+				auto result = predicate(element->_value, (*current)->_value);
 				if (std::strong_ordering::equal == result)
 					return iterator(*current);
 				else if (std::strong_ordering::less == result)
@@ -151,6 +163,7 @@ public:
 			}
 			element->_parent = parent;
 			element->_child[direction::left] = element->_child[direction::right] = *current;
+			*current = element;
 		}
 		{
 			node* current = element;
@@ -188,11 +201,19 @@ public:
 	}
 	inline auto begin(void) const noexcept -> iterator {
 		node* current = _root;
-		while (false == current->_nil && false == current->_child[direction::left]->_nil)
+		size_type depth = 0;
+		while (false == current->_nil && false == current->_child[direction::left]->_nil) {
 			current = current->_child[direction::left];
-		return iterator(current);
+			++depth;
+		}
+		return iterator(current, depth);
 	}
-
+	inline auto size(void) const noexcept -> size_type {
+		return _size;
+	}
+	inline bool empty(void) const noexcept {
+		return 0 == _size;
+	}
 private:
 	inline void rotate(node* const current, direction const dir) noexcept {
 		node* child = current->_child[!dir];

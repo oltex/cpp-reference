@@ -6,10 +6,9 @@
 
 #include "camera.h"
 #include "tree.h"
-#include "test.h"
 #include <string>
 
-#include "tree/map.h"
+#include "tree/set.h"
 
 
 class client final : public library::design_pattern::singleton<client, library::design_pattern::member_static<client>> {
@@ -53,14 +52,14 @@ public:
 				if (_input.empty())
 					break;
 				int index = std::stoi(_input.c_str());
-				_map.emplace(index);
+				_set.emplace(index);
 				_input.clear();
 			}
 			else if (VK_SHIFT == wparam) {
 				if (_input.empty())
 					break;
 				int index = std::stoi(_input.c_str());
-				_map.erase(index);
+				//_map.erase(index);
 				_input.clear();
 			}
 			else if (VK_BACK == wparam) {
@@ -69,14 +68,14 @@ public:
 				_input.pop_back();
 			}
 			if (0x51 == wparam) {
-				_test.onoff(_window);
+				//_test.onoff(_window);
 			}
 			_window.invalidate_rect(nullptr, true);
 		} break;
 		case WM_TIMER: {
 			if (1 != wparam)
 				break;
-			_test.run(_map);
+			//_test.run(_map);
 			_window.invalidate_rect(nullptr, true);
 		} break;
 		case WM_MOUSEWHEEL: {
@@ -95,19 +94,19 @@ public:
 			_dc.fill_rect(&rect, _background);
 
 			_dc.select_object(_tree._line);
-			auto iter = _map.begin();
-			for (unsigned int i = 0; i < _map.size(); ++i, ++iter) {
+			auto iter = _set.begin();
+			for (unsigned int i = 0; i < _set.size(); ++i, ++iter) {
 				RECT ellipse{ LONG(i * _tree._ellipse_size), LONG(iter._depth * _tree._ellipse_size), LONG((i + 1) * _tree._ellipse_size), LONG((iter._depth + 1) * _tree._ellipse_size) };
 				iter._node->_position = POINT{ (ellipse.left + ellipse.right) / 2, (ellipse.top + ellipse.bottom) / 2 };
 
 				POINT position;
-				if (false == iter._node->_left->_nil) {
+				if (false == iter._node->_child[direction::left]->_nil) {
 					position = _camera.clinet_to_camrea(iter._node->_position);
 					_dc.move_to(position.x, position.y);
-					position = _camera.clinet_to_camrea(iter._node->_left->_position);
+					position = _camera.clinet_to_camrea(iter._node->_child[direction::left]->_position);
 					_dc.line_to(position.x, position.y);
 				}
-				if (false == iter._node->_parent->_nil && iter._node->_parent->_right == iter._node) {
+				if (false == iter._node->_parent->_nil && iter._node->_parent->_child[direction::right] == iter._node) {
 					position = _camera.clinet_to_camrea(iter._node->_position);
 					_dc.move_to(position.x, position.y);
 					position = _camera.clinet_to_camrea(iter._node->_parent->_position);
@@ -119,17 +118,17 @@ public:
 			_dc.select_object(GetStockObject(NULL_PEN));
 			_dc.set_bk_mode(TRANSPARENT);
 			_dc.set_text_color(RGB(255, 255, 255));
-			auto iter2 = _map.begin();
-			for (unsigned int i = 0; i < _map.size(); ++i, ++iter2) {
+			auto iter2 = _set.begin();
+			for (unsigned int i = 0; i < _set.size(); ++i, ++iter2) {
 				RECT ellipse{ LONG(i * _tree._ellipse_size), LONG(iter2._depth * _tree._ellipse_size), LONG((i + 1) * _tree._ellipse_size), LONG((iter2._depth + 1) * _tree._ellipse_size) };
 				ellipse = _camera.clinet_to_camrea(ellipse);
 
-				if (iter2._node->_color == map<int, int>::color::red)
+				if (iter2._node->_color == color::red)
 					_dc.select_object(_tree._red);
 				else
 					_dc.select_object(_tree._black);
 				_dc.ellipse(ellipse.left, ellipse.top, ellipse.right, ellipse.bottom);
-				std::wstring wstr = std::to_wstring((*iter2)._first);
+				std::wstring wstr = std::to_wstring(*iter2);
 				_dc.draw_text(wstr.c_str(), (int)wstr.size(), &ellipse, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 			}
 
@@ -147,8 +146,7 @@ public:
 
 	camera _camera;
 	tree _tree;
-	test _test;
 	std::string _input;
 
-	map<int, int> _map;
+	set<int> _set;
 };

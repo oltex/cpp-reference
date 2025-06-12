@@ -21,9 +21,6 @@
     <ClInclude Include="tree.h">
       <Filter>client</Filter>
     </ClInclude>
-    <ClInclude Include="test.h">
-      <Filter>client</Filter>
-    </ClInclude>
     <ClInclude Include="timer.h">
       <Filter>client</Filter>
     </ClInclude>
