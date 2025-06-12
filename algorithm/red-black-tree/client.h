@@ -9,7 +9,7 @@
 #include "test.h"
 #include <string>
 
-#include "library/data-structure/map.h"
+#include "map/map.h"
 
 
 class client final : public library::design_pattern::singleton<client, library::design_pattern::member_static<client>> {
@@ -124,17 +124,14 @@ public:
 				RECT ellipse{ LONG(i * _tree._ellipse_size), LONG(iter2._depth * _tree._ellipse_size), LONG((i + 1) * _tree._ellipse_size), LONG((iter2._depth + 1) * _tree._ellipse_size) };
 				ellipse = _camera.clinet_to_camrea(ellipse);
 
-				if (iter2._node->_color == library::data_structure::map<int, int>::color::red)
+				if (iter2._node->_color == map<int, int>::color::red)
 					_dc.select_object(_tree._red);
 				else
 					_dc.select_object(_tree._black);
 				_dc.ellipse(ellipse.left, ellipse.top, ellipse.right, ellipse.bottom);
-
 				std::wstring wstr = std::to_wstring((*iter2)._first);
-
 				_dc.draw_text(wstr.c_str(), (int)wstr.size(), &ellipse, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 			}
-
 
 			window::device_context dc = _window.begin_paint();
 			dc.bit_blt(0, 0, rect.right, rect.bottom, _dc, 0, 0, SRCCOPY);
@@ -153,5 +150,5 @@ public:
 	test _test;
 	std::string _input;
 
-	library::data_structure::map<int, int> _map;
+	map<int, int> _map;
 };

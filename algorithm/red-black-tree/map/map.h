@@ -3,15 +3,14 @@
 #include <stdlib.h>
 #include <malloc.h>
 
-#include "predicate.h"
-#include "pair.h"
-#include "../../"
+#include "../../predicate/predicate.h"
+#include "../../../data-structure/pair/pair.h"
 
-	template<typename key_type, typename type, typename predicate = less<key_type>>
+	template<typename key_type, typename type, auto predicate = library::algorithm::predicate::ordering<key_type>>
 	class map final {
 	public:
 		using size_type = unsigned int;
-		using pair = pair<key_type, type>;
+		using pair = library::data_structure::pair<key_type, type>;
 		enum color : bool { red, black };
 		enum direction : bool { left, right };
 		struct node final {
@@ -124,7 +123,7 @@
 			node* parent = (*cur)->_parent;
 			while (false == (*cur)->_nil) {
 				parent = *cur;
-				std::strong_ordering result = _predicate(key, (*cur)->_pair._first);
+				std::strong_ordering result = predicate(key, (*cur)->_pair._first);
 				if (std::strong_ordering::equal == result)
 					return (*cur)->_pair;
 				else if (std::strong_ordering::less == result)
@@ -220,7 +219,7 @@
 		inline auto find(key_type const& key) const noexcept -> iterator {
 			node* cur = _root;
 			while (false == cur->_nil) {
-				std::strong_ordering result = _predicate(key, cur->_pair._first);
+				std::strong_ordering result = predicate(key, cur->_pair._first);
 				if (std::strong_ordering::equal == result)
 					return iterator(cur);
 				else if (std::strong_ordering::less == result)
@@ -367,5 +366,4 @@
 		node* _root;
 		node* _nil;
 		size_type _size = 0;
-		inline static predicate const _predicate;
 	};

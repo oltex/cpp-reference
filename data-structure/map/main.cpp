@@ -39,7 +39,7 @@ public:
 
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-
+	std::map<int, int> a;
 	//std_map.emplace(1, 2);
 	//std_map.emplace(std::piecewise_construct,
 	//	std::forward_as_tuple(1),

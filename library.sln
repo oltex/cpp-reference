@@ -151,6 +151,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jump-point-search", "algori
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "red-black-tree", "algorithm\red-black-tree\red-black-tree.vcxproj", "{D11C7C69-C778-49C0-8933-5426D6601200}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "set", "data-structure\set\set.vcxproj", "{375766DF-B820-4D64-8E77-8331BE85AC13}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -671,6 +673,14 @@ Global
 		{D11C7C69-C778-49C0-8933-5426D6601200}.Release|x64.Build.0 = Release|x64
 		{D11C7C69-C778-49C0-8933-5426D6601200}.Release|x86.ActiveCfg = Release|Win32
 		{D11C7C69-C778-49C0-8933-5426D6601200}.Release|x86.Build.0 = Release|Win32
+		{375766DF-B820-4D64-8E77-8331BE85AC13}.Debug|x64.ActiveCfg = Debug|x64
+		{375766DF-B820-4D64-8E77-8331BE85AC13}.Debug|x64.Build.0 = Debug|x64
+		{375766DF-B820-4D64-8E77-8331BE85AC13}.Debug|x86.ActiveCfg = Debug|Win32
+		{375766DF-B820-4D64-8E77-8331BE85AC13}.Debug|x86.Build.0 = Debug|Win32
+		{375766DF-B820-4D64-8E77-8331BE85AC13}.Release|x64.ActiveCfg = Release|x64
+		{375766DF-B820-4D64-8E77-8331BE85AC13}.Release|x64.Build.0 = Release|x64
+		{375766DF-B820-4D64-8E77-8331BE85AC13}.Release|x86.ActiveCfg = Release|Win32
+		{375766DF-B820-4D64-8E77-8331BE85AC13}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -744,6 +754,7 @@ Global
 		{BA1A03E3-D111-400D-A92D-6DB5676E44DE} = {88033A2C-B20C-4143-A6D8-0A943F34408E}
 		{4FE0314B-EE4A-46E7-86FB-7C613D53B0E8} = {88033A2C-B20C-4143-A6D8-0A943F34408E}
 		{D11C7C69-C778-49C0-8933-5426D6601200} = {88033A2C-B20C-4143-A6D8-0A943F34408E}
+		{375766DF-B820-4D64-8E77-8331BE85AC13} = {638B906C-1177-49D6-86F1-FCF8F6BED5FE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C69985D6-20AB-4E9A-AD82-08BFBE490891}

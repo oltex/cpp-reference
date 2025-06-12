@@ -9,8 +9,6 @@
 #include "../pair/pair.h"
 
 namespace library::data_structure {
-
-
 	template<typename key_type, typename type, auto predicate = algorithm::predicate::ordering<key_type>, typename allocator = pool<type>>
 	class map final {
 	private:

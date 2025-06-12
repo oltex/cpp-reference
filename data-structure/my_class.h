@@ -35,6 +35,10 @@ public:
 			return true;
 		return false;
 	}
+	inline auto operator <=> (const my_class& other) const noexcept {
+		return _value <=> other._value;
+	}
+
 	inline ~my_class(void) noexcept {
 		std::cout << "¼Ò¸êÀÚ: " << _value << std::endl;
 	};
