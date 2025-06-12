@@ -101,7 +101,7 @@ namespace library::data_structure {
 			inline bool operator!=(iterator const& rhs) const noexcept {
 				return _node != rhs._node;
 			}
-		private:
+		public:
 			node* _node;
 		};
 
@@ -188,6 +188,14 @@ namespace library::data_structure {
 			++_size;
 			return iterator(element);
 		}
+		inline auto erase(iterator const& iter) noexcept {
+			node* element = iter.node;
+			if (true == element->_nil)
+				return;
+
+			node* current = element->_child[direction::left];
+		}
+
 		inline auto begin(void) const noexcept -> iterator {
 			node* current = _root;
 			while (false == current->_nil && false == current->_child[direction::left]->_nil)

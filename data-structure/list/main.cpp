@@ -14,7 +14,6 @@
 
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-
 	library::data_structure::list<int> list;
 	library::data_structure::list<int>::iterator iter;
 	list.emplace_back(30);
