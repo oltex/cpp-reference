@@ -14,7 +14,7 @@ namespace library::data_structure {
 	private:
 		using size_type = unsigned int;
 		enum class color : bool { red, black };
-		enum class direction : bool { left, right };
+		enum direction : bool { left, right };
 		struct node final {
 			inline explicit node(void) noexcept = delete;
 			inline explicit node(node const&) noexcept = delete;
@@ -22,7 +22,8 @@ namespace library::data_structure {
 			inline auto operator=(node const&) noexcept = delete;
 			inline auto operator=(node&&) noexcept = delete;
 			inline ~node(void) noexcept = delete;
-			node* _parent, * _left, * _right;
+			node* _parent;
+			node* _child[2];
 			color _color;
 			bool _nil;
 			type _value;
@@ -44,7 +45,7 @@ namespace library::data_structure {
 			: _size(0) {
 			_root = _nil = reinterpret_cast<node*>(system::memory::allocate(sizeof(node*) * 3 + sizeof(color) + sizeof(bool)));
 #pragma warning(suppress: 6011)
-			_nil->_parent = _nil->_left = _nil->_right = _nil;
+			_nil->_parent = _nil->_child[direction::left] = _nil->_child[direction::right] = _nil;
 			_nil->_color = color::black;
 			_nil->_nil = true;
 		}
@@ -81,12 +82,12 @@ namespace library::data_structure {
 					if (std::strong_ordering::equal == result)
 						return;
 					else if (std::strong_ordering::less == result)
-						current = &(*current)->_left;
+						current = &(*current)->_child[direction::left];
 					else
-						current = &(*current)->_right;
+						current = &(*current)->_child[direction::right];
 				}
 				element->_parent = parent;
-				element->_left = element->_right = *current;
+				element->_child[direction::left] = element->_child[direction::right] = *current;
 			}
 			{
 				node* current = element;
@@ -95,14 +96,13 @@ namespace library::data_structure {
 					if (color::black == parent->_color)
 						return;
 					node* grand = parent->_parent;
-					node* uncle = parent == grand->_left ? grand->_right : grand->_left;
+					node* uncle = parent == grand->_child[direction::left] ? grand->_child[direction::right] : grand->_child[direction::left];
 
 					if (color::black == uncle->_color) {
 						//restructure
-						direction dir = parent == grand->_left ? direction::right : direction::left;
-						if ((direction::left == dir && current == parent->_left) ||
-							(direction::right == dir && current == parent->_right)) {
-							rotate(parent,  static_cast<direction>(!static_cast<bool>(dir)));
+						direction dir = parent == grand->_child[direction::left] ? direction::right : direction::left;
+						if (current == parent->_child[dir]) {
+							rotate(parent, static_cast<direction>(!static_cast<bool>(dir)));
 							parent = current;
 						}
 						rotate(grand, dir);
@@ -121,34 +121,20 @@ namespace library::data_structure {
 		}
 
 		inline void rotate(node* const current, direction const dir) noexcept {
-			node* child = dir == direction::left ? current->_right : current->_left;
+			node* child = current->_child[!dir];
 
 			if (current == _root) {
 				_root = child;
 				child->_parent = current->_parent;
 			}
 			else
-				connect(current->_parent, child, current == current->_parent->_left ? direction::left : direction::right);
+				connect(current->_parent, child, current == current->_parent->_child[direction::left] ? direction::left : direction::right);
 
-			switch (dir) {
-			case direction::left:
-				connect(current, child->_left, direction::right);
-				break;
-			case direction::right:
-				connect(current, child->_right, direction::left);
-				break;
-			}
+			connect(current, child->_child[dir], static_cast<direction>(!static_cast<bool>(dir)));
 			connect(child, current, dir);
 		}
 		inline void connect(node* const parent, node* const child, direction const dir) const noexcept {
-			switch (dir) {
-			case direction::left:
-				parent->_left = child;
-				break;
-			case direction::right:
-				parent->_right = child;
-				break;
-			}
+			parent->_child[dir] = child;
 			child->_parent = parent;
 		}
 	private:
