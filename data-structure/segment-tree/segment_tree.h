@@ -18,11 +18,11 @@ namespace library::data_structure {
 			_size = power_of_two(static_cast<size_type>(list.size()));
 			_vector.resize(_size * 2, 0);
 
-			auto vec = &_vector[_vector.size() / 2];
+			auto vec = &_vector[_size];
 			for (auto& iter : list)
 				*vec++ = iter;
 
-			for (auto index = _vector.size() / 2 - 1; index > 0; --index) {
+			for (auto index = _size - 1; index > 0; --index) {
 				auto left = 2 * index;
 				_vector[index] = _vector[left] + _vector[left + 1];
 			}
