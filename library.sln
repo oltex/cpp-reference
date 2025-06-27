@@ -157,6 +157,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "memory", "memory\memory.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "time", "time\time.vcxproj", "{9C6B8997-3AC8-4B81-9F77-C01272B750EB}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "aho-corasick", "algorithm\aho-corasick\aho-corasick.vcxproj", "{F0B9E1AB-0400-4694-A093-83B5671C4055}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -701,6 +703,14 @@ Global
 		{9C6B8997-3AC8-4B81-9F77-C01272B750EB}.Release|x64.Build.0 = Release|x64
 		{9C6B8997-3AC8-4B81-9F77-C01272B750EB}.Release|x86.ActiveCfg = Release|Win32
 		{9C6B8997-3AC8-4B81-9F77-C01272B750EB}.Release|x86.Build.0 = Release|Win32
+		{F0B9E1AB-0400-4694-A093-83B5671C4055}.Debug|x64.ActiveCfg = Debug|x64
+		{F0B9E1AB-0400-4694-A093-83B5671C4055}.Debug|x64.Build.0 = Debug|x64
+		{F0B9E1AB-0400-4694-A093-83B5671C4055}.Debug|x86.ActiveCfg = Debug|Win32
+		{F0B9E1AB-0400-4694-A093-83B5671C4055}.Debug|x86.Build.0 = Debug|Win32
+		{F0B9E1AB-0400-4694-A093-83B5671C4055}.Release|x64.ActiveCfg = Release|x64
+		{F0B9E1AB-0400-4694-A093-83B5671C4055}.Release|x64.Build.0 = Release|x64
+		{F0B9E1AB-0400-4694-A093-83B5671C4055}.Release|x86.ActiveCfg = Release|Win32
+		{F0B9E1AB-0400-4694-A093-83B5671C4055}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -775,6 +785,7 @@ Global
 		{375766DF-B820-4D64-8E77-8331BE85AC13} = {638B906C-1177-49D6-86F1-FCF8F6BED5FE}
 		{7FB82C3A-1AD1-4E06-AE65-6F1BEB21D4BB} = {88033A2C-B20C-4143-A6D8-0A943F34408E}
 		{F8DE5FB2-8CCB-4F23-9B04-3183BF66BB84} = {638B906C-1177-49D6-86F1-FCF8F6BED5FE}
+		{F0B9E1AB-0400-4694-A093-83B5671C4055} = {88033A2C-B20C-4143-A6D8-0A943F34408E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C69985D6-20AB-4E9A-AD82-08BFBE490891}
