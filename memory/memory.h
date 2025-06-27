@@ -9,10 +9,7 @@ namespace library::memory {
 		return reinterpret_cast<void*>(::malloc(size));
 	}
 	inline auto allocate(size_t const size, size_t const align) noexcept -> void* {
-		if (16 >= align)
-			return reinterpret_cast<void*>(::malloc(size));
-		else
-			return reinterpret_cast<void*>(::_aligned_malloc(size, align));
+		return reinterpret_cast<void*>(::_aligned_malloc(size, align));
 	}
 	template<typename type>
 		requires (!std::is_void_v<type>)
@@ -48,7 +45,7 @@ namespace library::memory {
 	}
 	template<typename type>
 		requires (!std::is_void_v<type>)
-	inline auto deallocate(type* const pointer) noexcept {
+	inline void deallocate(type* const pointer) noexcept {
 		if constexpr (16 >= alignof(type))
 			::free(pointer);
 		else
@@ -65,7 +62,7 @@ namespace library::memory {
 				instance = type(std::forward<argument>(arg)...);
 	}
 	template<typename type>
-	inline auto destruct(type& instance) noexcept {
+	inline void destruct(type& instance) noexcept {
 		if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
 			instance.~type();
 	}

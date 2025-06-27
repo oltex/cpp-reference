@@ -1,4 +1,4 @@
-//#include "memory.h"
+#include "memory.h"
 #include "iostream"
 #pragma comment(lib, "onecore.lib")
 #include <Windows.h>
@@ -46,4 +46,6 @@ int main() {
     }
     auto c = GetLastError();
     system("pause");
+
+    library::memory::deallocate()
 }
