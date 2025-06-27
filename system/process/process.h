@@ -61,7 +61,7 @@ namespace library::system {
 
 		inline auto open_token(void) noexcept -> token {
 			token token_;
-			if (0 == OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &token_.data())) {
+			if (0 == OpenProcessToken(_handle, TOKEN_ADJUST_PRIVILEGES, &token_.data())) {
 				switch (GetLastError()) {
 				default:
 					__debugbreak();
