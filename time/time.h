@@ -5,7 +5,7 @@
 #include <iomanip>
 #include <ctime>
 
-namespace library::system::time {
+namespace library::time {
 	namespace multimidia {
 		inline void begin_period(unsigned int const peroid) noexcept {
 			timeBeginPeriod(peroid);
@@ -109,9 +109,7 @@ namespace library::system::time {
 	private:
 		std::tm _tm;
 	};
-}
 
-namespace library::system::time {
 	class query_performance final {
 	public:
 		inline explicit query_performance(void) noexcept = default;
