@@ -4,12 +4,15 @@
 #include <utility>
 #include <Windows.h>
 
-namespace library::system::memory {
+namespace library::memory {
 	inline auto allocate(size_t const size) noexcept -> void* {
 		return reinterpret_cast<void*>(::malloc(size));
 	}
 	inline auto allocate(size_t const size, size_t const align) noexcept -> void* {
-		return reinterpret_cast<void*>(::_aligned_malloc(size, align));
+		if (16 >= align)
+			return reinterpret_cast<void*>(::malloc(size));
+		else
+			return reinterpret_cast<void*>(::_aligned_malloc(size, align));
 	}
 	template<typename type>
 		requires (!std::is_void_v<type>)
@@ -21,11 +24,11 @@ namespace library::system::memory {
 	}
 	template<typename type>
 		requires (!std::is_void_v<type>)
-	inline auto allocate(size_t const size) noexcept -> type* {
+	inline auto allocate(size_t const count) noexcept -> type* {
 		if constexpr (16 >= alignof(type))
-			return reinterpret_cast<type*>(::malloc(sizeof(type) * size));
+			return reinterpret_cast<type*>(::malloc(sizeof(type) * count));
 		else
-			return reinterpret_cast<type*>(::_aligned_malloc(sizeof(type) * size, alignof(type)));
+			return reinterpret_cast<type*>(::_aligned_malloc(sizeof(type) * count, alignof(type)));
 	}
 
 	inline auto reallocate(void* pointer, size_t const size) noexcept -> void* {
@@ -33,11 +36,11 @@ namespace library::system::memory {
 	}
 	template<typename type>
 		requires (!std::is_void_v<type>)
-	inline auto reallocate(type* pointer, size_t const size) noexcept -> type* {
+	inline auto reallocate(type* pointer, size_t const count) noexcept -> type* {
 		if constexpr (16 >= alignof(type))
-			return reinterpret_cast<type*>(::realloc(pointer, sizeof(type) * size));
+			return reinterpret_cast<type*>(::realloc(pointer, sizeof(type) * count));
 		else
-			return reinterpret_cast<type*>(::_aligned_realloc(pointer, sizeof(type) * size, alignof(type)));
+			return reinterpret_cast<type*>(::_aligned_realloc(pointer, sizeof(type) * count, alignof(type)));
 	}
 
 	inline auto deallocate(void* const pointer) noexcept {
