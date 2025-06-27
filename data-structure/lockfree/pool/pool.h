@@ -67,12 +67,12 @@ namespace library::data_structure::lockfree {
 			}
 
 			if constexpr (true == placement)
-				memory::construct(current->_value, std::forward<argument>(arg)...);
+				memory::construct<type, argument...>(current->_value, std::forward<argument>(arg)...);
 			return current->_value;
 		}
 		inline void deallocate(type& value) noexcept {
 			if constexpr (true == placement)
-				memory::destruct(value);
+				memory::destruct<type>(value);
 			node* current = reinterpret_cast<node*>(reinterpret_cast<unsigned char*>(&value) - offsetof(node, _value));
 			for (;;) {
 				unsigned long long head = _head;

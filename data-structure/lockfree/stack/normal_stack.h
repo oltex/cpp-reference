@@ -1,5 +1,5 @@
 #pragma once
-#include "../../../system/memory/memory.h"
+#include "../../../memory/memory.h"
 #include "../../thread-local/pool/pool.h"
 
 namespace library::data_structure {
@@ -25,7 +25,7 @@ namespace library::data_structure {
 		template<typename... argument>
 		inline void push(argument&&... arg) noexcept {
 			node* current = &_pool::instance().allocate();
-			system::memory::construct<type>(current->_value, std::forward<argument>(arg)...);
+			memory::construct<type>(current->_value, std::forward<argument>(arg)...);
 
 			current->_next = _head;
 			_head = current;

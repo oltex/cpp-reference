@@ -1,5 +1,5 @@
 #pragma once
-#include "../../../system/memory/memory.h"
+#include "../../../memory/memory.h"
 #include "../../../design-pettern/thread-local/singleton/singleton.h"
 #include "../../lockfree/pool/pool.h"
 #include "../../pair/pair.h"
@@ -147,13 +147,13 @@ namespace library::data_structure::_thread_local {
 			node* current = _head;
 			_head = current->_next;
 			if constexpr (true == placement)
-				system::memory::construct<type>(current->_value);
+				memory::construct<type, argument...>(current->_value, std::forward<argument>(arg)...);
 			--_size;
 			return current->_value;
 		}
 		inline void deallocate(type& value) noexcept {
 			if constexpr (true == placement)
-				system::memory::destruct<type>(value);
+				memory::destruct<type>(value);
 			node* current = reinterpret_cast<node*>(reinterpret_cast<unsigned char*>(&value) - offsetof(node, _value));
 			current->_next = _head;
 			_head = current;

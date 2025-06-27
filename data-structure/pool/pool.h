@@ -59,7 +59,7 @@ namespace library::data_structure {
 				_head = current->_next;
 			}
 			if constexpr (true == placement)
-				memory::construct<type>(current->_value, std::forward<argument>(arg)...);
+				memory::construct<type, argument...>(current->_value, std::forward<argument>(arg)...);
 			return current->_value;
 		}
 		inline void deallocate(type& value) noexcept {

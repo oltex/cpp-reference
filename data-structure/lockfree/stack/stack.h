@@ -1,5 +1,5 @@
 #pragma once
-#include "../../../system/memory/memory.h"
+#include "../../../memory/memory.h"
 #include "../../thread-local/pool/pool.h"
 #include <utility>
 #include <Windows.h>
@@ -33,16 +33,16 @@ namespace library::data_structure::lockfree {
 			node* head = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & _head);
 			while (nullptr != head) {
 				node* next = head->_next;
-				system::memory::destruct<type>(head->_value);
+				memory::destruct<type>(head->_value);
 				_pool::instance().deallocate(*head);
 				head = next;
 			}
 		};
-	public:
+
 		template<typename... argument>
 		inline void push(argument&&... arg) noexcept {
 			node* current = &_pool::instance().allocate();
-			system::memory::construct<type>(current->_value, std::forward<argument>(arg)...);
+			memory::construct<type>(current->_value, std::forward<argument>(arg)...);
 
 			for (;;) {
 				unsigned long long head = _head;
