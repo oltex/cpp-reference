@@ -1,5 +1,5 @@
 #pragma once
-#include "../../../system/memory/memory.h"
+#include "../../../memory/memory.h"
 #include <memory>
 #include <Windows.h>
 
@@ -46,7 +46,7 @@ namespace library::data_structure::lockfree {
 			node* head = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & _head);
 			while (nullptr != head) {
 				node* next = head->_next;
-				system::memory::deallocate<node>(head);
+				memory::deallocate<node>(head);
 				head = next;
 			}
 		}
@@ -58,7 +58,7 @@ namespace library::data_structure::lockfree {
 				unsigned long long head = _head;
 				current = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & head);
 				if (nullptr == current) {
-					current = system::memory::allocate<node>();
+					current = memory::allocate<node>();
 					break;
 				}
 				unsigned long long next = reinterpret_cast<unsigned long long>(current->_next) + (0xFFFF800000000000ULL & head);
@@ -67,12 +67,12 @@ namespace library::data_structure::lockfree {
 			}
 
 			if constexpr (true == placement)
-				system::memory::construct(current->_value, std::forward<argument>(arg)...);
+				memory::construct(current->_value, std::forward<argument>(arg)...);
 			return current->_value;
 		}
 		inline void deallocate(type& value) noexcept {
 			if constexpr (true == placement)
-				system::memory::destruct(value);
+				memory::destruct(value);
 			node* current = reinterpret_cast<node*>(reinterpret_cast<unsigned char*>(&value) - offsetof(node, _value));
 			for (;;) {
 				unsigned long long head = _head;
