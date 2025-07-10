@@ -22,11 +22,11 @@ namespace library::system {
 			return *this;
 		}
 		inline virtual ~inputoutput_completion_port(void) noexcept override = default;
-	public:
+
 		inline void create(unsigned long const concurrent_thread) noexcept {
 			_handle = CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, concurrent_thread);
 		}
-		inline void connect(socket& socket, ULONG_PTR key) noexcept {
+		inline void connect(socket& socket, ULONG_PTR const key) noexcept {
 			CreateIoCompletionPort(reinterpret_cast<HANDLE>(socket.data()), _handle, key, 0);
 		}
 		struct get_queue_state_result final {
@@ -35,12 +35,12 @@ namespace library::system {
 			ULONG_PTR _key;
 			OVERLAPPED* _overlapped;
 		};
-		inline auto get_queue_state(unsigned long milli_second) noexcept -> get_queue_state_result {
+		inline auto get_queue_state(unsigned long const milli_second) noexcept -> get_queue_state_result {
 			get_queue_state_result result;
 			result._result = GetQueuedCompletionStatus(_handle, &result._transferred, &result._key, &result._overlapped, milli_second);
 			return result;
 		}
-		inline auto get_queue_state_tuple(unsigned long milli_second) noexcept -> library::data_structure::tuple<bool, DWORD, ULONG_PTR, OVERLAPPED*> {
+		inline auto get_queue_state_tuple(unsigned long const milli_second) noexcept -> library::data_structure::tuple<bool, DWORD, ULONG_PTR, OVERLAPPED*> {
 			library::data_structure::tuple<bool, DWORD, ULONG_PTR, OVERLAPPED*> result;
 			result.get<0>() = GetQueuedCompletionStatus(_handle, &result.get<1>(), &result.get<2>(), &result.get<3>(), milli_second);
 			return result;
