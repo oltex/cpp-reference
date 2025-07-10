@@ -97,7 +97,6 @@ namespace library::input_output {
 		}
 	};
 
-
 	//	class registered_inputouput final {
 	//	public:
 	//		inline explicit registered_inputouput(void) noexcept {

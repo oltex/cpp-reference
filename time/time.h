@@ -6,17 +6,18 @@
 #include <ctime>
 
 namespace library::time {
-	namespace multimidia {
-		inline void begin_period(unsigned int const peroid) noexcept {
-			timeBeginPeriod(peroid);
-		}
-		inline void end_period(unsigned int const peroid) noexcept {
-			timeEndPeriod(peroid);
-		}
-		inline auto get_time(void) noexcept -> unsigned long {
-			return timeGetTime();
-		}
+	//multimidia
+	inline void begin_period(unsigned int const peroid) noexcept {
+		timeBeginPeriod(peroid);
 	}
+	inline void end_period(unsigned int const peroid) noexcept {
+		timeEndPeriod(peroid);
+	}
+	inline auto get_time(void) noexcept -> unsigned long {
+		return timeGetTime();
+	}
+
+	//system
 	inline auto get_tick_count(void) noexcept -> unsigned long {
 #pragma warning(suppress: 28159)
 		return GetTickCount();
