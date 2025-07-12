@@ -4,7 +4,7 @@
 #include <malloc.h>
 #include "../../../algorithm/swap/swap.h"
 
-namespace library::data_structure::intrusive {
+namespace library::intrusive {
 	template<size_t index>
 	class list_hook {
 	private:

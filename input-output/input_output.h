@@ -21,7 +21,7 @@
 //#include "../socket/socket.h"
 
 
-namespace library::input_output {
+namespace library {
 	class overlapped final {
 	public:
 		inline explicit overlapped(void) noexcept = default;
@@ -50,27 +50,27 @@ namespace library::input_output {
 		_OVERLAPPED _overlapped;
 	};
 
-	class completion_port final : public system::handle {
+	class io_completion_port final : public handle {
 	public:
-		inline explicit completion_port(void) noexcept = default;
-		inline explicit completion_port(unsigned long const concurrent_thread) noexcept
+		inline explicit io_completion_port(void) noexcept = default;
+		inline explicit io_completion_port(unsigned long const concurrent_thread) noexcept
 			: handle(CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, concurrent_thread)) {
 		};
-		inline explicit completion_port(completion_port const&) noexcept = delete;
-		inline explicit completion_port(completion_port&& rhs) noexcept
+		inline explicit io_completion_port(io_completion_port const&) noexcept = delete;
+		inline explicit io_completion_port(io_completion_port&& rhs) noexcept
 			: handle(std::move(rhs)) {
 		};
-		inline auto operator=(completion_port const&) noexcept -> completion_port & = delete;
-		inline auto operator=(completion_port&& rhs) noexcept -> completion_port& {
+		inline auto operator=(io_completion_port const&) noexcept -> io_completion_port & = delete;
+		inline auto operator=(io_completion_port&& rhs) noexcept -> io_completion_port& {
 			handle::operator=(std::move(rhs));
 			return *this;
 		}
-		inline virtual ~completion_port(void) noexcept override = default;
+		inline virtual ~io_completion_port(void) noexcept override = default;
 
 		inline void create(unsigned long const concurrent_thread) noexcept {
 			_handle = CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, concurrent_thread);
 		}
-		inline void connect(system::socket& socket, ULONG_PTR const key) noexcept {
+		inline void connect(socket& socket, ULONG_PTR const key) noexcept {
 			CreateIoCompletionPort(reinterpret_cast<HANDLE>(socket.data()), _handle, key, 0);
 		}
 		struct get_queue_state_result final {

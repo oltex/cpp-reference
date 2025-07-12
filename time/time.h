@@ -5,15 +5,15 @@
 #include <iomanip>
 #include <ctime>
 
-namespace library::time {
+namespace library {
 	//multimidia
-	inline void begin_period(unsigned int const peroid) noexcept {
+	inline void time_begin_period(unsigned int const peroid) noexcept {
 		timeBeginPeriod(peroid);
 	}
-	inline void end_period(unsigned int const peroid) noexcept {
+	inline void time_end_period(unsigned int const peroid) noexcept {
 		timeEndPeriod(peroid);
 	}
-	inline auto get_time(void) noexcept -> unsigned long {
+	inline auto time_get_time(void) noexcept -> unsigned long {
 		return timeGetTime();
 	}
 

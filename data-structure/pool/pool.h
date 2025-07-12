@@ -1,7 +1,7 @@
 #pragma once
 #include "../../memory/memory.h"
 
-namespace library::data_structure {
+namespace library {
 	template<typename type, bool placement = true, bool compress = true>
 	class pool final {
 	private:

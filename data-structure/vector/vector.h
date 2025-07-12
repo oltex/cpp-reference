@@ -5,7 +5,7 @@
 #include "../../system/memory/memory.h"
 #include "../../algorithm/swap/swap.h"
 
-namespace library::data_structure {
+namespace library {
 	template<typename type, bool placement = true>
 	class vector {
 	public:

@@ -10,7 +10,7 @@
 #include "../overlapped/overlapped.h"
 #include "../../data-structure/pair/pair.h"
 
-namespace library::system {
+namespace library {
 	inline static void wsa_start_up(void) noexcept {
 		WSAData wsadata;
 		if (0 != WSAStartup(0x0202, &wsadata))
@@ -439,6 +439,44 @@ namespace library::system {
 		inline static LPFN_ACCEPTEX _accept_ex;
 		inline static LPFN_DISCONNECTEX _disconnect_ex;
 	};
+
+	class file_descriptor final {
+	private:
+		using size_type = unsigned int;
+	public:
+		inline explicit file_descriptor(void) noexcept = default;
+		inline explicit file_descriptor(file_descriptor const& rhs) noexcept = delete;
+		inline explicit file_descriptor(file_descriptor&& rhs) noexcept = delete;
+		inline auto operator=(file_descriptor const& rhs) noexcept -> file_descriptor & = delete;
+		inline auto operator=(file_descriptor&& rhs) noexcept -> file_descriptor & = delete;
+		inline ~file_descriptor(void) noexcept = default;
+	public:
+		inline void zero(void) noexcept {
+			FD_ZERO(&_set);
+		}
+		inline void set(socket& socket) noexcept {
+			FD_SET(socket.data(), &_set);
+		}
+		inline auto is_set(socket& socket) const noexcept -> int {
+			return FD_ISSET(socket.data(), &_set);
+		}
+	public:
+		inline auto data(void) noexcept -> fd_set& {
+			return _set;
+		}
+		inline auto size(void) const noexcept -> size_type {
+			return _set.fd_count;
+		}
+	private:
+		fd_set _set;
+	};
+
+	inline static auto select(fd_set* read, fd_set* write, fd_set* exception, timeval* time) noexcept -> int {
+		int result = ::select(0, read, write, exception, time);
+		if (SOCKET_ERROR == result)
+			__debugbreak();
+		return result;
+	}
 }
 
 

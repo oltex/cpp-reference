@@ -1,7 +1,7 @@
 #pragma once
 #include <utility>
 
-namespace library::algorithm {
+namespace library {
 	template<typename type>
 	inline void swap(type& left, type& right) noexcept {
 		type temp = std::move(left);

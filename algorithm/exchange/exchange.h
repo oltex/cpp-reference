@@ -1,6 +1,6 @@
 #pragma once
 
-namespace library::algorithm {
+namespace library {
 	template <class type, class other>
 	inline constexpr type exchange(type& value, other&& new_value) noexcept {
 		type old_value = static_cast<type&&>(value);

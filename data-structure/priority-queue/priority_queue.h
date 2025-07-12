@@ -2,7 +2,7 @@
 #include "../vector/vector.h"
 #include "../../algorithm/predicate/predicate.h"
 
-namespace library::data_structure {
+namespace library {
 	template<typename type, auto predicate = algorithm::predicate::less<type>>
 	class priority_queue final {
 	private:

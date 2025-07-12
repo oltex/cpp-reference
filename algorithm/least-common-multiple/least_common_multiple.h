@@ -2,7 +2,7 @@
 #include <concepts>
 #include "../greatest-common-divisor/greatest_common_divisor.h"
 
-namespace library::algorithm {
+namespace library {
 	template <typename type>
 	inline constexpr auto least_common_multiple(type first, type second) noexcept {
 		return first* second / greatest_common_divisor(first, second);

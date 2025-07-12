@@ -6,7 +6,7 @@
 #include "../../system/memory/memory.h"
 #include "../../algorithm/swap/swap.h"
 
-namespace library::data_structure {
+namespace library {
 	template<typename type, typename allocator = pool<type>, bool placement = true>
 	class list final {
 	private:

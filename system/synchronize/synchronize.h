@@ -6,7 +6,7 @@
 #include <utility>
 #define x64
 
-namespace library::system::synchronize {
+namespace library {
 	namespace barrier {
 		inline void read(void) noexcept {
 			_ReadBarrier();
@@ -40,6 +40,28 @@ namespace library::system::synchronize {
 			_mm_clflush(address);
 		}
 	}
+
+	class spin_lock final {
+	public:
+		inline explicit spin_lock(void) noexcept = default;
+		inline explicit spin_lock(spin_lock const& rhs) noexcept = delete;
+		inline explicit spin_lock(spin_lock&& rhs) noexcept = delete;
+		inline auto operator=(spin_lock const& rhs) noexcept -> spin_lock & = delete;
+		inline auto operator=(spin_lock&& rhs) noexcept -> spin_lock & = delete;
+		inline ~spin_lock(void) noexcept = default;
+	public:
+		inline void lock(void) noexcept {
+			while (1 == _InterlockedExchange(&_lock, 1))
+				while (1 == _lock)
+					YieldProcessor();
+		}
+		inline void unlock(void) noexcept {
+			_InterlockedExchange(&_lock, 0);
+			//_lock = 0;
+		}
+	public:
+		volatile long _lock = 0;
+	};
 	namespace wait_on_address {
 		inline bool wait(void* address, void* _compare, size_t const size, unsigned long const milli_second) noexcept {
 			return WaitOnAddress(address, _compare, size, milli_second);
@@ -51,6 +73,28 @@ namespace library::system::synchronize {
 			WakeByAddressAll(address);
 		}
 	}
+	class wait_on_address_lock final {
+	public:
+		inline explicit wait_on_address_lock(void) noexcept = default;
+		inline explicit wait_on_address_lock(wait_on_address_lock const& rhs) noexcept = delete;
+		inline explicit wait_on_address_lock(wait_on_address_lock&& rhs) noexcept = delete;
+		inline auto operator=(wait_on_address_lock const& rhs) noexcept -> wait_on_address_lock & = delete;
+		inline auto operator=(wait_on_address_lock&& rhs) noexcept -> wait_on_address_lock & = delete;
+		inline ~wait_on_address_lock(void) noexcept = default;
+
+		inline void lock(void) noexcept {
+			volatile long compare = 1;
+			while (1 == _address || 1 == _InterlockedExchange(&_address, 1))
+				WaitOnAddress(&_address, (void*)&compare, sizeof(long), INFINITE);
+		}
+		inline void unlock(void) noexcept {
+			_address = 0;
+			WakeByAddressSingle((void*)&_address);
+		}
+	private:
+		volatile long _address = 0;
+	};
+
 	class critical_section final {
 	public:
 		inline explicit critical_section(void) noexcept {
@@ -117,6 +161,7 @@ namespace library::system::synchronize {
 	private:
 		SRWLOCK _srwlock;
 	};
+
 	class event final : public handle {
 	public:
 		inline explicit event(void) noexcept = default;

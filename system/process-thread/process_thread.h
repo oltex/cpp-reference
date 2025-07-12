@@ -6,7 +6,7 @@
 #include <type_traits>
 #include <memory>
 
-namespace library::system {
+namespace library {
 	class token final : public handle {
 	public:
 		inline explicit token(void) noexcept = default;
