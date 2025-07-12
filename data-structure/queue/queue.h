@@ -4,7 +4,6 @@
 namespace library::data_structure {
 	template<typename type, typename allocator = pool<type>, bool placement = true>
 	class queue final {
-	private:
 		using size_type = unsigned int;
 		struct node final {
 			inline explicit node(void) noexcept = delete;
@@ -16,7 +15,10 @@ namespace library::data_structure {
 			node* _next;
 			type _value;
 		};
-		using rebind_allocator = allocator::template rebind<node>;
+		size_type _size = 0;
+		node* _head;
+		node* _tail;
+		allocator::template rebind<node> _allocator;
 	public:
 		inline explicit queue(void) noexcept {
 			node* current = &_allocator.allocate();
@@ -72,10 +74,5 @@ namespace library::data_structure {
 		inline auto empty(void) const noexcept -> bool {
 			return 0 == _size;
 		}
-	private:
-		node* _head;
-		node* _tail;
-		rebind_allocator _allocator;
-		size_type _size = 0;
 	};
 }
