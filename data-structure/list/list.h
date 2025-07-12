@@ -3,23 +3,22 @@
 #include <stdlib.h>
 #include <malloc.h>
 #include "../pool/pool.h"
-#include "../../system/memory/memory.h"
+#include "../../memory/memory.h"
 #include "../../algorithm/swap/swap.h"
 
 namespace library {
 	template<typename type, typename allocator = pool<type>, bool placement = true>
 	class list final {
-	private:
 		using size_type = unsigned int;
 		struct node final {
+			node* _prev, * _next;
+			type _value;
 			inline explicit node(void) noexcept = delete;
 			inline explicit node(node const&) noexcept = delete;
 			inline explicit node(node&&) noexcept = delete;
 			inline auto operator=(node const&) noexcept = delete;
 			inline auto operator=(node&&) noexcept = delete;
 			inline ~node(void) noexcept = delete;
-			node* _prev, * _next;
-			type _value;
 		};
 		using rebind_allocator = allocator::template rebind<node>;
 	public:
@@ -71,7 +70,7 @@ namespace library {
 		};
 
 		inline explicit list(void) noexcept
-			: _head(reinterpret_cast<node*>(system::memory::allocate(sizeof(node*) * 2))) {
+			: _size(0), _head(reinterpret_cast<node*>(allocate(sizeof(node*) * 2))) {
 #pragma warning(suppress: 6011)
 			_head->_next = _head->_prev = _head;
 		}
@@ -96,7 +95,7 @@ namespace library {
 		inline auto operator=(list&& rhs) noexcept;
 		inline ~list(void) noexcept {
 			clear();
-			system::memory::deallocate(reinterpret_cast<void*>(_head));
+			deallocate(reinterpret_cast<void*>(_head));
 		}
 
 		template<typename... argument>
@@ -111,7 +110,7 @@ namespace library {
 		inline auto emplace(iterator const& iter, argument&&... arg) noexcept -> iterator {
 			auto current = &_allocator.allocate();
 			if constexpr (true == placement)
-				system::memory::construct<type>(current->_value, std::forward<argument>(arg)...);
+				construct<type>(current->_value, std::forward<argument>(arg)...);
 			auto next = iter._node;
 			auto prev = next->_prev;
 
@@ -138,7 +137,7 @@ namespace library {
 			next->_prev = prev;
 
 			if constexpr (true == placement)
-				system::memory::destruct<type>(current->_value);
+				destruct<type>(current->_value);
 			_allocator.deallocate(*current);
 			--_size;
 			return iterator(next);
@@ -156,16 +155,15 @@ namespace library {
 			return iterator(_head);
 		}
 		inline void swap(list& rhs) noexcept {
-			algorithm::swap(_head, rhs._head);
-			algorithm::swap(_size, rhs._size);
-			//_allocator.swap(rhs._allocator);
+			library::swap(_head, rhs._head);
+			library::swap(_size, rhs._size);
 		}
 		inline void clear(void) noexcept {
 			auto current = _head->_next;
 			auto next = current->_next;
 			while (current != _head) {
 				if constexpr (true == placement)
-					system::memory::destruct<type>(current->_value);
+					destruct<type>(current->_value);
 				_allocator.deallocate(*current);
 				current = next;
 				next = current->_next;
@@ -198,8 +196,8 @@ namespace library {
 			return 0 == _size;
 		}
 	private:
+		size_type _size;
 		node* _head;
-		size_type _size = 0;
 		rebind_allocator _allocator;
 	};
 }

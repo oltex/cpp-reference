@@ -14,8 +14,8 @@ struct my_struct2 {
 
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	library::data_structure::pool<my_struct, true, true> memory_pool;
-	library::data_structure::pool<my_struct, true, true> memory_pool2;
+	library::pool<my_struct, true, true> memory_pool;
+	library::pool<my_struct, true, true> memory_pool2;
 
 	auto& b = memory_pool.allocate();
 	memory_pool.deallocate(b);
