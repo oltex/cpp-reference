@@ -4,5 +4,5 @@
 int main(void) noexcept {
 	int a = 10;
 	int b = 20;
-	library::algorithm::swap(a, b);
+	library::swap(a, b);
 }

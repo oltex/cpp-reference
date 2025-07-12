@@ -3,6 +3,25 @@
 
 namespace library {
 	template<typename type>
+	inline constexpr auto less(type const& source, type const& destination) noexcept {
+		return source < destination;
+	}
+	template<typename type>
+	inline constexpr auto greater(type const& source, type const& destination) noexcept {
+		return destination < source;
+	}
+	template<typename type>
+	inline constexpr auto ordering(type const& source, type const& destination) noexcept {
+		return source <=> destination;
+	}
+
+	template <class type, class other = type>
+	inline constexpr auto exchange(type& value, other&& new_value) noexcept -> type {
+		type old_value = static_cast<type&&>(value);
+		value = static_cast<other&&>(new_value);
+		return old_value;
+	}
+	template<typename type>
 	inline void swap(type& left, type& right) noexcept {
 		type temp = std::move(left);
 		left = std::move(right);
@@ -20,7 +39,6 @@ namespace library {
 	inline constexpr auto maximum(type const& value, argument const&... arg) noexcept -> type const& {
 		return maximum(value, maximum(arg...));
 	}
-
 	template<typename type>
 	inline constexpr auto minimum(type const& first, type const& second) noexcept -> type const& {
 		if (first > second)

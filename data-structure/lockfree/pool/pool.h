@@ -3,29 +3,28 @@
 #include <memory>
 #include <Windows.h>
 
-namespace library::data_structure::lockfree {
+namespace library::lockfree {
 	template<typename type, bool placement = true, bool compress = true>
 	class pool final {
-	private:
 		union union_node final {
+			union_node* _next;
+			type _value;
 			inline explicit union_node(void) noexcept = delete;
 			inline explicit union_node(union_node const&) noexcept = delete;
 			inline explicit union_node(union_node&&) noexcept = delete;
 			inline auto operator=(union_node const&) noexcept = delete;
 			inline auto operator=(union_node&&) noexcept = delete;
 			inline ~union_node(void) noexcept = delete;
-			union_node* _next;
-			type _value;
 		};
-		struct strcut_node {
+		struct strcut_node final {
+			strcut_node* _next;
+			type _value;
 			inline explicit strcut_node(void) noexcept = delete;
 			inline explicit strcut_node(strcut_node const&) noexcept = delete;
 			inline explicit strcut_node(strcut_node&&) noexcept = delete;
 			inline auto operator=(strcut_node const&) noexcept = delete;
 			inline auto operator=(strcut_node&&) noexcept = delete;
 			inline ~strcut_node(void) noexcept = delete;
-			strcut_node* _next;
-			type _value;
 		};
 		using node = typename std::conditional<compress, union union_node, struct strcut_node>::type;
 	public:
