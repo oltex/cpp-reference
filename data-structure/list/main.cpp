@@ -20,10 +20,10 @@ int main(void) noexcept {
 	list.emplace_front(20);
 	list.emplace_back(40);
 	list.emplace_front(10);
-	list.clear();
+	//list.clear();
 
-	//list.pop_front();
-	//list.pop_back();
+	list.pop_front();
+	list.pop_back();
 
 	iter = list.begin();
 	for (size_t i = 0; i < list.size(); ++i) {
@@ -31,25 +31,23 @@ int main(void) noexcept {
 		++iter;
 	}
 
-	//iter = list.begin();
-	//++iter;
-	//++iter;
-	//--iter;
-	//list.insert(iter++, 100);
-	////list.erase(iter);
+	iter = list.begin();
+	++iter;
+	++iter;
+	--iter;
+	list.emplace(iter++, 100);
 
-	//library::data_structure::list<int> list2;
-	//list2.swap(list);
+	library::list<int> list2;
+	list2 = std::move(list);
 
-	//for (iter = list.begin(); iter != list.end(); ++iter)
-	//	std::cout << *iter << std::endl;
-	//for (iter = list2.begin(); iter != list2.end(); ++iter)
-	//	std::cout << *iter << std::endl;
+	list2.swap(list);
 
-	////for (iter = list.begin(); iter != list.end();)
-	////	iter = list.erase(iter);
+	for (iter = list.begin(); iter != list.end(); ++iter)
+		std::cout << *iter << std::endl;
+	for (iter = list2.begin(); iter != list2.end(); ++iter)
+		std::cout << *iter << std::endl;
 
-	//library::data_structure::list<int> list3(list);
-	//library::data_structure::list<int> list4(std::move(list));
+	library::list<int> list3(list);
+	library::list<int> list4(std::move(list));
 	return 0;
 }

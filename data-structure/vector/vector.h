@@ -40,12 +40,12 @@ namespace library {
 		}
 		inline auto operator=(vector const& rhs) noexcept -> vector& {
 			assert(this != &rhs && "self-assignment");
-			vector<type>(rhs).swap(*this);
+			vector(rhs).swap(*this);
 			return *this;
 		};
 		inline auto operator=(vector&& rhs) noexcept -> vector& {
 			assert(this != &rhs && "self-assignment");
-			vector<type>(std::move(rhs)).swap(*this);
+			vector(std::move(rhs)).swap(*this);
 			return *this;
 		}
 		inline ~vector(void) noexcept {

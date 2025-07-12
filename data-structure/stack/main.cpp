@@ -4,7 +4,7 @@
 
 int main(void) noexcept {
 	std::stack<int> std_stack;
-	library::data_structure::stack<my_class> stack;
+	library::stack<my_class> stack;
 	stack.emplace(1);
 	stack.pop();
 	stack.emplace(2);

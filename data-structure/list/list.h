@@ -2,9 +2,11 @@
 #include <utility>
 #include <stdlib.h>
 #include <malloc.h>
+#include <cassert>
 #include "../pool/pool.h"
 #include "../../memory/memory.h"
 #include "../../algorithm/swap/swap.h"
+#include "../../algorithm/exchange/exchange.h"
 
 namespace library {
 	template<typename type, typename allocator = pool<type>, bool placement = true>
@@ -20,20 +22,23 @@ namespace library {
 			inline auto operator=(node&&) noexcept = delete;
 			inline ~node(void) noexcept = delete;
 		};
-		using rebind_allocator = allocator::template rebind<node>;
+
+		size_type _size;
+		node* _head;
+		allocator::template rebind<node> _allocator;
 	public:
 		class iterator final {
 		public:
+			node* _node;
+
 			inline explicit iterator(node* const node = nullptr) noexcept
 				: _node(node) {
 			}
-			inline iterator(iterator const& rhs) noexcept
-				: _node(rhs._node) {
-			}
-			inline auto operator=(iterator const& rhs) noexcept -> iterator& {
-				_node = rhs._node;
-				return *this;
-			}
+			inline iterator(iterator const&) noexcept = default;
+			inline explicit iterator(iterator&&) noexcept = default;
+			inline auto operator=(iterator const&) noexcept -> iterator & = default;
+			inline auto operator=(iterator&&) noexcept -> iterator & = default;
+			inline ~iterator() noexcept = default;
 
 			inline auto operator*(void) const noexcept -> type& {
 				return _node->_value;
@@ -65,8 +70,6 @@ namespace library {
 			inline bool operator!=(iterator const& rhs) const noexcept {
 				return _node != rhs._node;
 			}
-		public:
-			node* _node;
 		};
 
 		inline explicit list(void) noexcept
@@ -91,8 +94,16 @@ namespace library {
 			: list() {
 			swap(rhs);
 		}
-		inline auto operator=(list const& rhs) noexcept;
-		inline auto operator=(list&& rhs) noexcept;
+		inline auto operator=(list const& rhs) noexcept -> list& {
+			assert(this != &rhs && "self-assignment");
+			list(rhs).swap(*this);
+			return *this;
+		};
+		inline auto operator=(list&& rhs) noexcept -> list& {
+			assert(this != &rhs && "self-assignment");
+			list(std::move(rhs)).swap(*this);
+			return *this;
+		};
 		inline ~list(void) noexcept {
 			clear();
 			deallocate(reinterpret_cast<void*>(_head));
@@ -108,7 +119,7 @@ namespace library {
 		}
 		template<typename... argument>
 		inline auto emplace(iterator const& iter, argument&&... arg) noexcept -> iterator {
-			auto current = &_allocator.allocate();
+			auto current = _allocator.allocate();
 			if constexpr (true == placement)
 				construct<type>(current->_value, std::forward<argument>(arg)...);
 			auto next = iter._node;
@@ -129,6 +140,8 @@ namespace library {
 			erase(--end());
 		}
 		inline auto erase(iterator const& iter) noexcept -> iterator {
+			assert(_size > 0 && "called on empty");
+			assert(iter._node != _head && "erase on sentinel");
 			auto current = iter._node;
 			auto prev = current->_prev;
 			auto next = current->_next;
@@ -138,14 +151,17 @@ namespace library {
 
 			if constexpr (true == placement)
 				destruct<type>(current->_value);
-			_allocator.deallocate(*current);
+			_allocator.deallocate(current);
 			--_size;
 			return iterator(next);
 		}
+
 		inline auto front(void) const noexcept -> type& {
+			assert(_size > 0 && "called on empty");
 			return _head->_next->_value;
 		}
 		inline auto back(void) const noexcept -> type& {
+			assert(_size > 0 && "called on empty");
 			return _head->_prev->_value;
 		}
 		inline auto begin(void) const noexcept -> iterator {
@@ -160,13 +176,10 @@ namespace library {
 		}
 		inline void clear(void) noexcept {
 			auto current = _head->_next;
-			auto next = current->_next;
 			while (current != _head) {
 				if constexpr (true == placement)
 					destruct<type>(current->_value);
-				_allocator.deallocate(*current);
-				current = next;
-				next = current->_next;
+				_allocator.deallocate(exchange(current, current->_next));
 			}
 			_head->_next = _head->_prev = _head;
 			_size = 0;
@@ -195,9 +208,5 @@ namespace library {
 		inline bool empty(void) const noexcept {
 			return 0 == _size;
 		}
-	private:
-		size_type _size;
-		node* _head;
-		rebind_allocator _allocator;
 	};
 }
