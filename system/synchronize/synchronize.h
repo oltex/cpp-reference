@@ -49,7 +49,7 @@ namespace library {
 		inline auto operator=(spin_lock const& rhs) noexcept -> spin_lock & = delete;
 		inline auto operator=(spin_lock&& rhs) noexcept -> spin_lock & = delete;
 		inline ~spin_lock(void) noexcept = default;
-	public:
+
 		inline void lock(void) noexcept {
 			while (1 == _InterlockedExchange(&_lock, 1))
 				while (1 == _lock)

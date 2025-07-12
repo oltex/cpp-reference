@@ -1,7 +1,7 @@
 #pragma once
 #include <compare>
 
-namespace library::predicate {
+namespace library {
 	template<typename type>
 	inline constexpr auto less(type const& source, type const& destination) noexcept {
 		return source < destination;

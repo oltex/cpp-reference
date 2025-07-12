@@ -2,24 +2,32 @@
 #include <initializer_list>
 #include <utility>
 #include <stdlib.h>
-#include "../../system/memory/memory.h"
+#include <cassert>
+#include "../../memory/memory.h"
 #include "../../algorithm/swap/swap.h"
+#include "../../algorithm/exchange/exchange.h"
 
 namespace library {
 	template<typename type, bool placement = true>
 	class vector {
+		using size_type = unsigned int;
+		size_type _size;
+		size_type _capacity;
+		type* _array;
 	public:
 		using iterator = type*;
-	private:
-		using size_type = unsigned int;
-	public:
-		inline explicit vector(void) noexcept = default;
-		inline explicit vector(std::initializer_list<type> const& list) noexcept {
+
+		inline explicit vector(void) noexcept
+			: _size(0), _capacity(0), _array(nullptr) {
+		};
+		inline explicit vector(std::initializer_list<type> const& list) noexcept
+			: vector() {
 			reserve(list.size());
 			for (auto& iter : list)
 				emplace_back(iter);
 		}
-		inline explicit vector(iterator const& begin, iterator const& end) noexcept {
+		inline explicit vector(iterator const& begin, iterator const& end) noexcept
+			: vector() {
 			reserve(end - begin);
 			for (auto iter = begin; iter != end; ++iter)
 				emplace_back(*iter);
@@ -28,48 +36,48 @@ namespace library {
 			: vector(rhs.begin(), rhs.end()) {
 		}
 		inline explicit vector(vector&& rhs) noexcept
-			: _array(rhs._array), _size(rhs._size), _capacity(rhs._capacity) {
-			rhs._array = nullptr;
-			rhs._size = 0;
-			rhs._capacity = 0;
+			: _size(exchange(rhs._size, 0)), _capacity(exchange(rhs._capacity, 0)), _array(exchange(rhs._array, nullptr)) {
 		}
-		inline auto operator=(vector const& rhs) noexcept -> vector&;
-		inline auto operator=(vector&& rhs) noexcept -> vector&;
+		inline auto operator=(vector const& rhs) noexcept -> vector& {
+			assert(this != &rhs && "self-assignment");
+			vector<type>(rhs).swap(*this);
+			return *this;
+		};
+		inline auto operator=(vector&& rhs) noexcept -> vector& {
+			assert(this != &rhs && "self-assignment");
+			vector<type>(std::move(rhs)).swap(*this);
+			return *this;
+		}
 		inline ~vector(void) noexcept {
 			clear();
-			system::memory::deallocate<type>(_array);
+			deallocate<type>(_array);
 		}
 
-		template<typename universal>
-		inline void push_back(universal&& value) noexcept {
-			emplace_back(std::forward<universal>(value));
-		}
 		template<typename... argument>
 		inline auto emplace_back(argument&&... arg) noexcept -> type& {
-			if (_size >= _capacity) {
-				size_type capacity = static_cast<size_type>(_capacity * 1.5f);
-				if (_size >= capacity)
-					capacity++;
-				reserve(capacity);
-			}
+			if (_size >= _capacity)
+				reserve(maximum(static_cast<size_type>(_capacity * 1.5f), _size + 1));
 			type& element = _array[_size++];
-			if (true == placement)
-				system::memory::construct(element, std::forward<argument>(arg)...);
+			if constexpr (true == placement)
+				construct(element, std::forward<argument>(arg)...);
 			return element;
 		}
 		inline void pop_back(void) noexcept {
+			assert(_size > 0 && "called on empty");
 			--_size;
-			if (true == placement)
-				system::memory::destruct(_array[_size]);
+			if constexpr (true == placement)
+				destruct(_array[_size]);
 		}
-	public:
 		inline auto front(void) const noexcept ->type& {
+			assert(_size > 0 && "called on empty");
 			return _array[0];
 		}
 		inline auto back(void) const noexcept ->type& {
+			assert(_size > 0 && "called on empty");
 			return _array[_size - 1];
 		}
 		inline auto operator[](size_type const index) const noexcept ->type& {
+			assert(index < _size && "index out of range");
 			return _array[index];
 		}
 		inline auto begin(void) const noexcept -> iterator {
@@ -78,15 +86,12 @@ namespace library {
 		inline auto end(void) const noexcept -> iterator {
 			return _array + _size;
 		}
-		inline auto data(void) noexcept -> type* {
-			return _array;
-		}
-	public:
+
 		inline void reserve(size_type const capacity) noexcept {
-			if (_size <= capacity) {
-				_capacity = capacity;
+			if (_capacity < capacity) {
 #pragma warning(suppress: 6308)
-				_array = system::memory::reallocate<type>(_array, _capacity);
+				_array = reallocate<type>(_array, capacity);
+				_capacity = capacity;
 			}
 		}
 		template<typename... argument>
@@ -94,34 +99,24 @@ namespace library {
 			if (size > _capacity)
 				reserve(size);
 
-			if constexpr (true == placement) {
-				if (size > _size)
-					if constexpr (std::is_constructible_v<type, argument...>)
-						while (size != _size)
-							system::memory::construct(_array[_size++], std::forward<argument>(arg)...);
-					else
-						if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
-							while (size != _size)
-								pop_back();
-			}
-			_size = size;
+			if (size > _size)
+				while (size != _size)
+					emplace_back(std::forward<argument>(arg)...);
+			else
+				while (size != _size)
+					pop_back();
 		}
-		inline void swap(vector& rhs) noexcept {
-			algorithm::swap(_size, rhs._size);
-			algorithm::swap(_capacity, rhs._capacity);
-			algorithm::swap(_array, rhs._array);
-		}
-		//not implemented
 		inline void assign(size_type const size, type const& value) noexcept {
 			clear();
-			if (_capacity < size)
+			if (size > _capacity)
 				reserve(size);
-			for (; _size < size; ++_size) {
-				if constexpr (std::is_class_v<type>)
-					new(_array + _size) type(value);
-				else
-					_array[_size] = value;
-			}
+			while (_size != size)
+				emplace_back(value);
+		}
+		inline void swap(vector& rhs) noexcept {
+			library::swap(_size, rhs._size);
+			library::swap(_capacity, rhs._capacity);
+			library::swap(_array, rhs._array);
 		}
 		inline void clear(void) noexcept {
 			if constexpr (true == placement && std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
@@ -130,19 +125,17 @@ namespace library {
 			else
 				_size = 0;
 		}
-	public:
-		inline auto size(void) const noexcept -> size_type {
-			return _size;
-		}
 		inline bool empty(void) const noexcept {
 			return 0 == _size;
+		}
+		inline auto size(void) const noexcept -> size_type {
+			return _size;
 		}
 		inline auto capacity(void) const noexcept -> size_type {
 			return _capacity;
 		}
-	private:
-		size_type _size = 0;
-		size_type _capacity = 0;
-		type* _array = nullptr;
+		inline auto data(void) noexcept -> type* {
+			return _array;
+		}
 	};
 }

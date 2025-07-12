@@ -8,6 +8,30 @@ namespace library {
 		left = std::move(right);
 		right = std::move(temp);
 	}
+
+	template<typename type>
+	inline constexpr auto maximum(type const& first, type const& second) noexcept -> type const& {
+		if (first < second)
+			return second;
+		else
+			return first;
+	}
+	template<typename type, typename... argument>
+	inline constexpr auto maximum(type const& value, argument const&... arg) noexcept -> type const& {
+		return maximum(value, maximum(arg...));
+	}
+
+	template<typename type>
+	inline constexpr auto minimum(type const& first, type const& second) noexcept -> type const& {
+		if (first > second)
+			return second;
+		else
+			return first;
+	}
+	template<typename type, typename... argument>
+	inline constexpr auto minimum(type const& value, argument const&... arg) noexcept -> type const& {
+		return maximum(value, maximum(arg...));
+	}
 }
 
 //_CONSTEXPR20 void swap(_Ty& _Left, _Ty& _Right) noexcept(

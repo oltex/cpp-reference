@@ -4,7 +4,7 @@
 #include <utility>
 #include <Windows.h>
 
-namespace library::memory {
+namespace library {
 	inline auto allocate(size_t const size) noexcept -> void* {
 		return reinterpret_cast<void*>(::malloc(size));
 	}

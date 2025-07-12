@@ -69,7 +69,7 @@ namespace library {
 		public:
 			node* _node;
 		};
-	public:
+
 		inline explicit list(void) noexcept
 			: _head(reinterpret_cast<node*>(system::memory::allocate(sizeof(node*) * 2))) {
 #pragma warning(suppress: 6011)
@@ -98,7 +98,7 @@ namespace library {
 			clear();
 			system::memory::deallocate(reinterpret_cast<void*>(_head));
 		}
-	public:
+
 		template<typename... argument>
 		inline auto emplace_front(argument&&... arg) noexcept -> type& {
 			return *emplace(begin(), std::forward<argument>(arg)...);
