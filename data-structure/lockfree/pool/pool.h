@@ -45,7 +45,7 @@ namespace library::lockfree {
 			node* head = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & _head);
 			while (nullptr != head) {
 				node* next = head->_next;
-				memory::deallocate<node>(head);
+				library::deallocate<node>(head);
 				head = next;
 			}
 		}
@@ -57,7 +57,7 @@ namespace library::lockfree {
 				unsigned long long head = _head;
 				current = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & head);
 				if (nullptr == current) {
-					current = memory::allocate<node>();
+					current = library::allocate<node>();
 					break;
 				}
 				unsigned long long next = reinterpret_cast<unsigned long long>(current->_next) + (0xFFFF800000000000ULL & head);
@@ -66,12 +66,12 @@ namespace library::lockfree {
 			}
 
 			if constexpr (true == placement)
-				memory::construct<type, argument...>(current->_value, std::forward<argument>(arg)...);
+				library::construct<type, argument...>(current->_value, std::forward<argument>(arg)...);
 			return current->_value;
 		}
 		inline void deallocate(type& value) noexcept {
 			if constexpr (true == placement)
-				memory::destruct<type>(value);
+				library::destruct<type>(value);
 			node* current = reinterpret_cast<node*>(reinterpret_cast<unsigned char*>(&value) - offsetof(node, _value));
 			for (;;) {
 				unsigned long long head = _head;

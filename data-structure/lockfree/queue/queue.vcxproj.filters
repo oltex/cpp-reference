@@ -4,9 +4,11 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="queue.swap.h" />
+    <ClInclude Include="queue.old.h" />
     <ClInclude Include="queue.h" />
-    <ClInclude Include="queue.boost.h" />
     <ClInclude Include="normal_queue.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="queue.new.h" />
   </ItemGroup>
 </Project>
