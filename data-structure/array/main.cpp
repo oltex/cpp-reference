@@ -9,7 +9,7 @@
 class A
 {
 private:
-	library::data_structure::array<int, 10> a;
+	library::array<int, 10> a;
 };
 
 int main(void) noexcept {
