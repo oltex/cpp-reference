@@ -95,9 +95,9 @@ inline static unsigned int __stdcall func(void* arg) noexcept {
 		QueryPerformanceCounter(&_start);
 		for (int i = 0; i < 10000; ++i) {
 			for (auto j = 0; j < 5000; ++j)
-				_array[j] = &_pool.allocate();
+				_array[j] = _pool.allocate();
 			for (auto j = 0; j < 5000; ++j)
-				_pool.deallocate(*_array[j]);
+				_pool.deallocate(_array[j]);
 		}
 		QueryPerformanceCounter(&_end);
 		printf("%f\n", (_end.QuadPart - _start.QuadPart) /
@@ -133,15 +133,11 @@ int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	QueryPerformanceFrequency(&_frequency);
 
-	int count = 1;
+	int count = 4;
 	//scanf_s("%d", &count);
 	for (int i = 0; i < count; ++i) {
 		(HANDLE)_beginthreadex(nullptr, 0, func, nullptr, 0, 0);
 	}
-	//HANDLE _handle1 = (HANDLE)_beginthreadex(nullptr, 0, func_new, nullptr, 0, 0);
-	//HANDLE _handle2 = (HANDLE)_beginthreadex(nullptr, 0, func_new, nullptr, 0, 0);
-	//HANDLE _handle3 = (HANDLE)_beginthreadex(nullptr, 0, func_new, nullptr, 0, 0);
-	//Sleep(5000);
 	system("pause");
 	return 0;
 }

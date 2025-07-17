@@ -1,6 +1,6 @@
 #pragma once
 #include "../../memory/memory.h"
-#include "../../algorithm/exchange/exchange.h"
+#include "../../function/function.h"
 
 namespace library {
 	template<typename type, bool placement = true, bool compress = true>
@@ -39,12 +39,9 @@ namespace library {
 		};
 		inline auto operator=(pool const&) noexcept = delete;
 		inline auto operator=(pool&& rhs) noexcept -> pool& {
-			while (nullptr != _head) {
+			while (nullptr != _head)
 #pragma warning(suppress: 6001)
-				auto next = _head->_next;
-				library::deallocate<node>(_head);
-				_head = next;
-			}
+				library::deallocate<node>(exchange(_head, _head->_next));
 			_head = exchange(rhs._head, nullptr);
 			return *this;
 		}

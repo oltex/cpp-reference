@@ -16,7 +16,7 @@ inline static unsigned int __stdcall func(void* arg) noexcept {
 	for (int j = 0; j < 1000; ++j) {
 		std::cout << "allocate" << std::endl;
 		for (auto i = 0; i < 2; ++i) {
-			int* a = &_pool.allocate();
+			int* a = _pool.allocate();
 			*a = 10;
 			_vector.emplace_back(a);
 		}
@@ -27,7 +27,7 @@ inline static unsigned int __stdcall func(void* arg) noexcept {
 		std::cout << "deallocate" << std::endl;
 		for (auto i = 0; i < 2; ++i) {
 			int* a = _vector.back();
-			_pool.deallocate(*a);
+			_pool.deallocate(a);
 			_vector.pop_back();
 		}
 	}

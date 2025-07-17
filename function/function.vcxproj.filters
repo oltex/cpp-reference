@@ -3,4 +3,7 @@
   <ItemGroup>
     <ClInclude Include="function.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
 </Project>

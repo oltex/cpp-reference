@@ -1,21 +1,17 @@
 #pragma once
 #include "../vector/vector.h"
+#include "../../function/function.h"
 #include <initializer_list>
 
-namespace library::data_structure {
+namespace library {
 	template<typename type>
 	class segment_tree final {
-	private:
 		using size_type = unsigned int;
-		inline static constexpr size_type power_of_two(size_type number) noexcept {
-			size_type result = 1;
-			while (result < number)
-				result <<= 1;
-			return result;
-		}
+		vector<type> _vector;
+		size_type _size;
 	public:
 		inline explicit segment_tree(std::initializer_list<type> list) noexcept {
-			_size = power_of_two(static_cast<size_type>(list.size()));
+			_size = bit_ceil(static_cast<size_type>(list.size()));
 			_vector.resize(_size * 2, 0);
 
 			auto vec = &_vector[_size];
@@ -71,8 +67,5 @@ namespace library::data_structure {
 			return query_recursion(node * 2, node_left, mid, query_left, query_right) +
 				query_recursion(node * 2 + 1, mid + 1, node_right, query_left, query_right);
 		}
-	private:
-		vector<type> _vector;
-		size_type _size;
 	};
 }

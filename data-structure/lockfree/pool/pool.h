@@ -1,5 +1,6 @@
 #pragma once
 #include "../../../memory/memory.h"
+#include "../../../function/function.h"
 #include <memory>
 #include <Windows.h>
 
@@ -34,25 +35,24 @@ namespace library::lockfree {
 		};
 		inline explicit pool(pool const&) noexcept = delete;
 		inline explicit pool(pool&& rhs) noexcept
-			: _head(rhs._head) {
-			rhs._head = nullptr;
+			: _head(exchange(rhs._head, nullptr)) {
 		};
 		inline auto operator=(pool const&) noexcept = delete;
-		inline auto operator=(pool&& rhs) noexcept {
-			_head = rhs._head;
-			rhs._head = nullptr;
+		inline auto operator=(pool&& rhs) noexcept -> pool&{
+			node* head = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & _head);
+			while (nullptr != head)
+				library::deallocate<node>(exchange(head, head->_next));
+			_head = exchange(rhs._head, nullptr);
+			return *this;
 		}
 		inline ~pool(void) noexcept {
 			node* head = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & _head);
-			while (nullptr != head) {
-				node* next = head->_next;
-				library::deallocate<node>(head);
-				head = next;
-			}
+			while (nullptr != head)
+				library::deallocate<node>(exchange(head, head->_next));
 		}
 
 		template<typename... argument>
-		inline auto allocate(argument&&... arg) noexcept -> type& {
+		inline auto allocate(argument&&... arg) noexcept -> type* {
 			node* current;
 			for (;;) {
 				unsigned long long head = _head;
@@ -68,12 +68,12 @@ namespace library::lockfree {
 
 			if constexpr (true == placement)
 				library::construct<type, argument...>(current->_value, std::forward<argument>(arg)...);
-			return current->_value;
+			return &current->_value;
 		}
-		inline void deallocate(type& value) noexcept {
+		inline void deallocate(type* value) noexcept {
 			if constexpr (true == placement)
-				library::destruct<type>(value);
-			node* current = reinterpret_cast<node*>(reinterpret_cast<unsigned char*>(&value) - offsetof(node, _value));
+				library::destruct<type>(*value);
+			auto current = reinterpret_cast<node*>(reinterpret_cast<unsigned char*>(value) - offsetof(node, _value));
 			for (;;) {
 				unsigned long long head = _head;
 				current->_next = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & head);

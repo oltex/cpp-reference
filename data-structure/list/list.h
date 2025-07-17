@@ -5,8 +5,7 @@
 #include <cassert>
 #include "../pool/pool.h"
 #include "../../memory/memory.h"
-#include "../../algorithm/swap/swap.h"
-#include "../../algorithm/exchange/exchange.h"
+#include "../../function/function.h"
 
 namespace library {
 	template<typename type, typename allocator = pool<type>, bool placement = true>

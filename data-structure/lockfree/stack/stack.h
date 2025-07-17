@@ -33,7 +33,7 @@ namespace library::data_structure::lockfree {
 			node* head = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & _head);
 			while (nullptr != head) {
 				node* next = head->_next;
-				memory::destruct<type>(head->_value);
+				library::destruct<type>(head->_value);
 				_pool::instance().deallocate(*head);
 				head = next;
 			}
@@ -42,7 +42,7 @@ namespace library::data_structure::lockfree {
 		template<typename... argument>
 		inline void push(argument&&... arg) noexcept {
 			node* current = &_pool::instance().allocate();
-			memory::construct<type>(current->_value, std::forward<argument>(arg)...);
+			library::construct<type>(current->_value, std::forward<argument>(arg)...);
 
 			for (;;) {
 				unsigned long long head = _head;

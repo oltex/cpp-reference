@@ -50,6 +50,30 @@ namespace library {
 	inline constexpr auto minimum(type const& value, argument const&... arg) noexcept -> type const& {
 		return maximum(value, maximum(arg...));
 	}
+
+	template<typename type>
+	inline constexpr auto bit_ceil(type const number) noexcept -> type {
+		type result = 1;
+		while (result < number)
+			result <<= 1;
+		return result;
+	}
+	template<typename type>
+	inline constexpr auto bit_floor(type const number) noexcept -> type {
+		type result = 1;
+		while ((result << 1) <= number)
+			result <<= 1;
+		return result;
+	}
+
+	template <typename type>
+	inline constexpr auto least_common_multiple(type first, type second) noexcept {
+		return first * second / greatest_common_divisor(first, second);
+	}
+	template <typename type_1, typename... type_2>
+	inline constexpr auto least_common_multiple(type_1 first, type_2... second) noexcept {
+		return least_common_multiple(first, least_common_multiple(second...));
+	}
 }
 
 //_CONSTEXPR20 void swap(_Ty& _Left, _Ty& _Right) noexcept(

@@ -1,38 +1,36 @@
 #pragma once
-#include "../../../memory/memory.h"
 #include "../../../design-pettern/thread-local/singleton/singleton.h"
+#include "../../../memory/memory.h"
 #include "../../lockfree/pool/pool.h"
 #include "../../pair/pair.h"
 
 namespace library::_thread_local {
 	template<typename type, size_t bucket_size = 1024, bool placement = true, bool compress = true>
 	class pool final : public design_pattern::_thread_local::singleton<pool<type, bucket_size, compress>> {
-	private:
 		friend class design_pattern::_thread_local::singleton<pool<type, bucket_size, compress>>;
 		using size_type = unsigned int;
 		union union_node final {
+			union_node* _next;
+			type _value;
 			inline explicit union_node(void) noexcept = delete;
 			inline explicit union_node(union_node const&) noexcept = delete;
 			inline explicit union_node(union_node&&) noexcept = delete;
 			inline auto operator=(union_node const&) noexcept = delete;
 			inline auto operator=(union_node&&) noexcept = delete;
 			inline ~union_node(void) noexcept = delete;
-			union_node* _next;
-			type _value;
 		};
 		struct strcut_node final {
+			strcut_node* _next;
+			type _value;
 			inline explicit strcut_node(void) noexcept = delete;
 			inline explicit strcut_node(strcut_node const&) noexcept = delete;
 			inline explicit strcut_node(strcut_node&&) noexcept = delete;
 			inline auto operator=(strcut_node const&) noexcept = delete;
 			inline auto operator=(strcut_node&&) noexcept = delete;
 			inline ~strcut_node(void) noexcept = delete;
-			strcut_node* _next;
-			type _value;
 		};
 		using node = typename std::conditional<compress, union union_node, struct strcut_node>::type;
 		class global final {
-		private:
 			struct bucket final {
 				inline explicit bucket(void) noexcept = delete;
 				inline explicit bucket(bucket const&) noexcept = delete;
@@ -44,10 +42,7 @@ namespace library::_thread_local {
 				node* _value;
 				size_type _size;
 			};
-			inline static consteval size_type power_of_two(size_type number, size_type square = 1) noexcept {
-				return square >= number ? square : power_of_two(number, square << 1);
-			}
-			inline static constexpr size_type _align = power_of_two(sizeof(node) * bucket_size);
+			inline static constexpr size_type _align = static_cast<size_type>(bit_ceil(sizeof(node) * bucket_size));
 
 			alignas(64) unsigned long long _head = 0;
 			size_type _capacity = 0;
@@ -73,7 +68,7 @@ namespace library::_thread_local {
 							_node_array[_node_array_index++] = _node;
 						_node = _node->_next;
 					}
-					_pool.deallocate(*head);
+					_pool.deallocate(head);
 					head = next;
 				}
 
@@ -102,13 +97,13 @@ namespace library::_thread_local {
 					unsigned long long next = reinterpret_cast<unsigned long long>(address->_next) + (0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
 					if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head)) {
 						pair<node*, size_type> result{ address->_value, address->_size };
-						_pool.deallocate(*address);
+						_pool.deallocate(address);
 						return result;
 					}
 				}
 			}
 			inline void deallocate(node* value, size_type size) noexcept {
-				bucket* current = &_pool.allocate();
+				bucket* current = _pool.allocate();
 				current->_value = value;
 				current->_size = size;
 
@@ -121,6 +116,11 @@ namespace library::_thread_local {
 				}
 			}
 		};
+
+		inline static global _global;
+		node* _head = nullptr;
+		node* _break = nullptr;
+		size_type _size = 0;
 
 		inline explicit pool(void) noexcept = default;
 		inline explicit pool(pool const&) noexcept = delete;
@@ -138,7 +138,7 @@ namespace library::_thread_local {
 		};
 	public:
 		template<typename... argument>
-		inline auto allocate(argument&&... arg) noexcept -> type& {
+		inline auto allocate(argument&&... arg) noexcept -> type* {
 			if (0 == _size) {
 				auto [value, size] = _global.allocate();
 				_head = value;
@@ -149,12 +149,12 @@ namespace library::_thread_local {
 			if constexpr (true == placement)
 				library::construct<type, argument...>(current->_value, std::forward<argument>(arg)...);
 			--_size;
-			return current->_value;
+			return &current->_value;
 		}
-		inline void deallocate(type& value) noexcept {
+		inline void deallocate(type* value) noexcept {
 			if constexpr (true == placement)
-				library::destruct<type>(value);
-			node* current = reinterpret_cast<node*>(reinterpret_cast<unsigned char*>(&value) - offsetof(node, _value));
+				library::destruct<type>(*value);
+			node* current = reinterpret_cast<node*>(reinterpret_cast<unsigned char*>(value) - offsetof(node, _value));
 			current->_next = _head;
 			_head = current;
 			++_size;
@@ -167,10 +167,5 @@ namespace library::_thread_local {
 				_size -= bucket_size;
 			}
 		}
-	private:
-		inline static global _global;
-		node* _head = nullptr;
-		node* _break = nullptr;
-		size_type _size = 0;
 	};
 }
