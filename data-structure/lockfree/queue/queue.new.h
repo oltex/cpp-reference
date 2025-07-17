@@ -9,14 +9,14 @@ namespace library::lockfree {
 	class queue {
 	protected:
 		struct node final {
+			unsigned long long _next;
+			type _value;
 			inline explicit node(void) noexcept = delete;
 			inline explicit node(node const&) noexcept = delete;
 			inline explicit node(node&&) noexcept = delete;
 			inline auto operator=(node const&) noexcept = delete;
 			inline auto operator=(node&&) noexcept = delete;
 			inline ~node(void) noexcept = delete;
-			unsigned long long _next;
-			type _value;
 		};
 		using _pool = _thread_local::pool<node>;
 
