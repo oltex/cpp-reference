@@ -6,7 +6,7 @@
   <ItemGroup>
     <ClInclude Include="queue.old.h" />
     <ClInclude Include="queue.h" />
-    <ClInclude Include="normal_queue.h" />
+    <ClInclude Include="queue.normal.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="queue.new.h" />

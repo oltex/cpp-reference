@@ -2,7 +2,7 @@
 #include "../../../memory/memory.h"
 #include "../../thread-local/pool/pool.h"
 
-namespace library::data_structure {
+namespace library {
 	template<typename type>
 	class queue {
 	private:
@@ -19,7 +19,7 @@ namespace library::data_structure {
 		using _pool = _thread_local::pool<node>;
 	public:
 		inline queue(void) noexcept {
-			node* current = &_pool::instance().allocate();
+			node* current = _pool::instance().allocate();
 			current->_next = nullptr;
 			_head = _tail = current;
 		}
@@ -27,7 +27,7 @@ namespace library::data_structure {
 
 		template<typename... argument>
 		inline void push(argument&&... arg) noexcept {
-			node* current = &_pool::instance().allocate();
+			node* current = _pool::instance().allocate();
 			library::construct<type>(current->_value, std::forward<argument>(arg)...);
 
 			current->_next = nullptr;
@@ -39,7 +39,7 @@ namespace library::data_structure {
 
 			type result = current->_next->_value;
 			_head = current->_next;
-			_pool::instance().deallocate(*current);
+			_pool::instance().deallocate(current);
 
 			return result;
 		}
