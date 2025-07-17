@@ -4,7 +4,7 @@
 #include "../../lockfree/pool/pool.h"
 #include "../../pair/pair.h"
 
-namespace library::data_structure::_thread_local {
+namespace library::_thread_local {
 	template<typename type, size_t bucket_size = 1024, bool placement = true, bool compress = true>
 	class pool final : public design_pattern::_thread_local::singleton<pool<type, bucket_size, compress>> {
 	private:
@@ -47,7 +47,11 @@ namespace library::data_structure::_thread_local {
 			inline static consteval size_type power_of_two(size_type number, size_type square = 1) noexcept {
 				return square >= number ? square : power_of_two(number, square << 1);
 			}
-			static constexpr size_type _align = power_of_two(sizeof(node) * bucket_size);
+			inline static constexpr size_type _align = power_of_two(sizeof(node) * bucket_size);
+
+			alignas(64) unsigned long long _head = 0;
+			size_type _capacity = 0;
+			lockfree::pool<bucket> _pool;
 		public:
 			inline explicit global(void) noexcept = default;
 			inline explicit global(global const&) noexcept = delete;
@@ -116,10 +120,6 @@ namespace library::data_structure::_thread_local {
 						break;
 				}
 			}
-		private:
-			alignas(64) unsigned long long _head = 0;
-			size_type _capacity = 0;
-			lockfree::pool<bucket> _pool;
 		};
 
 		inline explicit pool(void) noexcept = default;
@@ -147,13 +147,13 @@ namespace library::data_structure::_thread_local {
 			node* current = _head;
 			_head = current->_next;
 			if constexpr (true == placement)
-				memory::construct<type, argument...>(current->_value, std::forward<argument>(arg)...);
+				library::construct<type, argument...>(current->_value, std::forward<argument>(arg)...);
 			--_size;
 			return current->_value;
 		}
 		inline void deallocate(type& value) noexcept {
 			if constexpr (true == placement)
-				memory::destruct<type>(value);
+				library::destruct<type>(value);
 			node* current = reinterpret_cast<node*>(reinterpret_cast<unsigned char*>(&value) - offsetof(node, _value));
 			current->_next = _head;
 			_head = current;

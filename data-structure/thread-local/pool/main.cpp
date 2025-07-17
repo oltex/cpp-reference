@@ -77,7 +77,6 @@
 LARGE_INTEGER _frequency;
 long long _sum = 0;
 long long _count = 0;
-using namespace library::data_structure;
 
 struct my_str {
 	inline explicit my_str(void) noexcept = delete;
@@ -86,7 +85,7 @@ struct my_str {
 };
 
 inline static unsigned int __stdcall func(void* arg) noexcept {
-	auto& _pool = _thread_local::pool<my_str>::instance();
+	auto& _pool = library::_thread_local::pool<my_str>::instance();
 	my_str** _array = reinterpret_cast<my_str**>(malloc(sizeof(my_str*) * 10000));
 	if (nullptr == _array)
 		__debugbreak();
@@ -108,7 +107,7 @@ inline static unsigned int __stdcall func(void* arg) noexcept {
 	return 0;
 }
 inline static unsigned int __stdcall func2(void* arg) noexcept {
-	auto& _pool = library::data_structure::_thread_local::pool<int>::instance();
+	auto& _pool = library::_thread_local::pool<int>::instance();
 	my_str** _array = reinterpret_cast<my_str**>(malloc(sizeof(my_str*) * 10000));
 	if (nullptr == _array)
 		__debugbreak();

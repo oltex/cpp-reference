@@ -4,8 +4,7 @@
 #include <stdlib.h>
 #include <cassert>
 #include "../../memory/memory.h"
-#include "../../algorithm/swap/swap.h"
-#include "../../algorithm/exchange/exchange.h"
+#include "../../function/function.h"
 
 namespace library {
 	template<typename type, bool placement = true>

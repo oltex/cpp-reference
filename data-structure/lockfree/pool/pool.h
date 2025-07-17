@@ -27,6 +27,7 @@ namespace library::lockfree {
 			inline ~strcut_node(void) noexcept = delete;
 		};
 		using node = typename std::conditional<compress, union union_node, struct strcut_node>::type;
+		alignas(64) unsigned long long _head;
 	public:
 		inline explicit pool(void) noexcept
 			: _head(0) {
@@ -49,7 +50,7 @@ namespace library::lockfree {
 				head = next;
 			}
 		}
-	public:
+
 		template<typename... argument>
 		inline auto allocate(argument&&... arg) noexcept -> type& {
 			node* current;
@@ -81,7 +82,5 @@ namespace library::lockfree {
 					break;
 			}
 		}
-	private:
-		alignas(64) unsigned long long _head;
 	};
 }
