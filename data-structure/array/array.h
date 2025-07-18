@@ -9,8 +9,8 @@ namespace library {
 	private:
 		using size_type = unsigned int;
 	public:
-		inline auto operator[](size_type const idx) noexcept ->type& {
-			return _arr[idx];
+		inline auto operator[](size_type const index) noexcept ->type& {
+			return _arr[index];
 		}
 		inline auto front(void) const noexcept ->type& {
 			return _arr[0];
