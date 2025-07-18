@@ -46,8 +46,8 @@ public:
 };
 
 bool _run = false;
-library::data_structure::lockfree::stack<int> _lockfree_stack;
-library::data_structure::stack<int> _stack;
+library::lockfree::stack<int> _lockfree_stack;
+library::stack<int> _stack;
 spin _spin;
 std::stack<int> _std_stack;
 std::mutex _std_mutex;

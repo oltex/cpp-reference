@@ -2,7 +2,7 @@
 #include "../../../memory/memory.h"
 #include "../../thread-local/pool/pool.h"
 
-namespace library::data_structure {
+namespace library {
 	template<typename type>
 	class stack {
 	private:

@@ -1,6 +1,6 @@
 #pragma once
 #include "../pool/pool.h"
-#include "../../algorithm/exchange/exchange.h"
+#include "../../function/function.h"
 
 namespace library {
 	template<typename type, typename allocator = pool<type>, bool placement = true>

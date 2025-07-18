@@ -6,21 +6,21 @@
 #include <intrin.h>
 #include <optional>
 
-namespace library::data_structure::lockfree {
+namespace library::lockfree {
 	template<typename type>
 	class stack final {
-	private:
 		struct node final {
+			node* _next;
+			type _value;
 			inline explicit node(void) noexcept = delete;
 			inline explicit node(node const&) noexcept = delete;
 			inline explicit node(node&&) noexcept = delete;
 			inline auto operator=(node const&) noexcept = delete;
 			inline auto operator=(node&&) noexcept = delete;
 			inline ~node(void) noexcept = delete;
-			node* _next;
-			type _value;
 		};
 		using _pool = _thread_local::pool<node>;
+		alignas(64) unsigned long long _head;
 	public:
 		inline explicit stack(void) noexcept
 			: _head(0) {
@@ -66,7 +66,5 @@ namespace library::data_structure::lockfree {
 				}
 			}
 		}
-	private:
-		alignas(64) unsigned long long _head;
 	};
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include <utility>
+#include <cmath>
 
 namespace library {
 	template<typename type>
@@ -36,8 +37,8 @@ namespace library {
 			return first;
 	}
 	template<typename type, typename... argument>
-	inline constexpr auto maximum(type const& value, argument const&... arg) noexcept -> type const& {
-		return maximum(value, maximum(arg...));
+	inline constexpr auto maximum(type const& first, argument const&... second) noexcept -> type const& {
+		return maximum(first, maximum(second...));
 	}
 	template<typename type>
 	inline constexpr auto minimum(type const& first, type const& second) noexcept -> type const& {
@@ -47,8 +48,16 @@ namespace library {
 			return first;
 	}
 	template<typename type, typename... argument>
-	inline constexpr auto minimum(type const& value, argument const&... arg) noexcept -> type const& {
-		return maximum(value, maximum(arg...));
+	inline constexpr auto minimum(type const& first, argument const&... second) noexcept -> type const& {
+		return maximum(first, maximum(second...));
+	}
+
+	template<typename type>
+	inline constexpr auto absolute(type const value) noexcept {
+		if constexpr (std::floating_point<type>)
+			return std::signbit(value) ? -value : value;
+		else
+			return value < type(0) ? -value : value;
 	}
 
 	template<typename type>

@@ -10,10 +10,13 @@ namespace library {
 	class unique_pointer final {
 		type* _pointer;
 	public:
+		inline constexpr unique_pointer(void) noexcept
+			: _pointer(nullptr) {
+		};
 		inline constexpr unique_pointer(nullptr_t) noexcept
 			: _pointer(nullptr) {
 		};
-		inline explicit unique_pointer(type* pointer) noexcept
+		inline explicit unique_pointer(type* const pointer) noexcept
 			: _pointer(pointer) {
 		}
 		template<typename... argument>
@@ -43,9 +46,14 @@ namespace library {
 		inline auto operator->(void) noexcept -> type* {
 			return _pointer;
 		}
-
+		inline explicit operator bool() const noexcept {
+			return nullptr != _pointer;
+		}
 		inline void swap(unique_pointer& rhs) noexcept {
 			library::swap(_pointer, rhs._pointer);
+		}
+		inline auto get(void) const noexcept -> type* {
+			return _pointer;
 		}
 		inline void set(type* value) noexcept {
 			_pointer = value;
@@ -53,61 +61,64 @@ namespace library {
 		inline void reset(void) noexcept {
 			_pointer = nullptr;
 		}
+		template <class type>
+		friend inline bool operator==(unique_pointer<type> const& value, nullptr_t) noexcept {
+			return value._pointer == nullptr;
+		}
+	};
+	template<typename type>
+	class unique_pointer<type[]> final {
+		using size_type = unsigned int;
+		type* _pointer;
+	public:
+		inline constexpr unique_pointer(void) noexcept
+			: _pointer(nullptr) {
+		};
+		inline constexpr unique_pointer(nullptr_t) noexcept
+			: _pointer(nullptr) {
+		};
+		inline explicit unique_pointer(type* const pointer) noexcept
+			: _pointer(pointer) {
+		}
+		inline explicit unique_pointer(unique_pointer&) noexcept = delete;
+		inline explicit unique_pointer(unique_pointer&& rhs) noexcept
+			: _pointer(library::exchange(rhs._pointer, nullptr)) {
+		}
+		inline auto operator=(unique_pointer const&) noexcept -> unique_pointer & = delete;
+		inline auto operator=(unique_pointer&& rhs) noexcept -> unique_pointer& {
+			unique_pointer(std::move(rhs)).swap(*this);
+			return *this;
+		};
+		inline ~unique_pointer(void) noexcept {
+			if (nullptr != _pointer) {
+				library::destruct<type>(*_pointer);
+				library::deallocate<type>(_pointer);
+			}
+		}
+	
+		inline auto operator[](size_type const index) noexcept -> type& {
+			return _pointer[index];
+		}
+		inline explicit operator bool() const noexcept {
+			return nullptr != _pointer;
+		}
+		inline void swap(unique_pointer& rhs) noexcept {
+			library::swap(_pointer, rhs._pointer);
+		}
 		inline auto get(void) const noexcept -> type* {
 			return _pointer;
+		}
+		inline void set(type* value) noexcept {
+			_pointer = value;
+		}
+		inline void reset(void) noexcept {
+			_pointer = nullptr;
 		}
 		template <class type>
 		friend inline bool operator==(unique_pointer<type> const& value, nullptr_t) noexcept {
 			return value._pointer == nullptr;
 		}
 	};
-	//template<typename type>
-	//class unique_pointer<type[]> final {
-	//	using size_type = unsigned int;
-	//	type* _pointer;
-	//public:
-	//	inline constexpr unique_pointer(nullptr_t) noexcept
-	//		: _pointer(nullptr) {
-	//	};
-	//	inline explicit unique_pointer(type* pointer) noexcept
-	//		: _pointer(pointer) {
-	//	}
-	//	inline explicit unique_pointer(unique_pointer&) noexcept = delete;
-	//	inline explicit unique_pointer(unique_pointer&& rhs) noexcept
-	//		: _pointer(library::exchange(rhs._pointer, nullptr)) {
-	//	}
-	//	inline auto operator=(unique_pointer const&) noexcept -> unique_pointer & = delete;
-	//	inline auto operator=(unique_pointer&& rhs) noexcept -> unique_pointer& {
-	//		unique_pointer(std::move(rhs)).swap(*this);
-	//		return *this;
-	//	};
-	//	inline ~unique_pointer(void) noexcept {
-	//		if (nullptr != _pointer) {
-	//			if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
-	//				_pointer->~type();
-	//			free(_pointer);
-	//			library::destruct<type>(*_pointer);
-	//			library::deallocate<type>(_pointer);
-	//		}
-	//	}
-	//
-	//	inline auto operator[](size_type const index) noexcept -> type& {
-	//		return _pointer[index];
-	//	}
-	//	inline void set(type* value) noexcept {
-	//		_pointer = value;
-	//	}
-	//	inline void reset(void) noexcept {
-	//		_pointer = nullptr;
-	//	}
-	//	inline auto get(void) const noexcept -> type* {
-	//		return _pointer;
-	//	}
-	//	template <class type>
-	//	friend inline bool operator==(unique_pointer<type> const& value, nullptr_t) noexcept {
-	//		return value._pointer == nullptr;
-	//	}
-	//};
 
 	struct reference final {
 	private:
@@ -133,16 +144,14 @@ namespace library {
 			: _pointer(nullptr), _reference(nullptr) {
 		};
 		inline explicit share_pointer(type* const pointer) noexcept
-			: _pointer(pointer) {
-			_reference = library::allocate<reference>();
+			: _pointer(pointer), _reference(library::allocate<reference>()) {
 #pragma warning(suppress: 6011)
 			_reference->_use = 1;
 			_reference->_weak = 0;
 		}
 		template<typename... argument>
-		inline explicit share_pointer(argument&&... arg) noexcept {
-			_pointer = library::allocate<type>();
-			_reference = library::allocate<reference>();
+		inline explicit share_pointer(argument&&... arg) noexcept
+			: _pointer(library::allocate<type>()), _reference(library::allocate<reference>()) {
 			library::construct(*_pointer, std::forward<argument>(arg)...);
 			_reference->_use = 1;
 			_reference->_weak = 0;
@@ -180,6 +189,9 @@ namespace library {
 		}
 		inline auto operator->(void) noexcept -> type* {
 			return _pointer;
+		}
+		inline explicit operator bool() const noexcept {
+			return nullptr != _pointer;
 		}
 		inline void swap(share_pointer& rhs) noexcept {
 			library::swap(_pointer, rhs._pointer);
@@ -240,6 +252,9 @@ namespace library {
 		}
 		inline auto operator->(void) noexcept -> type* {
 			return _pointer;
+		}
+		inline explicit operator bool() const noexcept {
+			return nullptr != _pointer;
 		}
 		inline void swap(weak_pointer& rhs) noexcept {
 			library::swap(_pointer, rhs._pointer);

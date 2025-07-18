@@ -2,6 +2,7 @@
 #include "function.h"
 int main(void) noexcept {
 
-	auto a = library::bit_floor(63);
+
+	auto a = library::absolute(-0.f);
 	return 0;
 }
