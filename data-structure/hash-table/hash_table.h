@@ -4,8 +4,58 @@
 #include "../list/list.h"
 #include "../vector/vector.h"
 
-namespace library::data_structure {
-	template<typename key_type, typename type, auto _hash = algorithm::hash<key_type>>
+namespace library {
+	template<typename type, auto _hash = hash<type>>
+	class unorder_set final {
+		using size_type = unsigned int;
+		using iterator = typename list<pair>::iterator;
+
+		size_type _count = 8;
+		vector<iterator> _vector;
+		list<type> _list;
+	public:
+		inline explicit unorder_set(void) noexcept 
+			: _count(8) {
+			rehash(_count);
+		}
+		inline explicit unorder_set(unorder_set const& rhs) noexcept;
+		inline explicit unorder_set(unorder_set&& rhs) noexcept;
+		inline auto operator=(unorder_set const& rhs) noexcept -> unorder_set&;
+		inline auto operator=(unorder_set&& rhs) noexcept -> unorder_set&;
+		inline ~unorder_set(void) noexcept = default;
+
+		template<typename... argument>
+		inline auto emplace(argument&&... arg) noexcept -> iterator {
+			auto iter = find(key);
+			if (iter != _list.end())
+				return iter;
+
+			size_type index = bucket(key);
+			auto& first = _vector[index << 1];
+			auto& last = _vector[(index << 1) + 1];
+
+			auto result = _list.emplace(first, key, std::forward<argument>(arg)...);
+			if (first == _list.end())
+				last = result;
+			first = result;
+
+			if (1.f <= load_factor())
+				rehash(_count < 512 ? _count * 8 : _count + 1);
+			return result;
+		}
+
+		inline auto bucket(type const& key) const noexcept -> size_type {
+			return _hash(key) % _count;
+		}
+		inline auto size(void) const noexcept -> size_type {
+			return _list.size();
+		}
+		inline bool empty(void) const noexcept {
+			return  _list.empty();
+		}
+	};
+
+	template<typename key_type, typename type, auto _hash = hash<key_type>>
 	class unordered_map final {
 	private:
 		using size_type = unsigned int;
