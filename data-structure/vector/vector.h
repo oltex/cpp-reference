@@ -58,14 +58,14 @@ namespace library {
 				reserve(maximum(static_cast<size_type>(_capacity * 1.5f), _size + 1));
 			type& element = _array[_size++];
 			if constexpr (true == placement)
-				construct(element, std::forward<argument>(arg)...);
+				library::construct(element, std::forward<argument>(arg)...);
 			return element;
 		}
 		inline void pop_back(void) noexcept {
 			assert(_size > 0 && "called on empty");
 			--_size;
 			if constexpr (true == placement)
-				destruct(_array[_size]);
+				library::destruct(_array[_size]);
 		}
 		inline auto front(void) const noexcept ->type& {
 			assert(_size > 0 && "called on empty");
@@ -89,7 +89,7 @@ namespace library {
 		inline void reserve(size_type const capacity) noexcept {
 			if (_capacity < capacity) {
 #pragma warning(suppress: 6308)
-				_array = reallocate<type>(_array, capacity);
+				_array = library::reallocate<type>(_array, capacity);
 				_capacity = capacity;
 			}
 		}
