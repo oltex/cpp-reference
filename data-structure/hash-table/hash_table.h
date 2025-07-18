@@ -3,6 +3,7 @@
 #include "../../algorithm/hash/hash.h"
 #include "../list/list.h"
 #include "../vector/vector.h"
+
 namespace library::data_structure {
 	template<typename key_type, typename type, auto _hash = algorithm::hash<key_type>>
 	class unordered_map final {
