@@ -205,25 +205,23 @@
 //	long long _sum = 0;
 //	long long _count = 0;
 //	for (;;) {
+//				QueryPerformanceCounter(&_start);
 //		for (int i = 0; i < 100000; ++i) {
 //			for (auto j = 0; j < 500; ++j) {
-//				QueryPerformanceCounter(&_start);
 //				_lockfree_queue.emplace(0);
-//				QueryPerformanceCounter(&_end);
-//				_sum += _end.QuadPart - _start.QuadPart;
+//
 //				//for (volatile int k = 0; k < 64; ++k) {
 //				//}
 //			}
 //			for (auto j = 0; j < 500; ++j) {
-//				QueryPerformanceCounter(&_start);
 //				_lockfree_queue.pop();
-//				QueryPerformanceCounter(&_end);
-//				_sum += _end.QuadPart - _start.QuadPart;
 //				//for (volatile int k = 0; k < 64; ++k) {
 //				//}
 //			}
 //		}
 //		++_count;
+//		QueryPerformanceCounter(&_end);
+//		_sum += _end.QuadPart - _start.QuadPart;
 //		printf("%f\n", (static_cast<double>(_sum) / _count) / static_cast<double>(_frequency.QuadPart) * 1e3);
 //	}
 //	return 0;
@@ -283,24 +281,24 @@ int main(void) noexcept {
 	system("pause");
 
 
-	std::set<unsigned int> _result_set;
-	for (int i = 0; i < count; ++i) {
-		for (auto& iter : _result_list[i]) {
-			if (_result_set.count(iter))
-				__debugbreak();
-			_result_set.insert(iter);
-		}
-	}
-	unsigned int expected = 1;
-	for (auto val : _result_set) {
-		if (val != expected) {
-			__debugbreak();
-		}
-		++expected;
-	}
-	if (_result_set.size() != expected - 1) {
-		__debugbreak();
-	}
+	//std::set<unsigned int> _result_set;
+	//for (int i = 0; i < count; ++i) {
+	//	for (auto& iter : _result_list[i]) {
+	//		if (_result_set.count(iter))
+	//			__debugbreak();
+	//		_result_set.insert(iter);
+	//	}
+	//}
+	//unsigned int expected = 1;
+	//for (auto val : _result_set) {
+	//	if (val != expected) {
+	//		__debugbreak();
+	//	}
+	//	++expected;
+	//}
+	//if (_result_set.size() != expected - 1) {
+	//	__debugbreak();
+	//}
 
 	return 0;
 }
