@@ -27,11 +27,11 @@ namespace library {
 		}
 		inline explicit vector(iterator const& begin, iterator const& end) noexcept
 			: vector() {
-			reserve(end - begin);
+			reserve(static_cast<size_type>(end - begin));
 			for (auto iter = begin; iter != end; ++iter)
 				emplace_back(*iter);
 		}
-		inline explicit vector(vector const& rhs) noexcept
+		inline vector(vector const& rhs) noexcept
 			: vector(rhs.begin(), rhs.end()) {
 		}
 		inline explicit vector(vector&& rhs) noexcept

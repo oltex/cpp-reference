@@ -105,7 +105,7 @@ namespace library {
 		};
 		inline ~list(void) noexcept {
 			clear();
-			deallocate(reinterpret_cast<void*>(_head));
+			library::deallocate(reinterpret_cast<void*>(_head));
 		}
 
 		template<typename... argument>
@@ -120,7 +120,7 @@ namespace library {
 		inline auto emplace(iterator const& iter, argument&&... arg) noexcept -> iterator {
 			auto current = _allocator.allocate();
 			if constexpr (true == placement)
-				construct<type>(current->_value, std::forward<argument>(arg)...);
+				library::construct<type>(current->_value, std::forward<argument>(arg)...);
 			auto next = iter._node;
 			auto prev = next->_prev;
 
@@ -149,7 +149,7 @@ namespace library {
 			next->_prev = prev;
 
 			if constexpr (true == placement)
-				destruct<type>(current->_value);
+				library::destruct<type>(current->_value);
 			_allocator.deallocate(current);
 			--_size;
 			return iterator(next);
@@ -177,7 +177,7 @@ namespace library {
 			auto current = _head->_next;
 			while (current != _head) {
 				if constexpr (true == placement)
-					destruct<type>(current->_value);
+					library::destruct<type>(current->_value);
 				_allocator.deallocate(exchange(current, current->_next));
 			}
 			_head->_next = _head->_prev = _head;
