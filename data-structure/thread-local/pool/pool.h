@@ -5,7 +5,7 @@
 #include "../../pair/pair.h"
 
 namespace library::_thread_local {
-	template<typename type, size_t bucket_size = 1024, bool placement = true, bool compress = true>
+	template<typename type, size_t bucket_size = 4, bool placement = true, bool compress = true>
 	class pool final : public design_pattern::_thread_local::singleton<pool<type, bucket_size, compress>> {
 		friend class design_pattern::_thread_local::singleton<pool<type, bucket_size, compress>>;
 		using size_type = unsigned int;
