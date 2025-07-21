@@ -2,7 +2,7 @@
 
 namespace library {
 	template<typename type, typename size_type = unsigned int>
-	inline constexpr auto hash(type const& key) noexcept -> size_type {
+	inline constexpr auto fnv_hash(type const& key) noexcept -> size_type {
 		constexpr size_type _FNV_offset_basis = sizeof(size_type) == 4 ? 2166136261U : 14695981039346656037ULL;
 		constexpr size_type _FNV_prime = sizeof(size_type) == 4 ? 16777619U : 1099511628211ULL;
 

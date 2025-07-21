@@ -8,6 +8,9 @@
 #include "../../function/function.h"
 
 namespace library {
+	template<typename type, auto hash>
+	class unorder_set;
+
 	template<typename type, typename allocator = pool<type>, bool placement = true>
 	class list final {
 		using size_type = unsigned int;
@@ -21,7 +24,8 @@ namespace library {
 			inline auto operator=(node&&) noexcept = delete;
 			inline ~node(void) noexcept = delete;
 		};
-
+		template<typename type, auto hash>
+		friend class unorder_set;
 		size_type _size;
 		node* _head;
 		allocator::template rebind<node> _allocator;
@@ -72,7 +76,7 @@ namespace library {
 		};
 
 		inline explicit list(void) noexcept
-			: _size(0), _head(reinterpret_cast<node*>(allocate(sizeof(node*) * 2))) {
+			: _size(0), _head(reinterpret_cast<node*>(library::allocate(sizeof(node*) * 2))) {
 #pragma warning(suppress: 6011)
 			_head->_next = _head->_prev = _head;
 		}
@@ -118,18 +122,8 @@ namespace library {
 		}
 		template<typename... argument>
 		inline auto emplace(iterator const& iter, argument&&... arg) noexcept -> iterator {
-			auto current = _allocator.allocate();
-			if constexpr (true == placement)
-				library::construct<type>(current->_value, std::forward<argument>(arg)...);
-			auto next = iter._node;
-			auto prev = next->_prev;
-
-			prev->_next = current;
-			current->_prev = prev;
-			current->_next = next;
-			next->_prev = current;
-
-			++_size;
+			auto current = allocate(std::forward<argument>(arg)...);
+			link(iter._node, current);
 			return iterator(current);
 		}
 		inline void pop_front(void) noexcept {
@@ -148,9 +142,7 @@ namespace library {
 			prev->_next = next;
 			next->_prev = prev;
 
-			if constexpr (true == placement)
-				library::destruct<type>(current->_value);
-			_allocator.deallocate(current);
+			deallocate(current);
 			--_size;
 			return iterator(next);
 		}
@@ -183,29 +175,47 @@ namespace library {
 			_head->_next = _head->_prev = _head;
 			_size = 0;
 		}
-		inline void splice(iterator const& _before, iterator const& _first, iterator const& _last) noexcept {
-			node* before = _before._node;
-			node* first = _first._node;
-			node* last = _last._node;
-
-			node* first_prev = first->_prev;
-			first_prev->_next = last;
-			node* last_prev = last->_prev;
-			last_prev->_next = before;
-			node* before_prev = before->_prev;
-			before_prev->_next = first;
-
-			before->_prev = last_prev;
-			last->_prev = first_prev;
-			first->_prev = before_prev;
-
-			//return last;
-		}
 		inline auto size(void) const noexcept -> size_type {
 			return _size;
 		}
 		inline bool empty(void) const noexcept {
 			return 0 == _size;
+		}
+	private:
+		template<typename... argument>
+		inline auto allocate(argument&&... arg) noexcept -> node* {
+			auto current = _allocator.allocate();
+			if constexpr (true == placement)
+				library::construct<type>(current->_value, std::forward<argument>(arg)...);
+			return current;
+		}
+		inline void deallocate(node* current) noexcept {
+			if constexpr (true == placement)
+				library::destruct<type>(current->_value);
+			_allocator.deallocate(current);
+		}
+		inline void link(node* next, node* current) noexcept {
+			auto prev = next->_prev;
+
+			prev->_next = current;
+			current->_prev = prev;
+			current->_next = next;
+			next->_prev = current;
+
+			++_size;
+		}
+		inline void splice(node* before, node* first, node* last) noexcept {
+			node* first_prev = first->_prev;
+			node* last_prev = last->_prev;
+			node* before_prev = before->_prev;
+
+			first_prev->_next = last;
+			last_prev->_next = before;
+			before_prev->_next = first;
+
+			before->_prev = last_prev;
+			last->_prev = first_prev;
+			first->_prev = before_prev;
 		}
 	};
 }
