@@ -1,8 +1,8 @@
 #pragma once
 #include "../pair/pair.h"
-#include "../../algorithm/hash/hash.h"
 #include "../list/list.h"
 #include "../vector/vector.h"
+#include "../../function/function.h"
 
 namespace library {
 
@@ -25,7 +25,6 @@ namespace library {
 	template<typename type, auto hash = fnv_hash<type>>
 	class unorder_set final {
 		using size_type = unsigned int;
-		using iterator = typename list<type>::iterator;
 		template <typename key_type, typename... argument>
 		struct extract {
 			static constexpr bool able = false;
@@ -37,6 +36,9 @@ namespace library {
 				return value;
 			}
 		};
+	public:
+		using iterator = typename list<type>::iterator;
+	private:
 
 		size_type _count = 8;
 		vector<iterator> _vector;
@@ -53,51 +55,100 @@ namespace library {
 		inline ~unorder_set(void) noexcept = default;
 
 		template<typename... argument>
-		inline auto emplace(argument&&... arg) noexcept /*-> iterator*/ {
-			using extract = extract<type, std::remove_cvref_t<argument>...>;
-			type* value;
+		inline auto emplace(argument&&... arg) noexcept -> iterator {
 			iterator current;
+			using extract = extract<type, std::remove_cvref_t<argument>...>;
+			if constexpr (true == extract::able) {
+				auto const& value = extract::execute(std::forward<argument>(arg)...);
 
-			if constexpr (true == extract::able)
-				value = &extract::execute(std::forward<argument>(arg)...);
+				auto index = bucket(value);
+				auto& first = _vector[index << 1];
+				auto& last = _vector[(index << 1) + 1];
+
+				if (first != _list.end()) {
+					for (auto iter = first;; ++iter) {
+						if (*iter == value)
+							return iter;
+						if (iter == last)
+							break;
+					}
+				}
+
+				current = _list.emplace(first, std::forward<argument>(arg)...);
+				if (first == _list.end())
+					last = current;
+				first = current;
+
+
+
+			}
 			else {
 				current = iterator(_list.allocate(std::forward<argument>(arg)...));
-				value = &(*current);
-			}
 
-			auto index = bucket(*value);
-			auto& first = _vector[index << 1];
-			auto& last = _vector[(index << 1) + 1];
+				auto index = bucket(*current);
+				auto& first = _vector[index << 1];
+				auto& last = _vector[(index << 1) + 1];
 
-			//auto end = _list.end();
-			//if (first != end) {
-			//	for (auto iter = first;; ++iter) {
-			//		if (*iter == value)
-			//			return iter;
-			//		if (iter == last)
-			//			break;
-			//	}
-			//}
-			//return end;
-			//auto iter = find(current->_value);
-			//if (iter != _list.end()) {
-			//	_list.deallocate(current);
-			//	return iter;
-			//}
+				if (first != _list.end()) {
+					for (auto iter = first;; ++iter) {
+						if (*iter == *current) {
+							_list.deallocate(current._node);
+							return iter;
+						}
+						if (iter == last)
+							break;
+					}
+				}
 
-			if constexpr (true == extract::able)
-				current = _list.emplace(first, std::forward<argument>(arg)...);
-			else
 				_list.link(first._node, current._node);
 
-			if (first == _list.end())
-				last = current;
-			first = current;
+				if (first == _list.end())
+					last = current;
+				first = current;
+			}
 
 			if (1.f <= load_factor())
 				rehash(_count < 512 ? _count * 8 : _count + 1);
 			return current;
 		}
+		inline void erase(type const& value) noexcept {
+			assert(_list.size() > 0 && "called on empty");
+			auto iter = find(value);
+			erase(iter);
+		}
+		inline void erase(iterator const& iter) noexcept {
+			size_type index = bucket(*iter);
+
+			auto& first = _vector[index << 1];
+			auto& last = _vector[(index << 1) + 1];
+
+			if (first == last)
+				first = last = _list.end();
+			else if (first == iter)
+				++first;
+			else if (last == iter)
+				--last;
+			_list.erase(iter);
+		}
+		inline auto operator[](type const& value) noexcept -> type& {
+			return (*emplace(value))._second;
+		}
+		inline auto begin(void) const noexcept -> typename iterator {
+			return _list.begin();
+		}
+		inline auto begin(size_type const index) const noexcept -> iterator {
+			return _vector[index << 1];
+		}
+		inline auto end(void) const noexcept -> typename iterator {
+			return _list.end();
+		}
+		inline auto end(size_type const index) const noexcept -> iterator {
+			auto iter = _vector[(index << 1) + 1];
+			if (_list.end() != iter)
+				iter++;
+			return iter;
+		}
+
 
 		inline auto load_factor(void) const noexcept -> float {
 			return static_cast<float>(_list.size()) / _count;
@@ -105,6 +156,11 @@ namespace library {
 		inline auto bucket(type const& value) const noexcept -> size_type {
 			return hash(value) % _count;
 		}
+		inline auto bucket_count(void) const noexcept -> size_type {
+			return _count;
+		}
+		//inline auto bucket_size(size_type index) const noexcept -> size_type {
+		//}
 		inline void rehash(size_type const count) noexcept {
 			unsigned long bit;
 			_BitScanReverse64(&bit, ((count - 1) | 1));
@@ -159,6 +215,10 @@ namespace library {
 			}
 			return end;
 		}
+		inline void clear(void) noexcept {
+			_vector.assign(_count << 1, _list.end());
+			_list.clear();
+		}
 		inline auto size(void) const noexcept -> size_type {
 			return _list.size();
 		}
@@ -166,19 +226,6 @@ namespace library {
 			return  _list.empty();
 		}
 
-	private:
-		inline auto find(type const& value, iterator const first, iterator const last) const noexcept -> iterator {
-			auto end = _list.end();
-			if (first != end) {
-				for (auto iter = first;; ++iter) {
-					if (*iter == value)
-						return iter;
-					if (iter == last)
-						break;
-				}
-			}
-			return end;
-		}
 	};
 
 	//template<typename key_type, typename type, auto _hash = hash<key_type>>
