@@ -3,10 +3,11 @@
 #include "../../../memory/memory.h"
 #include "../../lockfree/pool/pool.h"
 #include "../../pair/pair.h"
+#include "../../tuple/tuple.h"
 #include "../../../function/function.h"
 
 namespace library::_thread_local {
-	template<typename type, size_t bucket_size = 4, bool placement = true, bool compress = true>
+	template<typename type, size_t bucket_size = 1024, bool placement = true, bool compress = true>
 	class pool final : public singleton<pool<type, bucket_size, compress>> {
 		friend class singleton<pool<type, bucket_size, compress>>;
 		using size_type = unsigned int;
@@ -142,12 +143,8 @@ namespace library::_thread_local {
 	public:
 		template<typename... argument>
 		inline auto allocate(argument&&... arg) noexcept -> type* {
-			if (0 == _size) {
-				std::tie()
-				auto [value, size] = _global.allocate();
-				_head = value;
-				_size = size;
-			}
+			if (0 == _size)
+				library::tie(_head, _size) = _global.allocate();
 			auto current = library::exchange(_head, _head->_next);
 			if constexpr (true == placement)
 				library::construct<type, argument...>(current->_value, std::forward<argument>(arg)...);

@@ -48,7 +48,7 @@ namespace library {
 		inline ~pool(void) noexcept {
 			while (nullptr != _head)
 #pragma warning(suppress: 6001)
-				library::deallocate<node>(exchange(_head, _head->_next));
+				library::deallocate<node>(library::exchange(_head, _head->_next));
 		}
 
 		template<typename... argument>

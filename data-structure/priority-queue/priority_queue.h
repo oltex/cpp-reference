@@ -1,0 +1,75 @@
+#pragma once
+#include <cassert>
+#include <type_traits>
+#include "../vector/vector.h"
+#include "../../function/function.h"
+
+namespace library {
+	template<typename type, auto predicate = less<type>>
+	class priority_queue final {
+	private:
+		using size_type = unsigned int;
+	public:
+		inline explicit priority_queue(void) noexcept = default;
+		inline explicit priority_queue(priority_queue const&) noexcept = default;
+		inline explicit priority_queue(priority_queue&&) noexcept = default;
+		inline auto operator=(priority_queue const&) noexcept -> priority_queue & = default;
+		inline auto operator=(priority_queue&&) noexcept -> priority_queue & = default;
+		inline ~priority_queue(void) noexcept = default;
+
+		template<typename... argument>
+		inline void emplace(argument&&... arg) noexcept {
+			_vector.emplace_back(std::forward<argument>(arg)...);
+			auto leaf = _vector.back();
+			auto child = _vector.size() - 1;
+			while (0 < child) {
+				auto parent = (child - 1) / 2;
+
+				if (predicate(_vector[parent], leaf))
+					break;
+				_vector[child] = _vector[parent];
+				child = parent;
+			}
+			_vector[child] = leaf;
+		};
+		inline void pop(void) noexcept {
+			auto leaf = _vector.back();
+			auto size = _vector.size() - 1;
+
+			size_type parent = 0;
+			for (;;) {
+				auto left = parent * 2 + 1;
+				if (size <= left)
+					break;
+				auto right = left + 1;
+
+				if (size > right && predicate(_vector[right], _vector[left]))
+					left = right;
+				if (predicate(leaf, _vector[left]))
+					break;
+
+				_vector[parent] = _vector[left];
+				parent = left;
+			}
+			_vector[parent] = leaf;
+			_vector.pop_back();
+		}
+		inline auto top(void) const noexcept -> type& {
+			return _vector.front();
+		};
+		inline void clear(void) noexcept {
+			_vector.clear();
+		}
+		inline void swap(priority_queue& rhs) noexcept {
+			library::swap(_vector, rhs._vector);
+		}
+		inline auto size(void) const noexcept -> size_type {
+			return _vector.size();
+		}
+		inline bool empty(void) const noexcept {
+			return _vector.empty();
+		}
+	private:
+		vector<type> _vector;
+	};
+}

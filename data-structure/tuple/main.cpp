@@ -2,11 +2,11 @@
 #include <stdlib.h>
 #include <crtdbg.h>
 
+#include "tuple.h"
 #include "../my_class.h"
 #include "../pair/pair.h"
 #include <iostream>
 #include <tuple>
-#include "tuple.h"
 
 auto func(void) -> library::pair<int, int> {
 	return { 10, 20 };
