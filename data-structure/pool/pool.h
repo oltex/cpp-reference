@@ -35,14 +35,14 @@ namespace library {
 		};
 		inline explicit pool(pool const&) noexcept = delete;
 		inline explicit pool(pool&& rhs) noexcept
-			: _head(exchange(rhs._head, nullptr)) {
+			: _head(library::exchange(rhs._head, nullptr)) {
 		};
 		inline auto operator=(pool const&) noexcept = delete;
 		inline auto operator=(pool&& rhs) noexcept -> pool& {
 			while (nullptr != _head)
 #pragma warning(suppress: 6001)
 				library::deallocate<node>(exchange(_head, _head->_next));
-			_head = exchange(rhs._head, nullptr);
+			_head = library::exchange(rhs._head, nullptr);
 			return *this;
 		}
 		inline ~pool(void) noexcept {
@@ -56,10 +56,8 @@ namespace library {
 			node* current;
 			if (nullptr == _head)
 				current = library::allocate<node>();
-			else {
-				current = _head;
-				_head = current->_next;
-			}
+			else 
+				current = library::exchange(_head, _head->_next);
 			if constexpr (true == placement)
 				library::construct<type, argument...>(current->_value, std::forward<argument>(arg)...);
 			return &current->_value;
@@ -68,8 +66,7 @@ namespace library {
 			if constexpr (true == placement)
 				library::destruct<type>(*value);
 			auto current = reinterpret_cast<node*>(reinterpret_cast<unsigned char*>(value) - offsetof(node, _value));
-			current->_next = _head;
-			_head = current;
+			current->_next = library::exchange(_head, current);
 		}
 	};
 }

@@ -5,23 +5,6 @@
 #include "../../function/function.h"
 
 namespace library {
-
-	//// assumes _Args have already been _Remove_cvref_t'd
-	//template <class _Key, class... _Args>
-	//struct _In_place_key_extract_set {
-	//	// by default we can't extract the key in the emplace family and must construct a node we might not use
-	//	static constexpr bool _Extractable = false;
-	//};
-	//template <class _Key>
-	//struct _In_place_key_extract_set<_Key, _Key> {
-	//	// we can extract the key in emplace if the emplaced type is identical to the key type
-	//	static constexpr bool _Extractable = true;
-	//	static const _Key& _Extract(const _Key& _Val) noexcept {
-	//		return _Val;
-	//	}
-	//};
-
-
 	template<typename type, auto hash = fnv_hash<type>>
 	class unorder_set final {
 		using size_type = unsigned int;
@@ -78,9 +61,6 @@ namespace library {
 				if (first == _list.end())
 					last = current;
 				first = current;
-
-
-
 			}
 			else {
 				current = iterator(_list.allocate(std::forward<argument>(arg)...));

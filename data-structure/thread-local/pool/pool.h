@@ -3,11 +3,12 @@
 #include "../../../memory/memory.h"
 #include "../../lockfree/pool/pool.h"
 #include "../../pair/pair.h"
+#include "../../../function/function.h"
 
 namespace library::_thread_local {
 	template<typename type, size_t bucket_size = 4, bool placement = true, bool compress = true>
-	class pool final : public design_pattern::_thread_local::singleton<pool<type, bucket_size, compress>> {
-		friend class design_pattern::_thread_local::singleton<pool<type, bucket_size, compress>>;
+	class pool final : public singleton<pool<type, bucket_size, compress>> {
+		friend class singleton<pool<type, bucket_size, compress>>;
 		using size_type = unsigned int;
 		union union_node final {
 			union_node* _next;
@@ -118,11 +119,13 @@ namespace library::_thread_local {
 		};
 
 		inline static global _global;
-		node* _head = nullptr;
-		node* _break = nullptr;
-		size_type _size = 0;
+		size_type _size;
+		node* _head;
+		node* _break;
 
-		inline explicit pool(void) noexcept = default;
+		inline explicit pool(void) noexcept
+			: _size(0), _head(nullptr), _break(nullptr) {
+		};
 		inline explicit pool(pool const&) noexcept = delete;
 		inline explicit pool(pool&&) noexcept = delete;
 		inline auto operator=(pool const&) noexcept -> pool & = delete;
@@ -140,12 +143,12 @@ namespace library::_thread_local {
 		template<typename... argument>
 		inline auto allocate(argument&&... arg) noexcept -> type* {
 			if (0 == _size) {
+				std::tie()
 				auto [value, size] = _global.allocate();
 				_head = value;
 				_size = size;
 			}
-			node* current = _head;
-			_head = current->_next;
+			auto current = library::exchange(_head, _head->_next);
 			if constexpr (true == placement)
 				library::construct<type, argument...>(current->_value, std::forward<argument>(arg)...);
 			--_size;
@@ -154,9 +157,8 @@ namespace library::_thread_local {
 		inline void deallocate(type* value) noexcept {
 			if constexpr (true == placement)
 				library::destruct<type>(*value);
-			node* current = reinterpret_cast<node*>(reinterpret_cast<unsigned char*>(value) - offsetof(node, _value));
-			current->_next = _head;
-			_head = current;
+			auto current = reinterpret_cast<node*>(reinterpret_cast<unsigned char*>(value) - offsetof(node, _value));
+			current->_next = library::exchange(_head, current);
 			++_size;
 
 			if (bucket_size == _size)

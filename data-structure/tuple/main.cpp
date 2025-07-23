@@ -7,16 +7,28 @@
 #include <iostream>
 #include <tuple>
 #include "tuple.h"
+
+auto func(void) -> library::pair<int, int> {
+	return { 10, 20 };
+}
+
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-	//std::tuple<int, int, int> std_tuple;
-	//std::tuple<my_class, my_class, my_class> std_tuple2(1, 2, 3);
-	library::data_structure::tuple<my_class, int, int> tuple(1, 2, 3);
+	std::tuple<int, int> std_tuple(2, 3);
+
+	library::tuple<my_class, int, int> tuple(1, 2, 3);
+	library::tuple<my_class, int, int> tuple2(4, 5, 6);
+	tuple = std::move(tuple2);
+	int test = tuple.get<1>();
+	auto& [result, byte, key] = tuple;
+
+	int b;
+	int c;
+	std::tie(b, c) = std_tuple;
 	//library::data_structure::tuple<my_class, int, int> tuple2(4, 5, 6);
 	//tuple = std::move(tuple2);
 
-	auto& [result, byte, key] = tuple;
 
 	//int b = byte;
 
