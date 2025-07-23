@@ -16,8 +16,12 @@ int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	//std::_Tuple_get()
 	std::tuple<int, int> std_tuple(2, 3);
+	library::tuple<my_class, int, int> tuple(1, 2, 3);
+	library::tuple<my_class, int, int> tuple2(std::move(tuple));
 
-	//library::tuple<my_class, int, int> tuple(1, 2, 3);
+
+
+	my_class b = tuple.move<0>();
 	//library::tuple<my_class, int, int> tuple2(4, 5, 6);
 	//tuple = std::move(tuple2);
 	//int test = tuple.get<1>();

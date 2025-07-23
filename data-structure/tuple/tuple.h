@@ -32,7 +32,7 @@ namespace library {
 			: tuple<rest...>(std::forward<rest_argument>(rest_arg)...), _value(std::forward<type_argument>(type_arg)) {
 		}
 		inline constexpr tuple(tuple&) noexcept = default;
-		inline explicit constexpr tuple(tuple&&) noexcept = default;
+		inline constexpr tuple(tuple&&) noexcept = default;
 		inline constexpr auto operator=(tuple& rhs) noexcept -> tuple& {
 			_value = rhs._value;
 			static_cast<tuple<rest...>&>(*this) = static_cast<tuple<rest...>&>(rhs);
@@ -57,6 +57,10 @@ namespace library {
 		inline auto get(void) noexcept -> element<index, tuple>::type& {
 			return reinterpret_cast<element<index, tuple>::tuple&>(*this)._value;
 		}
+		template <size_type index>
+		inline auto move(void) noexcept -> element<index, tuple>::type&& {
+			return static_cast<element<index, tuple>::type&&>(reinterpret_cast<element<index, tuple>::tuple&>(*this)._value);
+		}
 		inline auto get_rest(void) noexcept ->  tuple<rest...>& {
 			return reinterpret_cast<tuple<rest...>&>(*this);
 		}
@@ -70,11 +74,6 @@ namespace library {
 	inline constexpr auto forward_as_tuple(argunemt&&... arg) noexcept -> tuple<argunemt&&...> {
 		return tuple<argunemt&&...>(std::forward<argunemt>(arg)...);
 	}
-
-	struct piecewise_construct_t {
-		inline explicit piecewise_construct_t(void) noexcept = default;
-	};
-	constexpr piecewise_construct_t piecewise_construct{};
 }
 
 template <class... _Types>

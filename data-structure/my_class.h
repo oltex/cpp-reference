@@ -11,7 +11,7 @@ public:
 		: _value(rhs._value) {
 		std::cout << "복사 생성자" << std::endl;
 	}
-	inline explicit my_class(my_class&& rhs) noexcept
+	inline my_class(my_class&& rhs) noexcept
 		: _value(rhs._value) {
 		std::cout << "이동 생성자" << std::endl;
 	}

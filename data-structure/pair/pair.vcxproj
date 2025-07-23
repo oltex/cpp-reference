@@ -143,6 +143,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="A.h" />
+    <ClInclude Include="B.h" />
     <ClInclude Include="pair.h" />
   </ItemGroup>
   <ItemGroup>
