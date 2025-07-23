@@ -70,6 +70,11 @@ namespace library {
 	inline constexpr auto forward_as_tuple(argunemt&&... arg) noexcept -> tuple<argunemt&&...> {
 		return tuple<argunemt&&...>(std::forward<argunemt>(arg)...);
 	}
+
+	struct piecewise_construct_t {
+		inline explicit piecewise_construct_t(void) noexcept = default;
+	};
+	constexpr piecewise_construct_t piecewise_construct{};
 }
 
 template <class... _Types>

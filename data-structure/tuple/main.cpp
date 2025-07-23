@@ -14,8 +14,8 @@ auto func(void) -> std::pair<int, int> {
 
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-
-	//std::tuple<int, int> std_tuple(2, 3);
+	//std::_Tuple_get()
+	std::tuple<int, int> std_tuple(2, 3);
 
 	//library::tuple<my_class, int, int> tuple(1, 2, 3);
 	//library::tuple<my_class, int, int> tuple2(4, 5, 6);
@@ -26,10 +26,6 @@ int main(void) noexcept {
 	//int b;
 	//int c;
 	//std::tie(b, c) = std_tuple;
-
-	int _a, _b;
-
-	std::tie(_a, _b) = func();
 
 	//library::data_structure::tuple<my_class, int, int> tuple2(4, 5, 6);
 	//tuple = std::move(tuple2);

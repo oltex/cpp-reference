@@ -4,11 +4,6 @@
 #include "../vector/vector.h"
 #include "../../function/function.h"
 
-struct piecewise_construct_t {
-	explicit piecewise_construct_t() = default;
-};
-constexpr piecewise_construct_t piecewise_construct{};
-
 namespace library {
 	template<typename key_type, typename type, auto hash = fnv_hash<key_type>>
 	class unorder_map final {
