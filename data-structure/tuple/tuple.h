@@ -15,12 +15,12 @@ namespace library {
 		friend class tuple;
 		type _value;
 	public:
-		template <size_type index, class tuple>
+		template <size_type index, typename tuple>
 		struct element;
-		template <size_type index, class _this, class... rest>
+		template <size_type index, typename _this, typename... rest>
 		struct element<index, tuple<_this, rest...>> : element<index - 1, tuple<rest...>> {
 		};
-		template <class _this, class... rest>
+		template <typename _this, typename... rest>
 		struct element<0, tuple<_this, rest...>> {
 			using type = _this;
 			using tuple = tuple<_this, rest...>;
@@ -64,7 +64,11 @@ namespace library {
 
 	template <typename... argunemt>
 	inline constexpr auto tie(argunemt&... arg) noexcept -> tuple<argunemt&...> {
-		return  tuple<argunemt&...>(arg...);
+		return tuple<argunemt&...>(arg...);
+	}
+	template <typename... argunemt>
+	inline constexpr auto forward_as_tuple(argunemt&&... arg) noexcept -> tuple<argunemt&&...> {
+		return tuple<argunemt&&...>(std::forward<argunemt>(arg)...);
 	}
 }
 

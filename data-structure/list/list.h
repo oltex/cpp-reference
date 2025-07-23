@@ -10,9 +10,15 @@
 namespace library {
 	template<typename type, auto hash>
 	class unorder_set;
+	template<typename key_type, typename type, auto hash>
+	class unorder_map;
 
 	template<typename type, typename allocator = pool<type>, bool placement = true>
 	class list final {
+		template<typename type, auto hash>
+		friend class unorder_set;
+		template<typename key_type, typename type, auto hash>
+		friend class unorder_map;
 		using size_type = unsigned int;
 		struct node final {
 			node* _prev, * _next;
@@ -24,8 +30,6 @@ namespace library {
 			inline auto operator=(node&&) noexcept = delete;
 			inline ~node(void) noexcept = delete;
 		};
-		template<typename type, auto hash>
-		friend class unorder_set;
 		size_type _size;
 		node* _head;
 		allocator::template rebind<node> _allocator;

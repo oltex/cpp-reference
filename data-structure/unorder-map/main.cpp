@@ -10,39 +10,19 @@
 #include <iostream>
 #include <Windows.h>
 
+
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-	//library::unorder_set<int> set;
-	//std::unordered_set<int> std_set;
+	std::unordered_map<int, int> std_umap;
+	std_umap.emplace(10,10);
+	library::unorder_map<my_class, int> umap;
+	umap.emplace(10, 10);
 
-	//for (int i = 0; i < 10000; ++i)
-	//	set.emplace(i);
-	//for (int i = 0; i < 10000; ++i)
-	//	std_set.emplace(i);
+	std::pair<int, int> pair;
+	library::construct(pair, 10, 10);
 
-
-	//if (set.bucket_count() != std_set.bucket_count())
-	//	__debugbreak();
-
-	//for (int i = 0; i < set.bucket_count(); ++i) {
-	//	auto set_iter = set.begin(i);
-	//	auto std_set_iter = std_set.begin(i);
-
-	//	while (set_iter != set.end(i)) {
-	//		if (*set_iter != *std_set_iter)
-	//			__debugbreak();
-	//		++set_iter;
-	//		++std_set_iter;
-	//	}
-	//}
-
-	//library::data_structure::unordered_map<int, int> map;
-	//for (int i = 0; i < 10000; ++i)
-	//	map.emplace(i, i);
-	//std::unordered_map<int, int> std_map;
-	//for (int i = 0; i < 10000; ++i)
-	//	std_map.emplace(i, i);
+	std::piecewise_construct()
 
 	return 0;
 }

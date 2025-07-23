@@ -18,9 +18,14 @@ int main(void) noexcept {
 
 	for (int i = 0; i < 10000; ++i)
 		set.emplace(i);
+	set.clear();
+	for (int i = 0; i < 10000; ++i)
+		set.emplace(i);
 	for (int i = 0; i < 10000; ++i)
 		std_set.emplace(i);
-
+	std_set.clear();
+	for (int i = 0; i < 10000; ++i)
+		std_set.emplace(i);
 
 	if (set.bucket_count() != std_set.bucket_count())
 		__debugbreak();

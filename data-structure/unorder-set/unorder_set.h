@@ -10,7 +10,7 @@ namespace library {
 		using iterator = typename list<type>::iterator;
 	private:
 		using size_type = unsigned int;
-		template <typename key_type, typename... argument>
+		template <typename type, typename... argument>
 		struct extract {
 			static constexpr bool able = false;
 		};
@@ -21,13 +21,11 @@ namespace library {
 				return value;
 			}
 		};
-		size_type _count = 8;
 		vector<iterator> _vector;
 		list<type> _list;
 	public:
-		inline explicit unorder_set(void) noexcept
-			: _count(8) {
-			rehash(_count);
+		inline explicit unorder_set(void) noexcept {
+			rehash(8);
 		}
 		inline explicit unorder_set(unorder_set const& rhs) noexcept;
 		inline explicit unorder_set(unorder_set&& rhs) noexcept;
@@ -79,20 +77,18 @@ namespace library {
 				}
 
 				_list.link(first._node, current._node);
-
 				if (first == _list.end())
 					last = current;
 				first = current;
 			}
 
 			if (1.f <= load_factor())
-				rehash(_count < 512 ? _count * 8 : _count + 1);
+				rehash((_vector.size() >> 1) < 512 ? (_vector.size() >> 1) * 8 : (_vector.size() >> 1) + 1);
 			return current;
 		}
 		inline void erase(type const& value) noexcept {
 			assert(_list.size() > 0 && "called on empty");
-			auto iter = find(value);
-			erase(iter);
+			erase(find(value));
 		}
 		inline void erase(iterator const& iter) noexcept {
 			size_type index = bucket(*iter);
@@ -123,29 +119,29 @@ namespace library {
 		inline auto end(size_type const index) const noexcept -> iterator {
 			auto iter = _vector[(index << 1) + 1];
 			if (_list.end() != iter)
-				iter++;
+				++iter;
 			return iter;
 		}
 
 		inline auto load_factor(void) const noexcept -> float {
-			return static_cast<float>(_list.size()) / _count;
+			return static_cast<float>(_list.size()) / (_vector.size() >> 1);
 		}
 		inline auto bucket(type const& value) const noexcept -> size_type {
-			return hash(value) % _count;
+			return hash(value) % (_vector.size() >> 1);
 		}
 		inline auto bucket_count(void) const noexcept -> size_type {
-			return _count;
+			return (_vector.size() >> 1);
 		}
 		//inline auto bucket_size(size_type index) const noexcept -> size_type {
 		//}
-		inline void rehash(size_type const count) noexcept {
+		inline void rehash(size_type count) noexcept {
 			unsigned long bit;
 			_BitScanReverse64(&bit, ((count - 1) | 1));
-			_count = static_cast<size_type>(1) << (1 + bit);
+			count = static_cast<size_type>(1) << (1 + bit);
 
 			auto begin = _list.begin();
 			auto end = _list.end();
-			_vector.assign(_count << 1, end);
+			_vector.assign(count << 1, end);
 
 			while (begin != end) {
 				auto current = begin++;
@@ -161,19 +157,6 @@ namespace library {
 					_list.splice(first._node, current._node, begin._node);
 				first = current;
 			}
-			//for (auto next = iter; iter != end; iter = next) {
-			//	++next;
-			//	auto index = bucket((*iter)._first);
-
-			//	auto& first = _vector[index << 1];
-			//	auto& last = _vector[(index << 1) + 1];
-
-			//	if (first == end)
-			//		last = iter;
-			//	else
-			//		_list.splice(first, iter, next);
-			//	first = iter;
-			//}
 		}
 		inline auto find(type const& value) const noexcept -> iterator {
 			auto index = bucket(value);
@@ -193,7 +176,7 @@ namespace library {
 			return end;
 		}
 		inline void clear(void) noexcept {
-			_vector.assign(_count << 1, _list.end());
+			_vector.assign(_vector.size(), _list.end());
 			_list.clear();
 		}
 		inline auto size(void) const noexcept -> size_type {
