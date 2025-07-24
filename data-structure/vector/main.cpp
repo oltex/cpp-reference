@@ -18,6 +18,11 @@ int main(void) noexcept {
 	vector.emplace_back(3);
 	vector.emplace_back(4);
 	vector.emplace_back(5);
+
+	auto iter = vector.begin();
+	library::advance(iter, 3);
+	library::advance(iter, -2);
+
 	vector.resize(3, 1);
 
 	library::vector<int> vector2;

@@ -37,7 +37,6 @@ namespace library {
 		class iterator final {
 		public:
 			node* _node;
-
 			inline explicit iterator(node* const node = nullptr) noexcept
 				: _node(node) {
 			}

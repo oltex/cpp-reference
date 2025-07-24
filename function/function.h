@@ -110,6 +110,29 @@ namespace library {
 	inline constexpr auto least_common_multiple(type_1 first, type_2... second) noexcept {
 		return least_common_multiple(first, least_common_multiple(second...));
 	}
+
+	template <typename iterator, class _Diff>
+	inline constexpr void advance(iterator& iter, _Diff offset) noexcept {
+		if constexpr (std::_Is_ranges_random_iter_v<iterator>)
+			iter += offset;
+		else {
+			for (; offset < 0; ++offset)
+				--iter;
+			for (; 0 < offset; --offset)
+				++iter;
+		}
+	}
+	template <typename iterator>
+	inline constexpr auto next(iterator iter) noexcept -> iterator {
+		library::advance(iter, 1);
+		return iter;
+	}
+	template <typename iterator>
+	inline constexpr auto prev(iterator iter) noexcept -> iterator {
+		library::advance(iter, -1);
+		return iter;
+	}
+
 }
 
 //_CONSTEXPR20 void swap(_Ty& _Left, _Ty& _Right) noexcept(
