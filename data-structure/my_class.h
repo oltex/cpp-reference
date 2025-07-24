@@ -46,6 +46,5 @@ public:
 	inline void function(void) noexcept {
 		std::cout << "ÇÔ¼ö: " << _value << std::endl;
 	}
-private:
 	int _value;
 };

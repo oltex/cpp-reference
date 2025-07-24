@@ -1,9 +1,10 @@
 #pragma once
-#include "../pair/pair.h"
 #include <utility>
 #include <type_traits>
 
 namespace library {
+	template <typename type_1, typename type_2>
+	struct pair;
 	template<typename... type>
 	class tuple;
 	template<>
@@ -50,7 +51,7 @@ namespace library {
 		template <class type_1, class type_2>
 		inline auto operator=(pair<type_1, type_2>&& pair) noexcept -> tuple& {
 			_value = std::forward<type_1>(pair._first);
-			get_rest()._value = std::forward<type_2>(pair._second);
+			reinterpret_cast<tuple<rest...>&>(*this)._value = std::forward<type_2>(pair._second);
 			return *this;
 		}
 		template <size_type index>
@@ -61,18 +62,18 @@ namespace library {
 		inline auto move(void) noexcept -> element<index, tuple>::type&& {
 			return static_cast<element<index, tuple>::type&&>(reinterpret_cast<element<index, tuple>::tuple&>(*this)._value);
 		}
-		inline auto get_rest(void) noexcept ->  tuple<rest...>& {
-			return reinterpret_cast<tuple<rest...>&>(*this);
-		}
+		//inline auto get_rest(void) noexcept ->  tuple<rest...>& {
+		//	return reinterpret_cast<tuple<rest...>&>(*this);
+		//}
 	};
 
-	template <typename... argunemt>
-	inline constexpr auto tie(argunemt&... arg) noexcept -> tuple<argunemt&...> {
-		return tuple<argunemt&...>(arg...);
+	template <typename... type>
+	inline constexpr auto tie(type&... arg) noexcept -> tuple<type&...> {
+		return tuple<type&...>(arg...);
 	}
-	template <typename... argunemt>
-	inline constexpr auto forward_as_tuple(argunemt&&... arg) noexcept -> tuple<argunemt&&...> {
-		return tuple<argunemt&&...>(std::forward<argunemt>(arg)...);
+	template <typename... type>
+	inline constexpr auto forward_as_tuple(type&&... arg) noexcept -> tuple<type&&...> {
+		return tuple<type&&...>(std::forward<type>(arg)...);
 	}
 }
 
@@ -92,4 +93,3 @@ template <size_t _Index, class _This, class... _Rest>
 struct _MSVC_KNOWN_SEMANTICS std::tuple_element<_Index, library::tuple<_This, _Rest...>>
 	: tuple_element<_Index - 1, tuple<_Rest...>> {
 };
-

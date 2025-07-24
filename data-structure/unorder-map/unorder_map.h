@@ -1,5 +1,6 @@
 #pragma once
 #include "../pair/pair.h"
+#include "../tuple/tuple.h"
 #include "../list/list.h"
 #include "../vector/vector.h"
 #include "../../function/function.h"

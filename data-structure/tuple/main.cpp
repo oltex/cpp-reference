@@ -3,25 +3,26 @@
 #include <crtdbg.h>
 
 #include "tuple.h"
-#include "../my_class.h"
 #include "../pair/pair.h"
+#include "../my_class.h"
 #include <iostream>
 #include <tuple>
 
-auto func(void) -> std::pair<int, int> {
-	return { 10, 20 };
+auto func(void) -> library::pair<int, int> {
+	return library::pair<int, int>(10, 20);
 }
 
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	//std::_Tuple_get()
 	std::tuple<int, int> std_tuple(2, 3);
-	library::tuple<my_class, int, int> tuple(1, 2, 3);
-	library::tuple<my_class, int, int> tuple2(std::move(tuple));
+	library::tuple<int, int> tuple(1, 2);
+	//library::tuple<my_class, int, int> tuple2(std::move(tuple));
 
+	int _a;
+	int _b;
+	library::tie(_a, _b) = func();
 
-
-	my_class b = tuple.move<0>();
 	//library::tuple<my_class, int, int> tuple2(4, 5, 6);
 	//tuple = std::move(tuple2);
 	//int test = tuple.get<1>();
