@@ -2,7 +2,7 @@
 #include "../../function/function.h"
 
 namespace library {
-	template<typename iterator, auto predicate = library::less<>>
+	template<typename iterator, auto predicate = library::less<decltype(*std::declval<iterator>())>>
 	inline void select_sort(iterator first, iterator last) {
 		for (auto iter = first; iter != last; ++iter) {
 			auto minimum = iter;
