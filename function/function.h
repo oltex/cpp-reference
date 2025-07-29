@@ -18,16 +18,16 @@ namespace library {
 	}
 
 	template<typename type>
-	inline constexpr auto less(type const& source, type const& destination) noexcept {
-		return source < destination;
+	inline constexpr auto less(type const& left, type const& right) noexcept {
+		return left < right;
 	}
 	template<typename type>
-	inline constexpr auto greater(type const& source, type const& destination) noexcept {
-		return destination < source;
+	inline constexpr auto greater(type const& left, type const& right) noexcept {
+		return right < left;
 	}
 	template<typename type>
-	inline constexpr auto ordering(type const& source, type const& destination) noexcept {
-		return source <=> destination;
+	inline constexpr auto ordering(type const& left, type const& right) noexcept {
+		return left <=> right;
 	}
 
 	template <class type, class other = type>

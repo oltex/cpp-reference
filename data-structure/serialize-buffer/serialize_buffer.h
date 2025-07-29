@@ -3,9 +3,9 @@
 #include <memory>
 #include <string>
 #include <string_view>
-#include "../../system/memory/memory.h"
+#include "../../memory/memory.h"
 
-namespace library::data_structure {
+namespace library {
 	class serialize_buffer final {
 	private:
 		using byte = unsigned char;
@@ -36,7 +36,7 @@ namespace library::data_structure {
 		inline auto operator=(serialize_buffer const& rhs) noexcept -> serialize_buffer&;
 		inline auto operator=(serialize_buffer&& rhs) noexcept -> serialize_buffer&;
 		inline ~serialize_buffer(void) noexcept {
-			system::memory::deallocate<byte>(_array);
+			library::deallocate<byte>(_array);
 		};
 
 		template<typename type>
@@ -164,7 +164,7 @@ namespace library::data_structure {
 #include <string>
 #include <string_view>
 
-namespace library::data_structure {
+namespace library {
 	class serialize_view final {
 	private:
 		using byte = unsigned char;

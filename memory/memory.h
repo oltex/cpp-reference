@@ -27,9 +27,11 @@ namespace library {
 		else
 			return reinterpret_cast<type*>(::_aligned_malloc(sizeof(type) * count, alignof(type)));
 	}
-
 	inline auto reallocate(void* pointer, size_t const size) noexcept -> void* {
-		return reinterpret_cast<void*>(realloc(pointer, size));
+		return reinterpret_cast<void*>(::realloc(pointer, size));
+	}
+	inline auto reallocate(void* pointer, size_t const size, size_t const align) noexcept -> void* {
+		return reinterpret_cast<void*>(::_aligned_realloc(pointer, size, align));
 	}
 	template<typename type>
 		requires (!std::is_void_v<type>)
@@ -39,9 +41,11 @@ namespace library {
 		else
 			return reinterpret_cast<type*>(::_aligned_realloc(pointer, sizeof(type) * count, alignof(type)));
 	}
-
 	inline auto deallocate(void* const pointer) noexcept {
 		::free(pointer);
+	}
+	inline auto deallocate(void* const pointer, size_t const align) noexcept {
+		::_aligned_free(pointer);
 	}
 	template<typename type>
 		requires (!std::is_void_v<type>)
@@ -50,6 +54,10 @@ namespace library {
 			::free(pointer);
 		else
 			::_aligned_free(pointer);
+	}
+
+	inline auto memory_copy(void* const destine, void const* const source, size_t const size) noexcept -> void* {
+		return ::memcpy(destine, source, size);
 	}
 
 	template<typename type, typename... argument>
