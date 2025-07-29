@@ -35,6 +35,7 @@ int main(void) noexcept {
 
 	library::select_sort(list.begin(), list.end());
 
+	std::less<int> a;
 
 	return 0;
 }
