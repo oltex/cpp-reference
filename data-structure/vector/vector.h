@@ -53,14 +53,10 @@ namespace library {
 		}
 
 		template<typename... argument>
-		inline auto emplace_back(argument&&... arg) noexcept -> type& {
-			return *emplace(end(), std::forward<argument>(arg)...);
-		}
-		template<typename... argument>
 		inline auto emplace(iterator iter, argument&&... arg) noexcept -> iterator {
 			if (_size >= _capacity) {
 				auto index = iter - begin();
-				reserve(library::maximum(static_cast<size_type>(_capacity * 1.5f), _capacity + 1));
+				reserve(library::maximum(static_cast<size_type>(_capacity * 1.5f), _size + 1));
 				iter = begin() + index;
 			}
 			library::memory_move(iter + 1, iter, end() - iter);
@@ -69,8 +65,9 @@ namespace library {
 			++_size;
 			return iter;
 		}
-		inline void pop_back(void) noexcept {
-			erase(end() - 1);
+		template<typename... argument>
+		inline auto emplace_back(argument&&... arg) noexcept -> type& {
+			return *emplace(end(), std::forward<argument>(arg)...);
 		}
 		inline auto erase(iterator iter) noexcept -> iterator {
 			assert(_size > 0 && "called on empty");
@@ -81,6 +78,9 @@ namespace library {
 			--_size;
 			return iter;
 		}
+		inline void pop_back(void) noexcept {
+			erase(end() - 1);
+		}
 		inline void assign(size_type const size, type const& value) noexcept {
 			clear();
 			if (size > _capacity)
@@ -89,6 +89,12 @@ namespace library {
 				emplace_back(value);
 		}
 
+		inline auto begin(void) const noexcept -> iterator {
+			return _array;
+		}
+		inline auto end(void) const noexcept -> iterator {
+			return _array + _size;
+		}
 		inline auto front(void) const noexcept ->type& {
 			assert(_size > 0 && "called on empty");
 			return _array[0];
@@ -100,12 +106,6 @@ namespace library {
 		inline auto operator[](size_type const index) const noexcept ->type& {
 			assert(index < _size && "index out of range");
 			return _array[index];
-		}
-		inline auto begin(void) const noexcept -> iterator {
-			return _array;
-		}
-		inline auto end(void) const noexcept -> iterator {
-			return _array + _size;
 		}
 
 		inline void reserve(size_type const capacity) noexcept {

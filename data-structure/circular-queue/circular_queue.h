@@ -36,7 +36,7 @@ namespace library {
 		inline auto emplace(argument&&... arg) noexcept -> type& {
 			if constexpr (true == resize) {
 				if (full())
-					reserve(maximum(static_cast<size_type>(capacity() * 1.5f), size() + 1));
+					reserve(maximum(static_cast<size_type>(_capacity * 1.5f), size() + 2));
 			}
 			else
 				assert(full() && "called on full");
@@ -69,17 +69,16 @@ namespace library {
 			library::swap(_rear, rhs._rear);
 			library::swap(_array, rhs._array);
 		}
-		inline void reserve(size_type capacity) noexcept {
-			capacity += 1;
+		inline void reserve(size_type const capacity) noexcept {
 			if (_capacity < capacity) {
 				size_type size_ = size();
 				size_type once = _capacity - _front;
 				type* array_ = library::allocate<type>(capacity);
 				if (size_ <= once)
-					memcpy(array_, _array + _front, sizeof(type) * size_);
+					library::memory_copy(array_, _array + _front, size_);
 				else {
-					memcpy(array_, _array + _front, sizeof(type) * once);
-					memcpy(array_ + once, _array, sizeof(type) * (size_ - once));
+					library::memory_copy(array_, _array + _front, once);
+					library::memory_copy(array_ + once, _array, size_ - once);
 				}
 				library::deallocate<type>(_array);
 
@@ -96,7 +95,7 @@ namespace library {
 			return (_front + _capacity - (_rear + 1)) % _capacity;
 		}
 		inline auto capacity(void) const noexcept -> size_type {
-			return _capacity - 1;
+			return _capacity;
 		}
 		inline bool empty(void) const noexcept {
 			return _front == _rear;

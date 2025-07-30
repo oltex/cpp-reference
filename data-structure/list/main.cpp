@@ -14,8 +14,8 @@
 
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	std::list<int> std_list(;
-
+	std::list<int> std_list;
+	auto& tt = std_list.emplace_back(10);
 	library::list<int, library::pool<int>> list;
 	list.emplace_back(30);
 	list.emplace_front(20);

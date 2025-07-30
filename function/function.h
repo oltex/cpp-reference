@@ -111,8 +111,8 @@ namespace library {
 		return least_common_multiple(first, least_common_multiple(second...));
 	}
 
-	template <typename iterator, class _Diff>
-	inline constexpr void advance(iterator& iter, _Diff offset) noexcept {
+	template <typename iterator>
+	inline constexpr void advance(iterator& iter, size_t offset) noexcept {
 		if constexpr (std::_Is_ranges_random_iter_v<iterator>)
 			iter += offset;
 		else {
@@ -133,6 +133,10 @@ namespace library {
 		return iter;
 	}
 
+
+	inline auto string_length(char const* const character) noexcept -> size_t {
+		return ::strlen(character);
+	}
 }
 
 //_CONSTEXPR20 void swap(_Ty& _Left, _Ty& _Right) noexcept(

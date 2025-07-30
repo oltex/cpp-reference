@@ -3,7 +3,7 @@
 #include <iostream>
 int main(void) noexcept {
 	std::string std_string;
-	std_string.assign();
+	//std_string.at()
 	//std_string.insert()
 	//std_string.push_back()
 	//std_string = "hello";
@@ -12,13 +12,13 @@ int main(void) noexcept {
 	string.push_back('1');
 	string.push_back('2');
 	string.push_back('3');
-	string.pop_back();
 	string.push_back('4');
 	string.push_back('5');
-	string.pop_back();
 	string.push_back('6');
-	//string = "hello";
-	//auto a = string.begin();
+	string = "hello";
+	string += "guy";
+	auto iter = string.begin();
+	string.insert(iter, "hello");
 
 	size_t capacity = 0;
 	for (auto i = 0; i < 10000; ++i) {
