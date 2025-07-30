@@ -88,7 +88,7 @@ namespace library {
 			for (auto& iter : init_list)
 				emplace_back(iter);
 		}
-		inline explicit list(iterator const& begin, iterator const& end) noexcept
+		inline explicit list(iterator begin, iterator end) noexcept
 			: list() {
 			for (auto iter = begin; iter != end; ++iter)
 				emplace_back(*iter);
@@ -124,7 +124,7 @@ namespace library {
 			return *emplace(end(), std::forward<argument>(arg)...);
 		}
 		template<typename... argument>
-		inline auto emplace(iterator const& iter, argument&&... arg) noexcept -> iterator {
+		inline auto emplace(iterator iter, argument&&... arg) noexcept -> iterator {
 			auto current = allocate(std::forward<argument>(arg)...);
 			link(iter._node, current);
 			return iterator(current);
@@ -135,7 +135,7 @@ namespace library {
 		inline void pop_back(void) noexcept {
 			erase(--end());
 		}
-		inline auto erase(iterator const& iter) noexcept -> iterator {
+		inline auto erase(iterator iter) noexcept -> iterator {
 			assert(_size > 0 && "called on empty");
 			assert(iter._node != _head && "erase on sentinel");
 			auto current = iter._node;

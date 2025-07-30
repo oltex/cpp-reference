@@ -59,6 +59,19 @@ namespace library {
 	inline auto memory_copy(void* const destine, void const* const source, size_t const size) noexcept -> void* {
 		return ::memcpy(destine, source, size);
 	}
+	template<typename type>
+		requires (!std::is_void_v<type>)
+	inline auto memory_copy(type* const destine, type const* const source, size_t const count) noexcept -> type* {
+		return reinterpret_cast<type*>(::memcpy(destine, source, sizeof(type) * count));
+	}
+	inline auto memory_move(void* const destine, void const* const source, size_t const size) noexcept -> void* {
+		return ::memmove(destine, source, size);
+	}
+	template<typename type>
+		requires (!std::is_void_v<type>)
+	inline auto memory_move(type* const destine, type const* const source, size_t const count) noexcept -> type* {
+		return reinterpret_cast<type*>(::memmove(destine, source, sizeof(type) * count));
+	}
 
 	template<typename type, typename... argument>
 	inline auto construct(type& instance, argument&&... arg) noexcept {

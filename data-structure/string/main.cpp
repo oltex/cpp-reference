@@ -3,7 +3,14 @@
 #include <iostream>
 int main(void) noexcept {
 	std::string std_string;
+	std_string.insert()
+	//std_string.push_back()
+	//std_string = "hello";
 	library::string string;
+	auto& a = string.push_back('a');
+	a = 'b';
+	string.reserve(31);
+	string = "hello";
 
 	size_t capacity = 0;
 	for (auto i = 0; i < 10000; ++i) {

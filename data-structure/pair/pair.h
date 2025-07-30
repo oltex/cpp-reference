@@ -29,11 +29,3 @@ namespace library {
 		}
 	};
 }
-
-//_EXPORT_STD /* TRANSITION, VSO-1538698 */ template <size_t _Index, class... _Types>
-//_NODISCARD constexpr auto&& _Tuple_get(tuple<_Types...>&& _Tuple) noexcept {
-//	// used by pair's piecewise constructor
-//	using _Ty = tuple_element_t<_Index, tuple<_Types...>>;
-//	using _Ttype = typename tuple_element<_Index, tuple<_Types...>>::_Ttype;
-//	return static_cast<_Ty&&>(static_cast<_Ttype&>(_Tuple)._Myfirst._Val);
-//}

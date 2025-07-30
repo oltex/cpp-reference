@@ -49,24 +49,39 @@ namespace library {
 		}
 		inline ~vector(void) noexcept {
 			clear();
-			deallocate<type>(_array);
+			library::deallocate<type>(_array);
 		}
 
 		template<typename... argument>
 		inline auto emplace_back(argument&&... arg) noexcept -> type& {
-			if (_size >= _capacity)
-				reserve(maximum(static_cast<size_type>(_capacity * 1.5f), _size + 1));
-			type& element = _array[_size++];
+			return *emplace(end(), std::forward<argument>(arg)...);
+		}
+		template<typename... argument>
+		inline auto emplace(iterator iter, argument&&... arg) noexcept -> iterator {
+			if (_size >= _capacity) {
+				auto index = iter - begin();
+				reserve(library::maximum(static_cast<size_type>(_capacity * 1.5f), _capacity + 1));
+				iter = begin() + index;
+			}
+			library::memory_move(iter + 1, iter, end() - iter);
 			if constexpr (true == placement)
-				library::construct(element, std::forward<argument>(arg)...);
-			return element;
+				library::construct(*iter, std::forward<argument>(arg)...);
+			++_size;
+			return iter;
 		}
 		inline void pop_back(void) noexcept {
-			assert(_size > 0 && "called on empty");
-			--_size;
-			if constexpr (true == placement)
-				library::destruct(_array[_size]);
+			erase(end() - 1);
 		}
+		template<typename... argument>
+		inline auto erase(iterator iter) noexcept -> iterator {
+			assert(_size > 0 && "called on empty");
+			if constexpr (true == placement)
+				library::destruct(*iter);
+			library::memory_move(iter, iter + 1, end() - (iter + 1));
+			--_size;
+			return iter;
+		}
+
 		inline auto front(void) const noexcept ->type& {
 			assert(_size > 0 && "called on empty");
 			return _array[0];
