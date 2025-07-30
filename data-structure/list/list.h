@@ -116,24 +116,18 @@ namespace library {
 		}
 
 		template<typename... argument>
+		inline auto emplace(iterator iter, argument&&... arg) noexcept -> iterator {
+			auto current = allocate(std::forward<argument>(arg)...);
+			link(iter._node, current);
+			return iterator(current);
+		}
+		template<typename... argument>
 		inline auto emplace_front(argument&&... arg) noexcept -> type& {
 			return *emplace(begin(), std::forward<argument>(arg)...);
 		}
 		template<typename... argument>
 		inline auto emplace_back(argument&&... arg) noexcept -> type& {
 			return *emplace(end(), std::forward<argument>(arg)...);
-		}
-		template<typename... argument>
-		inline auto emplace(iterator iter, argument&&... arg) noexcept -> iterator {
-			auto current = allocate(std::forward<argument>(arg)...);
-			link(iter._node, current);
-			return iterator(current);
-		}
-		inline void pop_front(void) noexcept {
-			erase(begin());
-		}
-		inline void pop_back(void) noexcept {
-			erase(--end());
 		}
 		inline auto erase(iterator iter) noexcept -> iterator {
 			assert(_size > 0 && "called on empty");
@@ -148,6 +142,12 @@ namespace library {
 			deallocate(current);
 			--_size;
 			return iterator(next);
+		}
+		inline void pop_front(void) noexcept {
+			erase(begin());
+		}
+		inline void pop_back(void) noexcept {
+			erase(--end());
 		}
 
 		inline auto front(void) const noexcept -> type& {

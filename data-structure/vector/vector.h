@@ -72,14 +72,21 @@ namespace library {
 		inline void pop_back(void) noexcept {
 			erase(end() - 1);
 		}
-		template<typename... argument>
 		inline auto erase(iterator iter) noexcept -> iterator {
 			assert(_size > 0 && "called on empty");
+
 			if constexpr (true == placement)
 				library::destruct(*iter);
 			library::memory_move(iter, iter + 1, end() - (iter + 1));
 			--_size;
 			return iter;
+		}
+		inline void assign(size_type const size, type const& value) noexcept {
+			clear();
+			if (size > _capacity)
+				reserve(size);
+			while (_size != size)
+				emplace_back(value);
 		}
 
 		inline auto front(void) const noexcept ->type& {
@@ -119,13 +126,6 @@ namespace library {
 			else
 				while (size != _size)
 					pop_back();
-		}
-		inline void assign(size_type const size, type const& value) noexcept {
-			clear();
-			if (size > _capacity)
-				reserve(size);
-			while (_size != size)
-				emplace_back(value);
 		}
 		inline void swap(vector& rhs) noexcept {
 			library::swap(_size, rhs._size);
