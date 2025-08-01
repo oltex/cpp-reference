@@ -89,8 +89,7 @@ namespace library {
 		inline auto get(void) const noexcept -> type* {
 			return _pointer;
 		}
-		template <class type>
-		friend inline bool operator==(share_pointer<type> const& lhs, nullptr_t) noexcept {
+		inline friend bool operator==(share_pointer const& lhs, nullptr_t) noexcept {
 			return lhs._pointer == nullptr;
 		}
 	};

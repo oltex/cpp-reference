@@ -4,7 +4,7 @@
 #include "../../function/function.h"
 
 namespace library {
-	template<typename type = char, auto sso = 3> //small string optimization
+	template<typename type = char, auto sso = 16> //small string optimization
 		requires (std::is_same_v<type, char> || std::is_same_v<type, wchar_t>)
 	class string final {
 		using size_type = unsigned int;

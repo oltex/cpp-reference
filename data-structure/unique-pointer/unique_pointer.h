@@ -61,8 +61,7 @@ namespace library {
 		inline void reset(void) noexcept {
 			_pointer = nullptr;
 		}
-		template <class type>
-		friend inline bool operator==(unique_pointer<type> const& value, nullptr_t) noexcept {
+		inline friend bool operator==(unique_pointer const& value, nullptr_t) noexcept {
 			return value._pointer == nullptr;
 		}
 	};

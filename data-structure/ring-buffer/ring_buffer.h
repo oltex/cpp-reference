@@ -1,15 +1,17 @@
 #pragma once
 #include <memory>
-#include "../../system-component/memory/memory.h"
+#include "../../memory/memory.h"
 
-namespace library::data_structure {
+namespace library {
 	class ring_buffer final {
-	private:
 		using byte = unsigned char;
 		using size_type = unsigned int;
+		size_type _capacity = 0;
+		size_type _front = 0, _rear = 0;
+		byte* _array = nullptr;
 	public:
 		inline explicit ring_buffer(void) noexcept {
-			_array = system::memory::allocate<byte>(1025);
+			_array = library::allocate<byte>(1025);
 			_capacity = 1025;
 		};
 		inline explicit ring_buffer(ring_buffer const& rhs) noexcept
@@ -27,7 +29,7 @@ namespace library::data_structure {
 		inline auto operator=(ring_buffer const& rhs) noexcept -> ring_buffer&;
 		inline auto operator=(ring_buffer&& rhs) noexcept -> ring_buffer&;
 		inline ~ring_buffer(void) noexcept {
-			system::memory::deallocate<byte>(_array);
+			library::deallocate<byte>(_array);
 		}
 	public:
 		inline auto push(byte* const buffer, size_type length) noexcept -> size_type {
@@ -74,7 +76,7 @@ namespace library::data_structure {
 		inline void reserve(size_type capacity) noexcept {
 			size_type _size = size();
 			if (_size < capacity) {
-				byte* array_ = system::memory::allocate<byte>(capacity);
+				byte* array_ = library::allocate<byte>(capacity);
 
 				size_type once = _capacity - _front;
 				if (_size <= once)
@@ -85,7 +87,7 @@ namespace library::data_structure {
 					memcpy(array_ + once, _array, _size - once);
 				}
 
-				system::memory::deallocate<byte>(_array);
+				library::deallocate<byte>(_array);
 				_array = array_;
 				_capacity = capacity;
 				_front = 0;
@@ -135,9 +137,5 @@ namespace library::data_structure {
 		inline auto get_rear(void) const noexcept -> size_type {
 			return _rear;
 		}
-	private:
-		size_type _capacity = 0;
-		size_type _front = 0, _rear = 0;
-		byte* _array = nullptr;
 	};
 }
