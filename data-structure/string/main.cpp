@@ -1,35 +1,58 @@
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+
 #include "string.h"
 #include <string>
 #include <iostream>
 int main(void) noexcept {
-	std::string std_string;
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
+	std::wstring std_string;
+	std::wstring std_string2;
+	std_string.push_back('a');
 	//std_string.at()
 	//std_string.insert()
 	//std_string.push_back()
 	//std_string = "hello";
-	library::string string;
+
+	library::string<wchar_t> string;
 	//string.reserve(31);
 	string.push_back('1');
-	string.push_back('2');
-	string.push_back('3');
-	string.push_back('4');
-	string.push_back('5');
-	string.push_back('6');
-	string = "hello";
-	string += "guy";
-	auto iter = string.begin();
-	string.insert(iter, "hello");
+	string.push_back(L'2');
+	string.push_back(L'3');
+	string.push_back(L'4');
+	string.push_back(L'5');
+	string.push_back(L'6');
+	string = L"hello";
+	string += L"guy";
+	//auto iter = string.begin();
+	//string.insert(iter, L"hello");
 
-	size_t capacity = 0;
-	for (auto i = 0; i < 10000; ++i) {
-		size_t new_capacity = std_string.capacity();
-		if (capacity != new_capacity) {
-			std::cout << new_capacity << std::endl;
-			capacity = new_capacity;
-		}
-		std_string += 'a';
+	library::string<wchar_t> string2(string);// = L"¹Ý°©°í";
+	string2 = L"ggggg ggggg ggggg ggggg";
+	string2 = std::move(string);
 
+	string.push_back('1');
+	string.push_back(L'2');
+	string.push_back(L'3');
+	string.push_back(L'4');
+	string.push_back(L'5');
+	string.push_back(L'6');
+	string = L"hello";
+	string += L"guy";
+
+	if (string2 == string) {
+		int a = 10;
+	}
+	string2 = L'A';
+	if (L'B' != string2) {
+		int a = 10;
 	}
 
+
+	library::string<wchar_t> string3;
+
+	//string2.swap(string);
 	return 0;
 }

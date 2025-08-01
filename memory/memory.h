@@ -72,6 +72,14 @@ namespace library {
 	inline auto memory_move(type* const destine, type const* const source, size_t const count) noexcept -> type* {
 		return reinterpret_cast<type*>(::memmove(destine, source, sizeof(type) * count));
 	}
+	inline auto memory_compare(void const* const buffer_1, void const* const buffer_2, size_t const size) noexcept -> int {
+		return ::memcmp(buffer_1, buffer_2, size);
+	}
+	template<typename type>
+		requires (!std::is_void_v<type>)
+	inline auto memory_compare(type const* const buffer_1, type const* const buffer_2, size_t count) noexcept -> int {
+		return ::memcmp(buffer_1, buffer_2, sizeof(type) * count);
+	}
 
 	template<typename type, typename... argument>
 	inline auto construct(type& instance, argument&&... arg) noexcept {

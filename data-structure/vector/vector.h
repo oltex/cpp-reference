@@ -35,7 +35,7 @@ namespace library {
 			: vector(rhs.begin(), rhs.end()) {
 		}
 		inline explicit vector(vector&& rhs) noexcept
-			: _size(exchange(rhs._size, 0)), _capacity(exchange(rhs._capacity, 0)), _array(exchange(rhs._array, nullptr)) {
+			: _size(library::exchange(rhs._size, 0)), _capacity(library::exchange(rhs._capacity, 0)), _array(library::exchange(rhs._array, nullptr)) {
 		}
 		inline auto operator=(vector const& rhs) noexcept -> vector& {
 			assert(this != &rhs && "self-assignment");

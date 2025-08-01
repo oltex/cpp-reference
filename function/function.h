@@ -1,5 +1,6 @@
 #pragma once
 #include <utility>
+#include <type_traits>
 #include <cmath>
 
 namespace library {
@@ -133,9 +134,11 @@ namespace library {
 		return iter;
 	}
 
-
 	inline auto string_length(char const* const character) noexcept -> size_t {
 		return ::strlen(character);
+	}
+	inline auto string_length(wchar_t const* const wide_character) noexcept -> size_t {
+		return ::wcslen(wide_character);
 	}
 }
 

@@ -90,8 +90,8 @@ namespace library {
 			return _pointer;
 		}
 		template <class type>
-		friend inline bool operator==(share_pointer<type> const& rhs, nullptr_t) noexcept {
-			return rhs._pointer == nullptr;
+		friend inline bool operator==(share_pointer<type> const& lhs, nullptr_t) noexcept {
+			return lhs._pointer == nullptr;
 		}
 	};
 }
