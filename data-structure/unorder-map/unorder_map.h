@@ -38,7 +38,7 @@ namespace library {
 		inline ~unorder_map(void) noexcept = default;
 	public:
 		template<typename... argument>
-		inline auto emplace(argument&&... arg) noexcept /*-> iterator*/ {
+		inline auto emplace(argument&&... arg) noexcept -> iterator {
 			iterator current;
 
 			using extract = extract<key_type, std::remove_cvref_t<argument>...>;

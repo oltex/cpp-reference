@@ -4,9 +4,9 @@
 #include "../../function/function.h"
 #include "../../template/template.h"
 
-namespace library {
-	template<typename type = char, auto sso = 16> //small string optimization
-		requires (std::is_same_v<type, char> || std::is_same_v<type, wchar_t>)
+namespace detail {
+	template<typename type, size_t sso = 16> //small string optimization
+		requires (library::any_of_type<type, char, wchar_t>)
 	class string final {
 		using size_type = unsigned int;
 		union buffer {
@@ -220,4 +220,9 @@ namespace library {
 			}
 		}
 	};
+}
+
+namespace library {
+	using string = typename detail::string<char>;
+	using wstring = typename detail::string<wchar_t>;
 }
