@@ -162,6 +162,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "socket-address", "system\so
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "thread", "system\thread\thread.vcxproj", "{ADBC8B3A-4360-481D-B579-4E42B7504BF6}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "serialize_view", "data-structure\serialize_view\serialize_view.vcxproj", "{7A374A9A-2802-4133-A132-2D3FA1682817}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -714,6 +716,14 @@ Global
 		{ADBC8B3A-4360-481D-B579-4E42B7504BF6}.Release|x64.Build.0 = Release|x64
 		{ADBC8B3A-4360-481D-B579-4E42B7504BF6}.Release|x86.ActiveCfg = Release|Win32
 		{ADBC8B3A-4360-481D-B579-4E42B7504BF6}.Release|x86.Build.0 = Release|Win32
+		{7A374A9A-2802-4133-A132-2D3FA1682817}.Debug|x64.ActiveCfg = Debug|x64
+		{7A374A9A-2802-4133-A132-2D3FA1682817}.Debug|x64.Build.0 = Debug|x64
+		{7A374A9A-2802-4133-A132-2D3FA1682817}.Debug|x86.ActiveCfg = Debug|Win32
+		{7A374A9A-2802-4133-A132-2D3FA1682817}.Debug|x86.Build.0 = Debug|Win32
+		{7A374A9A-2802-4133-A132-2D3FA1682817}.Release|x64.ActiveCfg = Release|x64
+		{7A374A9A-2802-4133-A132-2D3FA1682817}.Release|x64.Build.0 = Release|x64
+		{7A374A9A-2802-4133-A132-2D3FA1682817}.Release|x86.ActiveCfg = Release|Win32
+		{7A374A9A-2802-4133-A132-2D3FA1682817}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -786,6 +796,7 @@ Global
 		{F86D5EB0-EF95-45DF-9447-34A047AA9051} = {1AA55DD9-5821-4C5B-980D-997F42D8264C}
 		{FBB5D986-F635-4979-9991-BC076AAC557F} = {1AA55DD9-5821-4C5B-980D-997F42D8264C}
 		{ADBC8B3A-4360-481D-B579-4E42B7504BF6} = {1AA55DD9-5821-4C5B-980D-997F42D8264C}
+		{7A374A9A-2802-4133-A132-2D3FA1682817} = {638B906C-1177-49D6-86F1-FCF8F6BED5FE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C69985D6-20AB-4E9A-AD82-08BFBE490891}
