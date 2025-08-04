@@ -6,9 +6,10 @@
 #include <MSWSock.h>
 #include <intrin.h>
 #include <optional>
-#include <string>
+#include <mutex>
 #include "../overlapped/overlapped.h"
 #include "../../data-structure/pair/pair.h"
+#include "../socket-address/socket_address.h"
 
 namespace library {
 	inline static void wsa_start_up(void) noexcept {
@@ -42,6 +43,16 @@ namespace library {
 				}
 			}
 		}
+		inline explicit socket(ADDRESS_FAMILY const address_family, int const type, int const protocol, unsigned long const flag) noexcept
+			: _socket(::WSASocket(address_family, type, protocol, nullptr, 0, flag)) {
+			if (_socket == INVALID_SOCKET) {
+				switch (::WSAGetLastError()) {
+				case WSANOTINITIALISED:
+				default:
+					__debugbreak();
+				}
+			}
+		}
 		inline explicit socket(SOCKET const sock) noexcept
 			: _socket(sock) {
 		}
@@ -65,6 +76,16 @@ namespace library {
 			_socket = ::socket(address_family, type, protocol);
 			if (INVALID_SOCKET == _socket) {
 				switch (GetLastError()) {
+				case WSANOTINITIALISED:
+				default:
+					__debugbreak();
+				}
+			}
+		}
+		inline void create(ADDRESS_FAMILY const address_family, int const type, int const protocol, unsigned long const flag) noexcept {
+			_socket = ::WSASocket(address_family, type, protocol, nullptr, 0, flag);
+			if (_socket == INVALID_SOCKET) {
+				switch (::WSAGetLastError()) {
 				case WSANOTINITIALISED:
 				default:
 					__debugbreak();
@@ -110,9 +131,10 @@ namespace library {
 					__debugbreak();
 				}
 			}
-			return library::pair<socket, socket_address_ipv4>(socket(sock), socket_address);
+			return library::pair<socket, socket_address_ipv4>(sock, socket_address);
 		}
 		inline auto accept_ex(socket& socket_, void* output_buffer, unsigned long address_length, unsigned long remote_address_length, overlapped& overlapeed_) noexcept {
+			std::call_once(_accept_ex_once, &socket::wsa_io_control_acccept_ex, this);
 			if (FALSE == _accept_ex(_socket, socket_.data(), output_buffer, 0, address_length, remote_address_length, nullptr, &overlapeed_.data())) {
 				switch (WSAGetLastError()) {
 				case ERROR_IO_PENDING:
@@ -302,6 +324,11 @@ namespace library {
 			unsigned long byte_returned;
 			wsa_io_control(SIO_GET_EXTENSION_FUNCTION_POINTER, reinterpret_cast<void*>(&guid), sizeof(GUID), reinterpret_cast<void*>(&_disconnect_ex), sizeof(LPFN_DISCONNECTEX), byte_returned);
 		}
+		inline void wsa_io_control_get_accept_ex_sockaddr(void) noexcept {
+			GUID guid = WSAID_GETACCEPTEXSOCKADDRS;
+			unsigned long byte_returned;
+			wsa_io_control(SIO_GET_EXTENSION_FUNCTION_POINTER, reinterpret_cast<void*>(&guid), sizeof(GUID), reinterpret_cast<void*>(&_get_accept_ex_sockaddr), sizeof(LPFN_GETACCEPTEXSOCKADDRS), byte_returned);
+		}
 		inline void wsa_io_control(unsigned long control_code, void* in_buffer, unsigned long in_buffer_size, void* out_buffer, unsigned long out_buffer_size, unsigned long& byte_returned) noexcept {
 			if (SOCKET_ERROR == ::WSAIoctl(_socket, control_code, in_buffer, in_buffer_size, out_buffer, out_buffer_size, &byte_returned, nullptr, nullptr))
 				__debugbreak();
@@ -332,12 +359,24 @@ namespace library {
 			}
 			return socket_address;
 		}
+		inline auto get_accept_ex_socket_address(void* buffer) noexcept -> library::pair<socket_address_ipv4, socket_address_ipv4> {
+			std::call_once(_get_accept_ex_sockaddr_once, &socket::wsa_io_control_get_accept_ex_sockaddr, this);
+			library::pair<socket_address, socket_address> result;
+			sockaddr* local_sockaddr = nullptr;
+			int local_sockaddr_length = 0;
+			sockaddr* remote_sockaddr = nullptr;
+			int remote_sockaddr_length = 0;
+			_get_accept_ex_sockaddr(buffer, 0, sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16, &local_sockaddr, &local_sockaddr_length, &remote_sockaddr, &remote_sockaddr_length);
+		}
 		inline auto data(void) noexcept -> SOCKET& {
 			return _socket;
 		}
 	private:
 		SOCKET _socket;
 		inline static LPFN_ACCEPTEX _accept_ex;
+		inline static std::once_flag _accept_ex_once;
+		inline static LPFN_GETACCEPTEXSOCKADDRS _get_accept_ex_sockaddr;
+		inline static std::once_flag _get_accept_ex_sockaddr_once;
 		inline static LPFN_DISCONNECTEX _disconnect_ex;
 	};
 
