@@ -1,5 +1,6 @@
 #pragma once
 #include "../handle/handle.h"
+#include <process.h>
 #include <Windows.h>
 #include <tuple>
 #include <type_traits>
@@ -26,7 +27,7 @@ namespace library {
 			using tuple = std::tuple<std::decay_t<function>, std::decay_t<argument>...>;
 			auto copy = std::make_unique<tuple>(std::forward<function>(func), std::forward<argument>(arg)...);
 			constexpr auto proc = make<tuple>(std::make_index_sequence<1 + sizeof...(argument)>());
-			_handle = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, proc, copy.get(), flag, 0));
+			_handle = reinterpret_cast<HANDLE>(::_beginthreadex(nullptr, 0, proc, copy.get(), flag, 0));
 
 			if (_handle)
 				copy.release();
@@ -49,7 +50,7 @@ namespace library {
 			using tuple = std::tuple<std::decay_t<function>, std::decay_t<argument>...>;
 			auto copy = std::make_unique<tuple>(std::forward<function>(func), std::forward<argument>(arg)...);
 			constexpr auto proc = make<tuple>(std::make_index_sequence<1 + sizeof...(argument)>());
-			_handle = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, proc, copy.get(), flag, 0));
+			_handle = reinterpret_cast<HANDLE>(::_beginthreadex(nullptr, 0, proc, copy.get(), flag, 0));
 
 			if (_handle)
 				copy.release();

@@ -28,7 +28,7 @@ int main(void) noexcept {
 	//string += L"guy";
 	//auto iter = string.begin();
 	//string.insert(iter, L"hello");
-
+	std::call_once()
 	library::wstring string2(string);// = L"¹Ý°©°í";
 	//string2 = L"ggggg ggggg ggggg ggggg";
 	//string2 = std::move(string);
