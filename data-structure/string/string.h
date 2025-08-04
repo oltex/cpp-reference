@@ -2,6 +2,7 @@
 #include <cassert>
 #include "../../memory/memory.h"
 #include "../../function/function.h"
+#include "../../template/template.h"
 
 namespace library {
 	template<typename type = char, auto sso = 16> //small string optimization
@@ -24,7 +25,7 @@ namespace library {
 			: _size(0), _capacity(sso), _buffer() {
 		};
 		template<typename argument>
-			requires (std::is_same_v<argument, type> || std::is_same_v<argument, type*> || std::is_same_v<argument, type const*>)
+			requires (library::same_type<library::remove_cp<argument>, type>)
 		inline string(argument arg) noexcept
 			: string() {
 			insert(end(), arg);
@@ -54,7 +55,7 @@ namespace library {
 		};
 
 		template<typename argument>
-			requires (std::is_same_v<argument, type> || std::is_same_v<argument, type*> || std::is_same_v<argument, type const*>)
+			requires (library::same_type<library::remove_cp<argument>, type>)
 		inline auto insert(iterator iter, argument arg) noexcept -> iterator {
 			size_type char_size;
 			if constexpr (std::is_same_v<argument, type>)
@@ -102,7 +103,7 @@ namespace library {
 			return *this;
 		}
 		template<typename argument>
-			requires (std::is_same_v<argument, type> || std::is_same_v<argument, type*> || std::is_same_v<argument, type const*>)
+			requires (library::same_type<library::remove_cp<argument>, type>)
 		inline auto append(argument character) noexcept -> string& {
 			insert(end(), character);
 			return *this;
@@ -114,7 +115,7 @@ namespace library {
 			return 0 == library::memory_compare(const_cast<string&>(*this).data(), const_cast<string&>(rhs).data(), _size);
 		}
 		template<typename argument>
-			requires (std::is_same_v<argument, type> || std::is_same_v<argument, type*> || std::is_same_v<argument, type const*>)
+			requires (library::same_type<library::remove_cp<argument>, type>)
 		inline friend auto operator==(string const& lhs, argument rhs) noexcept -> bool {
 			if constexpr (std::is_same_v<argument, type>) {
 				if (lhs._size != 1)
@@ -134,7 +135,7 @@ namespace library {
 			return result;
 		}
 		template<typename argument>
-			requires (std::is_same_v<argument, type> || std::is_same_v<argument, type*> || std::is_same_v<argument, type const*>)
+			requires (library::same_type<library::remove_cp<argument>, type>)
 		inline friend auto operator+(string const& lhs, argument rhs) noexcept -> string {
 			string result;
 			size_type char_size;
@@ -147,7 +148,7 @@ namespace library {
 			return result;
 		}
 		template<typename argument>
-			requires (std::is_same_v<argument, type> || std::is_same_v<argument, type*> || std::is_same_v<argument, type const*>)
+			requires (library::same_type<library::remove_cp<argument>, type>)
 		inline friend auto operator+(argument lhs, string const& rhs) noexcept -> string {
 			string result;
 			size_type char_size;

@@ -16,7 +16,7 @@ int main(void) noexcept {
 	//std_string.push_back()
 	//std_string = "hello";
 
-	library::string<wchar_t> string;
+	library::string<wchar_t> string(L"AAA");
 	//string.reserve(31);
 	string.push_back('1');
 	string.push_back(L'2');
