@@ -1,17 +1,4 @@
 #pragma once
-#pragma comment(lib,"ws2_32.lib")
-#include <WinSock2.h>
-#include "../system/socket/socket.h"
-#include "../system/handle/handle.h"
-#include "../data-structure/tuple/tuple.h"
-
-//overlaped용 헤더
-//#pragma once
-////#include "../multi/event.h"
-//#include <Windows.h>
-
-//rio용 헤더
-//#pragma once
 //#pragma comment(lib,"ws2_32.lib")
 //#include <WinSock2.h>
 //#pragma comment(lib, "mswsock.lib")
@@ -22,10 +9,9 @@
 
 
 namespace library {
-
-	//	class registered_inputouput final {
+	//	class register_inputouput final {
 	//	public:
-	//		inline explicit registered_inputouput(void) noexcept {
+	//		inline explicit register_inputouput(void) noexcept {
 	//			wsa_start_up();
 	//			socket _socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
