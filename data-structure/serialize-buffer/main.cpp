@@ -10,7 +10,7 @@
 
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	library::data_structure::serialize_buffer serialize_buffer;
+	library::serialize_buffer<false> serialize_buffer;
 	{
 		serialize_buffer << 0xaaaaaaaa << true << 'c';
 		//if (!serialize_buffer)
@@ -20,9 +20,10 @@ int main(void) noexcept {
 		unsigned int a;
 		bool b;
 		char c;
-		std::string str;
+		//std::string str;
 
 		serialize_buffer >> a >> b >> c;
+		int d = 10;
 		//if(!serialize_buffer)
 		//	__debugbreak();
 	}

@@ -73,9 +73,6 @@ namespace library {
 			inline bool operator==(iterator const& rhs) const noexcept {
 				return _node == rhs._node;
 			}
-			inline bool operator!=(iterator const& rhs) const noexcept {
-				return _node != rhs._node;
-			}
 		};
 
 		inline explicit list(void) noexcept

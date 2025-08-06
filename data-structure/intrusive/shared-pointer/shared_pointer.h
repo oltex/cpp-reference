@@ -2,70 +2,60 @@
 #include <malloc.h>
 #include <utility>
 #include <type_traits>
+#include "../../../function/function.h"
 
 namespace library::intrusive {
 	template<size_t index>
-	class shared_pointer_hook {
-	private:
+	class share_pointer_hook {
+		using size_type = unsigned int;
 		template<typename type, size_t>
-		friend class shared_pointer;
-		struct reference final {
-		private:
-			using size_type = unsigned int;
-		public:
-			size_type _use;
-			size_type _weak;
-		};
+		friend class share_pointer;
+		size_type _use;
 	public:
-		inline explicit shared_pointer_hook(void) noexcept = default;
-		inline explicit shared_pointer_hook(shared_pointer_hook const&) noexcept = default;
-		inline explicit shared_pointer_hook(shared_pointer_hook&&) noexcept = default;
-		inline auto operator=(shared_pointer_hook const&) noexcept -> shared_pointer_hook & = default;
-		inline auto operator=(shared_pointer_hook&&) noexcept -> shared_pointer_hook & = default;
-		inline ~shared_pointer_hook(void) noexcept = default;
-
-	private:
-		reference _reference;
+		inline explicit share_pointer_hook(void) noexcept = default;
+		inline explicit share_pointer_hook(share_pointer_hook const&) noexcept = default;
+		inline explicit share_pointer_hook(share_pointer_hook&&) noexcept = default;
+		inline auto operator=(share_pointer_hook const&) noexcept -> share_pointer_hook & = default;
+		inline auto operator=(share_pointer_hook&&) noexcept -> share_pointer_hook & = default;
+		inline ~share_pointer_hook(void) noexcept = default;
 	};
 
 	template<typename type, size_t index>
-	class shared_pointer final {
-	private:
+	class share_pointer final {
 		using size_type = unsigned int;
-		using hook = shared_pointer_hook<index>;
+		using hook = share_pointer_hook<index>;
 		static_assert(std::is_base_of<hook, type>::value);
+		hook* _pointer;
 	public:
-		inline constexpr explicit shared_pointer(void) noexcept
+		inline constexpr explicit share_pointer(void) noexcept
 			: _pointer(nullptr) {
 		}
-		inline constexpr shared_pointer(nullptr_t) noexcept
+		inline constexpr share_pointer(nullptr_t) noexcept
 			: _pointer(nullptr) {
 		};
-		inline explicit shared_pointer(type* value) noexcept {
+		inline explicit share_pointer(type* value) noexcept {
 			_pointer = static_cast<hook*>(value);
-			_pointer->_reference._use = 1;
-			_pointer->_reference._weak = 0;
+			_InterlockedExchange(&_pointer->_use, 1);
 		}
-		inline shared_pointer(shared_pointer const& rhs) noexcept
+		inline share_pointer(share_pointer const& rhs) noexcept
 			: _pointer(rhs._pointer) {
 			if (nullptr != _pointer)
-				++_pointer->_reference._use;
+				_InterlockedIncrement(&_pointer->_use);
 		};
-		inline explicit shared_pointer(shared_pointer&& rhs) noexcept
-			: _pointer(rhs._pointer) {
-			rhs._pointer = nullptr;
+		inline explicit share_pointer(share_pointer&& rhs) noexcept
+			: _pointer(library::exchange(rhs._pointer, nullptr)) {
 		};
-		inline auto operator=(shared_pointer const& rhs) noexcept -> shared_pointer& {
+		inline auto operator=(share_pointer const& rhs) noexcept -> share_pointer& {
 			shared_pointer(rhs).swap(*this);
 			return *this;
 		}
-		inline auto operator=(shared_pointer&& rhs) noexcept -> shared_pointer& {
+		inline auto operator=(share_pointer&& rhs) noexcept -> share_pointer& {
 			shared_pointer(std::move(rhs)).swap(*this);
 			return *this;
 		};
-		inline ~shared_pointer(void) noexcept {
-			if (nullptr != _pointer && 0 == --_pointer->_reference._use)
-				static_cast<type*>(_pointer)->destructor();
+		inline ~share_pointer(void) noexcept {
+			if (nullptr != _pointer && 0 == _InterlockedDecrement(&_pointer->_use))
+				static_cast<type*>(_pointer)->template destructor<index>();
 		}
 
 		inline auto operator*(void) noexcept -> type& {
@@ -74,32 +64,26 @@ namespace library::intrusive {
 		inline auto operator->(void) noexcept -> type* {
 			return static_cast<type*>(_pointer);
 		}
-
-		inline void swap(shared_pointer& rhs) noexcept {
-			auto temp = _pointer;
-			_pointer = rhs._pointer;
-			rhs._pointer = temp;
+		inline explicit operator bool() const noexcept {
+			return nullptr != _pointer;
+		}
+		inline void swap(share_pointer& rhs) noexcept {
+			library::swap(_pointer, rhs._pointer);
 		}
 		inline auto use_count(void) const noexcept -> size_type {
-			return _pointer->_reference._use;
+			return _pointer._use;
 		}
 		inline auto get(void) const noexcept -> type* {
 			return static_cast<type*>(_pointer);
 		}
-		//inline auto data(void) noexcept -> hook* {
-		//	return _pointer;
-		//}
 		inline void set(type* value) noexcept {
 			_pointer = static_cast<hook*>(value);
 		}
 		inline void reset(void) noexcept {
 			_pointer = nullptr;
 		}
-		template <class type, size_t index>
-		friend inline bool operator==(shared_pointer<type, index> const& rhs, nullptr_t) noexcept {
-			return rhs._pointer == nullptr;
+		friend inline bool operator==(share_pointer const& lhs, nullptr_t) noexcept {
+			return lhs._pointer == nullptr;
 		}
-	private:
-		hook* _pointer;
 	};
 }

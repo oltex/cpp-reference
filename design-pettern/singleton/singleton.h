@@ -24,14 +24,13 @@ namespace library::design_pattern {
 
 	template<typename type, typename trait = local_static<type>>
 	class singleton : public trait {
-	protected:
-		inline explicit singleton(void) noexcept = default;
-		inline ~singleton(void) noexcept = default;
-	private:
 		inline explicit singleton(singleton const&) noexcept = delete;
 		inline explicit singleton(singleton&&) noexcept = delete;
 		inline auto operator=(singleton const&) noexcept -> singleton & = delete;
 		inline auto operator=(singleton&&) noexcept -> singleton & = delete;
+	protected:
+		inline explicit singleton(void) noexcept = default;
+		inline ~singleton(void) noexcept = default;
 	public:
 		inline static auto instance(void) noexcept -> type& requires std::is_same<local_static<type>, trait>::value {
 			static type _instance;

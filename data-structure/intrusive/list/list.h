@@ -2,7 +2,7 @@
 #include <utility>
 #include <stdlib.h>
 #include <malloc.h>
-#include "../../../algorithm/swap/swap.h"
+#include "../../../function/function.h"
 
 namespace library::intrusive {
 	template<size_t index>
@@ -10,31 +10,36 @@ namespace library::intrusive {
 	private:
 		template<typename type, size_t>
 		friend class list;
-	private:
 		list_hook* _prev, * _next;
+	public:
+		inline explicit list_hook(void) noexcept = default;
+		inline explicit list_hook(list_hook const&) noexcept = default;
+		inline explicit list_hook(list_hook&&) noexcept = default;
+		inline auto operator=(list_hook const&) noexcept -> list_hook & = default;
+		inline auto operator=(list_hook&&) noexcept -> list_hook & = default;
+		inline ~list_hook(void) noexcept = default;
 	};
 
 	template<typename type, size_t index>
-		//requires std::is_base_of<list_hook<index>, type>::value
+	//requires std::is_base_of<list_hook<index>, type>::value
 	class list final {
-	private:
 		using size_type = unsigned int;
 		using node = list_hook<index>;
 		static_assert(std::is_base_of<node, type>::value);
+		size_type _size;
+		node _head;
 	public:
 		class iterator final {
 		public:
 			inline explicit iterator(node* const node = nullptr) noexcept
 				: _node(node) {
 			}
-			inline iterator(iterator const& rhs) noexcept
-				: _node(rhs._node) {
-			}
-			inline auto operator=(iterator const& rhs) noexcept -> iterator& {
-				_node = rhs._node;
-				return *this;
-			}
-		public:
+			inline iterator(iterator const&) noexcept = default;
+			inline explicit iterator(iterator&&) noexcept = default;
+			inline auto operator=(iterator const&) noexcept -> iterator & = default;
+			inline auto operator=(iterator&&) noexcept -> iterator & = default;
+			inline ~iterator() noexcept = default;
+
 			inline auto operator*(void) const noexcept -> type& {
 				return static_cast<type&>(*_node);
 			}
@@ -62,18 +67,20 @@ namespace library::intrusive {
 			inline bool operator==(iterator const& rhs) const noexcept {
 				return _node == rhs._node;
 			}
-			inline bool operator!=(iterator const& rhs) const noexcept {
-				return _node != rhs._node;
-			}
 		public:
 			node* _node;
 		};
-	public:
-		inline explicit list(void) noexcept {
+
+		inline explicit list(void) noexcept
+			: _size(0) {
 			_head._next = _head._prev = &_head;
 		}
+		inline explicit list(list const&) noexcept;
+		inline explicit list(list&&) noexcept;
+		inline auto operator=(list const&) noexcept -> list&;
+		inline auto operator=(list&&) noexcept -> list&;
 		inline ~list(void) noexcept = default;
-	public:
+
 		inline void push_front(type& value) noexcept {
 			insert(begin(), value);
 		}
@@ -113,7 +120,7 @@ namespace library::intrusive {
 			--_size;
 			return iterator(next);
 		}
-	public:
+
 		inline auto front(void) const noexcept -> type& {
 			return static_cast<type&>(*_head._next);
 		}
@@ -126,16 +133,15 @@ namespace library::intrusive {
 		inline auto end(void) noexcept -> iterator {
 			return iterator(&_head);
 		}
-	public:
+
 		inline void swap(list& rhs) noexcept {
-			node* next;
-			next = _head._next;
+			auto next = _head._next;
 			next->_prev = _head._prev->_next = &rhs._head;
 			next = rhs._head._next;
 			next->_prev = rhs._head._prev->_next = &_head;
 
-			algorithm::swap(_head, rhs._head);
-			algorithm::swap(_size, rhs._size);
+			library::swap(_head, rhs._head);
+			library::swap(_size, rhs._size);
 		}
 		inline void clear(void) noexcept {
 			_head._next = _head._prev = &_head;
@@ -147,8 +153,5 @@ namespace library::intrusive {
 		inline bool empty(void) const noexcept {
 			return 0 == _size;
 		}
-	private:
-		node _head;
-		size_type _size = 0;
 	};
 }

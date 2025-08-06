@@ -21,9 +21,10 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{2f13ceb2-c11a-47cf-a012-b1fa14abfbe0}</ProjectGuid>
-    <RootNamespace>interlocked</RootNamespace>
+    <ProjectGuid>{0ce5bc67-57dd-40df-a415-d94a2c63bf4a}</ProjectGuid>
+    <RootNamespace>inputoutputcompletport</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>inputoutput-complet-port</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -143,7 +144,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="interlocked.h" />
+    <ClInclude Include="inputoutput_complet_port.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

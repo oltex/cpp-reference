@@ -2,7 +2,7 @@
 #include <iostream>
 #include <memory>
 
-class my_class final : public library::data_structure::intrusive::shared_pointer_hook<1> {
+class my_class final : public library::intrusive::share_pointer_hook<1> {
 public:
 	inline explicit my_class(int value) noexcept
 		: _value(value) {
@@ -35,14 +35,10 @@ public:
 		std::cout << "¼Ò¸êÀÚ" << std::endl;
 	};
 public:
-	//friend void intrusive_ptr_add_ref(MyObject* p) {
-	//	++p->ref_count;
-	//}
-	//friend void intrusive_ptr_release(MyObject* p) {
-	//	if(--p->ref_count);
-	//    delete();
-	//}
-	inline void destructor(void) noexcept {
+	template<size_t index>
+	inline void destructor(void) noexcept;
+	template<>
+	inline void destructor<1>(void) noexcept {
 		delete this;
 	}
 public:
@@ -51,7 +47,7 @@ public:
 
 int main(void) noexcept {
 	my_class* myclass = new my_class(1);
-	library::data_structure::intrusive::shared_pointer<my_class, 1> shared_pointer(myclass);
+	library::intrusive::share_pointer<my_class, 1> shared_pointer(myclass);
 
 	return 0;
 }
