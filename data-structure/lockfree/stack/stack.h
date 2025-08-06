@@ -32,16 +32,15 @@ namespace library::lockfree {
 		inline ~stack(void) noexcept {
 			node* head = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & _head);
 			while (nullptr != head) {
-				node* next = head->_next;
-				library::destruct<type>(head->_value);
-				_pool::instance().deallocate(*head);
-				head = next;
+				node* current = library::exchange(head, head->_next);
+				library::destruct<type>(current->_value);
+				_pool::instance().deallocate(current);
 			}
 		};
 
 		template<typename... argument>
 		inline void push(argument&&... arg) noexcept {
-			node* current = &_pool::instance().allocate();
+			node* current = _pool::instance().allocate();
 			library::construct<type>(current->_value, std::forward<argument>(arg)...);
 
 			for (;;) {
@@ -61,7 +60,7 @@ namespace library::lockfree {
 				unsigned long long next = reinterpret_cast<unsigned long long>(address->_next) + (0xFFFF800000000000ULL & head);
 				if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head)) {
 					type result(std::move(address->_value));
-					_pool::instance().deallocate(*address);
+					_pool::instance().deallocate(address);
 					return result;
 				}
 			}

@@ -84,7 +84,7 @@ namespace library::_thread_local {
 					unsigned long long head = _head;
 					bucket* address = reinterpret_cast<bucket*>(0x00007FFFFFFFFFFFULL & head);
 					if (nullptr == address) {
-						pair<node*, size_type> result{ reinterpret_cast<node*>(_aligned_malloc(sizeof(node) * bucket_size, _align)), bucket_size };
+						pair<node*, size_type> result{ reinterpret_cast<node*>(_aligned_malloc(sizeof(node) * bucket_size, _align)), static_cast<size_type>(bucket_size) };
 						_InterlockedIncrement(&_capacity);
 
 						node* current = result._first;

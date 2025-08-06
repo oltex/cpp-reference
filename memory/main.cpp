@@ -47,7 +47,8 @@ int main() {
     //auto c = GetLastError();
     //system("pause");
 
-    library::allocate<int>();
+    auto t = library::allocate<int>();
     library::allocate<int>(1);
+    library::construct<int>(*t, 10);
 
 }

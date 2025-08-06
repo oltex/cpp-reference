@@ -17,7 +17,7 @@ namespace detail {
 		size_type _rear;
 		byte _array[capacity_];
 	public:
-		inline explicit serialize_buffer(void) noexcept 
+		inline serialize_buffer(void) noexcept 
 			: _front(0), _rear(0) {
 		};
 		inline explicit serialize_buffer(serialize_buffer const&) noexcept = default;

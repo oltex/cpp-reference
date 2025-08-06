@@ -170,6 +170,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "interlock", "system\interlo
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "inputoutput-complet-port", "system\inputoutput-complet-port\inputoutput-complet-port.vcxproj", "{0CE5BC67-57DD-40DF-A415-D94A2C63BF4A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "free-array", "data-structure\lockfree\free-array\free-array.vcxproj", "{EA3E8DF4-B11B-40E4-8455-20A53E45EA71}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -754,6 +756,14 @@ Global
 		{0CE5BC67-57DD-40DF-A415-D94A2C63BF4A}.Release|x64.Build.0 = Release|x64
 		{0CE5BC67-57DD-40DF-A415-D94A2C63BF4A}.Release|x86.ActiveCfg = Release|Win32
 		{0CE5BC67-57DD-40DF-A415-D94A2C63BF4A}.Release|x86.Build.0 = Release|Win32
+		{EA3E8DF4-B11B-40E4-8455-20A53E45EA71}.Debug|x64.ActiveCfg = Debug|x64
+		{EA3E8DF4-B11B-40E4-8455-20A53E45EA71}.Debug|x64.Build.0 = Debug|x64
+		{EA3E8DF4-B11B-40E4-8455-20A53E45EA71}.Debug|x86.ActiveCfg = Debug|Win32
+		{EA3E8DF4-B11B-40E4-8455-20A53E45EA71}.Debug|x86.Build.0 = Debug|Win32
+		{EA3E8DF4-B11B-40E4-8455-20A53E45EA71}.Release|x64.ActiveCfg = Release|x64
+		{EA3E8DF4-B11B-40E4-8455-20A53E45EA71}.Release|x64.Build.0 = Release|x64
+		{EA3E8DF4-B11B-40E4-8455-20A53E45EA71}.Release|x86.ActiveCfg = Release|Win32
+		{EA3E8DF4-B11B-40E4-8455-20A53E45EA71}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -831,6 +841,7 @@ Global
 		{143BF53E-4BDA-40E0-845D-EE8B50280D45} = {88033A2C-B20C-4143-A6D8-0A943F34408E}
 		{2F13CEB2-C11A-47CF-A012-B1FA14ABFBE0} = {1AA55DD9-5821-4C5B-980D-997F42D8264C}
 		{0CE5BC67-57DD-40DF-A415-D94A2C63BF4A} = {1AA55DD9-5821-4C5B-980D-997F42D8264C}
+		{EA3E8DF4-B11B-40E4-8455-20A53E45EA71} = {AC45BA54-4F8F-40BA-A97B-25E230AAE4C5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C69985D6-20AB-4E9A-AD82-08BFBE490891}

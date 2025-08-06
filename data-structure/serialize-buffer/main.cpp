@@ -3,6 +3,7 @@
 #include <crtdbg.h>
 
 #include "serialize_buffer.h"
+#include "../pool/pool.h"
 #include <intrin.h>
 #include <string_view>
 
@@ -10,21 +11,22 @@
 
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	library::serialize_buffer<false> serialize_buffer;
-	{
-		serialize_buffer << 0xaaaaaaaa << true << 'c';
-		//if (!serialize_buffer)
-		//	__debugbreak();
-	}
-	{
-		unsigned int a;
-		bool b;
-		char c;
-		//std::string str;
 
-		serialize_buffer >> a >> b >> c;
-		int d = 10;
-		//if(!serialize_buffer)
-		//	__debugbreak();
-	}
+	library::serialize_buffer<false> serialize_buffer;
+	//{
+	//	serialize_buffer << 0xaaaaaaaa << true << 'c';
+	//	//if (!serialize_buffer)
+	//	//	__debugbreak();
+	//}
+	//{
+	//	unsigned int a;
+	//	bool b;
+	//	char c;
+	//	//std::string str;
+
+	//	serialize_buffer >> a >> b >> c;
+	//	int d = 10;
+	//	//if(!serialize_buffer)
+	//	//	__debugbreak();
+	//}
 }

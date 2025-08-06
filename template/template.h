@@ -73,8 +73,8 @@ namespace library {
 	template <typename type>
 	using remove_cv = typename detail::remove_const<typename detail::remove_volatile<type>::type>::type;
 
-	template <class _Ty>
-	using type_identity = detail::type_identity<_Ty>::type;
+	template <class type>
+	using type_identity = detail::type_identity<type>::type;
 
 	template <typename, typename>
 	inline constexpr bool same_type = false;
@@ -82,6 +82,8 @@ namespace library {
 	inline constexpr bool same_type<type, type> = true;
 	template <typename type, typename... rest>
 	inline constexpr bool any_of_type = (same_type<type, rest> || ...);
+	template <typename type>
+	inline constexpr bool void_type = same_type<remove_cv<type>, void>;
 	template <typename>
 	inline constexpr bool pointer_type = false;
 	template <typename type>

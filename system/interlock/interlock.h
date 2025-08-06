@@ -3,8 +3,8 @@
 #include <Windows.h>
 
 namespace library {
-	inline auto interlock_bit(void) noexcept {
-	}
+	//inline auto interlock_bit(void) noexcept {
+	//}
 
 	template<typename type>
 		requires library::any_of_type<type, unsigned char, char, unsigned short, short, unsigned int, int, unsigned long, long, unsigned long long, long long>
@@ -18,9 +18,29 @@ namespace library {
 		else
 			return ::_InterlockedAnd64(reinterpret_cast<volatile long long*>(&destine), static_cast<long long>(value));
 	}
-	inline auto interlock_or(void) noexcept {
+	template<typename type>
+		requires library::any_of_type<type, unsigned char, char, unsigned short, short, unsigned int, int, unsigned long, long, unsigned long long, long long>
+	inline auto interlock_or(type& destine, library::type_identity<type> value) noexcept {
+		if constexpr (1 == sizeof(type))
+			return ::_InterlockedOr8(reinterpret_cast<volatile char*>(&destine), static_cast<char>(value));
+		else if constexpr (2 == sizeof(type))
+			return ::_InterlockedOr16(reinterpret_cast<volatile short*>(&destine), static_cast<short>(value));
+		else if constexpr (4 == sizeof(type))
+			return ::_InterlockedOr(reinterpret_cast<volatile long*>(&destine), static_cast<long>(value));
+		else
+			return ::_InterlockedOr64(reinterpret_cast<volatile long long*>(&destine), static_cast<long long>(value));
 	}
-	inline auto interlock_xor(void) noexcept {
+	template<typename type>
+		requires library::any_of_type<type, unsigned char, char, unsigned short, short, unsigned int, int, unsigned long, long, unsigned long long, long long>
+	inline auto interlock_xor(type& destine, library::type_identity<type> value) noexcept {
+		if constexpr (1 == sizeof(type))
+			return ::_InterlockedXor8(reinterpret_cast<volatile char*>(&destine), static_cast<char>(value));
+		else if constexpr (2 == sizeof(type))
+			return ::_InterlockedXor16(reinterpret_cast<volatile short*>(&destine), static_cast<short>(value));
+		else if constexpr (4 == sizeof(type))
+			return ::_InterlockedXor(reinterpret_cast<volatile long*>(&destine), static_cast<long>(value));
+		else
+			return ::_InterlockedXor64(reinterpret_cast<volatile long long*>(&destine), static_cast<long long>(value));
 	}
 
 	template<typename type>
@@ -33,7 +53,6 @@ namespace library {
 		else
 			return ::_InterlockedIncrement64(reinterpret_cast<volatile long long*>(&addend));
 	}
-
 	template<typename type>
 		requires library::any_of_type<type, unsigned short, short, unsigned int, int, unsigned long, long, unsigned long long, long long>
 	inline auto interlock_decrement(type& addend) noexcept -> type {
@@ -44,7 +63,6 @@ namespace library {
 		else
 			return ::_InterlockedDecrement64(reinterpret_cast<volatile long long*>(&addend));
 	}
-
 	template<typename type>
 		requires (library::any_of_type<type, unsigned char, char, unsigned short, short, unsigned int, int, unsigned long, long, unsigned long long, long long> || library::pointer_type<type>)
 	inline auto interlock_exchange(type& target, library::type_identity<type> value) noexcept -> type {
@@ -59,7 +77,6 @@ namespace library {
 		else
 			return ::_InterlockedExchange64(reinterpret_cast<volatile long long*>(&target), static_cast<long long>(value));
 	}
-
 	template<typename type>
 		requires library::any_of_type<type, unsigned int, int, unsigned long, long, unsigned long long, long long>
 	inline auto interlock_exchange_add(type& addend, library::type_identity<type> value) noexcept {
@@ -68,7 +85,6 @@ namespace library {
 		else
 			return ::_InterlockedExchangeAdd64(reinterpret_cast<long long volatile*>(&addend), static_cast<long long>(value));
 	}
-
 	template<typename type>
 		requires (library::any_of_type<type, unsigned short, short, unsigned int, int, unsigned long, long, unsigned long long, long long> || library::pointer_type<type>)
 	inline auto interlock_compare_exhange(type& destine, library::type_identity<type> exchange, library::type_identity<type> compare) noexcept -> type {
