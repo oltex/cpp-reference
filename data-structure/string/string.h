@@ -34,7 +34,7 @@ namespace detail {
 			: string(const_cast<string&>(rhs).c_str()) {
 		};
 		inline explicit string(string&& rhs) noexcept
-			: _size(library::exchange(rhs._size, 0)), _capacity(library::exchange(rhs._capacity, sso)), _buffer(rhs._buffer) {
+			: _size(library::exchange(rhs._size, 0)), _capacity(library::exchange(rhs._capacity, static_cast<size_type>(sso))), _buffer(rhs._buffer) {
 		};
 		inline auto operator=(string const& rhs) noexcept -> string& {
 			assign(const_cast<string&>(rhs).c_str());
@@ -45,7 +45,7 @@ namespace detail {
 				library::deallocate(_buffer._pointer);
 
 			_size = library::exchange(rhs._size, 0);
-			_capacity = library::exchange(rhs._capacity, sso);
+			_capacity = library::exchange(rhs._capacity, static_cast<size_type>(sso));
 			_buffer = rhs._buffer;
 			return *this;
 		};
