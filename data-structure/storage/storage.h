@@ -5,21 +5,15 @@
 namespace library {
 	template <typename type>
 	class storage {
-	protected:
-		union {
-			type _test;
-			alignas(alignof(type)) unsigned char _buffer[sizeof(type)];
-		};
 	public:
-		inline explicit storage(void) noexcept 
-			:_buffer() {
-		};
+		alignas(alignof(type)) unsigned char _buffer[sizeof(type)];
+	public:
+		inline explicit storage(void) noexcept = default;
 		inline explicit storage(storage const&) noexcept = delete;
 		inline explicit storage(storage&&) noexcept = delete;
 		inline auto operator=(storage const&) noexcept -> storage & = delete;
 		inline auto operator=(storage&&) noexcept -> storage & = delete;
-		inline ~storage(void) noexcept {
-		};
+		inline ~storage(void) noexcept = default;
 
 		template<typename... argument>
 		inline void construct(argument&&... arg) noexcept {
@@ -35,10 +29,17 @@ namespace library {
 			library::destruct<type>(get());
 		}
 		inline auto get(void) noexcept -> type& {
-			return *std::launder(reinterpret_cast<type*>(_buffer));
+			return *reinterpret_cast<type*>(_buffer);
+		}
+		inline auto operator*(void) noexcept -> type& {
+			return get();
+		}
+		inline auto operator->(void) noexcept -> type* {
+			return &get();
 		}
 
-		inline auto memory_copy() {
+		inline void relocate(type& rhs) noexcept {
+			library::memory_copy(&get(), &rhs, 1);
 		}
 	};
 }

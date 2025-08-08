@@ -1,6 +1,7 @@
 #pragma once
 #include "../../../memory/memory.h"
 #include "../../thread-local/pool/pool.h"
+#include "../../storage/storage.h"
 #include <utility>
 #include <Windows.h>
 #include <intrin.h>
@@ -59,11 +60,15 @@ namespace library::lockfree {
 					return std::nullopt;
 				unsigned long long next = reinterpret_cast<unsigned long long>(address->_next) + (0xFFFF800000000000ULL & head);
 				if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head)) {
-					type result(std::move(address->_value));
+					library::storage<type> result;
+					result.relocate(address->_value);
 					_pool::instance().deallocate(address);
-					return result;
+					return std::move(result.get());
 				}
 			}
 		}
 	};
 }
+//type result(std::move(address->_value));
+//_pool::instance().deallocate(address);
+//return result;

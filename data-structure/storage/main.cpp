@@ -1,21 +1,17 @@
 #include "storage.h"
 #include "../my_class.h"
-#include <optional>
 
 int main(void) noexcept {
-	std::optional<my_class> a;
-
 	library::storage<my_class> mycls;
-	//mycls.construct(10);
-	//mycls.get().function();
-	//mycls.destruct();
+	my_class mycls2(20);
 
+	mycls.relocate(mycls2);
+	mycls.destruct();
 
-	//my_class* mycls2 = new my_class(20);
-	//mycls2->function();
-	//delete mycls2;
+	mycls.construct(20);
+	mycls->function();
+	mycls.destruct();
 
-	//my_class mycls2(20);
 
 	//mycls.memory_copy(mycls2);
 	//mycls.get();

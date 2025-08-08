@@ -4,6 +4,7 @@
 
 #include "stack.h"
 #include "normal_stack.h"
+#include "../../my_class.h"
 #include <thread>
 #include <stack>
 #include <mutex>
@@ -45,44 +46,42 @@
 //	alignas(64) long _lock = 0;
 //};
 //
-//bool _run = false;
-//library::lockfree::stack<int> _lockfree_stack;
+
+library::lockfree::stack<int> _lockfree_stack;
 //library::stack<int> _stack;
 //spin _spin;
 //std::stack<int> _std_stack;
 //std::mutex _std_mutex;
 //alignas(64) SRWLOCK _srw;
 //alignas(64) CRITICAL_SECTION cs;
-//LARGE_INTEGER _frequency;
+LARGE_INTEGER _frequency;
 //int* _log = new int[30000000];
 //unsigned long long _logcnt = 0;
 ////_log[_logcnt++ % 30000000] = _tid;
-//
-//inline static unsigned int __stdcall func1(void* arg) noexcept {
-//	while (!_run) {
-//	}
-//	LARGE_INTEGER _start;
-//	LARGE_INTEGER _end;
-//	unsigned long long _sum = 0;
-//	unsigned long long _count = 0;
-//	int _tid = GetCurrentThreadId();
-//	for (;;) {
-//		QueryPerformanceCounter(&_start);
-//		for (int j = 0; j < 10000; ++j) {
-//			for (int i = 0; i < 500; ++i) {
-//				_lockfree_stack.push(0);
-//			}
-//			for (int i = 0; i < 500; ++i) {
-//				_lockfree_stack.pop();
-//			}
-//		}
-//		QueryPerformanceCounter(&_end);
-//		_sum += _end.QuadPart - _start.QuadPart;
-//		_count++;
-//		printf("%f\n", (static_cast<double>(_sum) / _count) / static_cast<double>(_frequency.QuadPart) * 1e3);
-//	}
-//	return 0;
-//}
+
+inline static unsigned int __stdcall func1(void* arg) noexcept {
+	LARGE_INTEGER _start;
+	LARGE_INTEGER _end;
+	unsigned long long _sum = 0;
+	unsigned long long _count = 0;
+	int _tid = GetCurrentThreadId();
+	for (;;) {
+		QueryPerformanceCounter(&_start);
+		for (int j = 0; j < 100000; ++j) {
+			for (int i = 0; i < 500; ++i) {
+				_lockfree_stack.push(0);
+			}
+			for (int i = 0; i < 500; ++i) {
+				_lockfree_stack.pop();
+			}
+		}
+		QueryPerformanceCounter(&_end);
+		_sum += _end.QuadPart - _start.QuadPart;
+		_count++;
+		printf("%f\n", (static_cast<double>(_sum) / _count) / static_cast<double>(_frequency.QuadPart) * 1e3);
+	}
+	return 0;
+}
 //
 //
 //inline static unsigned int __stdcall func2(void* arg) noexcept {
@@ -129,30 +128,17 @@
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-	library::lockfree::stack<int> _lockfree_stack2;
-	_lockfree_stack2.push(10);
-	_lockfree_stack2.push(20);
-	_lockfree_stack2.pop();
-	_lockfree_stack2.push(30);
-	_lockfree_stack2.push(40);
-	_lockfree_stack2.pop();
-	_lockfree_stack2.push(40);
-	_lockfree_stack2.push(40);
-	_lockfree_stack2.pop();
-	_lockfree_stack2.push(40);
-	_lockfree_stack2.pop();
+	//library::lockfree::stack<my_class> _lockfree_stack2;
 
 	//InitializeSRWLock(&_srw);
 	//InitializeCriticalSection(&cs);
-	//QueryPerformanceFrequency(&_frequency);
+	QueryPerformanceFrequency(&_frequency);
 
-	//for (int i = 0; i < 2; ++i)
-	//	(HANDLE)_beginthreadex(nullptr, 0, func2, nullptr, 0, 0);
-	////for (int i = 0; i < 32; ++i)
-	////	(HANDLE)_beginthreadex(nullptr, 0, func3, nullptr, 0, 0);
-	//system("pause");
-	//_run = true;
-	//Sleep(INFINITE);
+	int count;
+	scanf_s("%d", &count);
+	for (int i = 0; i < 4; ++i)
+		(HANDLE)_beginthreadex(nullptr, 0, func1, nullptr, 0, 0);
+	system("pause");
 	return 0;
 }
 

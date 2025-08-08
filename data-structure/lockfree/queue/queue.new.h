@@ -1,11 +1,12 @@
 #pragma once
 #include "../../../memory/memory.h"
 #include "../../thread-local/pool/pool.h"
+#include "../../storage/storage.h"
 #include <optional>
 
 namespace library::lockfree {
 	template <typename type>
-		requires std::is_trivially_copy_constructible_v<type>&& std::is_trivially_destructible_v<type>
+	//requires std::is_trivially_copy_constructible_v<type>&& std::is_trivially_destructible_v<type>
 	class queue {
 	protected:
 		struct node final {
@@ -34,10 +35,12 @@ namespace library::lockfree {
 		inline auto operator=(queue&&) noexcept -> queue & = delete;
 		inline ~queue(void) noexcept {
 			node* head = reinterpret_cast<node*>(0x00007FFFFFFFFFFEULL & _head);
-			while (reinterpret_cast<unsigned long long>(this) != reinterpret_cast<unsigned long long>(head)) {
-				node* next = reinterpret_cast<node*>(0x00007FFFFFFFFFFEULL & head->_next);
-				_pool::instance().deallocate(head);
-				head = next;
+			while (true) {
+				node* current = library::exchange(head, reinterpret_cast<node*>(0x00007FFFFFFFFFFEULL & head->_next));
+				_pool::instance().deallocate(current);
+				if (reinterpret_cast<unsigned long long>(this) == reinterpret_cast<unsigned long long>(head))
+					break;
+				library::destruct<type>(head->_value);
 			}
 		};
 
@@ -79,10 +82,14 @@ namespace library::lockfree {
 						unsigned long long tail = _tail;
 						if (tail == head)
 							_InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_tail), next, tail);
-						type result = reinterpret_cast<node*>(0x00007FFFFFFFFFFEULL & next)->_value;
+						//type result = reinterpret_cast<node*>(0x00007FFFFFFFFFFEULL & next)->_value;
+						library::storage<type> result;
+						result.relocate(reinterpret_cast<node*>(0x00007FFFFFFFFFFEULL & next)->_value);
 						if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head)) {
+							//_pool::instance().deallocate(address);
+							//return result;
 							_pool::instance().deallocate(address);
-							return result;
+							return std::move(result.get());
 						}
 					}
 				}

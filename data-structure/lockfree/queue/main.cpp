@@ -4,6 +4,7 @@
 
 #include "queue.new.h"
 #include "queue.normal.h"
+#include "../../my_class.h"
 #include <thread>
 #include <intrin.h>
 #include <iostream>
@@ -14,20 +15,24 @@
 #include <list>
 
 #pragma region order test
+//bool pause = false;
 //inline static unsigned int __stdcall func(void* arg) noexcept {
 //	library::lockfree::queue<std::pair<unsigned long, unsigned int>>& _queue = *(library::lockfree::queue<std::pair<unsigned long, unsigned int>>*)(arg);
 //	int count = 0;
 //	volatile unsigned int _value = 0;
 //	volatile unsigned int _prev_value = 0;
-//	for (auto index = 0; index < 1000000; ++index) {
+//	for (;;) {
+
 //		if (count++ == 1000000) {
 //			printf("thread : %d\n", GetCurrentThreadId());
 //			count = 0;
 //		}
-//		for (int i = 0; i < 2; ++i) {
+//		for (int i = 0; i < 20; ++i) {
 //			_queue.emplace(std::pair<int, unsigned int>(GetCurrentThreadId(), ++_value));
+// //		if (true == pause)
+//			break;
 //		}
-//		for (int i = 0; i < 2; ++i) {
+//		for (int i = 0; i < 20; ++i) {
 //			auto result = _queue.pop();
 //			if (result) {
 //				if (GetCurrentThreadId() == (*result).first) {
@@ -39,42 +44,40 @@
 //			}
 //			else
 //				__debugbreak();
+// 		if (true == pause)
+//			break;
 //		}
 //	}
 //	return 0;
 //}
 #pragma endregion
 
-#pragma region order test2
-//inline static unsigned int __stdcall func(void* arg) noexcept {
-//	library::data_structure::lockfree::queue<unsigned long long>& _lockfree_queue = *(library::data_structure::lockfree::queue<unsigned long long>*)(arg);
-//	int count = 0;
-//	auto rdtsc = __rdtsc();
-//	unsigned long long _value = 0;
-//	for (;;) {
-//		if (count == 1000000) {
-//			rdtsc = __rdtsc() - rdtsc;
-//			printf("thread_push : %d, %lld\n", GetCurrentThreadId(), rdtsc);
-//			rdtsc = __rdtsc();
-//			count = 0;
-//		}
-//		for (int j = 0; j < 2; ++j)
-//			_lockfree_queue.emplace(_value++);
-//		for (int j = 0; j < 2;) {
-//			auto result = _lockfree_queue.pop();
-//			if (result) {
-//				//if (_value > result)
-//				//	__debugbreak();
-//				//_value = *result;
-//				j++;
-//			}
-//			else
-//				__debugbreak();
-//		}
-//		count++;
-//	}
-//	return 0;
-//}
+#pragma region order test
+bool pause = false;
+inline static unsigned int __stdcall func(void* arg) noexcept {
+	library::lockfree::queue<std::shared_ptr<unsigned int>>& _queue = *(library::lockfree::queue<std::shared_ptr<unsigned int>>*)(arg);
+	int count = 0;
+	volatile unsigned int _value = 0;
+	volatile unsigned int _prev_value = 0;
+	for (;;) {
+
+		if (count++ == 1000000) {
+			printf("thread : %d\n", GetCurrentThreadId());
+			count = 0;
+		}
+		for (int i = 0; i < 2; ++i) {
+			_queue.emplace(std::make_shared<unsigned int>(_value++));
+			if (true == pause)
+				return 0;
+		}
+		for (int i = 0; i < 2; ++i) {
+			auto result = _queue.pop();
+			if (true == pause)
+				return 0 ;
+		}
+	}
+	return 0;
+}
 #pragma endregion
 
 #pragma region tls test
@@ -114,10 +117,10 @@
 #pragma endregion
 
 #pragma region duplication test
-//std::list<unsigned int> _result_list[5];
+//std::list<std::shared_ptr<unsigned int>> _result_list[5];
 //unsigned int _result_list_id = 0;
 //inline static unsigned int __stdcall func(void* arg) noexcept {
-//	library::lockfree::queue<unsigned int>& _queue = *(library::lockfree::queue<unsigned int>*)(arg);
+//	library::lockfree::queue<std::shared_ptr<unsigned int>>& _queue = *(library::lockfree::queue<std::shared_ptr<unsigned int>>*)(arg);
 //	unsigned int _id = _InterlockedIncrement(&_result_list_id) - 1;
 //	static unsigned int _value = 0;
 //	int count = 0;
@@ -127,7 +130,7 @@
 //			count = 0;
 //		}
 //		for (int i = 0; i < 2; ++i) {
-//			_queue.emplace(_InterlockedIncrement(&_value));
+//			_queue.emplace(std::make_shared<unsigned int>(_InterlockedIncrement(&_value)));
 //		}
 //		for (int i = 0; i < 2; ++i) {
 //			auto result = _queue.pop();
@@ -267,8 +270,9 @@
 
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	library::lockfree::queue<unsigned int> _queue;
+	//library::lockfree::queue<std::shared_ptr<unsigned int>> _queue;
 	//library::lockfree::queue<std::pair<unsigned long, unsigned int>> _queue;
+	library::lockfree::queue<std::shared_ptr<unsigned int>> _queue;
 
 	//QueryPerformanceFrequency(&_frequency);
 	//InitializeSRWLock(&_srw);
@@ -279,14 +283,16 @@ int main(void) noexcept {
 	for (int i = 0; i < count; ++i)
 		(HANDLE)_beginthreadex(nullptr, 0, func, (void*)&_queue, 0, 0);
 	system("pause");
+	pause = true;
+	system("pause");
 
 
 	//std::set<unsigned int> _result_set;
 	//for (int i = 0; i < count; ++i) {
 	//	for (auto& iter : _result_list[i]) {
-	//		if (_result_set.count(iter))
+	//		if (_result_set.count(*iter))
 	//			__debugbreak();
-	//		_result_set.insert(iter);
+	//		_result_set.insert(*iter);
 	//	}
 	//}
 	//unsigned int expected = 1;
