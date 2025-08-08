@@ -52,7 +52,7 @@
 //}
 #pragma endregion
 
-#pragma region order test
+#pragma region shared_ptr test
 bool pause = false;
 inline static unsigned int __stdcall func(void* arg) noexcept {
 	library::lockfree::queue<std::shared_ptr<unsigned int>>& _queue = *(library::lockfree::queue<std::shared_ptr<unsigned int>>*)(arg);
@@ -66,7 +66,7 @@ inline static unsigned int __stdcall func(void* arg) noexcept {
 			count = 0;
 		}
 		for (int i = 0; i < 2; ++i) {
-			_queue.emplace(std::make_shared<unsigned int>(_value++));
+			_queue.emplace(new unsigned int(_value++));
 			if (true == pause)
 				return 0;
 		}
