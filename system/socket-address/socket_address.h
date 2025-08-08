@@ -21,8 +21,11 @@ namespace library {
 	class socket_address_ipv4 final : public socket_address {
 	public:
 		inline explicit socket_address_ipv4(void) noexcept
-			: _sockaddr{} {
+			: _sockaddr() {
 			_sockaddr.sin_family = AF_INET;
+		}
+		inline explicit socket_address_ipv4(sockaddr_in sockaddr) noexcept
+			: _sockaddr(sockaddr) {
 		}
 		inline socket_address_ipv4(socket_address_ipv4 const& rhs) noexcept
 			: _sockaddr(rhs._sockaddr) {
