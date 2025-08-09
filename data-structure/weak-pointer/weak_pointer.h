@@ -45,10 +45,10 @@ namespace library {
 				library::deallocate<reference>(_reference);
 		}
 
-		inline auto operator*(void) noexcept -> type& {
+		inline auto operator*(void) const noexcept -> type& {
 			return *_pointer;
 		}
-		inline auto operator->(void) noexcept -> type* {
+		inline auto operator->(void) const noexcept -> type* const {
 			return _pointer;
 		}
 		inline explicit operator bool() const noexcept {

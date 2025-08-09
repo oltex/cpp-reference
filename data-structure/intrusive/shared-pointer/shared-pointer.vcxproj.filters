@@ -4,6 +4,6 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="shared_pointer.h" />
+    <ClInclude Include="share_pointer.h" />
   </ItemGroup>
 </Project>

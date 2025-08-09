@@ -256,6 +256,22 @@ namespace library {
 			}
 			return result;
 		}
+		inline auto receive(WSABUF* buffer, unsigned long count, overlap& overlap) noexcept -> int {
+			unsigned long flag = 0;
+			int result = WSARecv(_socket, buffer, count, nullptr, &flag, &overlap.data(), nullptr);
+			if (SOCKET_ERROR == result) {
+				switch (GetLastError()) {
+				case WSA_IO_PENDING:
+				case WSAECONNRESET:
+				case WSAECONNABORTED:
+					break;
+				case WSAENOTSOCK:
+				default:
+					__debugbreak();
+				}
+			}
+			return result;
+		}
 		inline auto receive(WSABUF* buffer, unsigned long count, unsigned long* flag, overlap& overlap) noexcept -> int {
 			int result = WSARecv(_socket, buffer, count, nullptr, flag, &overlap.data(), nullptr);
 			if (SOCKET_ERROR == result) {
@@ -277,7 +293,7 @@ namespace library {
 		inline void cancel_io_ex(void) const noexcept {
 			CancelIoEx(reinterpret_cast<HANDLE>(_socket), nullptr);
 		}
-		inline void cancel_io_ex(overlap overlap) const noexcept {
+		inline void cancel_io_ex(overlap& overlap) const noexcept {
 			CancelIoEx(reinterpret_cast<HANDLE>(_socket), &overlap.data());
 		}
 		inline bool wsa_get_overlapped_result(overlap& overlap, unsigned long* transfer, bool const wait, unsigned long* flag) noexcept {

@@ -3,6 +3,7 @@
 #include <utility>
 #include <type_traits>
 #include "../../../function/function.h"
+#include "../../../system/interlock/interlock.h"
 
 namespace library::intrusive {
 	template<size_t index>
@@ -54,14 +55,14 @@ namespace library::intrusive {
 			return *this;
 		};
 		inline ~share_pointer(void) noexcept {
-			if (nullptr != _pointer && 0 == _InterlockedDecrement(&_pointer->_use))
+			if (nullptr != _pointer && 0 == library::interlock_decrement(_pointer->_use))
 				static_cast<type*>(_pointer)->template destructor<index>();
 		}
 
-		inline auto operator*(void) noexcept -> type& {
+		inline auto operator*(void) const noexcept -> type& {
 			return static_cast<type&>(*_pointer);
 		}
-		inline auto operator->(void) noexcept -> type* {
+		inline auto operator->(void) const noexcept -> type* const {
 			return static_cast<type*>(_pointer);
 		}
 		inline explicit operator bool() const noexcept {

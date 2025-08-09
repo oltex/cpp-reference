@@ -6,10 +6,8 @@
 #include "../../template/template.h"
 
 namespace detail {
-	template <bool resize, size_t capacity_ = 128>
-	class serialize_buffer;
-	template<size_t capacity_>
-	class serialize_buffer<false, capacity_> {
+	template <size_t capacity_ = 128>
+	class serialize_buffer {
 	protected:
 		using byte = unsigned char;
 		using size_type = unsigned int;
@@ -17,13 +15,13 @@ namespace detail {
 		size_type _rear;
 		byte _array[capacity_];
 	public:
-		inline serialize_buffer(void) noexcept 
+		inline serialize_buffer(void) noexcept
 			: _front(0), _rear(0) {
 		};
 		inline explicit serialize_buffer(serialize_buffer const&) noexcept = default;
 		inline explicit serialize_buffer(serialize_buffer&&) noexcept = default;
-		inline auto operator=(serialize_buffer const&) noexcept -> serialize_buffer& = default;
-		inline auto operator=(serialize_buffer&&) noexcept -> serialize_buffer& = default;
+		inline auto operator=(serialize_buffer const&) noexcept -> serialize_buffer & = default;
+		inline auto operator=(serialize_buffer&&) noexcept -> serialize_buffer & = default;
 		inline ~serialize_buffer(void) noexcept = default;
 
 		template<typename type>
@@ -39,13 +37,12 @@ namespace detail {
 			library::memory_copy(_array + _rear, buffer, length);
 			_rear += length;
 		}
-
 		inline auto capacity(void) const noexcept -> size_type {
 			return capacity_;
 		}
 	};
-	template<size_t capacity_>
-	class serialize_buffer<true, capacity_> {
+	template<>
+	class serialize_buffer<0> {
 	protected:
 		using size_type = unsigned int;
 		size_type _front;
@@ -53,16 +50,15 @@ namespace detail {
 		size_type _capacity;
 		byte* _array;
 	public:
-		inline explicit serialize_buffer(void) noexcept 
+		inline explicit serialize_buffer(void) noexcept
 			: _front(0), _rear(0), _capacity(0), _array(nullptr) {
-			reserve(capacity_);
 		};
 		inline explicit serialize_buffer(serialize_buffer const& rhs) noexcept
 			: _front(rhs._front), _rear(rhs._rear), _capacity(rhs._capacity), _array(reinterpret_cast<byte*>(library::allocate(_capacity))) {
 			library::memory_copy(_array + _front, rhs._array + _front, _rear - _front);
 		}
 		inline explicit serialize_buffer(serialize_buffer&& rhs) noexcept
-			: _front(rhs._front), _rear(rhs._rear), _capacity(rhs._capacity), _array(library::exchange(rhs._array, nullptr)) {
+			: _front(library::exchange(rhs._front, 0)), _rear(library::exchange(rhs._rear, 0)), _capacity(library::exchange(rhs._capacity, 0)), _array(library::exchange(rhs._array, nullptr)) {
 		}
 		inline auto operator=(serialize_buffer const& rhs) noexcept -> serialize_buffer&;
 		inline auto operator=(serialize_buffer&& rhs) noexcept -> serialize_buffer&;
@@ -84,7 +80,6 @@ namespace detail {
 			library::memory_copy(_array + _rear, buffer, length);
 			_rear += length;
 		}
-
 		inline void reserve(size_type const& capacity) noexcept {
 			if (_capacity < capacity) {
 #pragma warning(suppress: 6308)
@@ -99,13 +94,13 @@ namespace detail {
 }
 
 namespace library {
-	template<bool resize, size_t capacity_ = 128>
-	class serialize_buffer : public detail::serialize_buffer<resize, capacity_> {
-		using size_type = detail::serialize_buffer<resize, capacity_>::size_type;
+	template<size_t capacity_ = 128>
+	class serialize_buffer : public detail::serialize_buffer<capacity_> {
+		using size_type = detail::serialize_buffer<capacity_>::size_type;
 		using iterator = byte*;
-		using detail::serialize_buffer<resize, capacity_>::_front;
-		using detail::serialize_buffer<resize, capacity_>::_rear;
-		using detail::serialize_buffer<resize, capacity_>::_array;
+		using detail::serialize_buffer<capacity_>::_front;
+		using detail::serialize_buffer<capacity_>::_rear;
+		using detail::serialize_buffer<capacity_>::_array;
 	public:
 		template<typename type>
 			requires library::arithmetic_type<type>
