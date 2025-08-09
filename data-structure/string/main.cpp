@@ -17,7 +17,7 @@ int main(void) noexcept {
 	//std_string = "hello";
 
 	library::wstring string(L"AAA");
-	string.reserve(31);
+	//string.reserve(31);
 	string.push_back('1');
 	string.push_back(L'2');
 	string.push_back(L'3');

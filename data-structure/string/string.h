@@ -1,5 +1,6 @@
 #pragma once
 #include <cassert>
+#include "../array/array.h"
 #include "../../memory/memory.h"
 #include "../../function/function.h"
 #include "../../template/template.h"
@@ -10,7 +11,7 @@ namespace detail {
 	class string final {
 		using size_type = unsigned int;
 		union buffer {
-			type _array[sso];
+			library::array<type, sso> _array;
 			type* _pointer;
 		};
 		//using node = typename std::conditional<resize, union union_node, struct strcut_node>::type;
@@ -183,7 +184,7 @@ namespace detail {
 		inline void reserve(size_type capacity) noexcept {
 			if (_capacity < capacity) {
 				if (sso >= _capacity)
-					_buffer._pointer = reinterpret_cast<type*>(library::memory_copy(library::allocate<type>(capacity), _buffer._array, _size));
+					_buffer._pointer = reinterpret_cast<type*>(library::memory_copy(library::allocate<type>(capacity), _buffer._array.data(), _size));
 				else
 					_buffer._pointer = reinterpret_cast<type*>(library::reallocate(_buffer._pointer, capacity));
 				_capacity = capacity;
@@ -205,14 +206,14 @@ namespace detail {
 		}
 		inline auto data(void) noexcept -> type* {
 			if (sso >= _capacity)
-				return _buffer._array;
+				return _buffer._array.data();
 			else
 				return _buffer._pointer;
 		}
 		inline auto c_str(void) noexcept -> type* {
 			if (sso >= _capacity) {
 				_buffer._array[_size] = '\0';
-				return _buffer._array;
+				return _buffer._array.data();
 			}
 			else {
 				_buffer._pointer[_size] = '\0';

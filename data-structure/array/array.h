@@ -12,17 +12,16 @@ namespace detail {
 		type _array[_capacity];
 	public:
 		inline explicit array(void) noexcept = default;
-		inline explicit array(array const& rhs) noexcept = default;
-		inline explicit array(array&& rhs) noexcept = default;
-		inline auto operator=(array const& rhs) noexcept -> array & = default;
-		inline auto operator=(array&& rhs) noexcept -> array & = default;
+		inline explicit array(array const&) noexcept = default;
+		inline explicit array(array&&) noexcept = default;
+		inline auto operator=(array const&) noexcept -> array & = default;
+		inline auto operator=(array&&) noexcept -> array & = default;
 		inline ~array(void) noexcept = default;
 
 		inline static auto capacity(void) noexcept -> size_type {
 			return _capacity;
 		}
 	};
-
 	template<typename type>
 	class array<type, 0> {
 	protected:
