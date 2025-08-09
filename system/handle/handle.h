@@ -13,7 +13,7 @@ namespace library {
 		inline explicit handle(HANDLE const handle_) noexcept
 			: _handle(handle_) {
 		};
-		inline explicit handle(handle const&) noexcept = default;
+		inline explicit handle(handle const&) noexcept = delete;
 		inline explicit handle(handle&& rhs) noexcept
 			: _handle(rhs._handle) {
 			rhs._handle = INVALID_HANDLE_VALUE;
@@ -39,8 +39,8 @@ namespace library {
 		inline void cancel_io_ex(void) const noexcept {
 			CancelIoEx(_handle, nullptr);
 		}
-		inline void cancel_io_ex(overlapped overlapped) const noexcept {
-			CancelIoEx(_handle, &overlapped.data());
+		inline void cancel_io_ex(overlap overlap) const noexcept {
+			CancelIoEx(_handle, &overlap.data());
 		}
 		inline auto wait_for_single(unsigned long const milli_second) noexcept -> unsigned long {
 			return WaitForSingleObject(_handle, milli_second);
@@ -59,13 +59,6 @@ namespace library {
 		inline static auto wait_for_multiple(bool const wait_all, unsigned long const milli_second, handle_type&... handle_) noexcept -> unsigned long {
 			HANDLE handle_array[] = { handle_.data()... };
 			return WaitForMultipleObjects(sizeof...(handle_), handle_array, wait_all, milli_second);
-		}
-		template<std::derived_from<handle> handle_type>
-		inline static auto wait_for_multiple(data_structure::vector<handle_type>& handle, bool const wait_all, unsigned long const milli_second) noexcept -> unsigned long {
-			HANDLE handle_array[128];
-			for (unsigned int index = 0; index < handle.size(); ++index)
-				handle_array[index] = handle[index].data();
-			return WaitForMultipleObjects(handle.size(), handle_array, wait_all, milli_second);
 		}
 		inline static auto wait_for_multiple_ex(unsigned long const count, HANDLE* handle, bool const wait_all, unsigned long const milli_second, bool alertable) noexcept {
 			return WaitForMultipleObjectsEx(count, handle, wait_all, milli_second, alertable);

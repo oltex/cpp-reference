@@ -22,9 +22,9 @@
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{ea3e8df4-b11b-40e4-8455-20a53e45ea71}</ProjectGuid>
-    <RootNamespace>freearray</RootNamespace>
+    <RootNamespace>freelist</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>free-array</ProjectName>
+    <ProjectName>free-list</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -144,7 +144,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="free_array.h" />
+    <ClInclude Include="free_list.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

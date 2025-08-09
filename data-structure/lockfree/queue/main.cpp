@@ -65,12 +65,12 @@ inline static unsigned int __stdcall func(void* arg) noexcept {
 			printf("thread : %d\n", GetCurrentThreadId());
 			count = 0;
 		}
-		for (int i = 0; i < 2; ++i) {
+		for (int i = 0; i < 1; ++i) {
 			_queue.emplace(new unsigned int(_value++));
 			if (true == pause)
 				return 0;
 		}
-		for (int i = 0; i < 2; ++i) {
+		for (int i = 0; i < 1; ++i) {
 			auto result = _queue.pop();
 			if (true == pause)
 				return 0 ;
