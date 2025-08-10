@@ -204,7 +204,17 @@ namespace library {
 			}
 			return result;
 		}
+		inline auto send(WSABUF& buffer, overlap& overlap) noexcept -> int {
+			return send(&buffer, 1, 0, overlap);
+		}
+		inline auto send(WSABUF& buffer, unsigned long flag, overlap& overlap) noexcept -> int {
+			return send(&buffer, 1, flag, overlap);
+		}
+		inline auto send(WSABUF* buffer, unsigned long count, overlap& overlap) {
+			return send(buffer, count, 0, overlap);
+		}
 		inline auto send(WSABUF* buffer, unsigned long count, unsigned long flag, overlap& overlap) noexcept -> int {
+			overlap.clear();
 			int result = WSASend(_socket, buffer, count, nullptr, flag, &overlap.data(), nullptr);
 			if (SOCKET_ERROR == result) {
 				switch (GetLastError()) {
@@ -258,23 +268,18 @@ namespace library {
 			}
 			return result;
 		}
+		inline auto receive(WSABUF& buffer, overlap& overlap) noexcept -> int {
+			return receive(&buffer, 1, overlap);
+		}
+		inline auto receive(WSABUF& buffer, unsigned long* flag, overlap& overlap) noexcept -> int {
+			return receive(&buffer, 1, flag, overlap);
+		}
 		inline auto receive(WSABUF* buffer, unsigned long count, overlap& overlap) noexcept -> int {
 			unsigned long flag = 0;
-			int result = WSARecv(_socket, buffer, count, nullptr, &flag, &overlap.data(), nullptr);
-			if (SOCKET_ERROR == result) {
-				switch (GetLastError()) {
-				case WSA_IO_PENDING:
-				case WSAECONNRESET:
-				case WSAECONNABORTED:
-					break;
-				case WSAENOTSOCK:
-				default:
-					__debugbreak();
-				}
-			}
-			return result;
+			return receive(buffer, count, &flag, overlap);
 		}
 		inline auto receive(WSABUF* buffer, unsigned long count, unsigned long* flag, overlap& overlap) noexcept -> int {
+			overlap.clear();
 			int result = WSARecv(_socket, buffer, count, nullptr, flag, &overlap.data(), nullptr);
 			if (SOCKET_ERROR == result) {
 				switch (GetLastError()) {
@@ -387,7 +392,6 @@ namespace library {
 			}
 			return socket_address;
 		}
-
 		inline static auto get_accept_ex_socket_address(void* buffer) noexcept -> library::pair<socket_address_ipv4, socket_address_ipv4> {
 			sockaddr* local_sockaddr = nullptr;
 			int local_sockaddr_length = 0;
