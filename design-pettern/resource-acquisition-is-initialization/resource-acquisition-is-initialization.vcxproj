@@ -143,7 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="resource_acquisition_is_initialization.h" />
+    <ClInclude Include="resource_acquire_is_initialize.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

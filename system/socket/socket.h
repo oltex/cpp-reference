@@ -164,8 +164,10 @@ namespace library {
 				__debugbreak();
 		}
 		inline void close(void) noexcept {
-			closesocket(_socket);
-			_socket = INVALID_SOCKET;
+			if (INVALID_SOCKET != _socket) {
+				closesocket(_socket);
+				_socket = INVALID_SOCKET;
+			}
 		}
 		inline auto send(char const* const buffer, int const length, int const flag) noexcept -> int {
 			int result = ::send(_socket, buffer, length, flag);
