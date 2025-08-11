@@ -47,11 +47,11 @@ namespace library::intrusive {
 			: _pointer(library::exchange(rhs._pointer, nullptr)) {
 		};
 		inline auto operator=(share_pointer const& rhs) noexcept -> share_pointer& {
-			shared_pointer(rhs).swap(*this);
+			share_pointer(rhs).swap(*this);
 			return *this;
 		}
 		inline auto operator=(share_pointer&& rhs) noexcept -> share_pointer& {
-			shared_pointer(std::move(rhs)).swap(*this);
+			share_pointer(std::move(rhs)).swap(*this);
 			return *this;
 		};
 		inline ~share_pointer(void) noexcept {
@@ -84,7 +84,7 @@ namespace library::intrusive {
 			_pointer = nullptr;
 		}
 		friend inline bool operator==(share_pointer const& lhs, nullptr_t) noexcept {
-			return lhs._pointer == nullptr;
+			return nullptr == lhs._pointer;
 		}
 	};
 }

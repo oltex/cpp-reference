@@ -90,7 +90,7 @@ namespace library {
 			return _pointer;
 		}
 		inline friend bool operator==(share_pointer const& lhs, nullptr_t) noexcept {
-			return lhs._pointer == nullptr;
+			return nullptr == lhs._pointer;
 		}
 	};
 }

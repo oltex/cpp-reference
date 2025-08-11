@@ -16,8 +16,8 @@ namespace library {
 
 		inline explicit constexpr pair(void) noexcept = default;
 		template <typename type_1, typename type_2>
-		inline explicit constexpr pair(type_1 first, type_2 second) noexcept
-			: _first(first), _second(second) {
+		inline explicit constexpr pair(type_1&& first, type_2&& second) noexcept
+			: _first(std::forward<type_1>(first)), _second(std::forward<type_2>(second)) {
 		}
 		template <class... type_1, class... type_2>
 		inline explicit constexpr pair(piecewise_construct, tuple<type_1...> first, tuple<type_2...> second) noexcept

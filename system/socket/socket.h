@@ -7,8 +7,9 @@
 #include <intrin.h>
 #include <optional>
 #include <mutex>
-#include "../overlap/overlap.h"
+#include "../../function/function.h"
 #include "../../data-structure/pair/pair.h"
+#include "../overlap/overlap.h"
 #include "../socket-address/socket_address.h"
 
 namespace library {
@@ -58,18 +59,18 @@ namespace library {
 		}
 		inline explicit socket(socket const&) noexcept = delete;
 		inline explicit socket(socket&& rhs) noexcept
-			: _socket(rhs._socket) {
-			rhs._socket = INVALID_SOCKET;
+			: _socket(library::exchange(rhs._socket, INVALID_SOCKET)) {
 		}
 		inline auto operator=(socket const&) noexcept -> socket & = delete;
 		inline auto operator=(socket&& rhs) noexcept -> socket& {
-			closesocket(_socket);
-			_socket = rhs._socket;
-			rhs._socket = INVALID_SOCKET;
+			if (INVALID_SOCKET == _socket)
+				closesocket(_socket);
+			_socket = library::exchange(rhs._socket, INVALID_SOCKET);
 			return *this;
 		};
 		inline ~socket(void) noexcept {
-			closesocket(_socket);
+			if (INVALID_SOCKET == _socket)
+				closesocket(_socket);
 		}
 
 		inline void create(ADDRESS_FAMILY const address_family, int const type, int const protocol) noexcept {

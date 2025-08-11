@@ -114,8 +114,8 @@ namespace library {
 			_pointer = nullptr;
 		}
 		template <class type>
-		friend inline bool operator==(unique_pointer<type> const& value, nullptr_t) noexcept {
-			return value._pointer == nullptr;
+		friend inline bool operator==(unique_pointer<type> const& lhs, nullptr_t) noexcept {
+			return nullptr == lhs._pointer;
 		}
 	};
 }
