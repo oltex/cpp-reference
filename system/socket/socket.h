@@ -133,7 +133,8 @@ namespace library {
 			}
 			return library::pair<socket, socket_address_ipv4>(sock, socket_address);
 		}
-		inline auto accept_ex(socket& socket_, void* output_buffer, unsigned long address_length, unsigned long remote_address_length, overlap& overlap_) noexcept {
+		inline auto accept(socket& socket_, void* output_buffer, unsigned long address_length, unsigned long remote_address_length, overlap& overlap_) noexcept {
+			overlap_.clear();
 			if (FALSE == _accept_ex(_socket, socket_.data(), output_buffer, 0, address_length, remote_address_length, nullptr, &overlap_.data())) {
 				switch (WSAGetLastError()) {
 				case ERROR_IO_PENDING:
