@@ -105,14 +105,17 @@ namespace library {
 		template<typename type>
 			requires library::arithmetic_type<type>
 		inline auto operator>>(type& value) noexcept -> serialize_buffer& {
+			assert(sizeof(type) + _front <= _rear && "not enough data");
 			value = reinterpret_cast<type&>(_array[_front]);
 			_front += sizeof(type);
 			return *this;
 		}
 		inline void peek(byte* const buffer, size_type const length) const noexcept {
-			memcpy(buffer, _array + _front, length);
+			assert(length + _front <= _rear && "not enough data");
+			library::memory_copy(buffer, _array + _front, length);
 		}
 		inline void pop(size_type const length) noexcept {
+			assert(length + _front <= _rear && "not enough data");
 			_front += length;
 		}
 
