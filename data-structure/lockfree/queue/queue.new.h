@@ -34,7 +34,7 @@ namespace library::lockfree {
 		inline auto operator=(queue const&) noexcept -> queue & = delete;
 		inline auto operator=(queue&&) noexcept -> queue & = delete;
 		inline ~queue(void) noexcept {
-			node* head = reinterpret_cast<node*>(0x00007FFFFFFFFFFEULL & _head);
+			auto head = reinterpret_cast<node*>(0x00007FFFFFFFFFFEULL & _head);
 			while (true) {
 				node* current = library::exchange(head, reinterpret_cast<node*>(0x00007FFFFFFFFFFEULL & head->_next));
 				_pool::instance().deallocate(current);
@@ -52,7 +52,7 @@ namespace library::lockfree {
 			for (;;) {
 				unsigned long long tail = _tail;
 				unsigned long long count = 0xFFFF800000000000ULL & tail;
-				node* address = reinterpret_cast<node*>(0x00007FFFFFFFFFFEULL & tail);
+				auto address = reinterpret_cast<node*>(0x00007FFFFFFFFFFEULL & tail);
 				unsigned long long next = address->_next;
 
 				unsigned long long next_count = count + 0x0000800000000000ULL;
@@ -72,7 +72,7 @@ namespace library::lockfree {
 			for (;;) {
 				unsigned long long head = _head;
 				unsigned long long count = 0xFFFF800000000000ULL & head;
-				node* address = reinterpret_cast<node*>(0x00007FFFFFFFFFFEULL & head);
+				auto address = reinterpret_cast<node*>(0x00007FFFFFFFFFFEULL & head);
 				unsigned long long next = address->_next;
 
 				if (count + 0x0000800000000000ULL == (0xFFFF800000000000ULL & next)) {
