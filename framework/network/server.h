@@ -8,7 +8,7 @@
 namespace framework {
 	class server final : iocp::object {
 		enum class task {
-			accept = 0, session
+			accept = 0, session, destory,
 		};
 		iocp& _iocp;
 		listen _listen;
@@ -57,7 +57,7 @@ namespace framework {
 						_iocp.connect(*this, session._socket, static_cast<uintptr_t>(task::session));
 
 						on_create_session(session._key);
-						if (!session.receive() && session.release<true>()) {
+						if (!session.receive() && session.release<false>()) {
 							on_destroy_session(session._key);
 							_session_array.deallocate(&session);
 						}
@@ -69,7 +69,7 @@ namespace framework {
 				auto [session, task] = session::recover(overlapped);
 				if (session::task::recv == task) {
 					if (0 != transferred) {
-						session._message.move_rear(transferred);
+						session._receive_message.move_rear(transferred);
 						for (;;) {
 							auto message = session.message();
 							if (!message)
@@ -89,9 +89,9 @@ namespace framework {
 				}
 				else {
 					if (0 != transferred) {
-						//_interlockedadd((volatile long*)&_send_tps, session_._send_size);
-						//session_.finish_send();
-						//session_.send()
+						session.finish_send();
+						if (session.send())
+							break;
 					}
 					if (session.release<true>()) {
 						on_destroy_session(session._key);
@@ -117,6 +117,8 @@ namespace framework {
 			message >> value;
 			auto message_ = create_message();
 			message_ << value;
+
+			do_send_session(key, message_);
 			return true;
 		};
 		inline virtual void on_destroy_session(unsigned long long key) noexcept {
@@ -124,12 +126,12 @@ namespace framework {
 		inline void do_send_session(unsigned long long key, message& message) noexcept {
 			session& session_ = _session_array[key];
 			if (session_.acquire(key)) {
-				session_._send_queue.push(view_ptr);
-				if (0 == _send_frame && session_.send())
+				session_._send_queue.emplace(message);
+				if (session_.send())
 					return;
 			}
 			if (session_.release())
-				_complation_port.post_queue_state(0, static_cast<uintptr_t>(post_queue_state::destory_session), reinterpret_cast<OVERLAPPED*>(&session_));
+				_iocp.post(*this, 0, static_cast<uintptr_t>(task::destory), reinterpret_cast<OVERLAPPED*>(&session_));
 		}
 
 		inline static auto create_message(void) noexcept -> message {

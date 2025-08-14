@@ -17,10 +17,10 @@ namespace framework {
 		inline auto operator=(accept&&) noexcept -> accept & = delete;
 		inline ~accept(void) noexcept = default;
 
+		inline auto initialize(framework::listen& listen) noexcept;
 		inline static auto recover(OVERLAPPED* overlapped) noexcept -> accept& {
 			return *reinterpret_cast<accept*>(reinterpret_cast<unsigned char*>(overlapped) - offsetof(library::overlap, _overlapped) - offsetof(accept, _overlap));
 		}
-		inline auto initialize(framework::listen& listen) noexcept;
 	};
 
 	struct listen final {

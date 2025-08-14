@@ -31,16 +31,18 @@ namespace framework {
 		unsigned long _io_count; // release_flag // recv_flag // io count
 		unsigned long _cancel_flag;
 
-		message _message;
-		context _context;
+		message _receive_message;
+		context _receive_context;
 
 		unsigned long _send_flag;
+		unsigned long _send_size;
 		queue _send_queue;
 		context _send_context;
 	public:
 		inline session(size_type& index) noexcept
 			: _key(index++), _io_count(0x80000000) {
-			_context._task = task::recv;
+			_receive_context._task = task::recv;
+			_send_context._task = task::send;
 		};
 		inline explicit session(session const&) noexcept = delete;
 		inline explicit session(session&&) noexcept = delete;
@@ -48,13 +50,6 @@ namespace framework {
 		inline auto operator=(session&&) noexcept -> session & = delete;
 		inline ~session(void) noexcept = default;
 
-		inline static auto recover(OVERLAPPED* overlapped) noexcept -> library::pair<session&, task> {
-			auto context_ = reinterpret_cast<context*>(reinterpret_cast<unsigned char*>(overlapped) - offsetof(library::overlap, _overlapped) - offsetof(context, _overlap));
-			if (task::recv == context_->_task)
-				return library::pair<session&, task>(*reinterpret_cast<session*>(reinterpret_cast<unsigned char*>(context_) - offsetof(session, _context)), context_->_task);
-			else
-				return library::pair<session&, task>(*reinterpret_cast<session*>(reinterpret_cast<unsigned char*>(context_) - offsetof(session, _context)), context_->_task);
-		}
 		inline void initialize(framework::accept& accept, unsigned long long timeout_duration) noexcept {
 			_key = 0xffff & _key | library::interlock_exchange_add(_id, 0x10000);
 			_socket = std::move(accept._socket);
@@ -85,7 +80,7 @@ namespace framework {
 					//_receive_message->clear();
 					//while (!_send_queue.empty())
 						//_send_queue.pop();
-					_message.finalize();
+					_receive_message.finalize();
 					_socket.close();
 					return true;
 				}
@@ -95,7 +90,7 @@ namespace framework {
 					//_receive_message->clear();
 					//while (!_send_queue.empty())
 						//_send_queue.pop();
-					_message.finalize();
+					_receive_message.finalize();
 					_socket.close();
 					return true;
 				}
@@ -104,21 +99,20 @@ namespace framework {
 		}
 
 		inline bool receive(void) noexcept {
-			if (nullptr == _message)
-				_message.initialize();
+			if (nullptr == _receive_message)
+				_receive_message.initialize();
 			else {
 				framework::message message_;
 				message_.initialize();
-				if (!_message.empty()) {
-					library::memory_copy(message_.data(), _message.data() + _message.front(), _message.size());
-					message_.move_rear(_message.size());
+				if (!_receive_message.empty()) {
+					library::memory_copy(message_.data(), _receive_message.data() + _receive_message.front(), _receive_message.size());
+					message_.move_rear(_receive_message.size());
 				}
-				_message = std::move(message_);
-				return true;
+				_receive_message = std::move(message_);
 			}
-			if (0 != _cancel_flag) {
-				WSABUF wsa_buffer{ .len = _message.capacity() - _message.rear(), .buf = _message.data() - _message.rear() };
-				if (SOCKET_ERROR == _socket.receive(wsa_buffer, _context._overlap)) {
+			if (0 == _cancel_flag) {
+				WSABUF wsa_buffer{ .len = _receive_message.capacity() - _receive_message.rear(), .buf = _receive_message.data() + _receive_message.rear() };
+				if (SOCKET_ERROR == _socket.receive(wsa_buffer, _receive_context._overlap)) {
 					if (WSA_IO_PENDING == GetLastError()) {
 						//if (1 == _cancel_flag)
 							//_socket.cancel_io_ex();
@@ -137,28 +131,27 @@ namespace framework {
 			return false;
 		}
 		inline bool send(void) noexcept {
-			while (!_send_queue.empty() && 0 == _InterlockedExchange(&_send_flag, 1)) {
+			while (!_send_queue.empty() && 0 == library::interlock_exchange(_send_flag, 1)) {
 				if (_send_queue.empty())
-					_InterlockedExchange(&_send_flag, 0);
+					library::interlock_exchange(_send_flag, 0);
 				else {
 					WSABUF wsa_buffer[512];
 					_send_size = 0;
-					for (auto iter = _send_queue.begin(), end = _send_queue.end(); iter != end && 512 <= _send_size; ++iter, ++_send_size) {
-						wsa_buffer[_send_size].buf = reinterpret_cast<char*>((*iter)->data()->data() + (*iter)->front());
-						wsa_buffer[_send_size].len = (*iter)->size();
+					for (auto iter = _send_queue.begin(), end = _send_queue.end(); iter != end; ++iter, ++_send_size) {
+						wsa_buffer[_send_size].buf = reinterpret_cast<char*>(iter->data() + iter->front());
+						wsa_buffer[_send_size].len = iter->size();
 					}
-					_send_overlapped.clear();
 					unsigned long long key = _key;
-					if (SOCKET_ERROR == _socket.wsa_send(wsa_buffer, _send_size, 0, _send_overlapped)) {
+					if (SOCKET_ERROR == _socket.send(wsa_buffer, _send_size, _send_context._overlap)) {
 						if (GetLastError() == WSA_IO_PENDING) {
-							if (1 == _cancel_flag) {
-								if (acquire(key))
-									_socket.cancel_io_ex();
-								return false;
-							}
+							//if (1 == _cancel_flag) {
+							//	if (acquire(key))
+							//		_socket.cancel_io_ex();
+								//return false;
+							//}
 							return true;
 						}
-						_cancel_flag = 1;
+						//_cancel_flag = 1;
 						return false;
 					}
 					return true;
@@ -166,20 +159,31 @@ namespace framework {
 			}
 			return false;
 		}
-
+		inline void finish_send(void) noexcept {
+			for (size_type index = 0; index < _send_size; ++index)
+				_send_queue.pop();
+			_InterlockedExchange(&_send_flag, 0);
+		}
 		inline auto message(void) noexcept -> std::optional<framework::message> {
-			if (sizeof(header) > _message.size())
+			if (sizeof(header) > _receive_message.size())
 				return std::nullopt;
 			header header_;
-			_message.peek(reinterpret_cast<unsigned char*>(&header_), sizeof(header));
-			if (sizeof(header) + header_._size > _message.size())
+			_receive_message.peek(reinterpret_cast<unsigned char*>(&header_), sizeof(header));
+			if (sizeof(header) + header_._size > _receive_message.size())
 				return std::nullopt;
-			_message.pop(sizeof(header) + header_._size);
-			return framework::message(_message, _message.rear() - header_._size, _message.rear());
+			_receive_message.pop(sizeof(header) + header_._size);
+			return framework::message(_receive_message, _receive_message.front() - header_._size, _receive_message.front());
 		}
 		inline void cancel(void) noexcept {
 			_cancel_flag = 1;
 			_socket.cancel_io_ex();
+		}
+		inline static auto recover(OVERLAPPED* overlapped) noexcept -> library::pair<session&, task> {
+			auto context_ = reinterpret_cast<context*>(reinterpret_cast<unsigned char*>(overlapped) - offsetof(library::overlap, _overlapped) - offsetof(context, _overlap));
+			if (task::recv == context_->_task)
+				return library::pair<session&, task>(*reinterpret_cast<session*>(reinterpret_cast<unsigned char*>(context_) - offsetof(session, _receive_context)), context_->_task);
+			else
+				return library::pair<session&, task>(*reinterpret_cast<session*>(reinterpret_cast<unsigned char*>(context_) - offsetof(session, _send_context)), context_->_task);
 		}
 	};
 	class session_array final {
