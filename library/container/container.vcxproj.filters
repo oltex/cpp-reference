@@ -73,6 +73,55 @@
     <ClInclude Include="example\intrusive\share_pointer.h">
       <Filter>example\intrusive</Filter>
     </ClInclude>
+    <ClInclude Include="thread-local\pool.h">
+      <Filter>thread-local</Filter>
+    </ClInclude>
+    <ClInclude Include="example\thread-local\pool.h">
+      <Filter>example\thread-local</Filter>
+    </ClInclude>
+    <ClInclude Include="lockfree\free_list.h">
+      <Filter>lockfree</Filter>
+    </ClInclude>
+    <ClInclude Include="lockfree\pool.h">
+      <Filter>lockfree</Filter>
+    </ClInclude>
+    <ClInclude Include="lockfree\queue.h">
+      <Filter>lockfree</Filter>
+    </ClInclude>
+    <ClInclude Include="lockfree\queue.new.h">
+      <Filter>lockfree</Filter>
+    </ClInclude>
+    <ClInclude Include="lockfree\queue.old.h">
+      <Filter>lockfree</Filter>
+    </ClInclude>
+    <ClInclude Include="lockfree\stack.h">
+      <Filter>lockfree</Filter>
+    </ClInclude>
+    <ClInclude Include="example\lockfree\queue.h">
+      <Filter>example\lockfree</Filter>
+    </ClInclude>
+    <ClInclude Include="example\lockfree\pool.h">
+      <Filter>example\lockfree</Filter>
+    </ClInclude>
+    <ClInclude Include="example\lockfree\stack.h">
+      <Filter>example\lockfree</Filter>
+    </ClInclude>
+    <ClInclude Include="segment_tree.h" />
+    <ClInclude Include="example\segment_tree.h">
+      <Filter>example</Filter>
+    </ClInclude>
+    <ClInclude Include="serialize_view.h" />
+    <ClInclude Include="example\map.h">
+      <Filter>example</Filter>
+    </ClInclude>
+    <ClInclude Include="map.h" />
+    <ClInclude Include="set.h" />
+    <ClInclude Include="example\unorder_map.h">
+      <Filter>example</Filter>
+    </ClInclude>
+    <ClInclude Include="example\unorder_set.h">
+      <Filter>example</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -101,6 +150,18 @@
     </Filter>
     <Filter Include="example\intrusive">
       <UniqueIdentifier>{164c0176-fd21-4a9d-9cd4-973c62bcb2bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="thread-local">
+      <UniqueIdentifier>{8069a90a-41c8-4cc0-b96e-568b2e7cc7ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="example\thread-local">
+      <UniqueIdentifier>{34ea690c-5dfb-4b5c-929d-7cb7aa356eca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lockfree">
+      <UniqueIdentifier>{3c7f6864-b950-425f-b4d6-212d179a658d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="example\lockfree">
+      <UniqueIdentifier>{17d04edf-2959-4472-85a7-8fba7dfd59b5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
