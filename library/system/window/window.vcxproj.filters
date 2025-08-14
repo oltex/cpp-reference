@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="window">
+      <UniqueIdentifier>{4e850af0-c47f-4ab0-b50c-d5c79829e915}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="window\object">
+      <UniqueIdentifier>{4d687117-5062-4792-a253-2f0787c6c786}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="window\resource">
+      <UniqueIdentifier>{b2bc33ac-cdce-4c2a-aee0-5e1ace6629d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="window\device_context">
+      <UniqueIdentifier>{896e9180-4f34-486d-a030-6c35b799d702}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="window\window">
+      <UniqueIdentifier>{2403f12e-f914-4dd0-923a-b9b020be5831}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="device_context.h">
+      <Filter>window\device_context</Filter>
+    </ClInclude>
+    <ClInclude Include="object.h">
+      <Filter>window\object</Filter>
+    </ClInclude>
+    <ClInclude Include="window.h">
+      <Filter>window\window</Filter>
+    </ClInclude>
+    <ClInclude Include="sct.h">
+      <Filter>window\window</Filter>
+    </ClInclude>
+    <ClInclude Include="cls.h">
+      <Filter>window\window</Filter>
+    </ClInclude>
+    <ClInclude Include="cursor.h">
+      <Filter>window\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="icon.h">
+      <Filter>window\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="brush.h">
+      <Filter>window\object</Filter>
+    </ClInclude>
+    <ClInclude Include="pen.h">
+      <Filter>window\object</Filter>
+    </ClInclude>
+    <ClInclude Include="bitmap.h">
+      <Filter>window\object</Filter>
+    </ClInclude>
+    <ClInclude Include="instance.h">
+      <Filter>window\window</Filter>
+    </ClInclude>
+    <ClInclude Include="font.h">
+      <Filter>window\object</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

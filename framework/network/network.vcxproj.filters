@@ -1,0 +1,128 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="library">
+      <UniqueIdentifier>{b5c7e2df-846e-47e2-bb55-83986ed1a187}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="library\intrusive">
+      <UniqueIdentifier>{7d33e764-42a7-4286-a2ad-dc6743a188bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="library\thread-local">
+      <UniqueIdentifier>{4340850c-faa2-4d09-94d5-a08c503bbbd0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="library\lockfree">
+      <UniqueIdentifier>{079ec623-e855-4066-89b0-081bc1e9ebb8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="server">
+      <UniqueIdentifier>{f97331c8-c6db-4682-8855-ecef551051d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="server\1.component">
+      <UniqueIdentifier>{c513d9c7-6140-440d-9372-175813b0fdbb}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="library\handle.h">
+      <Filter>library</Filter>
+    </ClInclude>
+    <ClInclude Include="library\overlap.h">
+      <Filter>library</Filter>
+    </ClInclude>
+    <ClInclude Include="library\inputoutput_complet_port.h">
+      <Filter>library</Filter>
+    </ClInclude>
+    <ClInclude Include="library\tuple.h">
+      <Filter>library</Filter>
+    </ClInclude>
+    <ClInclude Include="library\socket.h">
+      <Filter>library</Filter>
+    </ClInclude>
+    <ClInclude Include="library\pair.h">
+      <Filter>library</Filter>
+    </ClInclude>
+    <ClInclude Include="library\socket_address.h">
+      <Filter>library</Filter>
+    </ClInclude>
+    <ClInclude Include="library\string.h">
+      <Filter>library</Filter>
+    </ClInclude>
+    <ClInclude Include="library\memory.h">
+      <Filter>library</Filter>
+    </ClInclude>
+    <ClInclude Include="library\function.h">
+      <Filter>library</Filter>
+    </ClInclude>
+    <ClInclude Include="library\template.h">
+      <Filter>library</Filter>
+    </ClInclude>
+    <ClInclude Include="library\vector.h">
+      <Filter>library</Filter>
+    </ClInclude>
+    <ClInclude Include="library\thread.h">
+      <Filter>library</Filter>
+    </ClInclude>
+    <ClInclude Include="library\singleton.h">
+      <Filter>library</Filter>
+    </ClInclude>
+    <ClInclude Include="library\serialize_buffer.h">
+      <Filter>library</Filter>
+    </ClInclude>
+    <ClInclude Include="library\intrusive\list.h">
+      <Filter>library\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="library\intrusive\share_pointer.h">
+      <Filter>library\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="library\thread-local\pool.h">
+      <Filter>library\thread-local</Filter>
+    </ClInclude>
+    <ClInclude Include="library\thread-local\singleton.h">
+      <Filter>library\thread-local</Filter>
+    </ClInclude>
+    <ClInclude Include="library\lockfree\pool.h">
+      <Filter>library\lockfree</Filter>
+    </ClInclude>
+    <ClInclude Include="library\lockfree\free_list.h">
+      <Filter>library\lockfree</Filter>
+    </ClInclude>
+    <ClInclude Include="library\interlock.h">
+      <Filter>library</Filter>
+    </ClInclude>
+    <ClInclude Include="library\storage.h">
+      <Filter>library</Filter>
+    </ClInclude>
+    <ClInclude Include="library\array.h">
+      <Filter>library</Filter>
+    </ClInclude>
+    <ClInclude Include="library\guard.h">
+      <Filter>library</Filter>
+    </ClInclude>
+    <ClInclude Include="iocp.h">
+      <Filter>server</Filter>
+    </ClInclude>
+    <ClInclude Include="listen.h">
+      <Filter>server\1.component</Filter>
+    </ClInclude>
+    <ClInclude Include="sample.h" />
+    <ClInclude Include="server.h">
+      <Filter>server</Filter>
+    </ClInclude>
+    <ClInclude Include="session.h">
+      <Filter>server\1.component</Filter>
+    </ClInclude>
+    <ClInclude Include="message.h">
+      <Filter>server\1.component</Filter>
+    </ClInclude>
+    <ClInclude Include="header.h">
+      <Filter>server\1.component</Filter>
+    </ClInclude>
+    <ClInclude Include="library\lockfree\queue.h">
+      <Filter>library\lockfree</Filter>
+    </ClInclude>
+    <ClInclude Include="queue.h">
+      <Filter>server\1.component</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+</Project>

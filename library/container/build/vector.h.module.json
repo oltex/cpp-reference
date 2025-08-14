@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "build\\vector.h.obj",
+            "outputs": [
+                "C:\\Users\\user\\source\\repos\\library\\library\\container\\build\\vc143.pdb",
+                "build\\",
+                "C:\\Users\\user\\source\\repos\\library\\library\\container\\build\\vector.h.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "example\\vector.h",
+                    "source-path": "c:\\users\\user\\source\\repos\\library\\library\\container\\example\\vector.h",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

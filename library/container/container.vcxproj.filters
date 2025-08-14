@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="list.h" />
+    <ClInclude Include="pool.h" />
+    <ClInclude Include="pair.h" />
+    <ClInclude Include="vector.h" />
+    <ClInclude Include="stack.h" />
+    <ClInclude Include="example\stack.h">
+      <Filter>example</Filter>
+    </ClInclude>
+    <ClInclude Include="queue.h" />
+    <ClInclude Include="example\queue.h">
+      <Filter>example</Filter>
+    </ClInclude>
+    <ClInclude Include="compress_pair.h" />
+    <ClInclude Include="example\compress_pair.h">
+      <Filter>example</Filter>
+    </ClInclude>
+    <ClInclude Include="array.h" />
+    <ClInclude Include="example\array.h">
+      <Filter>example</Filter>
+    </ClInclude>
+    <ClInclude Include="priority_queue.h" />
+    <ClInclude Include="example\priority_queue.h">
+      <Filter>example</Filter>
+    </ClInclude>
+    <ClInclude Include="serialize_buffer.h" />
+    <ClInclude Include="example\serialize_buffer.h">
+      <Filter>example</Filter>
+    </ClInclude>
+    <ClInclude Include="string.h" />
+    <ClInclude Include="example\string.h">
+      <Filter>example</Filter>
+    </ClInclude>
+    <ClInclude Include="storage.h" />
+    <ClInclude Include="example\storage.h">
+      <Filter>example</Filter>
+    </ClInclude>
+    <ClInclude Include="unique_pointer.h" />
+    <ClInclude Include="example\unique_pointer.h">
+      <Filter>example</Filter>
+    </ClInclude>
+    <ClInclude Include="share_pointer.h" />
+    <ClInclude Include="example\share_pointer.h">
+      <Filter>example</Filter>
+    </ClInclude>
+    <ClInclude Include="weak_pointer.h" />
+    <ClInclude Include="example\weak_pointer.h">
+      <Filter>example</Filter>
+    </ClInclude>
+    <ClInclude Include="circle_queue.h" />
+    <ClInclude Include="example\circle_queue.h">
+      <Filter>example</Filter>
+    </ClInclude>
+    <ClInclude Include="bit_grid.h" />
+    <ClInclude Include="example\bit_grid.h">
+      <Filter>example</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="example\list.h">
+      <Filter>example</Filter>
+    </ClCompile>
+    <ClCompile Include="example\pool.h">
+      <Filter>example</Filter>
+    </ClCompile>
+    <ClCompile Include="example\pair.h">
+      <Filter>example</Filter>
+    </ClCompile>
+    <ClCompile Include="example\tuple.h">
+      <Filter>example</Filter>
+    </ClCompile>
+    <ClCompile Include="example\vector.h">
+      <Filter>example</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="example">
+      <UniqueIdentifier>{c7126c31-288b-46e9-9f5e-bb67ed0459a1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

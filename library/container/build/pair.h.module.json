@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "build\\pair.h.obj",
+            "outputs": [
+                "C:\\Users\\user\\source\\repos\\library\\library\\container\\build\\vc143.pdb",
+                "build\\",
+                "C:\\Users\\user\\source\\repos\\library\\library\\container\\build\\pair.h.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "example\\pair.h",
+                    "source-path": "c:\\users\\user\\source\\repos\\library\\library\\container\\example\\pair.h",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}
