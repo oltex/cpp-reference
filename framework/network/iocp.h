@@ -41,13 +41,10 @@ namespace framework {
 		inline void worker(void) noexcept {
 			for (;;) {
 				auto [result, transferred, key, overlapped] = _complet_port.get_queue_state(INFINITE);
-				switch (key) {
-				case 0:
+				if (0 == key)
 					return;
-				default:
+				else
 					reinterpret_cast<object*>(0x00007FFFFFFFFFFF & key)->worker(result, transferred, (key >> 47), overlapped);
-					break;
-				}
 			}
 		}
 	};

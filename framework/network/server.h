@@ -7,7 +7,7 @@
 
 namespace framework {
 	class server final : iocp::object {
-		enum class task {
+		enum class task : unsigned char {
 			accept = 0, session, destory,
 		};
 		iocp& _iocp;
@@ -98,8 +98,6 @@ namespace framework {
 					}
 				}
 			} break;
-			default:
-				break;
 			}
 		};
 
