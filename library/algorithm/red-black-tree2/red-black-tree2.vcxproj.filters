@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="client">
+      <UniqueIdentifier>{3762ef99-f00e-4ca3-a61f-9f05428c299d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tree">
+      <UniqueIdentifier>{9b00d206-3fd8-4c0f-89f0-56a2a4b6e0c2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="client.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="camera.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="tree.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="timer.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="tree\set.h">
+      <Filter>tree</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

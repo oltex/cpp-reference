@@ -34,7 +34,7 @@ bld/
 [Ll]ogs/
 
 [Bb]inary/
-[Bb]ulid/
+[Bb]uild/
 #**/[Bb]inary/*
 #!**/[Bb]inary/*.cfg
 
