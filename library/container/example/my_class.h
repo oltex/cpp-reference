@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 
-class my_class final {
+class my_class {
 public:
 	inline explicit my_class(int value) noexcept
 		: _value(value) {
@@ -25,6 +25,9 @@ public:
 		std::cout << "이동 대입 연산자" << std::endl;
 		return *this;
 	}
+	inline ~my_class(void) noexcept {
+		std::cout << "소멸자: " << _value << std::endl;
+	};
 	inline bool operator == (const my_class& other) const noexcept {
 		if (_value == other._value)
 			return true;
@@ -39,10 +42,6 @@ public:
 		return _value <=> other._value;
 	}
 
-	inline ~my_class(void) noexcept {
-		std::cout << "소멸자: " << _value << std::endl;
-	};
-public:
 	inline void function(void) noexcept {
 		std::cout << "함수: " << _value << std::endl;
 	}

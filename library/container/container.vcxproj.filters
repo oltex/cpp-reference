@@ -57,6 +57,22 @@
     <ClInclude Include="example\bit_grid.h">
       <Filter>example</Filter>
     </ClInclude>
+    <ClInclude Include="example\ring_buffer.h">
+      <Filter>example</Filter>
+    </ClInclude>
+    <ClInclude Include="ring_buffer.h" />
+    <ClInclude Include="intrusive\list.h">
+      <Filter>intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="intrusive\share_pointer.h">
+      <Filter>intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="example\intrusive\list.h">
+      <Filter>example\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="example\intrusive\share_pointer.h">
+      <Filter>example\intrusive</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -79,6 +95,12 @@
   <ItemGroup>
     <Filter Include="example">
       <UniqueIdentifier>{c7126c31-288b-46e9-9f5e-bb67ed0459a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="intrusive">
+      <UniqueIdentifier>{c5a889fe-96cd-4bb0-bcc4-1c622abd83b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="example\intrusive">
+      <UniqueIdentifier>{164c0176-fd21-4a9d-9cd4-973c62bcb2bc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

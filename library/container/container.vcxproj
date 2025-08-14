@@ -154,6 +154,8 @@
     <ClInclude Include="example\array.h" />
     <ClInclude Include="example\circle_queue.h" />
     <ClInclude Include="example\compress_pair.h" />
+    <ClInclude Include="example\intrusive\list.h" />
+    <ClInclude Include="example\intrusive\share_pointer.h" />
     <ClInclude Include="example\priority_queue.h" />
     <ClInclude Include="example\queue.h" />
     <ClInclude Include="example\stack.h" />
@@ -164,11 +166,15 @@
     <ClInclude Include="example\share_pointer.h" />
     <ClInclude Include="example\weak_pointer.h" />
     <ClInclude Include="example\bit_grid.h" />
+    <ClInclude Include="example\ring_buffer.h" />
+    <ClInclude Include="intrusive\list.h" />
+    <ClInclude Include="intrusive\share_pointer.h" />
     <ClInclude Include="list.h" />
     <ClInclude Include="pair.h" />
     <ClInclude Include="pool.h" />
     <ClInclude Include="priority_queue.h" />
     <ClInclude Include="queue.h" />
+    <ClInclude Include="ring_buffer.h" />
     <ClInclude Include="serialize_buffer.h" />
     <ClInclude Include="share_pointer.h" />
     <ClInclude Include="stack.h" />

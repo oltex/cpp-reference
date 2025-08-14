@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="interlock.h" />
+    <ClInclude Include="example\interlock.h">
+      <Filter>example</Filter>
+    </ClInclude>
+    <ClInclude Include="handle.h" />
+    <ClInclude Include="overlap.h" />
+    <ClInclude Include="inputoutput_complet_port.h" />
+    <ClInclude Include="socket.h" />
+    <ClInclude Include="socket_address.h" />
+    <ClInclude Include="thread.h" />
+    <ClInclude Include="time.h" />
+    <ClInclude Include="register_inputoutput.h" />
+    <ClInclude Include="human_interface_device.h" />
+    <ClInclude Include="file.h" />
+    <ClInclude Include="coroutine.h" />
+    <ClInclude Include="example\coroutine.h">
+      <Filter>example</Filter>
+    </ClInclude>
+    <ClInclude Include="process.h" />
+    <ClInclude Include="token.h" />
+    <ClInclude Include="example\token.h">
+      <Filter>example</Filter>
+    </ClInclude>
+    <ClInclude Include="console.h" />
+    <ClInclude Include="example\console.h">
+      <Filter>example</Filter>
+    </ClInclude>
+    <ClInclude Include="mutex.h" />
+    <ClInclude Include="event.h" />
+    <ClInclude Include="slim_read_write_lock.h" />
+    <ClInclude Include="critical_section.h" />
+    <ClInclude Include="wait_on_address_lock.h" />
+    <ClInclude Include="wait_on_address.h" />
+    <ClInclude Include="spin_lock.h" />
+    <ClInclude Include="fence.h" />
+    <ClInclude Include="barrier.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="example">
+      <UniqueIdentifier>{43610a18-c633-4667-b45d-8cdbe56ccaf7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -18,6 +18,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "network", "framework\networ
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "container", "library\container\container.vcxproj", "{7F2BFC87-C83D-483C-8476-0D0595FC1764}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "system", "library\system\system.vcxproj", "{3FB7291B-F505-4EF5-A3C7-BE8326FE3910}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -42,6 +44,14 @@ Global
 		{7F2BFC87-C83D-483C-8476-0D0595FC1764}.Release|x64.Build.0 = Release|x64
 		{7F2BFC87-C83D-483C-8476-0D0595FC1764}.Release|x86.ActiveCfg = Release|Win32
 		{7F2BFC87-C83D-483C-8476-0D0595FC1764}.Release|x86.Build.0 = Release|Win32
+		{3FB7291B-F505-4EF5-A3C7-BE8326FE3910}.Debug|x64.ActiveCfg = Debug|x64
+		{3FB7291B-F505-4EF5-A3C7-BE8326FE3910}.Debug|x64.Build.0 = Debug|x64
+		{3FB7291B-F505-4EF5-A3C7-BE8326FE3910}.Debug|x86.ActiveCfg = Debug|Win32
+		{3FB7291B-F505-4EF5-A3C7-BE8326FE3910}.Debug|x86.Build.0 = Debug|Win32
+		{3FB7291B-F505-4EF5-A3C7-BE8326FE3910}.Release|x64.ActiveCfg = Release|x64
+		{3FB7291B-F505-4EF5-A3C7-BE8326FE3910}.Release|x64.Build.0 = Release|x64
+		{3FB7291B-F505-4EF5-A3C7-BE8326FE3910}.Release|x86.ActiveCfg = Release|Win32
+		{3FB7291B-F505-4EF5-A3C7-BE8326FE3910}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -49,6 +59,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{34D137D6-1CE2-439A-AEB4-951AFAC17C28} = {9E061FC9-D46F-4980-95C4-9EE400541711}
 		{7F2BFC87-C83D-483C-8476-0D0595FC1764} = {16C02BB2-DD27-40EE-8ECE-B93587C9E562}
+		{3FB7291B-F505-4EF5-A3C7-BE8326FE3910} = {16C02BB2-DD27-40EE-8ECE-B93587C9E562}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C69985D6-20AB-4E9A-AD82-08BFBE490891}

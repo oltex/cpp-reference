@@ -27,12 +27,16 @@ x86/
 [Aa][Rr][Mm]/
 [Aa][Rr][Mm]64/
 bld/
-[Bb]inary/
-[Bb]ulid/
+[Bb]in/
 [Oo]bj/
 [Oo]ut/
 [Ll]og/
 [Ll]ogs/
+
+[Bb]inary/
+[Bb]ulid/
+#**/[Bb]inary/*
+#!**/[Bb]inary/*.cfg
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
