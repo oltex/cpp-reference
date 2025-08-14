@@ -77,20 +77,18 @@ namespace framework {
 		inline bool release(void) noexcept {
 			if constexpr (false == send) {
 				if (0x40000000 == library::interlock_and(_io_count, ~0x40000000) && 0 == library::interlock_compare_exhange(_io_count, 0x80000000, 0)) {
-					//_receive_message->clear();
-					//while (!_send_queue.empty())
-						//_send_queue.pop();
 					_receive_message.finalize();
+					while (!_send_queue.empty())
+						_send_queue.pop();
 					_socket.close();
 					return true;
 				}
 			}
 			else {
 				if (0 == library::interlock_decrement(_io_count) && 0 == library::interlock_compare_exhange(_io_count, 0x80000000, 0)) {
-					//_receive_message->clear();
-					//while (!_send_queue.empty())
-						//_send_queue.pop();
 					_receive_message.finalize();
+					while (!_send_queue.empty())
+						_send_queue.pop();
 					_socket.close();
 					return true;
 				}
@@ -112,23 +110,26 @@ namespace framework {
 			}
 			if (0 == _cancel_flag) {
 				WSABUF wsa_buffer{ .len = _receive_message.capacity() - _receive_message.rear(), .buf = _receive_message.data() + _receive_message.rear() };
-				if (SOCKET_ERROR == _socket.receive(wsa_buffer, _receive_context._overlap)) {
-					if (WSA_IO_PENDING == GetLastError()) {
-						//if (1 == _cancel_flag)
-							//_socket.cancel_io_ex();
-						return true;
-					}
-					else {
-						return false;
-					}
-					//else {
-						//_InterlockedDecrement(&_io_count);
-						//_cancel_flag = 1;
-					//}
+				switch (_socket.receive(wsa_buffer, _receive_context._overlap)) {
+					using enum library::socket::result;
+				case complet:
+				case pending:
+					return true;
+				case close:
+					return false;
 				}
-				return true;
 			}
 			return false;
+		}
+		inline auto message(void) noexcept -> std::optional<framework::message> {
+			if (sizeof(header) > _receive_message.size())
+				return std::nullopt;
+			header header_;
+			_receive_message.peek(reinterpret_cast<unsigned char*>(&header_), sizeof(header));
+			if (sizeof(header) + header_._size > _receive_message.size())
+				return std::nullopt;
+			_receive_message.pop(sizeof(header) + header_._size);
+			return framework::message(_receive_message, _receive_message.front() - header_._size, _receive_message.front());
 		}
 		inline bool send(void) noexcept {
 			while (!_send_queue.empty() && 0 == library::interlock_exchange(_send_flag, 1)) {
@@ -141,39 +142,24 @@ namespace framework {
 						wsa_buffer[_send_size].buf = reinterpret_cast<char*>(iter->data() + iter->front());
 						wsa_buffer[_send_size].len = iter->size();
 					}
-					unsigned long long key = _key;
-					if (SOCKET_ERROR == _socket.send(wsa_buffer, _send_size, _send_context._overlap)) {
-						if (GetLastError() == WSA_IO_PENDING) {
-							//if (1 == _cancel_flag) {
-							//	if (acquire(key))
-							//		_socket.cancel_io_ex();
-								//return false;
-							//}
-							return true;
-						}
-						//_cancel_flag = 1;
+					switch (_socket.send(wsa_buffer, _send_size, _send_context._overlap)) {
+						using enum library::socket::result;
+					case complet:
+					case pending:
+						return true;
+					case close:
 						return false;
 					}
-					return true;
 				}
 			}
 			return false;
 		}
-		inline void finish_send(void) noexcept {
+		inline void flush(void) noexcept {
 			for (size_type index = 0; index < _send_size; ++index)
 				_send_queue.pop();
-			_InterlockedExchange(&_send_flag, 0);
+			library::interlock_exchange(_send_flag, 0);
 		}
-		inline auto message(void) noexcept -> std::optional<framework::message> {
-			if (sizeof(header) > _receive_message.size())
-				return std::nullopt;
-			header header_;
-			_receive_message.peek(reinterpret_cast<unsigned char*>(&header_), sizeof(header));
-			if (sizeof(header) + header_._size > _receive_message.size())
-				return std::nullopt;
-			_receive_message.pop(sizeof(header) + header_._size);
-			return framework::message(_receive_message, _receive_message.front() - header_._size, _receive_message.front());
-		}
+
 		inline void cancel(void) noexcept {
 			_cancel_flag = 1;
 			_socket.cancel_io_ex();

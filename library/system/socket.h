@@ -31,6 +31,9 @@ namespace library {
 
 	class socket final {
 	public:
+		enum class result : unsigned char {
+			complet, pending, close, fail
+		};
 		inline explicit socket(void) noexcept
 			: _socket(INVALID_SOCKET) {
 		}
@@ -206,32 +209,32 @@ namespace library {
 			}
 			return result;
 		}
-		inline auto send(WSABUF& buffer, overlap& overlap) noexcept -> int {
+		inline auto send(WSABUF& buffer, overlap& overlap) noexcept -> result {
 			return send(&buffer, 1, 0, overlap);
 		}
-		inline auto send(WSABUF& buffer, unsigned long flag, overlap& overlap) noexcept -> int {
+		inline auto send(WSABUF& buffer, unsigned long flag, overlap& overlap) noexcept -> result {
 			return send(&buffer, 1, flag, overlap);
 		}
-		inline auto send(WSABUF* buffer, unsigned long count, overlap& overlap) {
+		inline auto send(WSABUF* buffer, unsigned long count, overlap& overlap) noexcept -> result {
 			return send(buffer, count, 0, overlap);
 		}
-		inline auto send(WSABUF* buffer, unsigned long count, unsigned long flag, overlap& overlap) noexcept -> int {
+		inline auto send(WSABUF* buffer, unsigned long count, unsigned long flag, overlap& overlap) noexcept -> result {
 			overlap.clear();
-			int result = WSASend(_socket, buffer, count, nullptr, flag, &overlap.data(), nullptr);
-			if (SOCKET_ERROR == result) {
+			if (SOCKET_ERROR == WSASend(_socket, buffer, count, nullptr, flag, &overlap.data(), nullptr)) {
 				switch (GetLastError()) {
 				case WSA_IO_PENDING:
+					return result::pending;
 				case WSAECONNRESET:
 				case WSAECONNABORTED:
 				case WSAEINTR:
 				case WSAEINVAL:
-					break;
+					return result::close;
 				case WSAENOTSOCK:
 				default:
 					__debugbreak();
 				}
 			}
-			return result;
+			return result::complet;
 		}
 		inline auto receive(char* const buffer, int const length, int const flag) noexcept -> int {
 			int result = ::recv(_socket, buffer, length, flag);
@@ -270,31 +273,31 @@ namespace library {
 			}
 			return result;
 		}
-		inline auto receive(WSABUF& buffer, overlap& overlap) noexcept -> int {
+		inline auto receive(WSABUF& buffer, overlap& overlap) noexcept -> result {
 			return receive(&buffer, 1, overlap);
 		}
-		inline auto receive(WSABUF& buffer, unsigned long* flag, overlap& overlap) noexcept -> int {
+		inline auto receive(WSABUF& buffer, unsigned long* flag, overlap& overlap) noexcept -> result {
 			return receive(&buffer, 1, flag, overlap);
 		}
-		inline auto receive(WSABUF* buffer, unsigned long count, overlap& overlap) noexcept -> int {
+		inline auto receive(WSABUF* buffer, unsigned long count, overlap& overlap) noexcept -> result {
 			unsigned long flag = 0;
 			return receive(buffer, count, &flag, overlap);
 		}
-		inline auto receive(WSABUF* buffer, unsigned long count, unsigned long* flag, overlap& overlap) noexcept -> int {
+		inline auto receive(WSABUF* buffer, unsigned long count, unsigned long* flag, overlap& overlap) noexcept -> result {
 			overlap.clear();
-			int result = WSARecv(_socket, buffer, count, nullptr, flag, &overlap.data(), nullptr);
-			if (SOCKET_ERROR == result) {
+			if (SOCKET_ERROR == WSARecv(_socket, buffer, count, nullptr, flag, &overlap.data(), nullptr)) {
 				switch (GetLastError()) {
 				case WSA_IO_PENDING:
+					return result::pending;
 				case WSAECONNRESET:
 				case WSAECONNABORTED:
-					break;
+					return result::close;
 				case WSAENOTSOCK:
 				default:
 					__debugbreak();
 				}
 			}
-			return result;
+			return result::complet;
 		}
 		inline void cancel_io(void) const noexcept {
 			CancelIo(reinterpret_cast<HANDLE>(_socket));

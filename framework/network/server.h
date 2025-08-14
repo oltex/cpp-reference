@@ -71,8 +71,7 @@ namespace framework {
 					if (0 != transferred) {
 						session._receive_message.move_rear(transferred);
 						for (;;) {
-							auto message = session.message();
-							if (!message)
+							if (auto message = session.message(); !message)
 								break;
 							else if (false == on_receive_session(session._key, *message)) {
 								session.cancel();
@@ -89,7 +88,7 @@ namespace framework {
 				}
 				else {
 					if (0 != transferred) {
-						session.finish_send();
+						session.flush();
 						if (session.send())
 							break;
 					}
