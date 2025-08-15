@@ -1,4 +1,5 @@
 #pragma once
+#include "../memory.h"
 #include <coroutine>
 #include <iostream>
 #include <Windows.h>
@@ -41,25 +42,31 @@ namespace library {
 		std::coroutine_handle<promise_type> _handle;
 	};
 
+	class suspend final {
+	public:
+		inline bool await_ready(void) noexcept {
+			printf("await ready\n");
+			return false;
+		}
+		inline void await_suspend(std::coroutine_handle<void> handle) noexcept {
+			printf("await suspend\n");
+			Sleep(1000);
+		}
+		inline int await_resume(void) noexcept {
+			printf("await resume\n");
+			return 10;
+		}
+	};
 
 	class promise final {
 	public:
-		class suspend final {
-		public:
-			inline bool await_ready(void) noexcept {
-				printf("await ready\n");
-				return false;
-			}
-			inline void await_suspend(std::coroutine_handle<void> handle) noexcept {
-				printf("await suspend\n");
-				Sleep(1000);
-			}
-			inline int await_resume(void) noexcept {
-				printf("await resume\n");
-				return 10;
-			}
-		};
-	public:
+		inline static void* operator new(size_t size) noexcept {
+			return library::allocate(size);
+		}
+		inline static void operator delete(void* pointer, size_t size) noexcept {
+			library::deallocate(pointer);
+		}
+
 		inline explicit promise(void) noexcept = default;
 		inline explicit promise(promise const&) noexcept = delete;
 		inline explicit promise(promise&&) noexcept = delete;
@@ -67,16 +74,17 @@ namespace library {
 		inline auto operator=(promise&&) noexcept -> promise & = delete;
 		inline ~promise(void) noexcept = default;
 
-		inline auto get_return_object(void) noexcept -> coroutine< promise> {
+		inline auto get_return_object(void) noexcept -> coroutine<promise> {
 			return coroutine<promise>(std::coroutine_handle<promise>::from_promise(*this));
 		}
 		inline auto initial_suspend(void) noexcept -> std::suspend_always {
+			printf("initial suspend\n");
 			return std::suspend_always();
 		}
 		inline auto final_suspend(void) noexcept -> std::suspend_always {
+			printf("final suspend\n");
 			return std::suspend_always();
 		}
-
 		inline auto yield_value(int result) noexcept -> std::suspend_always {
 			printf("yield value\n");
 			return std::suspend_always();
@@ -85,7 +93,6 @@ namespace library {
 		//	printf("await transform\n");
 		//	return suspend();
 		//}
-
 		inline void return_void(void) noexcept {
 			//printf("return void\n");
 		}

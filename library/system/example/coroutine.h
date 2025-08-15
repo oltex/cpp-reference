@@ -44,25 +44,19 @@ namespace example {
 	//	delete obj;
 	//}
 
-	library::coroutine<library::promise> test(void) {
-		//1
-		co_await; //string //디비 요청
-		//3
+	library::coroutine<library::promise> test(void) noexcept {
+		printf("1\n");
+		co_await library::suspend();
+		printf("2\n");
 		co_return;
 	}
 
 	inline void coroutine(void) noexcept {
-		// gqcs
-
 		auto co = test();
 		co.resume();
-		//2 디비조회를 요청했구나!
-		// 디비조회를 해줘 redis [](){끝나면 pqcs *co 쏴줘};
-		continue;
-
-
 		// 디비작업이 완료됐구나!
-		co.resume();
+		//co.resume();
+		printf("3\n");
 	}
 
 }
