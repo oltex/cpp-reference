@@ -181,8 +181,6 @@
     <ClInclude Include="lockfree\free_list.h" />
     <ClInclude Include="lockfree\pool.h" />
     <ClInclude Include="lockfree\queue.h" />
-    <ClInclude Include="lockfree\queue.new.h" />
-    <ClInclude Include="lockfree\queue.old.h" />
     <ClInclude Include="lockfree\stack.h" />
     <ClInclude Include="map.h" />
     <ClInclude Include="pair.h" />
