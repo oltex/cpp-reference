@@ -89,12 +89,12 @@ namespace library {
 			printf("yield value\n");
 			return std::suspend_always();
 		}
-		//inline auto await_transform(int result) noexcept -> suspend {
-		//	printf("await transform\n");
-		//	return suspend();
-		//}
+		inline auto await_transform(int result) noexcept -> suspend {
+			printf("await transform\n");
+			return suspend();
+		}
 		inline void return_void(void) noexcept {
-			//printf("return void\n");
+			printf("return void\n");
 		}
 		//inline void return_value(int result) noexcept {
 		//	printf("return value\n");
