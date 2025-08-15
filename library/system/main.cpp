@@ -11,6 +11,5 @@ int main(void) noexcept {
 	//example::interlock();
 	example::coroutine();
 
-
 	return 0;
 }

@@ -9,10 +9,10 @@ namespace library {
 	class coroutine final {
 	public:
 		using promise_type = _promise_type;
-		inline explicit coroutine(std::coroutine_handle<promise_type> handler) noexcept
-			: _handle(handler) {
+		inline explicit coroutine(std::coroutine_handle<promise_type> handle) noexcept
+			: _handle(handle) {
 		}
-		inline explicit coroutine(coroutine const& rhs) noexcept = delete;
+		inline explicit coroutine(coroutine const&) noexcept = delete;
 		inline coroutine(coroutine&& rhs) noexcept
 			: _handle(rhs._handle) {
 			rhs._handle = nullptr;

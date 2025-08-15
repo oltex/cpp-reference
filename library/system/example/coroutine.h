@@ -46,7 +46,7 @@ namespace example {
 
 	library::coroutine<library::promise> test(void) noexcept {
 		printf("1\n");
-		co_await library::suspend();
+		//co_await library::suspend();
 		printf("2\n");
 		co_return;
 	}
