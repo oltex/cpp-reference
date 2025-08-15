@@ -4,6 +4,12 @@
 #include <iostream>
 #include <Windows.h>
 
+#include "../container/pool.h"
+struct MyStruct {
+	char _array[160];
+};
+library::pool< MyStruct> _pool;
+
 namespace library {
 	template<typename _promise_type>
 	class coroutine final {
@@ -23,8 +29,8 @@ namespace library {
 			rhs._handle = nullptr;
 		};
 		inline ~coroutine(void) noexcept {
-			if (nullptr != _handle)
-				_handle.destroy();
+			//if (nullptr != _handle)
+				//_handle.destroy();
 		};
 		inline void resume(void) const noexcept {
 			_handle.resume();
@@ -45,26 +51,29 @@ namespace library {
 	class suspend final {
 	public:
 		inline bool await_ready(void) noexcept {
-			printf("await ready\n");
+			//printf("await ready\n");
 			return false;
 		}
 		inline void await_suspend(std::coroutine_handle<void> handle) noexcept {
-			printf("await suspend\n");
-			Sleep(1000);
+			//printf("await suspend\n");
 		}
 		inline int await_resume(void) noexcept {
-			printf("await resume\n");
-			return 10;
+			//printf("await resume\n");
+			return 0;
 		}
 	};
 
 	class promise final {
 	public:
 		inline static void* operator new(size_t size) noexcept {
-			return library::allocate(size);
+			//printf("allocate %lld\n", size);
+			return reinterpret_cast<void*>(_pool.allocate());
+			//return library::allocate(size);
 		}
 		inline static void operator delete(void* pointer, size_t size) noexcept {
-			library::deallocate(pointer);
+			//printf("deallocate\n");
+			_pool.deallocate(reinterpret_cast<MyStruct*>(pointer));
+			//library::deallocate(pointer);
 		}
 
 		inline explicit promise(void) noexcept = default;
@@ -77,24 +86,24 @@ namespace library {
 		inline auto get_return_object(void) noexcept -> coroutine<promise> {
 			return coroutine<promise>(std::coroutine_handle<promise>::from_promise(*this));
 		}
-		inline auto initial_suspend(void) noexcept -> std::suspend_always {
-			printf("initial suspend\n");
-			return std::suspend_always();
+		inline auto initial_suspend(void) noexcept -> std::suspend_never {
+			//printf("initial suspend\n");
+			return std::suspend_never();
 		}
-		inline auto final_suspend(void) noexcept -> std::suspend_always {
-			printf("final suspend\n");
-			return std::suspend_always();
+		inline auto final_suspend(void) noexcept -> std::suspend_never {
+			//printf("final suspend\n");
+			return std::suspend_never();
 		}
 		inline auto yield_value(int result) noexcept -> std::suspend_always {
 			printf("yield value\n");
 			return std::suspend_always();
 		}
-		inline auto await_transform(int result) noexcept -> suspend {
-			printf("await transform\n");
-			return suspend();
-		}
+		//inline auto await_transform(int result) noexcept -> suspend {
+		//	printf("await transform\n");
+		//	return suspend();
+		//}
 		inline void return_void(void) noexcept {
-			printf("return void\n");
+			//printf("return void\n");
 		}
 		//inline void return_value(int result) noexcept {
 		//	printf("return value\n");

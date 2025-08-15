@@ -1,62 +1,61 @@
 #pragma once
 #include "../coroutine.h"
+#include "../slim_read_write_lock.h"
+#include "../thread.h"
 
 namespace example {
-	class Base {
-	public:
-		virtual ~Base() = default;
-		virtual library::coroutine<library::promise> coroutineFunction() {
-			co_return;
-		};
-		virtual void coroutineFunction2() {
-			int a = 10;
-			return;
-		}
-	};
 
-	class Derived : public Base {
-		//public:
-			//library::system::coroutine<library::system::promise> coroutineFunction() override {
-			//	int a = 10;
-			//	co_return;
-			//}
-			//void coroutineFunction2() override {
-			//	int a = 10;
-			//	return;
-			//}
-	};
-
-	//int main() {
-	//	Base* obj = new Base();
-	//	system("pause");
-	//
-	//	for (int j = 0; j < 10; j++) {
-	//		auto rdtsc = __rdtsc();
-	//		for (int i = 0; i < 1000000; ++i) {
-	//			//obj->coroutineFunction2();
-	//			auto task = obj->coroutineFunction();
-	//			task.resume();
-	//		}
-	//		rdtsc = __rdtsc() - rdtsc;
-	//		std::cout << rdtsc << std::endl;
-	//	}
-	//
-	//	delete obj;
-	//}
-
-	library::coroutine<library::promise> test(void) noexcept {
-		printf("1\n");
-		//co_await library::suspend();
-		printf("2\n");
+	inline library::coroutine<library::promise> function(void) noexcept {
+		co_return;
+	}
+#pragma optimize("", off)   // 모든 최적화 끄기
+	__declspec(noinline) void function2(void) noexcept {
+		return;
+	}
+#pragma optimize("", on)    // 원래대로
+	inline library::coroutine<library::promise> function3(void) noexcept {
+		for (auto index = 0; index < 100000; ++index)
+			co_await library::suspend();
 		co_return;
 	}
 
 	inline void coroutine(void) noexcept {
-		auto co = test();
-		co.resume();
-		// 디비작업이 완료됐구나!
-		//co.resume();
-		printf("3\n");
+		MyStruct* mystr[100000];
+		for (auto index = 0; index < 100000; ++index)
+			mystr[index] = _pool.allocate();
+		for (auto index = 0; index < 100000; ++index)
+			_pool.deallocate(mystr[index]);
+		{
+			auto rdtsc = __rdtsc();
+			for (auto index = 0; index < 100000; ++index)
+				auto coroutine = function();
+			std::printf("coroutine call      : %lld\n", __rdtsc() - rdtsc);
+		}
+		{
+			auto rdtsc = __rdtsc();
+			for (auto index = 0; index < 100000; ++index)
+				function2();
+			std::printf("function call       : %lld\n", __rdtsc() - rdtsc);
+		}
+
+		{
+			auto rdtsc = __rdtsc();
+			auto coroutine = function3();
+			for (auto index = 0; index < 100000; ++index)
+				coroutine.resume();
+			std::printf("coroutine lock      : %lld\n", __rdtsc() - rdtsc);
+		}
+		{
+			library::slim_read_write_lock lock;
+			auto rdtsc = __rdtsc();
+			//library::thread::switch_to();
+			for (auto index = 0; index < 100000; ++index) {
+				//lock.acquire_exclusive();
+				//lock.release_exclusive();
+				Sleep(0);
+			}
+			std::printf("context_switch      : %lld\n", __rdtsc() - rdtsc);
+		}
 	}
 
 }
