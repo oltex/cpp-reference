@@ -1,10 +1,10 @@
 #pragma once
-#include "../../../design-pettern/thread-local/singleton/singleton.h"
-#include "../../../memory/memory.h"
-#include "../../lockfree/pool/pool.h"
-#include "../../pair/pair.h"
-#include "../../tuple/tuple.h"
-#include "../../../function/function.h"
+#include "../../memory.h"
+#include "../../function.h"
+#include "../lockfree/pool.h"
+#include "../pair.h"
+#include "../tuple.h"
+#include "../../pattern/thread-local/singleton.h"
 
 namespace library::_thread_local {
 	template<typename type, size_t bucket_size = 1024, bool placement = true, bool compress = true>

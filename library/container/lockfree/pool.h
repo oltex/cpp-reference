@@ -1,6 +1,6 @@
 #pragma once
-#include "../../../memory/memory.h"
-#include "../../../function/function.h"
+#include "../../memory.h"
+#include "../../function.h"
 #include <memory>
 #include <Windows.h>
 

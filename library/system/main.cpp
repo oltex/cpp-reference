@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <crtdbg.h>
 
-#include "example/interlock.h"
+//#include "example/interlock.h"
 #include "example/coroutine.h"
 
 int main(void) noexcept {

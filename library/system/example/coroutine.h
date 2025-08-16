@@ -1,4 +1,6 @@
 #pragma once
+#include "../inputoutput_complet_port.h"
+#include "../wait_on_address.h"
 #include "../coroutine.h"
 #include "../slim_read_write_lock.h"
 #include "../thread.h"
@@ -20,6 +22,23 @@ namespace example {
 	}
 
 	inline void coroutine(void) noexcept {
+		library::inputoutput_complet_port iocp;
+		iocp.create(16);
+		{
+			auto rdtsc = __rdtsc();
+			for (auto index = 0; index < 100000; ++index)
+				iocp.post_queue_state(0, 0, 0);
+			std::printf("pqcs                : %lld\n", __rdtsc() - rdtsc);
+		}
+
+		{
+			int a;
+			auto rdtsc = __rdtsc();
+			for (auto index = 0; index < 100000; ++index)
+				library::wake_by_address_single(a);
+			std::printf("woad                : %lld\n", __rdtsc() - rdtsc);
+		}
+
 		MyStruct* mystr[100000];
 		for (auto index = 0; index < 100000; ++index)
 			mystr[index] = _pool.allocate();

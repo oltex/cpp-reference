@@ -149,7 +149,6 @@ namespace library::lockfree {
 				return true;
 			return false;
 		}
-
 		inline auto begin(void) noexcept -> iterator requires(false == multi_pop) {
 			return iterator(reinterpret_cast<node*>(0x00007FFFFFFFFFFEULL & reinterpret_cast<node*>(0x00007FFFFFFFFFFEULL & _head)->_next));
 		}

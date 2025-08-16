@@ -1,9 +1,9 @@
 #pragma once
-#pragma comment(lib,"ws2_32.lib")
-#include <WinSock2.h>
 #include "socket.h"
 #include "handle.h"
 #include "../container/tuple.h"
+#pragma comment(lib,"ws2_32.lib")
+#include <WinSock2.h>
 
 namespace library {
 	class inputoutput_complet_port final : public handle {
