@@ -2,5 +2,19 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="executor.h" />
+    <ClInclude Include="library\lockfree\queue.h">
+      <Filter>library\lockfree</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="library">
+      <UniqueIdentifier>{1da66e44-1421-44e3-85bc-1d86b9e514a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="library\lockfree">
+      <UniqueIdentifier>{9fc14a92-f220-42e5-af99-cb611d58e5e4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

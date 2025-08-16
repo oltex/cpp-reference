@@ -5,7 +5,7 @@
 #include <optional>
 
 namespace library::lockfree {
-	template <typename type, bool multi_pop = true>
+	template <typename type>
 	//requires std::is_trivially_copy_constructible_v<type>&& std::is_trivially_destructible_v<type>
 	class queue {
 	protected:
@@ -24,34 +24,6 @@ namespace library::lockfree {
 		alignas(64) unsigned long long _head;
 		alignas(64) unsigned long long _tail;
 	public:
-		class iterator final {
-			node* _node;
-		public:
-			inline explicit iterator(void) noexcept = default;
-			inline explicit iterator(node* node_) noexcept
-				: _node(node_) {
-			}
-			inline explicit iterator(iterator const&) noexcept = delete;
-			inline explicit iterator(iterator&&) noexcept = delete;
-			inline auto operator=(iterator const&) noexcept -> iterator & = delete;
-			inline auto operator=(iterator&&) noexcept -> iterator & = delete;
-			inline ~iterator(void) noexcept = default;
-
-			inline auto operator*(void) const noexcept -> type& {
-				return _node->_value;
-			}
-			inline auto operator->(void) const noexcept -> type* const {
-				return &_node->_value;
-			}
-			inline auto operator++(void) noexcept -> iterator& {
-				_node = reinterpret_cast<node*>(0x00007FFFFFFFFFFEULL & _node->_next);
-				return *this;
-			}
-			inline bool operator==(iterator const& rhs) const noexcept {
-				return _node == rhs._node;
-			}
-		};
-
 		inline explicit queue(void) noexcept {
 			node* current = _pool::instance().allocate();
 			current->_next = 0x0000800000000000ULL + reinterpret_cast<unsigned long long>(this);
@@ -122,42 +94,6 @@ namespace library::lockfree {
 					}
 				}
 			}
-		}
-
-		inline auto pop(void) noexcept -> type requires (false == multi_pop) {
-			unsigned long long head = _head;
-			auto address = reinterpret_cast<node*>(0x00007FFFFFFFFFFEULL & head);
-			unsigned long long next = address->_next;
-
-			if (reinterpret_cast<unsigned long long>(this) == (0x00007FFFFFFFFFFFULL & next))
-				__debugbreak();
-			else if (1 != (0x1ULL & next))
-				__debugbreak();
-
-			unsigned long long tail = _tail;
-			if (tail == head)
-				_InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_tail), next, tail);
-
-			library::storage<type> result;
-			result.relocate(reinterpret_cast<node*>(0x00007FFFFFFFFFFEULL & next)->_value);
-			_head = next;
-			_pool::instance().deallocate(address);
-			return std::move(result.get());
-		}
-		inline auto empty(void) const noexcept requires (false == multi_pop) {
-			unsigned long long head = _head;
-			auto address = reinterpret_cast<node*>(0x00007FFFFFFFFFFEULL & head);
-			unsigned long long next = address->_next;
-
-			if (reinterpret_cast<unsigned long long>(this) == (0x00007FFFFFFFFFFFULL & next))
-				return true;
-			return false;
-		}
-		inline auto begin(void) noexcept -> iterator requires(false == multi_pop) {
-			return iterator(reinterpret_cast<node*>(0x00007FFFFFFFFFFEULL & reinterpret_cast<node*>(0x00007FFFFFFFFFFEULL & _head)->_next));
-		}
-		inline auto end(void) noexcept -> iterator requires(false == multi_pop) {
-			return iterator(reinterpret_cast<node*>(this));
 		}
 	};
 }

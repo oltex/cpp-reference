@@ -1,7 +1,7 @@
 #pragma once
-#include "../../../system/interlock/interlock.h"
-#include "../../../memory/memory.h"
-#include "../../../function/function.h"
+#include "../../system/interlock.h"
+#include "../../memory.h"
+#include "../../function.h"
 
 namespace library::lockfree {
 	template<typename type>
