@@ -10,11 +10,11 @@ namespace example {
 	inline library::coroutine<library::promise> function(void) noexcept {
 		co_return;
 	}
-#pragma optimize("", off)   // 모든 최적화 끄기
+#pragma optimize("", off)
 	__declspec(noinline) void function2(void) noexcept {
 		return;
 	}
-#pragma optimize("", on)    // 원래대로
+#pragma optimize("", on)
 	inline library::coroutine<library::promise> function3(void) noexcept {
 		for (auto index = 0; index < 100000; ++index)
 			co_await library::suspend();

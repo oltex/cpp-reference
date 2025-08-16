@@ -1,18 +1,18 @@
 #include "executor.h"
 
-class test {
+class my_class {
 public:
-	moduler::coroutine<moduler::promise> func(void) noexcept {
-		printf("func");
+	coroutine function(void) noexcept {
+		printf("function");
 		co_return;
 	}
 };
 
 int main(void) noexcept {
-	test t;
+	my_class t;
 
-	moduler::executor executor(5);
-	executor.registed(&test::func, t);
+	executor executor(5);
+	executor.registed(&my_class::function, t);
 
 	Sleep(INFINITE);
 }

@@ -4,18 +4,78 @@
 #include <iostream>
 #include <Windows.h>
 
-#include "../container/pool.h"
-struct MyStruct {
-	char _array[160];
-};
-library::pool< MyStruct> _pool;
-
 namespace library {
-	template<typename _promise_type>
-	class coroutine final {
+	class awaiter final {
 	public:
-		using promise_type = _promise_type;
-		inline explicit coroutine(std::coroutine_handle<promise_type> handle) noexcept
+		inline explicit awaiter(void) noexcept = default;
+		inline explicit awaiter(awaiter const&) noexcept = delete;
+		inline explicit awaiter(awaiter&&) noexcept = delete;
+		inline auto operator=(awaiter const&) noexcept -> awaiter & = delete;
+		inline auto operator=(awaiter&&) noexcept -> awaiter & = delete;
+		inline ~awaiter(void) noexcept = default;
+
+		inline bool await_ready(void) noexcept {
+			//printf("await ready\n");
+			return false;
+		}
+		inline void await_suspend(std::coroutine_handle<void> handle) noexcept {
+			//printf("await suspend\n");
+		}
+		inline int await_resume(void) noexcept {
+			//printf("await resume\n");
+			return 0;
+		}
+	};
+
+	template<typename type>
+	class promise {
+	public:
+		inline explicit promise(void) noexcept = default;
+		inline explicit promise(promise const&) noexcept = delete;
+		inline explicit promise(promise&&) noexcept = delete;
+		inline auto operator=(promise const&) noexcept -> promise & = delete;
+		inline auto operator=(promise&&) noexcept -> promise & = delete;
+		inline ~promise(void) noexcept = default;
+
+		inline auto get_return_object(void) noexcept -> std::coroutine_handle<type> {
+			return std::coroutine_handle<type>::from_promise(static_cast<type&>(*this));
+		}
+		inline auto initial_suspend(void) noexcept -> std::suspend_never {
+			return std::suspend_never();
+		}
+		inline auto final_suspend(void) noexcept -> std::suspend_never {
+			return std::suspend_never();
+		}
+		inline auto yield_value(int result) noexcept -> std::suspend_always {
+			return std::suspend_always();
+		}
+		//inline auto await_transform(int result) noexcept -> suspend {
+		//	printf("await transform\n");
+		//	return suspend();
+		//}
+		inline void return_void(void) noexcept {
+		}
+		//inline void return_value(int result) noexcept {
+		//}
+		inline void unhandled_exception(void) noexcept {
+			__debugbreak();
+		}
+
+		inline static void* operator new(size_t size) noexcept {
+			return library::allocate(size);
+		}
+		inline static void operator delete(void* pointer, size_t size) noexcept {
+			library::deallocate(pointer);
+		}
+	};
+
+	template<typename type>
+	class coroutine {
+	protected:
+		std::coroutine_handle<type> _handle;
+	public:
+		using promise_type = type;
+		inline coroutine(std::coroutine_handle<type> handle) noexcept
 			: _handle(handle) {
 		}
 		inline explicit coroutine(coroutine const&) noexcept = delete;
@@ -41,75 +101,11 @@ namespace library {
 		inline auto address(void) noexcept -> void* {
 			return _handle.address();
 		}
-		inline auto promise(void) noexcept -> promise_type& {
+		inline auto promise(void) noexcept -> type& {
 			return _handle.promise();
 		}
-	private:
-		std::coroutine_handle<promise_type> _handle;
-	};
-
-	class suspend final {
-	public:
-		inline bool await_ready(void) noexcept {
-			//printf("await ready\n");
-			return false;
-		}
-		inline void await_suspend(std::coroutine_handle<void> handle) noexcept {
-			//printf("await suspend\n");
-		}
-		inline int await_resume(void) noexcept {
-			//printf("await resume\n");
-			return 0;
-		}
-	};
-
-	class promise final {
-	public:
-		inline static void* operator new(size_t size) noexcept {
-			//printf("allocate %lld\n", size);
-			return reinterpret_cast<void*>(_pool.allocate());
-			//return library::allocate(size);
-		}
-		inline static void operator delete(void* pointer, size_t size) noexcept {
-			//printf("deallocate\n");
-			_pool.deallocate(reinterpret_cast<MyStruct*>(pointer));
-			//library::deallocate(pointer);
-		}
-
-		inline explicit promise(void) noexcept = default;
-		inline explicit promise(promise const&) noexcept = delete;
-		inline explicit promise(promise&&) noexcept = delete;
-		inline auto operator=(promise const&) noexcept -> promise & = delete;
-		inline auto operator=(promise&&) noexcept -> promise & = delete;
-		inline ~promise(void) noexcept = default;
-
-		inline auto get_return_object(void) noexcept -> coroutine<promise> {
-			return coroutine<promise>(std::coroutine_handle<promise>::from_promise(*this));
-		}
-		inline auto initial_suspend(void) noexcept -> std::suspend_never {
-			//printf("initial suspend\n");
-			return std::suspend_never();
-		}
-		inline auto final_suspend(void) noexcept -> std::suspend_never {
-			//printf("final suspend\n");
-			return std::suspend_never();
-		}
-		inline auto yield_value(int result) noexcept -> std::suspend_always {
-			printf("yield value\n");
-			return std::suspend_always();
-		}
-		//inline auto await_transform(int result) noexcept -> suspend {
-		//	printf("await transform\n");
-		//	return suspend();
-		//}
-		inline void return_void(void) noexcept {
-			//printf("return void\n");
-		}
-		//inline void return_value(int result) noexcept {
-		//	printf("return value\n");
-		//}
-		inline void unhandled_exception(void) noexcept {
-			printf("unhandled exception\n");
+		inline auto data(void) noexcept -> std::coroutine_handle<type>& {
+			return _handle;
 		}
 	};
 }
