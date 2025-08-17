@@ -13,7 +13,7 @@ namespace library {
 		inline explicit handle(HANDLE const handle_) noexcept
 			: _handle(handle_) {
 		};
-		inline explicit handle(handle const&) noexcept = default;
+		inline explicit handle(handle const&) noexcept = delete;
 		inline explicit handle(handle&& rhs) noexcept
 			: _handle(rhs._handle) {
 			rhs._handle = INVALID_HANDLE_VALUE;

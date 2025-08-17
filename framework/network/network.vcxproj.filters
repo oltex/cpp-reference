@@ -21,16 +21,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="library\handle.h">
-      <Filter>library</Filter>
-    </ClInclude>
     <ClInclude Include="library\overlap.h">
-      <Filter>library</Filter>
-    </ClInclude>
-    <ClInclude Include="library\inputoutput_complet_port.h">
-      <Filter>library</Filter>
-    </ClInclude>
-    <ClInclude Include="library\tuple.h">
       <Filter>library</Filter>
     </ClInclude>
     <ClInclude Include="library\socket.h">
@@ -42,22 +33,7 @@
     <ClInclude Include="library\socket_address.h">
       <Filter>library</Filter>
     </ClInclude>
-    <ClInclude Include="library\string.h">
-      <Filter>library</Filter>
-    </ClInclude>
     <ClInclude Include="library\memory.h">
-      <Filter>library</Filter>
-    </ClInclude>
-    <ClInclude Include="library\function.h">
-      <Filter>library</Filter>
-    </ClInclude>
-    <ClInclude Include="library\template.h">
-      <Filter>library</Filter>
-    </ClInclude>
-    <ClInclude Include="library\vector.h">
-      <Filter>library</Filter>
-    </ClInclude>
-    <ClInclude Include="library\thread.h">
       <Filter>library</Filter>
     </ClInclude>
     <ClInclude Include="library\singleton.h">
@@ -83,15 +59,6 @@
     </ClInclude>
     <ClInclude Include="library\lockfree\free_list.h">
       <Filter>library\lockfree</Filter>
-    </ClInclude>
-    <ClInclude Include="library\interlock.h">
-      <Filter>library</Filter>
-    </ClInclude>
-    <ClInclude Include="library\storage.h">
-      <Filter>library</Filter>
-    </ClInclude>
-    <ClInclude Include="library\array.h">
-      <Filter>library</Filter>
     </ClInclude>
     <ClInclude Include="library\guard.h">
       <Filter>library</Filter>
