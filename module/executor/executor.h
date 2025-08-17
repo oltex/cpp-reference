@@ -3,7 +3,8 @@
 #include "pattern/singleton.h"
 #include "container/vector.h"
 
-class executor final {
+class executor final : public library::singleton<executor, true> {
+	friend class library::singleton<executor, true>;
 	using size_type = unsigned int;
 	size_type _round_robin;
 	library::vector<worker> _worker;

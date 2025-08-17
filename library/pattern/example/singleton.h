@@ -3,14 +3,8 @@
 #include <iostream>
 
 namespace example {
-	class my_class : public library::singleton<my_class, library::member_static<my_class>> {
-		friend class library::singleton<my_class, library::member_static<my_class>>;
-	public:
-		inline static auto constructor(void) noexcept -> my_class& {
-			_instance = new my_class();
-			atexit(destructor);
-			return *_instance;
-		}
+	class my_class : public library::singleton<my_class> {
+		friend class library::singleton<my_class>;
 	private:
 		inline explicit my_class(void) noexcept = default;
 		inline explicit my_class(my_class const& rhs) noexcept = delete;
@@ -21,7 +15,7 @@ namespace example {
 	};
 
 	inline void singleton(void) noexcept {
-		my_class::constructor();
+		my_class::instance();
 		my_class::instance();
 	}
 }

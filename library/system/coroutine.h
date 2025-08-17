@@ -5,6 +5,7 @@
 #include <Windows.h>
 
 namespace library {
+	template<typename type>
 	class awaiter final {
 	public:
 		inline explicit awaiter(void) noexcept = default;
@@ -15,14 +16,11 @@ namespace library {
 		inline ~awaiter(void) noexcept = default;
 
 		inline bool await_ready(void) noexcept {
-			//printf("await ready\n");
-			return false;
+			return true;
 		}
 		inline void await_suspend(std::coroutine_handle<void> handle) noexcept {
-			//printf("await suspend\n");
 		}
-		inline int await_resume(void) noexcept {
-			//printf("await resume\n");
+		inline type await_resume(void) noexcept {
 			return 0;
 		}
 	};
@@ -46,9 +44,9 @@ namespace library {
 		inline auto final_suspend(void) noexcept -> std::suspend_never {
 			return std::suspend_never();
 		}
-		inline auto yield_value(int result) noexcept -> std::suspend_always {
-			return std::suspend_always();
-		}
+		//inline auto yield_value(int result) noexcept -> std::suspend_always {
+		//	return std::suspend_always();
+		//}
 		//inline auto await_transform(int result) noexcept -> suspend {
 		//	printf("await transform\n");
 		//	return suspend();

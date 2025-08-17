@@ -17,7 +17,7 @@ namespace library {
 
 		template<typename... argument>
 		inline void construct(argument&&... arg) noexcept {
-			library::construct<type>(*reinterpret_cast<type*>(_buffer), std::forward<argument>(arg)...);
+			library::construct<type>(get(), std::forward<argument>(arg)...);
 		}
 		inline auto operator=(type& rhs) noexcept -> type& {
 			return get() = rhs;
