@@ -1,8 +1,8 @@
 #pragma once
+#include "../container/string.h"
 #pragma comment(lib,"ws2_32.lib")
 #include <WinSock2.h>
 #include <WS2tcpip.h>
-#include <string>
 
 namespace library {
 	class socket_address {
@@ -50,11 +50,11 @@ namespace library {
 			if (1 != inet_pton(AF_INET, address, &_sockaddr.sin_addr))
 				__debugbreak();
 		}
-		inline auto get_address(void) const noexcept -> std::wstring {
+		inline auto get_address(void) const noexcept -> library::wstring {
 			wchar_t string[INET_ADDRSTRLEN];
 			if (0 == InetNtopW(AF_INET, &_sockaddr.sin_addr, string, INET_ADDRSTRLEN))
 				__debugbreak();
-			return std::wstring(string);
+			return library::wstring(string);
 		}
 		inline void set_port(unsigned short port) noexcept {
 			_sockaddr.sin_port = htons(port);

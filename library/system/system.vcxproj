@@ -163,6 +163,7 @@
     <ClInclude Include="example\interlock.h" />
     <ClInclude Include="example\token.h" />
     <ClInclude Include="example\console.h" />
+    <ClInclude Include="file_descript.h" />
     <ClInclude Include="fence.h" />
     <ClInclude Include="file.h" />
     <ClInclude Include="handle.h" />

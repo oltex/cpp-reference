@@ -154,21 +154,9 @@
   <ItemGroup>
     <ClInclude Include="header.h" />
     <ClInclude Include="iocp.h" />
-    <ClInclude Include="library\intrusive\list.h" />
-    <ClInclude Include="library\intrusive\share_pointer.h" />
-    <ClInclude Include="library\lockfree\pool.h" />
-    <ClInclude Include="library\lockfree\free_list.h" />
-    <ClInclude Include="library\lockfree\queue.h" />
-    <ClInclude Include="library\memory.h" />
     <ClInclude Include="library\overlap.h" />
-    <ClInclude Include="library\pair.h" />
     <ClInclude Include="library\guard.h" />
-    <ClInclude Include="library\serialize_buffer.h" />
-    <ClInclude Include="library\singleton.h" />
-    <ClInclude Include="library\socket.h" />
-    <ClInclude Include="library\socket_address.h" />
     <ClInclude Include="library\thread-local\pool.h" />
-    <ClInclude Include="library\thread-local\singleton.h" />
     <ClInclude Include="listen.h" />
     <ClInclude Include="message.h" />
     <ClInclude Include="queue.h" />

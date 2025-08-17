@@ -40,6 +40,7 @@
     <ClInclude Include="spin_lock.h" />
     <ClInclude Include="fence.h" />
     <ClInclude Include="barrier.h" />
+    <ClInclude Include="file_descript.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="example">
