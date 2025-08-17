@@ -1,5 +1,5 @@
 #pragma once
-#include "library/singleton.h"
+#include "library/pattern/singleton.h"
 #include "library/inputoutput_complet_port.h"
 #include "library/thread.h"
 #include "library/vector.h"
