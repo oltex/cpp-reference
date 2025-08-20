@@ -1,5 +1,5 @@
 #pragma once
-#include "../../function/function.h"
+#include "../function.h"
 
 namespace library {
 	template<typename iterator, auto predicate = library::less<decltype(*std::declval<iterator>())>>

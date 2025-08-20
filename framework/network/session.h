@@ -1,12 +1,11 @@
 #pragma once
-#include "library/socket.h"
-#include "library/interlock.h"
-#include "library/guard.h"
+#include "library/system/socket.h"
+#include "library/system/interlock.h"
 
-#include "library/thread-local/pool.h"
-#include "library/lockfree/free_list.h"
-#include "library/vector.h"
-#include "library/array.h"
+#include "library/container/thread-local/pool.h"
+#include "library/container/lockfree/free_list.h"
+#include "library/container/vector.h"
+#include "library/container/array.h"
 
 #include "listen.h"
 #include "message.h"

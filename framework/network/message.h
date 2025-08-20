@@ -1,8 +1,7 @@
 #pragma once
-#include "library/thread-local/pool.h"
-#include "library/intrusive/share_pointer.h"
-#include "library/serialize_buffer.h"
-#include "library/array.h"
+#include "library/container/thread-local/pool.h"
+#include "library/container/intrusive/share_pointer.h"
+#include "library/container/array.h"
 
 namespace framework {
 	class buffer : public library::intrusive::share_pointer_hook<0>, public library::array<char, 128> {

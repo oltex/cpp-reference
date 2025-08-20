@@ -1,7 +1,7 @@
 #pragma once
-#include "library/socket.h"
-#include "library/vector.h"
-#include "library/array.h"
+#include "library/system/socket.h"
+#include "library/container/vector.h"
+#include "library/container/array.h"
 
 namespace framework {
 	struct listen;

@@ -6,6 +6,7 @@
 namespace library {
 	class overlap final {
 	public:
+		_OVERLAPPED _overlapped;
 		inline explicit overlap(void) noexcept = default;
 		inline explicit overlap(overlap const&) noexcept = delete;
 		inline explicit overlap(overlap&&) noexcept = delete;
@@ -28,7 +29,5 @@ namespace library {
 		inline auto data(void) noexcept -> _OVERLAPPED& {
 			return _overlapped;
 		}
-	private:
-		_OVERLAPPED _overlapped;
 	};
 }

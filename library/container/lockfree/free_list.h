@@ -35,7 +35,7 @@ namespace library::lockfree {
 		inline auto operator=(free_list const&) noexcept -> free_list & = delete;
 		inline auto operator=(free_list&&) noexcept -> free_list & = delete;
 		inline ~free_list(void) noexcept {
-			clear();
+			//clear();
 		};
 
 		inline auto allocate(void) noexcept -> type* {

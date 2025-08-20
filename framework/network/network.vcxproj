@@ -158,9 +158,6 @@
   <ItemGroup>
     <ClInclude Include="header.h" />
     <ClInclude Include="iocp.h" />
-    <ClInclude Include="library\overlap.h" />
-    <ClInclude Include="library\guard.h" />
-    <ClInclude Include="library\thread-local\pool.h" />
     <ClInclude Include="listen.h" />
     <ClInclude Include="message.h" />
     <ClInclude Include="queue.h" />

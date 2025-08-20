@@ -1,5 +1,5 @@
 #pragma once
-#include "../function.h"
+#include "../../function.h"
 #include "../../system/interlock.h"
 #include <malloc.h>
 #include <utility>
