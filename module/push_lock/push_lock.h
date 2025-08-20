@@ -70,31 +70,31 @@ public:
 	inline void acquire_exclusive(void) noexcept {
 		for (;;) {
 			auto head = _head;
-			if (0 == (head & EX_PUSH_LOCK_LOCK)) {
-				if (head == library::interlock_compare_exhange(_head, head + EX_PUSH_LOCK_LOCK, head))
+			if (0 == (head & EX_PUSH_LOCK_LOCK)) { //락이 켜져있지 않으면
+				if (head == library::interlock_compare_exhange(_head, head + EX_PUSH_LOCK_LOCK, head)) //락을 올림
 					break;
 			}
-			else {
+			else { //락이 켜져있으면
 				auto current = library::allocate<node>();
 				current->_flag = EX_PUSH_LOCK_FLAGS_EXCLUSIVE | EX_PUSH_LOCK_FLAGS_SPINNING;
 				current->_prev = nullptr;
 				unsigned long long next;
 				bool optimize = false;
 
-				if (0 == (head & EX_PUSH_LOCK_WAITING)) {
+				if (0 == (head & EX_PUSH_LOCK_WAITING)) { //대기열이 없으면
 					current->_last = current;
 					current->_share = static_cast<long>(head & EX_PUSH_LOCK_SHARE);
-					if (1 >= current->_share) {
-						current->_share = 0; // 이부분 이해안감 쉐어 카운트가 1이면 1로 해줘야지 감소시켜서 0되면 얘를 푼다 이런거아닌가?
+					if (1 >= current->_share) { //먼저 진행중인 공유락이 1개 이하면
+						current->_share = 0;												// 이부분 이해안감 쉐어 카운트가 1이면 1로 해줘야지 감소시켜서 0되면 얘를 푼다 이런거아닌가?
 						next = EX_PUSH_LOCK_WAITING | EX_PUSH_LOCK_LOCK | reinterpret_cast<unsigned long long>(current);
 					}
-					else
+					else //먼저 진행중인 공유략이 2개 이상이면
 						next = EX_PUSH_LOCK_MULTIPLE_SHARED | EX_PUSH_LOCK_WAITING | EX_PUSH_LOCK_LOCK | reinterpret_cast<unsigned long long>(current);
 				}
-				else {
+				else { //대기열이 있으면
 					current->_last = nullptr;
 					current->_next = reinterpret_cast<node*>(head & EX_PUSH_LOCK_SHARE);
-					current->_share = 0;
+					current->_share = 0; //굳이 WATING 왜 넣는지 모르겠음 / LOCK도 모르겠는게 대기열이 있으면 LOCK이 당연히 있는게 아닌건가? 누가 대기열을 재끼고 먼저 들어간다?
 					next = (EX_PUSH_LOCK_WAKING | EX_PUSH_LOCK_WAITING | EX_PUSH_LOCK_LOCK | reinterpret_cast<unsigned long long>(current)) | (head & EX_PUSH_LOCK_PTR_BITS);
 
 					if (0 == (head & EX_PUSH_LOCK_WAKING)) //과거 값이 waking이 였으면 내가 waiking을 먹은게 아님
@@ -113,11 +113,11 @@ public:
 		for (;;) {
 			auto head = _head;
 			unsigned long long next;
-			if (0 == (head & EX_PUSH_LOCK_LOCK) || (0 == (head & EX_PUSH_LOCK_WAITING) && 0 < (head & EX_PUSH_LOCK_SHARE))) {
-				if (0 != (head & EX_PUSH_LOCK_WAITING))
+			if (0 == (head & EX_PUSH_LOCK_LOCK) || (0 == (head & EX_PUSH_LOCK_WAITING) && 0 < (head & EX_PUSH_LOCK_SHARE))) { //락을 아무도 잡지 않았거나, 락은 잡히고 쉐어 카운트 있는데 스택이 생기진 않았거나
+				if (0 != (head & EX_PUSH_LOCK_WAITING)) //락이 없는데 웨이팅은 있는 경우? 이게 뭔소릴까
 					next = head + EX_PUSH_LOCK_LOCK;
 				else
-					next = head + EX_PUSH_LOCK_SHARE_INC | EX_PUSH_LOCK_LOCK;
+					next = head + EX_PUSH_LOCK_SHARE_INC | EX_PUSH_LOCK_LOCK; // 락이 없거나, 락은 있고 쉐어카운터가 있거나 할때 증가
 				if (head == library::interlock_compare_exhange(_head, next, head))
 					break;
 			}
@@ -150,7 +150,6 @@ public:
 			}
 		}
 	}
-
 	inline void release_exclusive(void) noexcept {
 		for (;;) {
 			auto head = _head;
@@ -177,6 +176,41 @@ public:
 				next = head - EX_PUSH_LOCK_SHARE_INC;
 			else
 				next = 0;
+			if (head == library::interlock_compare_exhange(_head, next, head))
+				return;
+			head = _head;
+		}
+
+		if (0 != (head & EX_PUSH_LOCK_MULTIPLE_SHARED)) { //독점락이 멀티를 가지고 있다. 
+			auto current = reinterpret_cast<node*>(head & EX_PUSH_LOCK_SHARE);
+
+			for (;;) {
+				auto last = current->_last;
+				if (last != NULL) {
+					current = last;
+					break;
+				}
+				current = current->_next;
+			}
+
+			if (0 < library::interlock_decrement(current->_share))
+				return;
+		}
+
+		for (;;) {
+			if (0 != (head & EX_PUSH_LOCK_WAKING)) {
+				next = head & ~(EX_PUSH_LOCK_LOCK | EX_PUSH_LOCK_MULTIPLE_SHARED);
+
+				if (head == library::interlock_compare_exhange(_head, next, head))
+					return;
+			}
+			else {
+				next = EX_PUSH_LOCK_WAKING | (head & ~(EX_PUSH_LOCK_LOCK | EX_PUSH_LOCK_MULTIPLE_SHARED));
+				if (head == library::interlock_compare_exhange(_head, next, head))
+					//ExfWakePushLock(next);
+					return;
+			}
+			head = _head;
 		}
 	}
 

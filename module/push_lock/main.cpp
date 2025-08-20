@@ -5,6 +5,8 @@ int main(void) noexcept {
 
 	pl.acquire_exclusive();
 	pl.acquire_share();
+	pl.release_exclusive();
+	pl.acquire_share();
 	pl.acquire_exclusive();
 	pl.acquire_share();
 	pl.acquire_share();
