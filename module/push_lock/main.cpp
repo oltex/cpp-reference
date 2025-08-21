@@ -20,7 +20,7 @@ inline void function1(void) noexcept {
 			__debugbreak();
 		--value;
 		push_lock.release_exclusive();
-		Sleep(rand() % 100);
+		Sleep(rand() % 50);
 	}
 }
 inline void function2(void) noexcept {
@@ -34,7 +34,7 @@ inline void function2(void) noexcept {
 		if (0 != value)
 			__debugbreak();
 		push_lock.release_share();
-		Sleep(rand() % 100);
+		Sleep(rand() % 50);
 	}
 }
 
