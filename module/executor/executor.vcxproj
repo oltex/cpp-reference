@@ -156,7 +156,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="executor.h" />
-    <ClInclude Include="lock.h" />
     <ClInclude Include="queue.h" />
     <ClInclude Include="task.h" />
     <ClInclude Include="worker.h" />

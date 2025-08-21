@@ -6,7 +6,12 @@ int value = 0;
 int share = 0;
 
 inline void function1(void) noexcept {
+	unsigned long long count = 0;
 	for (;;) {
+		if (count++ == 100) {
+			printf("function1 : %d\n", library::thread::get_current_id());
+			count = 0;
+		}
 		push_lock.acquire_exclusive();
 		if (0 != value)
 			__debugbreak();
@@ -14,42 +19,33 @@ inline void function1(void) noexcept {
 		if (1 != value)
 			__debugbreak();
 		--value;
-		//printf("function1\n");
 		push_lock.release_exclusive();
-		Sleep(0);
+		Sleep(rand() % 100);
 	}
 }
 inline void function2(void) noexcept {
+	unsigned long long count = 0;
 	for (;;) {
+		if (count++ == 100) {
+			printf("function2 : %d\n", library::thread::get_current_id());
+			count = 0;
+		}
 		push_lock.acquire_share();
 		if (0 != value)
 			__debugbreak();
-		//printf("function2\n");
-		auto res = library::interlock_increment(share);
-		printf("%d\n", res);
-		library::interlock_decrement(share);
 		push_lock.release_share();
-		Sleep(0);
-	}
-}
-inline void function3(void) noexcept {
-	for (;;) {
-		push_lock.acquire_share();
-		if (0 != value)
-			__debugbreak();
-		//printf("function3\n");
-		auto res = library::interlock_increment(share);
-		printf("%d\n", res);
-		library::interlock_decrement(share);
-		push_lock.release_share();
-		Sleep(0);
+		Sleep(rand() % 100);
 	}
 }
 
 int main(void) noexcept {
 	library::thread thread1(function1, 0);
+	library::thread thread1_2(function1, 0);
+	library::thread thread1_3(function1, 0);
 	library::thread thread2(function2, 0);
-	library::thread thread3(function3, 0);
+	library::thread thread2_1(function2, 0);
+	library::thread thread2_2(function2, 0);
+	library::thread thread2_3(function2, 0);
 	library::sleep(INFINITE);
 	return 0;
 }

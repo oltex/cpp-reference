@@ -5,8 +5,7 @@
 #include <Windows.h>
 
 namespace library {
-	template<typename type>
-	class awaiter final {
+	class awaiter {
 	public:
 		inline explicit awaiter(void) noexcept = default;
 		inline explicit awaiter(awaiter const&) noexcept = delete;
@@ -20,7 +19,7 @@ namespace library {
 		}
 		inline void await_suspend(std::coroutine_handle<void> handle) noexcept {
 		}
-		inline type await_resume(void) noexcept {
+		inline int await_resume(void) noexcept {
 			return 0;
 		}
 	};

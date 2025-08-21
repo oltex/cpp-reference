@@ -15,10 +15,25 @@ namespace library {
 	//	void* _head = 0;
 	//	void* _next = 0;
 	//};
+	//auto order = _InterlockedIncrement(&_order) % 10000000;
+	//_log[order]._thread_id = GetCurrentThreadId();
+	//_log[order]._action = L"push";
+	//_log[order]._head = (void*)head;
+	//_log[order]._next = (void*)next;
 	class push_lock final {
 		//volatile unsigned int _order = 0;
 		//library::log* _log = new library::log[10000000]{};
-
+		inline static constexpr long EX_PUSH_LOCK_FLAGS_EXCLUSIVE = 0x1;
+		inline static constexpr long EX_PUSH_LOCK_FLAGS_SPINNING_V = 0x1;
+		inline static constexpr long EX_PUSH_LOCK_FLAGS_SPINNING = 0x2;
+		struct node {
+			node* _next;
+			node* _last;
+			node* _prev;
+			long _share;
+			long _flag;
+			library::event _event;
+		};
 		inline static constexpr unsigned long long EX_PUSH_LOCK_LOCK_V = 0x0;
 		inline static constexpr unsigned long long EX_PUSH_LOCK_LOCK = 0x1000000000000000ULL;
 		inline static constexpr unsigned long long EX_PUSH_LOCK_WAITING = 0x2000000000000000ULL;
@@ -27,50 +42,7 @@ namespace library {
 		inline static constexpr unsigned long long EX_PUSH_LOCK_SHARE = 0x0FFFFFFFFFFFFFFFULL;
 		inline static constexpr unsigned long long EX_PUSH_LOCK_SHARE_INC = 0x1ULL;
 		inline static constexpr unsigned long long EX_PUSH_LOCK_PTR_BITS = 0xf000000000000000ULL;
-
-		//struct EX_PUSH_LOCK {
-		//	union {
-		//		struct {
-		//			ULONG_PTR Locked : 1;
-		//			ULONG_PTR Waiting : 1;
-		//			ULONG_PTR Waking : 1;
-		//			ULONG_PTR MultipleShared : 1;
-		//			ULONG_PTR Shared : sizeof(ULONG_PTR) * 8 - 4;
-		//		};
-		//		ULONG_PTR Value;
-		//		PVOID Ptr;
-		//	};
-		//};
-		//EX_PUSH_LOCK _head;
 		unsigned long long _head;
-
-
-		inline static constexpr long EX_PUSH_LOCK_FLAGS_EXCLUSIVE = 0x1;
-		inline static constexpr long EX_PUSH_LOCK_FLAGS_SPINNING_V = 0x1;
-		inline static constexpr long EX_PUSH_LOCK_FLAGS_SPINNING = 0x2;
-		//struct DECLSPEC_ALIGN(16) EX_PUSH_LOCK_WAIT_BLOCK {
-		//	//union {
-		//	//	KGATE WakeGate;
-		//	//	KEVENT WakeEvent;
-		//	//};
-		//	EX_PUSH_LOCK_WAIT_BLOCK* Next;
-		//	EX_PUSH_LOCK_WAIT_BLOCK* Last;
-		//	EX_PUSH_LOCK_WAIT_BLOCK* Previous;
-		//	LONG ShareCount;
-		//	LONG Flags;
-		//};
-		struct node {
-			//union {
-			//	KGATE WakeGate;
-			//	KEVENT WakeEvent;
-			//};
-			node* _next;
-			node* _last;
-			node* _prev;
-			long _share;
-			long _flag;
-			library::event _event;
-		};
 	public:
 		inline explicit push_lock(void) noexcept
 			: _head(0) {
@@ -85,13 +57,19 @@ namespace library {
 			for (;;) {
 				auto head = _head;
 				if (0 == (head & EX_PUSH_LOCK_LOCK)) { //락이 켜져있지 않으면
-					if (head == library::interlock_compare_exhange(_head, head + EX_PUSH_LOCK_LOCK, head)) //락을 올림
+					if (head == library::interlock_compare_exhange(_head, head + EX_PUSH_LOCK_LOCK, head)) {//락을 올림
+						//auto order = _InterlockedIncrement(&_order) % 10000000;
+						//_log[order]._thread_id = GetCurrentThreadId();
+						//_log[order]._action = L"acquire_exclusive 1";
+						//_log[order]._head = (void*)head;
+						//_log[order]._next = (void*)(head + EX_PUSH_LOCK_LOCK);
 						break;
+					}
 				}
 				else { //락이 켜져있으면
 					auto current = library::allocate<node>();
 					library::construct(current->_event, false, false);
-					current->_flag = EX_PUSH_LOCK_FLAGS_EXCLUSIVE | EX_PUSH_LOCK_FLAGS_SPINNING;
+					current->_flag = EX_PUSH_LOCK_FLAGS_EXCLUSIVE/* | EX_PUSH_LOCK_FLAGS_SPINNING*/;
 					current->_prev = nullptr;
 					unsigned long long next;
 					bool optimize = false;
@@ -117,17 +95,24 @@ namespace library {
 					}
 
 					if (head == library::interlock_compare_exhange(_head, next, head)) {
+						//auto order = _InterlockedIncrement(&_order) % 10000000;
+						//_log[order]._thread_id = GetCurrentThreadId();
+						//_log[order]._action = L"acquire_exclusive 2";
+						//_log[order]._head = (void*)head;
+						//_log[order]._next = (void*)next;
+
 						if (true == optimize)
 							push_lock::optimize(next);
 
-						for (auto index = 0; index < 66; ++index) {
-							if (0 == (current->_flag & EX_PUSH_LOCK_FLAGS_SPINNING))
-								break;
-							library::pause();
-						}
-						if (library::interlock_bit_test_and_reset(current->_flag, EX_PUSH_LOCK_FLAGS_SPINNING_V))
-							current->_event.wait_for_single(INFINITE);
+						//for (auto index = 0; index < 66; ++index) {
+						//	if (0 == (current->_flag & EX_PUSH_LOCK_FLAGS_SPINNING))
+						//		break;
+						//	library::pause();
+						//}
+						//if (library::interlock_bit_test_and_reset(current->_flag, EX_PUSH_LOCK_FLAGS_SPINNING_V))
+						current->_event.wait_for_single(INFINITE);
 					}
+					current->_event.close();
 					library::deallocate(current);
 				}
 			}
@@ -187,13 +172,21 @@ namespace library {
 				unsigned long long next;
 				if (0 == (head & EX_PUSH_LOCK_WAITING) || 0 != (head & EX_PUSH_LOCK_WAKING)) {
 					next = head - EX_PUSH_LOCK_LOCK;
-					if (head == library::interlock_compare_exhange(_head, next, head))
+					if (head == library::interlock_compare_exhange(_head, next, head)) {
+						//auto order = _InterlockedIncrement(&_order) % 10000000;
+						//_log[order]._thread_id = GetCurrentThreadId();
+						//_log[order]._action = L"release_exclusive 1";
+						//_log[order]._head = (void*)head;
+						//_log[order]._next = (void*)next;
 						break;
+					}
 				}
 				else {
 					next = head - EX_PUSH_LOCK_LOCK + EX_PUSH_LOCK_WAKING;
-					if (head == library::interlock_compare_exhange(_head, next, head))
+					if (head == library::interlock_compare_exhange(_head, next, head)) {
+						wake(next);
 						break;
+					}
 				}
 			}
 		}
@@ -234,9 +227,10 @@ namespace library {
 				}
 				else {
 					next = EX_PUSH_LOCK_WAKING | (head & ~(EX_PUSH_LOCK_LOCK | EX_PUSH_LOCK_MULTIPLE_SHARED));
-					if (head == library::interlock_compare_exhange(_head, next, head))
+					if (head == library::interlock_compare_exhange(_head, next, head)) {
 						wake(next);
-					return;
+						return;
+					}
 				}
 				head = _head;
 			}
@@ -324,3 +318,30 @@ namespace library {
 		}
 	};
 }
+
+//struct EX_PUSH_LOCK {
+//	union {
+//		struct {
+//			ULONG_PTR Locked : 1;
+//			ULONG_PTR Waiting : 1;
+//			ULONG_PTR Waking : 1;
+//			ULONG_PTR MultipleShared : 1;
+//			ULONG_PTR Shared : sizeof(ULONG_PTR) * 8 - 4;
+//		};
+//		ULONG_PTR Value;
+//		PVOID Ptr;
+//	};
+//};
+//EX_PUSH_LOCK _head;
+
+		//struct DECLSPEC_ALIGN(16) EX_PUSH_LOCK_WAIT_BLOCK {
+		//	//union {
+		//	//	KGATE WakeGate;
+		//	//	KEVENT WakeEvent;
+		//	//};
+		//	EX_PUSH_LOCK_WAIT_BLOCK* Next;
+		//	EX_PUSH_LOCK_WAIT_BLOCK* Last;
+		//	EX_PUSH_LOCK_WAIT_BLOCK* Previous;
+		//	LONG ShareCount;
+		//	LONG Flags;
+		//};
