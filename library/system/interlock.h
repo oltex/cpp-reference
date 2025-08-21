@@ -3,8 +3,23 @@
 #include <Windows.h>
 
 namespace library {
-	//inline auto interlock_bit(void) noexcept {
-	//}
+	template<typename type>
+		requires library::any_of_type<type, unsigned int, int, unsigned long, long, unsigned long long, long long>
+	inline auto interlock_bit_test_and_set(type& base, library::type_identity<type> offset) noexcept -> bool {
+		if constexpr (4 == sizeof(type))
+			return ::_interlockedbittestandset(reinterpret_cast<volatile long*>(&base), static_cast<long>(offset));
+		else
+			return ::_interlockedbittestandset64(reinterpret_cast<volatile __int64*>(&base), static_cast<__int64>(offset));
+	}
+	template<typename type>
+		requires library::any_of_type<type, unsigned int, int, unsigned long, long, unsigned long long, long long>
+	inline auto interlock_bit_test_and_reset(type& base, library::type_identity<type> offset) noexcept -> bool {
+		if constexpr (4 == sizeof(type))
+			return ::_interlockedbittestandreset(reinterpret_cast<volatile long*>(&base), static_cast<long>(offset));
+		else
+			return ::_interlockedbittestandreset64(reinterpret_cast<volatile __int64*>(&base), static_cast<__int64>(offset));
+	}
+
 
 	template<typename type>
 		requires library::any_of_type<type, unsigned char, char, unsigned short, short, unsigned int, int, unsigned long, long, unsigned long long, long long>

@@ -7,6 +7,10 @@
 #include <memory>
 
 namespace library {
+	inline void sleep(unsigned long milli_second) noexcept {
+		::Sleep(milli_second);
+	}
+
 	class thread final : public handle {
 	private:
 		template <typename tuple, size_t... index>
@@ -88,6 +92,7 @@ namespace library {
 		inline static void switch_to(void) noexcept {
 			SwitchToThread();
 		}
+
 		inline static auto get_current_id(void) noexcept {
 			return GetCurrentThreadId();
 		}

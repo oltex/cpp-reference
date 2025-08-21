@@ -17,4 +17,7 @@ namespace library {
 	inline void flush(void const* address) noexcept {
 		_mm_clflush(address);
 	}
+	inline void pause(void) noexcept {
+		_mm_pause();
+	}
 }
