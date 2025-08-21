@@ -147,7 +147,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="bubble_sort.h" />
+    <ClInclude Include="example\bubble_sort.h" />
+    <ClInclude Include="example\insert_sort.h" />
     <ClInclude Include="example\select_sort.h" />
+    <ClInclude Include="insert_sort.h" />
     <ClInclude Include="select_sort.h" />
   </ItemGroup>
   <ItemGroup>

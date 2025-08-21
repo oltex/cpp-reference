@@ -5,6 +5,14 @@
     <ClInclude Include="example\select_sort.h">
       <Filter>example</Filter>
     </ClInclude>
+    <ClInclude Include="bubble_sort.h" />
+    <ClInclude Include="example\bubble_sort.h">
+      <Filter>example</Filter>
+    </ClInclude>
+    <ClInclude Include="example\insert_sort.h">
+      <Filter>example</Filter>
+    </ClInclude>
+    <ClInclude Include="insert_sort.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="example">
