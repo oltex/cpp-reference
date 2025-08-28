@@ -146,6 +146,10 @@ namespace framework {
 		inline auto operator=(pool&&) noexcept -> pool & = delete;
 		inline ~pool(void) noexcept = default;
 	public:
+		inline auto allocate(void) noexcept {
+			auto& instance = library::_thread_local::pool<buffer>::instance();
+			return framework::message(instance.allocate());
+		}
 		inline auto allocate(size_type const size) noexcept {
 			if (nullptr == _message || _message.remain() < sizeof(header) + size) {
 				auto& instance = library::_thread_local::pool<buffer>::instance();

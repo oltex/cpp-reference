@@ -13,8 +13,8 @@ namespace framework {
 		network _network;
 		session_array _session_array;
 	public:
-		inline explicit server(void) noexcept
-			: _iocp(framework::iocp::instance()) {
+		inline explicit server(size_type sessions) noexcept
+			: _iocp(framework::iocp::instance()), _session_array(sessions) {
 		}
 		inline explicit server(server const&) noexcept = delete;
 		inline explicit server(server&&) noexcept = delete;
@@ -22,21 +22,14 @@ namespace framework {
 		inline auto operator=(server&&) noexcept -> server & = delete;
 		inline ~server(void) noexcept = default;
 
-		inline void start(void) noexcept {
-			_session_array.initialize(100);
-		}
-		inline void stop(void) noexcept {
-			_session_array.finalize();
-		}
-
-		inline void accept(char const* const ip, unsigned short port, int backlog) noexcept {
+		inline void start_listen(char const* const ip, unsigned short port, int backlog) noexcept {
 			_network.listen(ip, port, backlog);
 			_iocp.connect(*this, _network._listen, static_cast<uintptr_t>(task::accept));
 			_network.accept(16);
 		}
-		//inline void reject(void) {
-			//_listen.finalize();
-		//}
+		inline void stop_listen(void) noexcept {
+			_network.close();
+		}
 		inline void connect(char const* const ip, unsigned short port) noexcept {
 			//_socket.create(AF_INET, SOCK_STREAM, IPPROTO_TCP, WSA_FLAG_OVERLAPPED);
 			//_socket.set_option_linger(1, 0);
@@ -66,10 +59,10 @@ namespace framework {
 			//return session_._key;
 		}
 	private:
-		inline void worker(bool result, unsigned long transferred, uintptr_t key, OVERLAPPED* overlapped) noexcept override {
+		inline virtual void worker(bool result, unsigned long transferred, uintptr_t key, OVERLAPPED* overlapped) noexcept override {
 			switch (static_cast<task>(key)) {
 			case task::accept: {
-				auto& accept = accept::recover(overlapped);
+				auto& accept = *accept::recover(overlapped);
 				if (false == result)
 					accept.close();
 				else {
@@ -89,9 +82,9 @@ namespace framework {
 				}
 			} break;
 			case task::connect: {
-				auto& connect = connect::recover(overlapped);
+				auto& connect = *connect::recover(overlapped);
 				if (false == result)
-					connect._socket.close();
+					connect.close();
 				else {
 
 				}
@@ -174,5 +167,4 @@ namespace framework {
 			return _message;
 		}
 	};
-
 }

@@ -38,7 +38,7 @@ namespace library {
 		inline static auto instance(void) noexcept -> type& {
 			return *_instance;
 		}
-		inline static void destruct(void) noexcept  {
+		inline static void destruct(void) noexcept {
 			library::destruct(*_instance);
 			library::deallocate(_instance);
 		}

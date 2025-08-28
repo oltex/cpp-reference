@@ -92,18 +92,8 @@ namespace framework {
 			return false;
 		}
 
-
-		//inline auto initialize(void) noexcept {
-		//	_front = 0;
-		//	_rear = 0;
-		//	_buffer = share_pointer();
-		//}
-		//inline auto finalize(void) noexcept {
-		//	_buffer = nullptr;
-		//}
-
 		inline bool receive(void) noexcept {
-			framework::message message_ = pool::instance().allocate(128);
+			framework::message message_ = pool::instance().allocate();
 			if (nullptr != _receive_message && !_receive_message.empty()) {
 				library::memory_copy(message_.data(), _receive_message.data() + _receive_message.front(), _receive_message.size());
 				message_.move_rear(_receive_message.size());
@@ -111,7 +101,7 @@ namespace framework {
 			_receive_message = std::move(message_);
 
 			if (0 == _cancel_flag) {
-				WSABUF wsa_buffer{ .len = _receive_message.capacity() - _receive_message.rear(), .buf = _receive_message.data() + _receive_message.rear() };
+				WSABUF wsa_buffer{ .len = _receive_message.remain(), .buf = _receive_message.data() + _receive_message.rear() };
 				switch (_socket.receive(wsa_buffer, _receive_context._overlap)) {
 					using enum library::socket::result;
 				case complet:
@@ -167,11 +157,11 @@ namespace framework {
 			_socket.cancel_io_ex();
 		}
 		inline static auto recover(OVERLAPPED* overlapped) noexcept -> library::pair<session&, task> {
-			auto context_ = reinterpret_cast<context*>(reinterpret_cast<unsigned char*>(overlapped) - offsetof(library::overlap, _overlapped) - offsetof(context, _overlap));
-			if (task::recv == context_->_task)
-				return library::pair<session&, task>(*reinterpret_cast<session*>(reinterpret_cast<unsigned char*>(context_) - offsetof(session, _receive_context)), context_->_task);
+			auto context = reinterpret_cast<session::context*>(reinterpret_cast<unsigned char*>(library::overlap::recover(overlapped)) - offsetof(session::context, _overlap));
+			if (task::recv == context->_task)
+				return library::pair<session&, task>(*reinterpret_cast<session*>(reinterpret_cast<unsigned char*>(context) - offsetof(session, _receive_context)), context->_task);
 			else
-				return library::pair<session&, task>(*reinterpret_cast<session*>(reinterpret_cast<unsigned char*>(context_) - offsetof(session, _send_context)), context_->_task);
+				return library::pair<session&, task>(*reinterpret_cast<session*>(reinterpret_cast<unsigned char*>(context) - offsetof(session, _send_context)), context->_task);
 		}
 	};
 	class session_array final {
@@ -179,21 +169,18 @@ namespace framework {
 		size_type _size;
 		library::lockfree::free_list<session> _free_list;
 	public:
-		inline explicit session_array(void) noexcept = default;
+		inline explicit session_array(size_type capacity) noexcept {
+			size_type index = 0;
+			_free_list.reserve(capacity, index);
+			_size = 0;
+		};
 		inline explicit session_array(session_array const&) noexcept = delete;
 		inline explicit session_array(session_array&&) noexcept = delete;
 		inline auto operator=(session_array const&) noexcept -> session_array & = delete;
 		inline auto operator=(session_array&&) noexcept -> session_array & = delete;
-		inline ~session_array(void) noexcept = default;
-
-		inline void initialize(size_type capacity) noexcept {
-			size_type index = 0;
-			_free_list.reserve(capacity, index);
-			_size = 0;
-		}
-		inline void finalize(void) noexcept {
+		inline ~session_array(void) noexcept {
 			_free_list.clear();
-		}
+		};
 
 		inline auto allocate(void) noexcept -> session* {
 			auto result = _free_list.allocate();

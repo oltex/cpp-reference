@@ -24,11 +24,11 @@ namespace framework {
 			_socket.close();
 		}
 		inline auto inherit(framework::network& network) noexcept;
-		inline auto address(void) noexcept {
+		inline auto address(void) noexcept -> library::socket_address_ipv4 {
 			return library::socket::get_accept_ex_socket_address(_buffer.data())._second;
 		};
-		inline static auto recover(OVERLAPPED* overlapped) noexcept -> accept& {
-			return *reinterpret_cast<accept*>(reinterpret_cast<unsigned char*>(library::overlap::recover(overlapped)) - offsetof(accept, _overlap));
+		inline static auto recover(OVERLAPPED* overlapped) noexcept -> accept* {
+			return reinterpret_cast<accept*>(reinterpret_cast<unsigned char*>(library::overlap::recover(overlapped)) - offsetof(accept, _overlap));
 		}
 	};
 	struct connect {
@@ -42,8 +42,17 @@ namespace framework {
 		inline auto operator=(connect&&) noexcept -> connect & = delete;
 		inline ~connect(void) noexcept = default;
 
-		inline static auto recover(OVERLAPPED* overlapped) noexcept -> accept& {
-			return *reinterpret_cast<accept*>(reinterpret_cast<unsigned char*>(library::overlap::recover(overlapped)) - offsetof(connect, _overlap));
+		inline void create(void) noexcept {
+			_socket.create(AF_INET, SOCK_STREAM, IPPROTO_TCP, WSA_FLAG_OVERLAPPED);
+		}
+		/*	inline void connect(void) noexcept {
+				_socket.create(AF_INET, SOCK_STREAM, IPPROTO_TCP, WSA_FLAG_OVERLAPPED);
+			}*/
+		inline void close(void) noexcept {
+			_socket.close();
+		}
+		inline static auto recover(OVERLAPPED* overlapped) noexcept -> accept* {
+			return reinterpret_cast<accept*>(reinterpret_cast<unsigned char*>(library::overlap::recover(overlapped)) - offsetof(connect, _overlap));
 		}
 	};
 
@@ -51,6 +60,7 @@ namespace framework {
 		using size_type = unsigned int;
 		library::socket _listen;
 		library::vector<accept> _accept;
+		size_type _accept_count;
 		library::vector<connect> _connect;
 
 		inline explicit network(void) noexcept = default;
@@ -72,6 +82,7 @@ namespace framework {
 		}
 		inline void accept(size_type capacity) noexcept {
 			_accept.reserve(capacity);
+			_accept_count = capacity;
 			for (size_type index = 0; index < capacity; ++index) {
 				auto& accept = _accept.emplace_back();
 				accept.create();
@@ -81,24 +92,31 @@ namespace framework {
 		inline void accept(framework::accept& accept) noexcept {
 			accept._socket.close();
 			accept._socket.create(AF_INET, SOCK_STREAM, IPPROTO_TCP, WSA_FLAG_OVERLAPPED);
-			_listen.accept(accept._socket, accept._buffer.data(), sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16, accept._overlap);
+			switch (_listen.accept(accept._socket, accept._buffer.data(), sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16, accept._overlap)) {
+				using enum library::socket::result;
+			case complet:
+			case pending:
+				break;
+			case close:
+				accept._socket.close();
+				break;
+			}
 		}
-		inline void connect(size_type capacity) noexcept {
-			_connect.reserve(capacity);
-			for (size_type index = 0; index < capacity; ++index) {
+		inline void close(void) noexcept {
+			_listen.close();
+			//while (0 != _accept_count) {
+			//}
+			//_accept.clear();
+		}
+
+		inline void connect(/*size_type capacity*/) noexcept {
+			_connect.reserve(1);
+			for (size_type index = 0; index < 1; ++index) {
 				auto& connect = _connect.emplace_back();
-				//accept.create();
+				connect.create();
 				//_listen.accept(accept._socket, accept._buffer.data(), sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16, accept._overlap);
 			}
 		}
-
-		//inline void finalize(void) noexcept {
-		//	_socket.close();
-		//	//_vector.clear();
-		//}
-
-
-	
 	};
 	inline auto accept::inherit(framework::network& network) noexcept {
 		_socket.set_option_update_accept_context(network._listen);
