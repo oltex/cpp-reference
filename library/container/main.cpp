@@ -23,7 +23,8 @@
 //#include "example/ring_buffer.h"
 //#include "example/intrusive/list.h"
 //#include "example/intrusive/share_pointer.h"
-#include "example/lockfree/stack.h"
+//#include "example/lockfree/stack.h"
+#include "example/lockfree/pool.h"
 
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -49,7 +50,8 @@ int main(void) noexcept {
 	//example::ring_buffer();
 	//example::intrusive::list();
 	//example::intrusive::share_pointer();
-	example::lockfree::stack();
+	//example::lockfree::stack();
+	example::lockfree::pool();
 
 	return 0;
 }

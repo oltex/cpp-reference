@@ -38,7 +38,7 @@ namespace library::lockfree {
 			: _head(exchange(rhs._head, nullptr)) {
 		};
 		inline auto operator=(pool const&) noexcept = delete;
-		inline auto operator=(pool&& rhs) noexcept -> pool&{
+		inline auto operator=(pool&& rhs) noexcept -> pool& {
 			node* head = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & _head);
 			while (nullptr != head)
 				library::deallocate<node>(exchange(head, head->_next));
@@ -54,18 +54,16 @@ namespace library::lockfree {
 		template<typename... argument>
 		inline auto allocate(argument&&... arg) noexcept -> type* {
 			node* current;
-			for (;;) {
-				unsigned long long head = _head;
+			for (unsigned long long head = _head, prev;; head = prev) {
 				current = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & head);
 				if (nullptr == current) {
 					current = library::allocate<node>();
 					break;
 				}
 				unsigned long long next = reinterpret_cast<unsigned long long>(current->_next) + (0xFFFF800000000000ULL & head);
-				if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head))
+				if (prev = _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head); prev == head)
 					break;
 			}
-
 			if constexpr (true == placement)
 				library::construct<type, argument...>(current->_value, std::forward<argument>(arg)...);
 			return &current->_value;
@@ -74,11 +72,10 @@ namespace library::lockfree {
 			if constexpr (true == placement)
 				library::destruct<type>(*value);
 			auto current = reinterpret_cast<node*>(reinterpret_cast<unsigned char*>(value) - offsetof(node, _value));
-			for (;;) {
-				unsigned long long head = _head;
+			for (unsigned long long head = _head, prev;; head = prev) {
 				current->_next = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & head);
 				unsigned long long next = reinterpret_cast<unsigned long long>(current) + (0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
-				if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head))
+				if (prev = _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head); prev == head)
 					break;
 			}
 		}

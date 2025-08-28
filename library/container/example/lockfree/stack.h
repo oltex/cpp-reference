@@ -81,10 +81,6 @@ namespace example::lockfree {
 
 	inline void stack(void) noexcept {
 		library::lockfree::stack<int> _stack;
-		_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-
-		//library::lockfree::stack<my_class> _lockfree_stack2;
-
 		//InitializeSRWLock(&_srw);
 		//InitializeCriticalSection(&cs);
 		QueryPerformanceFrequency(&_frequency);

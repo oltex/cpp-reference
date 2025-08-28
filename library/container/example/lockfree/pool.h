@@ -1,53 +1,68 @@
 #pragma once
-#include "pool.h"
+#include "../../lockfree/pool.h"
+#include "../../array.h"
 #include <iostream>
 #include <thread>
 #include <vector>
 #include <intrin.h>
 
-library::lockfree::pool<int> _pool;
+namespace example::lockfree {
+	inline static unsigned int __stdcall pool_function(void* arg) noexcept {
+		library::lockfree::pool<int>& _pool = *reinterpret_cast<library::lockfree::pool<int>*>(arg);
+		std::vector<int*> _vector;
 
-inline static unsigned int __stdcall func(void* arg) noexcept {
-	std::vector<int*> _vector;
-
-	for (int j = 0; j < 1000; ++j) {
-		std::cout << "allocate" << std::endl;
-		for (auto i = 0; i < 2; ++i) {
-			int* a = _pool.allocate();
-			*a = 10;
-			_vector.emplace_back(a);
+		for (int loop = 0; loop < 1000; ++loop) {
+			std::cout << "allocate" << std::endl;
+			for (auto index = 0; index < 2; ++index) {
+				int* value = _pool.allocate();
+				*value = 10;
+				_vector.emplace_back(value);
+			}
+			for (auto index = 0; index < 2; ++index) {
+				if (11 != ++(*_vector[index]))
+					__debugbreak();
+			}
+			std::cout << "deallocate" << std::endl;
+			for (auto index = 0; index < 2; ++index) {
+				int* value = _vector.back();
+				_vector.pop_back();
+				_pool.deallocate(value);
+			}
 		}
-		for (auto i = 0; i < 2; ++i) {
-			if (11 != ++(*_vector[i]))
-				__debugbreak();
-		}
-		std::cout << "deallocate" << std::endl;
-		for (auto i = 0; i < 2; ++i) {
-			int* a = _vector.back();
-			_pool.deallocate(a);
-			_vector.pop_back();
-		}
+		return 0;
 	}
 
-	return 0;
-}
+	LARGE_INTEGER _frequency;
+	inline static unsigned int __stdcall pool_performance(void* arg) noexcept {
+		library::lockfree::pool<int>& _pool = *reinterpret_cast<library::lockfree::pool<int>*>(arg);
+		library::array<int*, 500> _array;
 
-int main(void) noexcept {
-	//std::vector<int*> _vector;
-	//for (int i = 0; i < 10000; ++i) {
-	//	_vector.emplace_back(&_pool.allocate());
-	//}
-	//for (auto i = 0; i < 10000; ++i) {
-	//	int* a = _vector.back();
-	//	_pool.deallocate(*a);
-	//	_vector.pop_back();
-	//}
+		LARGE_INTEGER _start, _end;
+		unsigned long long _sum = 0, _count = 0;
+		for (;;) {
+			QueryPerformanceCounter(&_start);
+			for (int loop = 0; loop < 10000; ++loop) {
+				for (auto index = 0; index < 500; ++index)
+					_array[index] = _pool.allocate();
+				for (auto index = 0; index < 500; ++index)
+					_pool.deallocate(_array[index]);
+			}
+			QueryPerformanceCounter(&_end);
+			_sum += _end.QuadPart - _start.QuadPart;
+			_count++;
+			printf("%f\n", (static_cast<double>(_sum) / _count) / static_cast<double>(_frequency.QuadPart) * 1e3);
+		}
+		return 0;
+	}
 
-	HANDLE _handle0 = (HANDLE)_beginthreadex(nullptr, 0, func, nullptr, 0, 0);
-	HANDLE _handle1 = (HANDLE)_beginthreadex(nullptr, 0, func, nullptr, 0, 0);
-	HANDLE _handle2 = (HANDLE)_beginthreadex(nullptr, 0, func, nullptr, 0, 0);
-	HANDLE _handle3 = (HANDLE)_beginthreadex(nullptr, 0, func, nullptr, 0, 0);
-	system("pause");
-	//Sleep(INFINITE);
-	return 0;
+	inline void pool(void) noexcept {
+		library::lockfree::pool<int> _pool;
+		QueryPerformanceFrequency(&_frequency);
+
+		int count;
+		scanf_s("%d", &count);
+		for (int i = 0; i < 4; ++i)
+			(HANDLE)_beginthreadex(nullptr, 0, pool_performance, reinterpret_cast<void*>(&_pool), 0, 0);
+		system("pause");
+	}
 }

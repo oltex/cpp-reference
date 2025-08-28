@@ -112,6 +112,7 @@ namespace library {
 	};
 
 	class query_performance final {
+		LARGE_INTEGER _large_integer;
 	public:
 		inline explicit query_performance(void) noexcept = default;
 		inline explicit query_performance(LARGE_INTEGER large_integer) noexcept
@@ -169,8 +170,5 @@ namespace library {
 		inline auto data(void) noexcept -> LARGE_INTEGER& {
 			return _large_integer;
 		}
-	private:
-		LARGE_INTEGER _large_integer;
 	};
-	//inline static query_performance _frequency();
 }
