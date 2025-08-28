@@ -50,7 +50,7 @@ namespace detail {
 		inline void deallocate(void) noexcept {
 			library::deallocate<type>(_array);
 		}
-		inline void reallocate(void) noexcept {
+		inline void reallocate(size_type const capacity) noexcept {
 			_array = library::reallocate<type>(_array, capacity);
 		}
 		inline auto capacity(void) const noexcept -> size_type {

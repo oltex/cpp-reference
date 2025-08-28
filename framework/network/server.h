@@ -60,16 +60,19 @@ namespace framework {
 		}
 	private:
 		inline virtual void worker(bool result, unsigned long transferred, uintptr_t key, OVERLAPPED* overlapped) noexcept override {
-			switch (static_cast<task>(key)) {
-			case task::accept: {
-				auto& accept = *accept::recover(overlapped);
+			switch (auto task = static_cast<server::task>(key)) {
+			case task::accept:
+			case task::connect: {
+				auto& connection = connection::recover(overlapped);
 				if (false == result)
-					accept.close();
+					connection.close();
 				else {
-					accept.inherit(_network);
-					if (auto address = accept.address(); true == on_accept_socket(address)) {
+					connection.inherit(_network);
+					if (auto address = connection.address(); false == on_accept_socket(address)) {
+					}
+					else {
 						auto& session = *_session_array.allocate();
-						session.initialize(accept, 400000);
+						session.initialize(connection, 400000);
 						_iocp.connect(*this, session._socket, static_cast<uintptr_t>(task::session));
 
 						on_create_session(session._key);
@@ -78,17 +81,9 @@ namespace framework {
 							_session_array.deallocate(&session);
 						}
 					}
-					_network.accept(accept);
+					if (task::accept == task)
+						_network.accept(connection);
 				}
-			} break;
-			case task::connect: {
-				auto& connect = *connect::recover(overlapped);
-				if (false == result)
-					connect.close();
-				else {
-
-				}
-
 			} break;
 			case task::session: {
 				auto [session, task] = session::recover(overlapped);
@@ -124,6 +119,9 @@ namespace framework {
 				}
 			} break;
 			case task::destory: {
+				session& session = *reinterpret_cast<framework::session*>(overlapped);
+				on_destroy_session(session._key);
+				_session_array.deallocate(&session);
 			} break;
 			case task::function: {
 			} break;

@@ -12,9 +12,8 @@ namespace libray {
 		inline ~spin_lock(void) noexcept = default;
 
 		inline void lock(void) noexcept {
-			while (1 == library::interlock_exchange(_lock, 1))
-				while (1 == _lock)
-					YieldProcessor();
+			while (1 == _lock || 1 == library::interlock_exchange(_lock, 1))
+				YieldProcessor();
 		}
 		inline void unlock(void) noexcept {
 			library::interlock_exchange(_lock, 0);

@@ -206,7 +206,7 @@ namespace library {
 			}
 			return result;
 		}
-		inline auto send_to(char const* const buffer, int const length, int const flag, socket_address& socket_address) const noexcept -> int {
+		inline auto send(char const* const buffer, int const length, int const flag, socket_address& socket_address) const noexcept -> int {
 			return ::sendto(_socket, buffer, length, flag, &socket_address.data(), socket_address.get_length());
 		}
 		inline auto send(WSABUF* buffer, unsigned long count, unsigned long* byte, unsigned long flag) noexcept -> int {
@@ -270,7 +270,7 @@ namespace library {
 				close();
 			return result;
 		}
-		inline auto receive_from(char* const buffer, int const length, int const flag, socket_address& socket_address, int& from_length) noexcept -> int {
+		inline auto receive(char* const buffer, int const length, int const flag, socket_address& socket_address, int& from_length) noexcept -> int {
 			return ::recvfrom(_socket, buffer, length, flag, &socket_address.data(), &from_length);
 		}
 		inline auto receive(WSABUF* buffer, unsigned long count, unsigned long* byte, unsigned long* flag) noexcept -> int {

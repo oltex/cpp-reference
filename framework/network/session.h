@@ -46,9 +46,9 @@ namespace framework {
 		inline auto operator=(session&&) noexcept -> session & = delete;
 		inline ~session(void) noexcept = default;
 
-		inline void initialize(framework::accept& accept, unsigned long long timeout_duration) noexcept {
+		inline void initialize(framework::connection& connection, unsigned long long timeout_duration) noexcept {
 			_key = 0xffff & _key | library::interlock_exchange_add(_id, 0x10000);
-			_socket = std::move(accept._socket);
+			_socket = std::move(connection._socket);
 			//_timeout_currnet = GetTickCount64();
 			//_timeout_duration = timeout_duration;
 			_cancel_flag = 0;

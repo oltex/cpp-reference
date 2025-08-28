@@ -56,52 +56,52 @@ namespace framework {
 }
 
 
-class scheduler final {
-public:
-	class task {
-	public:
-		template <typename function_, typename... argument>
-		inline explicit task(function_&& func, argument&&... arg) noexcept
-			: task(type::function), _function(std::bind(std::forward<function_>(func), std::forward<argument>(arg)...)) {
-		};
-		inline explicit task(task const&) noexcept = delete;
-		inline explicit task(task&&) noexcept = delete;
-		inline auto operator=(task const&) noexcept -> task & = delete;
-		inline auto operator=(task&&) noexcept -> task & = delete;
-		inline ~task(void) noexcept = default;
-
-		inline virtual bool excute(void) noexcept override {
-			for (;;) {
-				int time = _function();
-				switch (time) {
-				case 0:
-					break;
-				case -1:
-					return false;
-				default:
-					_time += time;
-					return true;
-				}
-			}
-		}
-	private:
-		std::function<int(void)> _function;
-	};
-	class task {
-	public:
-#pragma warning(suppress: 26495)
-		inline explicit task(type const type_) noexcept
-			: _type(type_), _time(system_component::time::multimedia::get_time()) {
-		};
-		inline explicit task(task const&) noexcept = delete;
-		inline explicit task(task&&) noexcept = delete;
-		inline auto operator=(task const&) noexcept -> task & = delete;
-		inline auto operator=(task&&) noexcept -> task & = delete;
-		inline ~task(void) noexcept = default;
-
-		inline virtual bool excute(void) noexcept = 0;
-
-		type _type;
-		unsigned long _time;
-	};
-}
+//class scheduler final {
+//public:
+//	class task {
+//	public:
+//		template <typename function_, typename... argument>
+//		inline explicit task(function_&& func, argument&&... arg) noexcept
+//			: task(type::function), _function(std::bind(std::forward<function_>(func), std::forward<argument>(arg)...)) {
+//		};
+//		inline explicit task(task const&) noexcept = delete;
+//		inline explicit task(task&&) noexcept = delete;
+//		inline auto operator=(task const&) noexcept -> task & = delete;
+//		inline auto operator=(task&&) noexcept -> task & = delete;
+//		inline ~task(void) noexcept = default;
+//
+//		inline virtual bool excute(void) noexcept override {
+//			for (;;) {
+//				int time = _function();
+//				switch (time) {
+//				case 0:
+//					break;
+//				case -1:
+//					return false;
+//				default:
+//					_time += time;
+//					return true;
+//				}
+//			}
+//		}
+//	private:
+//		std::function<int(void)> _function;
+//	};
+//	class task {
+//	public:
+//#pragma warning(suppress: 26495)
+//		inline explicit task(type const type_) noexcept
+//			: _type(type_), _time(system_component::time::multimedia::get_time()) {
+//		};
+//		inline explicit task(task const&) noexcept = delete;
+//		inline explicit task(task&&) noexcept = delete;
+//		inline auto operator=(task const&) noexcept -> task & = delete;
+//		inline auto operator=(task&&) noexcept -> task & = delete;
+//		inline ~task(void) noexcept = default;
+//
+//		inline virtual bool excute(void) noexcept = 0;
+//
+//		type _type;
+//		unsigned long _time;
+//	};
+//}
