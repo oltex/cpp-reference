@@ -1,7 +1,7 @@
 #pragma once
-#include "../../../memory/memory.h"
-#include "../../thread-local/pool/pool.h"
-#include "../../storage/storage.h"
+#include "../../memory.h"
+#include "../thread-local/pool.h"
+#include "../storage.h"
 #include <utility>
 #include <Windows.h>
 #include <intrin.h>
@@ -43,23 +43,20 @@ namespace library::lockfree {
 		inline void push(argument&&... arg) noexcept {
 			node* current = _pool::instance().allocate();
 			library::construct<type>(current->_value, std::forward<argument>(arg)...);
-
-			for (;;) {
-				unsigned long long head = _head;
+			for (unsigned long long head = _head, prev;; head = prev) {
 				current->_next = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & head);
 				unsigned long long next = reinterpret_cast<unsigned long long>(current) + (0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
-				if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head))
+				if (prev = _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head); prev == head)
 					break;
 			}
 		}
 		inline auto pop(void) noexcept -> std::optional<type> {
-			for (;;) {
-				unsigned long long head = _head;
+			for (unsigned long long head = _head, prev;; head = prev) {
 				node* address = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & head);
 				if (nullptr == address)
 					return std::nullopt;
 				unsigned long long next = reinterpret_cast<unsigned long long>(address->_next) + (0xFFFF800000000000ULL & head);
-				if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head)) {
+				if (prev = _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head); prev == head) {
 					library::storage<type> result;
 					result.relocate(address->_value);
 					_pool::instance().deallocate(address);

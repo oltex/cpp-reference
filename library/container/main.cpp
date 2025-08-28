@@ -6,7 +6,7 @@
 //#include "example/pool.h"
 //#include "example/pair.h"
 //#include "example/tuple.h"
-#include "example/vector.h"
+//#include "example/vector.h"
 //#include "example/stack.h"
 //#include "example/queue.h"
 //#include "example/compress_pair.h"
@@ -21,8 +21,9 @@
 //#include "example/circle_queue.h"
 //#include "example/bit_grid.h"
 //#include "example/ring_buffer.h"
-#include "example/intrusive/list.h"
-#include "example/intrusive/share_pointer.h"
+//#include "example/intrusive/list.h"
+//#include "example/intrusive/share_pointer.h"
+#include "example/lockfree/stack.h"
 
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -31,7 +32,7 @@ int main(void) noexcept {
 	//example::pair();
 	//example::tuple();
 	//example::pool();
-	example::vector();
+	//example::vector();
 	//example::stack();
 	//example::queue();
 	//example::compress_pair();
@@ -46,8 +47,9 @@ int main(void) noexcept {
 	//example::circle_queue();
 	//example::bit_grid();
 	//example::ring_buffer();
-	example::intrusive::list();
-	example::intrusive::share_pointer();
+	//example::intrusive::list();
+	//example::intrusive::share_pointer();
+	example::lockfree::stack();
 
 	return 0;
 }

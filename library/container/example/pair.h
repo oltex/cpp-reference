@@ -9,7 +9,6 @@ namespace example {
 	inline void pair(void) noexcept {
 		struct test {
 		};
-		library::pair<int, test> pair2;
 		std::pair<int, int>(std::piecewise_construct, std::forward_as_tuple(10), std::forward_as_tuple(10));
 		library::pair<int, int> pair(library::_piecewise_construct, library::forward_as_tuple(10), library::forward_as_tuple(10));
 
