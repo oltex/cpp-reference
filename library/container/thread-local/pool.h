@@ -80,8 +80,7 @@ namespace library::_thread_local {
 			};
 
 			inline auto allocate(void) noexcept -> pair<node*, size_type> {
-				for (;;) {
-					unsigned long long head = _head;
+				for (unsigned long long head = _head, prev;; head = prev) {
 					bucket* address = reinterpret_cast<bucket*>(0x00007FFFFFFFFFFFULL & head);
 					if (nullptr == address) {
 						pair<node*, size_type> result{ reinterpret_cast<node*>(_aligned_malloc(sizeof(node) * bucket_size, _align)), static_cast<size_type>(bucket_size) };
@@ -97,7 +96,7 @@ namespace library::_thread_local {
 						return result;
 					}
 					unsigned long long next = reinterpret_cast<unsigned long long>(address->_next) + (0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
-					if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head)) {
+					if (prev = _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head); prev == head) {
 						pair<node*, size_type> result{ address->_value, address->_size };
 						_pool.deallocate(address);
 						return result;
@@ -109,11 +108,10 @@ namespace library::_thread_local {
 				current->_value = value;
 				current->_size = size;
 
-				for (;;) {
-					unsigned long long head = _head;
+				for (unsigned long long head = _head, prev;; head = prev) {
 					current->_next = reinterpret_cast<bucket*>(0x00007FFFFFFFFFFFULL & head);
 					unsigned long long next = reinterpret_cast<unsigned long long>(current) + (0xFFFF800000000000ULL & head);
-					if (head == _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head))
+					if (prev = _InterlockedCompareExchange(reinterpret_cast<unsigned long long volatile*>(&_head), next, head); prev == head)
 						break;
 				}
 			}

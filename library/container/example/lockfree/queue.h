@@ -96,7 +96,7 @@ namespace example::lockfree {
 		return 0;
 	}
 	inline static unsigned int __stdcall queue_order(void* arg) noexcept {
-		library::lockfree::queue<std::pair<unsigned long, unsigned long long>>& _queue = *reinterpret_cast<library::lockfree::queue<std::pair<unsigned long, unsigned long long>>*>(arg);
+		auto& _queue = *reinterpret_cast<library::lockfree::queue<std::pair<unsigned long, unsigned long long>>*>(arg);
 		int count = 0;
 		unsigned long long _value = 0;
 		unsigned long long _prev_value = 0;

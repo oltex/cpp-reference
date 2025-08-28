@@ -18,7 +18,7 @@ namespace example::lockfree {
 	LARGE_INTEGER _frequency;
 
 	inline static unsigned int __stdcall stack_performance(void* arg) noexcept {
-		library::lockfree::stack<int>& _stack = *reinterpret_cast<library::lockfree::stack<int>*>(arg);
+		auto& _stack = *reinterpret_cast<library::lockfree::stack<int>*>(arg);
 
 		LARGE_INTEGER _start, _end;
 		unsigned long long _sum = 0;
