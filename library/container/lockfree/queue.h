@@ -159,6 +159,17 @@ namespace library::lockfree {
 		inline auto end(void) noexcept -> iterator requires(false == multi_pop) {
 			return iterator(reinterpret_cast<node*>(this));
 		}
+
+		inline void clear(void) noexcept {
+/*			auto head = reinterpret_cast<node*>(0x00007FFFFFFFFFFEULL & _head);
+			for (;;) {
+				node* current = library::exchange(head, reinterpret_cast<node*>(0x00007FFFFFFFFFFEULL & head->_next));
+				_pool::instance().deallocate(current);
+				if (reinterpret_cast<unsigned long long>(this) == reinterpret_cast<unsigned long long>(head))
+					break;
+				library::destruct<type>(head->_value);
+			*/}
+		}
 	};
 }
 //requires std::is_trivially_copy_constructible_v<type>&& std::is_trivially_destructible_v<type>
