@@ -164,6 +164,16 @@ namespace library {
 			}
 			return result;
 		}
+		inline auto connect(socket_address& socket_address, overlap& overlap) noexcept -> int {
+			if (FALSE == _connect_ex(_socket, &socket_address.data(), socket_address.get_length(), nullptr, 0, nullptr, &overlap.data())) {
+				switch (WSAGetLastError()) {
+				case ERROR_IO_PENDING:
+					break;
+				default:
+					__debugbreak();
+				}
+			}
+		}
 		inline void shutdown(int const how) const noexcept {
 			if (SOCKET_ERROR == ::shutdown(_socket, how))
 				__debugbreak();
@@ -355,6 +365,12 @@ namespace library {
 			unsigned long byte_returned;
 			sock.wsa_io_control(SIO_GET_EXTENSION_FUNCTION_POINTER, reinterpret_cast<void*>(&guid), sizeof(GUID), reinterpret_cast<void*>(&_accept_ex), sizeof(LPFN_ACCEPTEX), byte_returned);
 		}
+		inline static void wsa_io_control_connect_ex(void) noexcept {
+			socket sock(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+			GUID guid = WSAID_CONNECTEX;
+			unsigned long byte_returned;
+			sock.wsa_io_control(SIO_GET_EXTENSION_FUNCTION_POINTER, reinterpret_cast<void*>(&guid), sizeof(GUID), reinterpret_cast<void*>(&_connect_ex), sizeof(LPFN_CONNECTEX), byte_returned);
+		}
 		inline static void wsa_io_control_disconnect_ex(void) noexcept {
 			socket sock(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 			GUID guid = WSAID_DISCONNECTEX;
@@ -411,6 +427,7 @@ namespace library {
 	private:
 		SOCKET _socket;
 		inline static LPFN_ACCEPTEX _accept_ex;
+		inline static LPFN_CONNECTEX _connect_ex;
 		inline static LPFN_GETACCEPTEXSOCKADDRS _get_accept_ex_sockaddr;
 		inline static LPFN_DISCONNECTEX _disconnect_ex;
 	};

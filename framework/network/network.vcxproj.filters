@@ -9,19 +9,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="listen.h">
+    <ClInclude Include="network.h">
       <Filter>component</Filter>
     </ClInclude>
     <ClInclude Include="session.h">
       <Filter>component</Filter>
     </ClInclude>
     <ClInclude Include="message.h">
-      <Filter>component</Filter>
-    </ClInclude>
-    <ClInclude Include="header.h">
-      <Filter>component</Filter>
-    </ClInclude>
-    <ClInclude Include="queue.h">
       <Filter>component</Filter>
     </ClInclude>
     <ClInclude Include="iocp.h" />

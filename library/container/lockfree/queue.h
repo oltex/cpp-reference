@@ -6,7 +6,6 @@
 
 namespace library::lockfree {
 	template <typename type, bool multi_pop = true>
-	//requires std::is_trivially_copy_constructible_v<type>&& std::is_trivially_destructible_v<type>
 	class queue {
 	protected:
 		struct node final {
@@ -162,6 +161,7 @@ namespace library::lockfree {
 		}
 	};
 }
+//requires std::is_trivially_copy_constructible_v<type>&& std::is_trivially_destructible_v<type>
 //type result = reinterpret_cast<node*>(0x00007FFFFFFFFFFEULL & next)->_value;
 //_pool::instance().deallocate(address);
 //return result;

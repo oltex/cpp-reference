@@ -121,6 +121,7 @@
     </ClInclude>
     <ClInclude Include="unorder_map.h" />
     <ClInclude Include="unorder_set.h" />
+    <ClInclude Include="tuple.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

@@ -3,7 +3,19 @@
 #include "library/container/intrusive/share_pointer.h"
 #include "library/container/array.h"
 
+#include "library/container/lockfree/queue.h"
+
 namespace framework {
+	struct header final {
+		unsigned short _size;
+		inline explicit header(void) noexcept = default;
+		inline explicit header(header const&) noexcept = delete;
+		inline explicit header(header&&) noexcept = delete;
+		inline auto operator=(header const&) noexcept -> header & = delete;
+		inline auto operator=(header&&) noexcept -> header & = delete;
+		inline ~header(void) noexcept = default;
+	};
+
 	class buffer : public library::intrusive::share_pointer_hook<0>, public library::array<char, 128> {
 		using byte = unsigned char;
 	public:
@@ -130,5 +142,15 @@ namespace framework {
 		inline friend bool operator==(message const& lhs, nullptr_t) noexcept {
 			return nullptr == lhs._buffer;
 		}
+	};
+
+	class queue final : public library::lockfree::queue<message, false> {
+	public:
+		inline explicit queue(void) noexcept = default;
+		inline explicit queue(queue const&) noexcept = delete;
+		inline explicit queue(queue&&) noexcept = delete;
+		inline auto operator=(queue const&) noexcept -> queue & = delete;
+		inline auto operator=(queue&&) noexcept -> queue & = delete;
+		inline ~queue(void) noexcept = default;
 	};
 }

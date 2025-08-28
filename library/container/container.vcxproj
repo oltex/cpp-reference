@@ -202,6 +202,7 @@
     <ClInclude Include="storage.h" />
     <ClInclude Include="string.h" />
     <ClInclude Include="thread-local\pool.h" />
+    <ClInclude Include="tuple.h" />
     <ClInclude Include="unique_pointer.h" />
     <ClInclude Include="unorder_map.h" />
     <ClInclude Include="unorder_set.h" />

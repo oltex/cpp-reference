@@ -1,18 +1,15 @@
 #pragma once
 #include "iocp.h"
-#include "listen.h"
-
+#include "network.h"
 #include "session.h"
-#include "header.h"
 
 namespace framework {
 	class server final : iocp::object {
 		enum class task : unsigned char {
-			accept = 0, session, destory,
+			accept = 0, connect, session, destory, function
 		};
 		iocp& _iocp;
-		listen _listen;
-
+		network _network;
 		session_array _session_array;
 	public:
 		inline explicit server(void) noexcept
@@ -32,15 +29,40 @@ namespace framework {
 		}
 
 		inline void accept(char const* const ip, unsigned short port, int backlog) noexcept {
-			_listen.initialize(ip, port, backlog);
-			_iocp.connect(*this, _listen._socket, static_cast<uintptr_t>(task::accept));
-			_listen.accept(16);
+			_network.listen(ip, port, backlog);
+			_iocp.connect(*this, _network._listen, static_cast<uintptr_t>(task::accept));
+			_network.accept(16);
 		}
-		inline void reject(void) {
-			_listen.finalize();
-		}
-		inline void connect(void) noexcept {
+		//inline void reject(void) {
+			//_listen.finalize();
+		//}
+		inline void connect(char const* const ip, unsigned short port) noexcept {
+			//_socket.create(AF_INET, SOCK_STREAM, IPPROTO_TCP, WSA_FLAG_OVERLAPPED);
+			//_socket.set_option_linger(1, 0);
+			//_socket.set_option_send_buffer(0);
+			//library::socket_address_ipv4 sockaddr;
+			//sockaddr.set_address(ip);
+			//sockaddr.set_port(port);
+			//_socket.bind(sockaddr);
 
+			//socket.connect()
+			//system_component::socket_address_ipv4 socket_address;
+			//socket_address.set_address(address);
+			//socket_address.set_port(port);
+			//system_component::socket socket(AF_INET, SOCK_STREAM, 0);
+			//socket.set_linger(1, 0);
+			//socket.connect(socket_address);
+
+			//session& session_ = *_session_array.acquire();
+			//session_.initialize(std::move(socket), _timeout_duration);
+			//_complation_port.connect(session_._socket, reinterpret_cast<ULONG_PTR>(&session_));
+
+			//if (!session_.receive() && session_.release()) {
+			//	on_destroy_session(session_._key);
+			//	_session_array.release(session_);
+			//	return 0;
+			//}
+			//return session_._key;
 		}
 	private:
 		inline void worker(bool result, unsigned long transferred, uintptr_t key, OVERLAPPED* overlapped) noexcept override {
@@ -50,7 +72,8 @@ namespace framework {
 				if (false == result)
 					accept._socket.close();
 				else {
-					auto address = accept.initialize(_listen);
+					accept.inherit(_network);
+					auto address = accept.address();
 					if (true == on_accept_socket(address)) {
 						auto& session = *_session_array.allocate();
 						session.initialize(accept, 400000);
@@ -62,8 +85,17 @@ namespace framework {
 							_session_array.deallocate(&session);
 						}
 					}
-					_listen.accept(accept);
+					_network.accept(accept);
 				}
+			} break;
+			case task::connect: {
+				auto& connect = connect::recover(overlapped);
+				if (false == result)
+					connect._socket.close();
+				else {
+
+				}
+
 			} break;
 			case task::session: {
 				auto [session, task] = session::recover(overlapped);
@@ -97,6 +129,10 @@ namespace framework {
 						_session_array.deallocate(&session);
 					}
 				}
+			} break;
+			case task::destory: {
+			} break;
+			case task::function: {
 			} break;
 			}
 		};
