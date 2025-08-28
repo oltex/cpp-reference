@@ -100,4 +100,6 @@ namespace library {
 	inline constexpr bool floating_point_type = any_of_type<remove_cv<type>, float, double, long double>;
 	template <typename type>
 	inline constexpr bool arithmetic_type = integral_type<type> || floating_point_type<type>;
+	//template <typename type>
+	//inline constexpr bool fundamental_type = arithmetic_type<type> || void_type<type> || is_null_pointer_v<type>;
 }

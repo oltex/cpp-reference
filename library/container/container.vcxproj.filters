@@ -119,6 +119,8 @@
     <ClInclude Include="example\my_class.h">
       <Filter>example</Filter>
     </ClInclude>
+    <ClInclude Include="unorder_map.h" />
+    <ClInclude Include="unorder_set.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

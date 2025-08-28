@@ -203,6 +203,8 @@
     <ClInclude Include="string.h" />
     <ClInclude Include="thread-local\pool.h" />
     <ClInclude Include="unique_pointer.h" />
+    <ClInclude Include="unorder_map.h" />
+    <ClInclude Include="unorder_set.h" />
     <ClInclude Include="vector.h" />
     <ClInclude Include="weak_pointer.h" />
   </ItemGroup>

@@ -8,8 +8,8 @@
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-	//example::select_sort();
-	example::bubble_sort();
+	example::select_sort();
+	//example::bubble_sort();
 
 	return 0;
 }
