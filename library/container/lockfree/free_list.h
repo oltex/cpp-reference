@@ -39,24 +39,21 @@ namespace library::lockfree {
 		};
 
 		inline auto allocate(void) noexcept -> type* {
-			for (;;) {
-				unsigned long long head = _head;
+			for (unsigned long long head = _head, prev;; head = prev) {
 				node* current = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & head);
 				if (nullptr == current)
 					return nullptr;
 				unsigned long long next = reinterpret_cast<unsigned long long>(current->_next) + (0xFFFF800000000000ULL & head) + 0x0000800000000000ULL;
-				if (head == library::interlock_compare_exhange(_head, next, head)) {
+				if (prev = library::interlock_compare_exhange(_head, next, head); prev == head)
 					return &current->_value;
-				}
 			}
 		}
 		inline void deallocate(type* value) noexcept {
 			auto current = reinterpret_cast<node*>(reinterpret_cast<unsigned char*>(value) - offsetof(node, _value));
-			for (;;) {
-				unsigned long long head = _head;
+			for (unsigned long long head = _head, prev;; head = prev) {
 				current->_next = reinterpret_cast<node*>(head & 0x00007FFFFFFFFFFFULL);
 				unsigned long long next = reinterpret_cast<unsigned long long>(current) + (head & 0xFFFF800000000000ULL);
-				if (head == library::interlock_compare_exhange(_head, next, head))
+				if (prev = library::interlock_compare_exhange(_head, next, head); prev == head)
 					break;
 			}
 		}

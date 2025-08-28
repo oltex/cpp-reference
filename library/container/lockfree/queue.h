@@ -63,7 +63,7 @@ namespace library::lockfree {
 		inline auto operator=(queue&&) noexcept -> queue & = delete;
 		inline ~queue(void) noexcept {
 			auto head = reinterpret_cast<node*>(0x00007FFFFFFFFFFEULL & _head);
-			while (true) {
+			for (;;) {
 				node* current = library::exchange(head, reinterpret_cast<node*>(0x00007FFFFFFFFFFEULL & head->_next));
 				_pool::instance().deallocate(current);
 				if (reinterpret_cast<unsigned long long>(this) == reinterpret_cast<unsigned long long>(head))

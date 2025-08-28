@@ -110,7 +110,7 @@ namespace library {
 		return VirtualAlloc2(nullptr, address, size, type, protection, nullptr, 0);
 	}
 	inline auto virtual_deallocate(void* address, size_t size, unsigned long type) noexcept {
-		VirtualFree(address, size, type);
+		//VirtualFree(address, size, type);
 	}
 }
 
