@@ -13,6 +13,7 @@
 
 namespace framework {
 	struct session final {
+		using size_type = unsigned int;
 		enum class task : unsigned char {
 			recv, send
 		};
@@ -21,7 +22,7 @@ namespace framework {
 			library::overlap _overlap;
 		};
 		inline static unsigned long long _id = 0x10000;
-		using size_type = unsigned int;
+
 		unsigned long long _key;
 		library::socket _socket;
 		unsigned long _io_count; // release_flag // recv_flag // io count
@@ -29,7 +30,6 @@ namespace framework {
 
 		message _receive_message;
 		context _receive_context;
-
 		unsigned long _send_flag;
 		unsigned long _send_size;
 		queue _send_queue;
@@ -59,46 +59,34 @@ namespace framework {
 		}
 		inline auto acquire(void) noexcept -> bool {
 			auto io_count = library::interlock_increment(_io_count);
-			if ((0x80000000 & io_count) || !(0x40000000 & io_count))
-				return false;
-			return true;
+			return !(0x80000000 & io_count) && (0x40000000 & io_count);
 		}
 		inline auto acquire(unsigned long long key) noexcept -> bool {
 			auto io_count = library::interlock_increment(_io_count);
-			if ((0x80000000 & io_count) || !(0x40000000 & io_count) || _key != key)
-				return false;
-			return true;
+			return !(0x80000000 & io_count) && (0x40000000 & io_count) && (_key == key);
 		}
 		template<bool send = true>
 		inline bool release(void) noexcept {
-			if constexpr (false == send) {
-				if (0x40000000 == library::interlock_and(_io_count, ~0x40000000) && 0 == library::interlock_compare_exhange(_io_count, 0x80000000, 0)) {
-					_receive_message = nullptr;
-					while (!_send_queue.empty())
-						_send_queue.pop();
-					_socket.close();
-					return true;
-				}
-			}
-			else {
-				if (0 == library::interlock_decrement(_io_count) && 0 == library::interlock_compare_exhange(_io_count, 0x80000000, 0)) {
-					_receive_message = nullptr;
-					while (!_send_queue.empty())
-						_send_queue.pop();
-					_socket.close();
-					return true;
-				}
+			bool flag;
+			if constexpr (false == send)
+				flag = (0x40000000 == library::interlock_and(_io_count, ~0x40000000) && 0 == library::interlock_compare_exhange(_io_count, 0x80000000, 0));
+			else
+				flag = (0 == library::interlock_decrement(_io_count) && 0 == library::interlock_compare_exhange(_io_count, 0x80000000, 0));
+			if (flag) {
+				_receive_message = nullptr;
+				while (!_send_queue.empty())
+					_send_queue.pop();
+				_socket.close();
+				return true;
 			}
 			return false;
 		}
 
 		inline bool receive(void) noexcept {
-			framework::message message_ = pool::instance().allocate();
-			if (nullptr != _receive_message && !_receive_message.empty()) {
-				library::memory_copy(message_.data(), _receive_message.data() + _receive_message.front(), _receive_message.size());
-				message_.move_rear(_receive_message.size());
-			}
-			_receive_message = std::move(message_);
+			framework::message message = pool::instance().allocate();
+			if (nullptr != _receive_message && !_receive_message.empty())
+				message.push(_receive_message.data() + _receive_message.front(), _receive_message.size());
+			_receive_message = std::move(message);
 
 			if (0 == _cancel_flag) {
 				WSABUF wsa_buffer{ .len = _receive_message.remain(), .buf = _receive_message.data() + _receive_message.rear() };
@@ -117,7 +105,7 @@ namespace framework {
 			if (sizeof(header) > _receive_message.size())
 				return std::nullopt;
 			header header_;
-			_receive_message.peek(reinterpret_cast<unsigned char*>(&header_), sizeof(header));
+			_receive_message.peek(reinterpret_cast<char*>(&header_), sizeof(header));
 			if (sizeof(header) + header_._size > _receive_message.size())
 				return std::nullopt;
 			_receive_message.pop(sizeof(header) + header_._size);

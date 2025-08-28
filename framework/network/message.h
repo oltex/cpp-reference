@@ -14,9 +14,7 @@ namespace framework {
 		inline auto operator=(header&&) noexcept -> header & = delete;
 		inline ~header(void) noexcept = default;
 	};
-
 	class buffer : public library::intrusive::share_pointer_hook<0>, public library::array<char, 128> {
-		using byte = unsigned char;
 	public:
 		inline explicit buffer(void) noexcept = delete;
 		inline explicit buffer(buffer const&) noexcept = delete;
@@ -32,7 +30,6 @@ namespace framework {
 			library::_thread_local::pool<buffer>::instance().deallocate(this);
 		}
 	};
-
 	class message final {
 		using size_type = unsigned int;
 		using share_pointer = library::intrusive::share_pointer<buffer, 0>;
@@ -78,7 +75,7 @@ namespace framework {
 			_rear += sizeof(type);
 			return *this;
 		}
-		inline void push(byte* const buffer, size_type const length) noexcept {
+		inline void push(char* const buffer, size_type const length) noexcept {
 			assert(length + _rear <= _buffer->capacity() && "not enough capacity");
 			library::memory_copy(_buffer->data() + _rear, buffer, length);
 			_rear += length;
@@ -90,7 +87,7 @@ namespace framework {
 			_front += sizeof(type);
 			return *this;
 		}
-		inline void peek(byte* const buffer, size_type const length) const noexcept {
+		inline void peek(char* const buffer, size_type const length) const noexcept {
 			assert(length + _front <= _rear && "not enough data");
 			library::memory_copy(buffer, _buffer->data() + _front, length);
 		}
@@ -161,7 +158,6 @@ namespace framework {
 			return message;
 		}
 	};
-
 	class queue final : public library::lockfree::queue<message, false> {
 	public:
 		inline explicit queue(void) noexcept = default;

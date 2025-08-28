@@ -68,9 +68,13 @@ namespace framework {
 					connection.close();
 				else {
 					connection.inherit(_network);
-					if (auto address = connection.address(); false == on_accept_socket(address)) {
-					}
+					library::socket_address_ipv4 address;
+					if (task::accept == task)
+						address = connection.address();
 					else {
+						// 주소를 구해서 con을 true로
+					}
+					if (on_accept(address)) {
 						auto& session = *_session_array.allocate();
 						session.initialize(connection, 400000);
 						_iocp.connect(*this, session._socket, static_cast<uintptr_t>(task::session));
@@ -128,7 +132,7 @@ namespace framework {
 			}
 		};
 
-		inline virtual bool on_accept_socket(library::socket_address_ipv4& socket_address) noexcept {
+		inline virtual bool on_accept(library::socket_address_ipv4& socket_address) noexcept {
 			return true;
 		}
 		inline virtual void on_create_session(unsigned long long key) noexcept {
@@ -161,7 +165,7 @@ namespace framework {
 			message _message = pool::instance().allocate(size);
 			header header_;
 			header_._size = 8;
-			_message.push(reinterpret_cast<unsigned char*>(&header_), sizeof(header));
+			_message.push(reinterpret_cast<char*>(&header_), sizeof(header));
 			return _message;
 		}
 	};
