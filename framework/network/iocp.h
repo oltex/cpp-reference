@@ -8,6 +8,9 @@ namespace framework {
 	class iocp final : public library::singleton<iocp, true> {
 		friend class library::singleton<iocp, true>;
 		using size_type = unsigned int;
+		enum class task : unsigned char {
+			close = 0, 
+		};
 		library::inputoutput_complet_port _complet_port;
 		library::vector<library::thread> _worker_thread;
 	public:

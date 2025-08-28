@@ -72,9 +72,9 @@ namespace framework {
 					if (task::accept == task)
 						address = connection.address();
 					else {
-						// 주소를 구해서 con을 true로
+						// 주소를 구하기
 					}
-					if (on_accept(address)) {
+					if (true == on_accept(address)) {
 						auto& session = *_session_array.allocate();
 						session.initialize(connection, 400000);
 						_iocp.connect(*this, session._socket, static_cast<uintptr_t>(task::session));

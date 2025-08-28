@@ -23,19 +23,32 @@ namespace library::lockfree {
 		size_type _capacity;
 		node* _array;
 	public:
-		inline explicit free_list(void) noexcept
-			: _head(0), _capacity(0), _array(nullptr) {
-		};
 		template<typename... argument>
 		inline explicit free_list(size_type const capacity, argument&&... arg)noexcept {
-			reserve(capacity, std::forward<argument>(arg)...);
+			_array = library::allocate<node>(capacity);
+			_capacity = capacity;
+
+			auto begin = _array;
+			for (size_type index = 0; index < capacity - 1; ++index) {
+				auto current = begin++;
+				current->_next = begin;
+				library::construct(current->_value, std::forward<argument>(arg)...);
+			}
+#pragma warning(suppress: 6011)
+			begin->_next = nullptr;
+			library::construct(begin->_value, std::forward<argument>(arg)...);
+
+			_head = reinterpret_cast<unsigned long long>(_array);
 		}
 		inline explicit free_list(free_list const&) noexcept = delete;
 		inline explicit free_list(free_list&&) noexcept = delete;
 		inline auto operator=(free_list const&) noexcept -> free_list & = delete;
 		inline auto operator=(free_list&&) noexcept -> free_list & = delete;
 		inline ~free_list(void) noexcept {
-			//clear();
+			node* head = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & _head);
+			while (nullptr != head)
+				library::destruct<type>(library::exchange(head, head->_next)->_value);
+			library::deallocate<node>(_array);
 		};
 
 		inline auto allocate(void) noexcept -> type* {
@@ -57,29 +70,7 @@ namespace library::lockfree {
 					break;
 			}
 		}
-		template<typename... argument>
-		inline void reserve(size_type const capacity, argument&&... arg) noexcept {
-			_array = library::allocate<node>(capacity);
-			_capacity = capacity;
 
-			auto begin = _array;
-			for (size_type index = 0; index < capacity - 1; ++index) {
-				auto current = begin++;
-				current->_next = begin;
-				library::construct(current->_value, std::forward<argument>(arg)...);
-			}
-#pragma warning(suppress: 6011)
-			begin->_next = nullptr;
-			library::construct(begin->_value, std::forward<argument>(arg)...);
-
-			_head = reinterpret_cast<unsigned long long>(_array);
-		}
-		inline void clear(void) noexcept {
-			node* head = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & _head);
-			while (nullptr != head)
-				library::destruct<type>(library::exchange(head, head->_next)->_value);
-			library::deallocate<node>(_array);
-		}
 
 		inline auto begin(void) const noexcept -> iterator {
 			return _array;
@@ -92,3 +83,27 @@ namespace library::lockfree {
 		}
 	};
 }
+
+//template<typename... argument>
+//inline void reserve(size_type const capacity, argument&&... arg) noexcept {
+//	_array = library::allocate<node>(capacity);
+//	_capacity = capacity;
+//
+//	auto begin = _array;
+//	for (size_type index = 0; index < capacity - 1; ++index) {
+//		auto current = begin++;
+//		current->_next = begin;
+//		library::construct(current->_value, std::forward<argument>(arg)...);
+//	}
+//#pragma warning(suppress: 6011)
+//	begin->_next = nullptr;
+//	library::construct(begin->_value, std::forward<argument>(arg)...);
+//
+//	_head = reinterpret_cast<unsigned long long>(_array);
+//}
+//inline void clear(void) noexcept {
+//	node* head = reinterpret_cast<node*>(0x00007FFFFFFFFFFFULL & _head);
+//	while (nullptr != head)
+//		library::destruct<type>(library::exchange(head, head->_next)->_value);
+//	library::deallocate<node>(_array);
+//}

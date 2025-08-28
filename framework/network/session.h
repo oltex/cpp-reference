@@ -156,19 +156,16 @@ namespace framework {
 		using size_type = unsigned int;
 		size_type _size;
 		library::lockfree::free_list<session> _free_list;
+		size_type index = 0;
 	public:
-		inline explicit session_array(size_type capacity) noexcept {
-			size_type index = 0;
-			_free_list.reserve(capacity, index);
-			_size = 0;
+		inline explicit session_array(size_type capacity) noexcept 
+			: _size(0), _free_list(capacity, index){
 		};
 		inline explicit session_array(session_array const&) noexcept = delete;
 		inline explicit session_array(session_array&&) noexcept = delete;
 		inline auto operator=(session_array const&) noexcept -> session_array & = delete;
 		inline auto operator=(session_array&&) noexcept -> session_array & = delete;
-		inline ~session_array(void) noexcept {
-			_free_list.clear();
-		};
+		inline ~session_array(void) noexcept = default;
 
 		inline auto allocate(void) noexcept -> session* {
 			auto result = _free_list.allocate();
