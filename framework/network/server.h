@@ -5,6 +5,7 @@
 
 namespace framework {
 	class server final : iocp::object {
+		using size_type = unsigned int;
 		enum class task : unsigned char {
 			accept = 0, connect, session, destory, function
 		};
@@ -70,11 +71,10 @@ namespace framework {
 			case task::accept: {
 				auto& accept = accept::recover(overlapped);
 				if (false == result)
-					accept._socket.close();
+					accept.close();
 				else {
 					accept.inherit(_network);
-					auto address = accept.address();
-					if (true == on_accept_socket(address)) {
+					if (auto address = accept.address(); true == on_accept_socket(address)) {
 						auto& session = *_session_array.allocate();
 						session.initialize(accept, 400000);
 						_iocp.connect(*this, session._socket, static_cast<uintptr_t>(task::session));
@@ -148,7 +148,7 @@ namespace framework {
 		inline virtual bool on_receive_session(unsigned long long key, message& message) noexcept {
 			unsigned long long value;
 			message >> value;
-			auto message_ = create_message();
+			auto message_ = create_message(10);
 			message_ << value;
 
 			do_send_session(key, message_);
@@ -166,11 +166,8 @@ namespace framework {
 			if (session_.release())
 				_iocp.post(*this, 0, static_cast<uintptr_t>(task::destory), reinterpret_cast<OVERLAPPED*>(&session_));
 		}
-
-		inline static auto create_message(void) noexcept -> message {
-			message _message;
-			_message.initialize();
-
+		inline static auto create_message(size_type size) noexcept -> message {
+			message _message = pool::instance().allocate(size);
 			header header_;
 			header_._size = 8;
 			_message.push(reinterpret_cast<unsigned char*>(&header_), sizeof(header));

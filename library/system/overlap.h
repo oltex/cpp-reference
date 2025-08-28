@@ -29,5 +29,8 @@ namespace library {
 		inline auto data(void) noexcept -> _OVERLAPPED& {
 			return _overlapped;
 		}
+		inline static auto recover(OVERLAPPED* overlapped) noexcept -> library::overlap* {
+			return reinterpret_cast<overlap*>(reinterpret_cast<unsigned char*>(overlapped) - offsetof(library::overlap, _overlapped));
+		}
 	};
 }

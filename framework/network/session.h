@@ -73,7 +73,7 @@ namespace framework {
 		inline bool release(void) noexcept {
 			if constexpr (false == send) {
 				if (0x40000000 == library::interlock_and(_io_count, ~0x40000000) && 0 == library::interlock_compare_exhange(_io_count, 0x80000000, 0)) {
-					_receive_message.finalize();
+					_receive_message = nullptr;
 					while (!_send_queue.empty())
 						_send_queue.pop();
 					_socket.close();
@@ -82,7 +82,7 @@ namespace framework {
 			}
 			else {
 				if (0 == library::interlock_decrement(_io_count) && 0 == library::interlock_compare_exhange(_io_count, 0x80000000, 0)) {
-					_receive_message.finalize();
+					_receive_message = nullptr;
 					while (!_send_queue.empty())
 						_send_queue.pop();
 					_socket.close();
@@ -92,18 +92,24 @@ namespace framework {
 			return false;
 		}
 
+
+		//inline auto initialize(void) noexcept {
+		//	_front = 0;
+		//	_rear = 0;
+		//	_buffer = share_pointer();
+		//}
+		//inline auto finalize(void) noexcept {
+		//	_buffer = nullptr;
+		//}
+
 		inline bool receive(void) noexcept {
-			if (nullptr == _receive_message)
-				_receive_message.initialize();
-			else {
-				framework::message message_;
-				message_.initialize();
-				if (!_receive_message.empty()) {
-					library::memory_copy(message_.data(), _receive_message.data() + _receive_message.front(), _receive_message.size());
-					message_.move_rear(_receive_message.size());
-				}
-				_receive_message = std::move(message_);
+			framework::message message_ = pool::instance().allocate(128);
+			if (nullptr != _receive_message && !_receive_message.empty()) {
+				library::memory_copy(message_.data(), _receive_message.data() + _receive_message.front(), _receive_message.size());
+				message_.move_rear(_receive_message.size());
 			}
+			_receive_message = std::move(message_);
+
 			if (0 == _cancel_flag) {
 				WSABUF wsa_buffer{ .len = _receive_message.capacity() - _receive_message.rear(), .buf = _receive_message.data() + _receive_message.rear() };
 				switch (_socket.receive(wsa_buffer, _receive_context._overlap)) {

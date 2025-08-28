@@ -2,7 +2,6 @@
 #include "library/container/thread-local/pool.h"
 #include "library/container/intrusive/share_pointer.h"
 #include "library/container/array.h"
-
 #include "library/container/lockfree/queue.h"
 
 namespace framework {
@@ -33,15 +32,6 @@ namespace framework {
 			library::_thread_local::pool<buffer>::instance().deallocate(this);
 		}
 	};
-	//class memory_pool final : public library::_thread_local::singleton<memory_pool> {
-	//	friend class library::_thread_local::singleton<memory_pool>;
-
-	//	auto& pool = library::_thread_local::pool<buffer>::instance();
-	//	thread_local message _message;
-	//	if (nullptr == _message || _message.capacity() - _message.rear() < 10) {
-	//		_message._buffer = library::_thread_local::pool<buffer>::instance().allocate();
-	//	}
-	//};
 
 	class message final {
 		using size_type = unsigned int;
@@ -51,6 +41,12 @@ namespace framework {
 	public:
 		inline constexpr explicit message(void) noexcept
 			: _front(0), _rear(0), _buffer(nullptr) {
+		}
+		inline constexpr message(nullptr_t) noexcept
+			: _front(0), _rear(0), _buffer(nullptr) {
+		}
+		inline explicit message(buffer* buffer) noexcept
+			: _front(0), _rear(0), _buffer(buffer) {
 		}
 		inline explicit message(message& rhs, size_type front, size_type rear) noexcept
 			: _front(front), _rear(rear), _buffer(rhs._buffer) {
@@ -73,15 +69,6 @@ namespace framework {
 			return *this;
 		};
 		inline ~message(void) noexcept = default;
-
-		inline auto initialize(void) noexcept {
-			_front = 0;
-			_rear = 0;
-			_buffer = share_pointer(library::_thread_local::pool<buffer>::instance().allocate());
-		}
-		inline auto finalize(void) noexcept {
-			_buffer = nullptr;
-		}
 
 		template<typename type>
 			requires library::arithmetic_type<type>
@@ -115,6 +102,9 @@ namespace framework {
 		inline auto capacity(void) const noexcept -> size_type {
 			return _buffer->capacity();
 		}
+		inline auto remain(void) noexcept -> size_type {
+			return _buffer->capacity() - _rear;
+		}
 		inline void clear(void) noexcept {
 			_front = _rear = 0;
 		}
@@ -141,6 +131,30 @@ namespace framework {
 		}
 		inline friend bool operator==(message const& lhs, nullptr_t) noexcept {
 			return nullptr == lhs._buffer;
+		}
+	};
+
+	class pool final : public library::_thread_local::singleton<pool> {
+		friend class library::_thread_local::singleton<pool>;
+		using size_type = unsigned int;
+		message _message;
+
+		inline explicit pool(void) noexcept = default;
+		inline explicit pool(pool const&) noexcept = delete;
+		inline explicit pool(pool&&) noexcept = delete;
+		inline auto operator=(pool const&) noexcept -> pool & = delete;
+		inline auto operator=(pool&&) noexcept -> pool & = delete;
+		inline ~pool(void) noexcept = default;
+	public:
+		inline auto allocate(size_type const size) noexcept {
+			if (nullptr == _message || _message.remain() < sizeof(header) + size) {
+				auto& instance = library::_thread_local::pool<buffer>::instance();
+				_message = framework::message(instance.allocate());
+			}
+			message message(_message);
+			_message.move_rear(sizeof(header) + size);
+			_message.move_front(sizeof(header) + size);
+			return message;
 		}
 	};
 
