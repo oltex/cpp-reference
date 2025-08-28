@@ -161,14 +161,14 @@ namespace library::lockfree {
 		}
 
 		inline void clear(void) noexcept {
-/*			auto head = reinterpret_cast<node*>(0x00007FFFFFFFFFFEULL & _head);
-			for (;;) {
-				node* current = library::exchange(head, reinterpret_cast<node*>(0x00007FFFFFFFFFFEULL & head->_next));
-				_pool::instance().deallocate(current);
-				if (reinterpret_cast<unsigned long long>(this) == reinterpret_cast<unsigned long long>(head))
-					break;
-				library::destruct<type>(head->_value);
-			*/}
+			/*			auto head = reinterpret_cast<node*>(0x00007FFFFFFFFFFEULL & _head);
+						for (;;) {
+							node* current = library::exchange(head, reinterpret_cast<node*>(0x00007FFFFFFFFFFEULL & head->_next));
+							_pool::instance().deallocate(current);
+							if (reinterpret_cast<unsigned long long>(this) == reinterpret_cast<unsigned long long>(head))
+								break;
+							library::destruct<type>(head->_value);
+			}*/
 		}
 	};
 }
