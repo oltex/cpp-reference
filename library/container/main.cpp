@@ -11,7 +11,7 @@
 //#include "example/queue.h"
 //#include "example/compress_pair.h"
 //#include "example/array.h"
-//#include "example/priority_queue.h"
+#include "example/priority_queue.h"
 //#include "example/serialize_buffer.h"
 //#include "example/string.h"
 //#include "example/storage.h"
@@ -26,7 +26,7 @@
 //#include "example/lockfree/stack.h"
 //#include "example/lockfree/pool.h"
 //#include "example/lockfree/queue.h"
-#include "example/thread-local/pool.h"
+//#include "example/thread-local/pool.h"
 
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -40,7 +40,7 @@ int main(void) noexcept {
 	//example::queue();
 	//example::compress_pair();
 	//example::array();
-	//example::priority_queue();
+	example::priority_queue();
 	//example::serialize_buffer();
 	//example::string();
 	//example::stroage();
@@ -55,7 +55,7 @@ int main(void) noexcept {
 	//example::lockfree::stack();
 	//example::lockfree::pool();
 	//example::lockfree::queue();
-	example::_thread_local::pool();
+	//example::_thread_local::pool();
 
 	return 0;
 }

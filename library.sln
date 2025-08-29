@@ -42,6 +42,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "push_lock", "debug\push_loc
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "directx11", "framework\directx11\directx11.vcxproj", "{73CE2BD3-BC25-46A3-8A5F-A0ACE3A57749}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "scheduler", "module\scheduler\scheduler.vcxproj", "{F0A00F3D-6D00-413E-A85E-B114E295F62F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -154,6 +156,14 @@ Global
 		{73CE2BD3-BC25-46A3-8A5F-A0ACE3A57749}.Release|x64.Build.0 = Release|x64
 		{73CE2BD3-BC25-46A3-8A5F-A0ACE3A57749}.Release|x86.ActiveCfg = Release|Win32
 		{73CE2BD3-BC25-46A3-8A5F-A0ACE3A57749}.Release|x86.Build.0 = Release|Win32
+		{F0A00F3D-6D00-413E-A85E-B114E295F62F}.Debug|x64.ActiveCfg = Debug|x64
+		{F0A00F3D-6D00-413E-A85E-B114E295F62F}.Debug|x64.Build.0 = Debug|x64
+		{F0A00F3D-6D00-413E-A85E-B114E295F62F}.Debug|x86.ActiveCfg = Debug|Win32
+		{F0A00F3D-6D00-413E-A85E-B114E295F62F}.Debug|x86.Build.0 = Debug|Win32
+		{F0A00F3D-6D00-413E-A85E-B114E295F62F}.Release|x64.ActiveCfg = Release|x64
+		{F0A00F3D-6D00-413E-A85E-B114E295F62F}.Release|x64.Build.0 = Release|x64
+		{F0A00F3D-6D00-413E-A85E-B114E295F62F}.Release|x86.ActiveCfg = Release|Win32
+		{F0A00F3D-6D00-413E-A85E-B114E295F62F}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -172,6 +182,7 @@ Global
 		{201F8F13-DB59-4C7A-A4AC-17B0ABE81DBF} = {F7DB0058-44EE-4110-85B4-80C9BF47EB6A}
 		{300ED2B1-F0A8-4818-80BC-09FB248D428B} = {F7DB0058-44EE-4110-85B4-80C9BF47EB6A}
 		{73CE2BD3-BC25-46A3-8A5F-A0ACE3A57749} = {9E061FC9-D46F-4980-95C4-9EE400541711}
+		{F0A00F3D-6D00-413E-A85E-B114E295F62F} = {5FE7E891-5452-49AD-B69B-74DECBD9CAAE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C69985D6-20AB-4E9A-AD82-08BFBE490891}

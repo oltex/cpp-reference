@@ -1,20 +1,19 @@
 #pragma once
-#include "iocp.h"
+#include "module/scheduler/io_complet_port.h"
 #include "network.h"
 #include "session.h"
 
 namespace framework {
-	class server final : iocp::object {
+	class server final : public io_complet_port::io_complet_object {
 		using size_type = unsigned int;
 		enum class task : unsigned char {
 			accept = 0, connect, session, destory, function
 		};
-		iocp& _iocp;
 		network _network;
 		session_array _session_array;
 	public:
 		inline explicit server(size_type sessions) noexcept
-			: _iocp(framework::iocp::instance()), _session_array(sessions) {
+			: _session_array(sessions) {
 		}
 		inline explicit server(server const&) noexcept = delete;
 		inline explicit server(server&&) noexcept = delete;

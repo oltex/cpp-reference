@@ -1,27 +1,37 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="component">
-      <UniqueIdentifier>{c513d9c7-6140-440d-9372-175813b0fdbb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="sample">
       <UniqueIdentifier>{37538c8f-601a-46fa-a944-f093d45afd92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="iocp">
+      <UniqueIdentifier>{ad8da767-bffb-4c54-9d47-1697a7081c82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="server">
+      <UniqueIdentifier>{3fdc2e22-e76c-45ab-aa35-54a48dac5c32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="server\component">
+      <UniqueIdentifier>{c513d9c7-6140-440d-9372-175813b0fdbb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="network.h">
-      <Filter>component</Filter>
+      <Filter>server\component</Filter>
     </ClInclude>
     <ClInclude Include="session.h">
-      <Filter>component</Filter>
+      <Filter>server\component</Filter>
     </ClInclude>
     <ClInclude Include="message.h">
-      <Filter>component</Filter>
+      <Filter>server\component</Filter>
     </ClInclude>
-    <ClInclude Include="iocp.h" />
-    <ClInclude Include="server.h" />
     <ClInclude Include="sample.h">
       <Filter>sample</Filter>
+    </ClInclude>
+    <ClInclude Include="iocp.h">
+      <Filter>iocp</Filter>
+    </ClInclude>
+    <ClInclude Include="server.h">
+      <Filter>server</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

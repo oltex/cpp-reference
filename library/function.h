@@ -1,7 +1,10 @@
 #pragma once
+#define _WINSOCKAPI_
 #include <utility>
 #include <type_traits>
 #include <cmath>
+#include <Windows.h>
+#include "template.h"
 
 namespace library {
 	template<typename type, typename size_type = unsigned long long>
@@ -88,6 +91,36 @@ namespace library {
 		while ((result << 1) <= number)
 			result <<= 1;
 		return result;
+	}
+	template<typename type>
+		requires library::any_of_type<type, unsigned int, int, unsigned long, long, unsigned long long, long long>
+	inline constexpr auto bit_scan_forward(type const mask) noexcept -> unsigned long {
+		unsigned long index;
+		if constexpr (4 == sizeof(type))
+			::_BitScanForward(&index, mask);
+		else
+			::_BitScanForward64(&index, mask);
+		return index;
+	}
+	template<typename type>
+		requires library::any_of_type<type, unsigned int, int, unsigned long, long, unsigned long long, long long>
+	inline constexpr auto bit_scan_reverse(type const mask) noexcept -> unsigned long {
+		unsigned long index;
+		if constexpr (4 == sizeof(type))
+			::_BitScanReverse(&index, mask);
+		else
+			::_BitScanReverse64(&index, mask);
+		return index;
+	}
+	template<typename type>
+		requires library::any_of_type<type, unsigned int, int, unsigned long, long, unsigned long long, long long>
+	inline constexpr auto bit_mask_forward(type const mask) noexcept -> unsigned long {
+		return 1 << bit_scan_forward(mask);
+	}
+	template<typename type>
+		requires library::any_of_type<type, unsigned int, int, unsigned long, long, unsigned long long, long long>
+	inline constexpr auto bit_mask_reverse(type const mask) noexcept -> unsigned long {
+		return 1 << bit_scan_reverse(mask);
 	}
 
 	template <typename type>

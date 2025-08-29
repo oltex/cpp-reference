@@ -70,9 +70,9 @@ namespace example::lockfree {
 				count = 0;
 			}
 			for (auto index = 0; index < 2; ++index)
-				_queue.emplace2(0);
+				_queue.emplace(0);
 			for (auto index = 0; index < 2; ++index)
-				_queue.pop2();
+				_queue.pop();
 		}
 		return 0;
 	}
@@ -106,9 +106,9 @@ namespace example::lockfree {
 				count = 0;
 			}
 			for (auto index = 0; index < 20; ++index)
-				_queue.emplace2(std::pair<unsigned long, unsigned long long>(GetCurrentThreadId(), ++_value));
+				_queue.emplace(std::pair<unsigned long, unsigned long long>(GetCurrentThreadId(), ++_value));
 			for (auto index = 0; index < 20; ++index) {
-				if (auto result = _queue.pop2(); result) {
+				if (auto result = _queue.pop(); result) {
 					if (GetCurrentThreadId() == (*result).first) {
 						if (_prev_value >= (*result).second)
 							__debugbreak();

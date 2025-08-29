@@ -1,5 +1,5 @@
 #pragma once
-#define _WINSOCKAPI_ 
+#define _WINSOCKAPI_
 #include "../function.h"
 #include "../container/pair.h"
 #include "overlap.h"
