@@ -1,14 +1,55 @@
+#define _WINSOCKAPI_
 #include "io_complet_port.h"
 #include "thread_pool.h"
 
+#include "library/system/event.h"
+
+int _count;
 int function(void) noexcept {
-	printf("hello\n");
-	return 500;
+	//printf("hello\n");
+	library::interlock_increment(_count);
+	return 1;
 }
 
 int main(void) noexcept {
-	auto& instance = thread_pool::construct(4);
-	system("pause");
-	instance.execute(function);
-	system("pause");
+	//library::event event(false, false);
+	//{
+	//	auto rdtsc = __rdtsc();
+	//	for (auto index = 0; index < 100; ++index)
+	//		event.set();
+	//	printf("%lld\n", __rdtsc() - rdtsc);
+	//}
+	//int pp = 0;
+	//{
+	//	auto rdtsc = __rdtsc();
+	//	for (auto index = 0; index < 100; ++index)
+	//		library::wake_by_address_all(pp);
+	//	printf("%lld\n", __rdtsc() - rdtsc);
+	//}
+	//{
+	//	auto rdtsc = __rdtsc();
+	//	for (auto index = 0; index < 100; ++index)
+	//		inst._complet_port.post_queue_state(0, 0, 0);
+	//	printf("%lld\n", __rdtsc() - rdtsc);
+	//}
+	{
+		auto& instance = io_complet_port::construct(4, 16);
+		system("pause");
+		for (auto index = 0; index < 64; ++index)
+			instance.execute(function);
+		Sleep(30000);
+		__debugbreak();
+		system("pause");
+		io_complet_port::destruct();
+	}
+	{
+		auto& instance = thread_pool::construct(16);
+		system("pause");
+		for (auto index = 0; index < 64; ++index)
+			instance.execute(function);
+		Sleep(30000);
+		__debugbreak();
+		system("pause");
+		thread_pool::destruct();
+	}
 }

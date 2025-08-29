@@ -93,10 +93,8 @@ namespace framework {
 				if (session::task::recv == task) {
 					if (0 != transferred) {
 						session._receive_message.move_rear(transferred);
-						for (;;) {
-							if (auto message = session.message(); !message)
-								break;
-							else if (false == on_receive_session(session._key, *message)) {
+						while (auto message = session.message()) {
+							if (false == on_receive_session(session._key, *message)) {
 								session.cancel();
 								break;
 							}

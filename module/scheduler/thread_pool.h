@@ -42,8 +42,9 @@ class thread_pool : public library::singleton<thread_pool, true> {
 			}
 		}
 	};
-	class queue final : public library::lockfree::queue<task*, false> {
-		using base = library::lockfree::queue<task*, false>;
+	template<bool multi_pop>
+	class queue final : public library::lockfree::queue<task*, multi_pop> {
+		using base = library::lockfree::queue<task*, multi_pop>;
 		unsigned long _size;
 	public:
 		inline explicit queue(void) noexcept
@@ -61,21 +62,34 @@ class thread_pool : public library::singleton<thread_pool, true> {
 			base::emplace(std::forward<argument>(arg)...);
 			library::wake_by_address_single(_size);
 		}
-		inline auto pop(void) noexcept -> task* {
+		inline auto pop(void) noexcept -> task* requires(false == multi_pop) {
 			auto result = base::pop();
 			library::interlock_decrement(_size);
 			return result;
 		}
-		inline void wait(unsigned long mili_second) noexcept {
+		inline auto pop(void) noexcept -> std::optional<task*> requires(true == multi_pop) {
+			auto result = base::pop();
+			if (result)
+				library::interlock_decrement(_size);
+			return result;
+		}
+		inline bool wait(unsigned long mili_second) noexcept {
 			unsigned long compare = 0;
 			library::wait_on_address(_size, compare, mili_second);
+			return !(_size & 0x80000000);
 		}
+		inline void stop(void) noexcept {
+			library::interlock_or(_size, 0x80000000);
+			library::wake_by_address_single(_size);
+		}
+	};
+	class worker final {
 	};
 
 	library::thread _scheduler_thread;
-	queue _scheduler_queue;
+	queue<false> _scheduler_queue;
 	library::vector<library::thread> _worker_thread;
-	queue _worker_queue;
+	queue<true> _worker_queue;
 public:
 	inline explicit thread_pool(size_type worker) noexcept
 		: _scheduler_thread(&thread_pool::schedule, 0, this) {
@@ -87,7 +101,14 @@ public:
 	inline explicit thread_pool(thread_pool&&) noexcept = delete;
 	inline auto operator=(thread_pool const&) noexcept -> thread_pool & = delete;
 	inline auto operator=(thread_pool&&) noexcept -> thread_pool & = delete;
-	inline ~thread_pool(void) noexcept;
+	inline ~thread_pool(void) noexcept {
+		_worker_queue.stop();
+		HANDLE handle[128];
+		for (unsigned int index = 0; index < _worker_thread.size(); ++index)
+			handle[index] = _worker_thread[index].data();
+		library::handle::wait_for_multiple(_worker_thread.size(), handle, true, INFINITE);
+		_worker_thread.clear();
+	};
 
 	template <typename function, typename... argument>
 	inline void execute(function&& func, argument&&... arg) noexcept {
@@ -95,21 +116,23 @@ public:
 	}
 private:
 	inline void worker(void) noexcept {
-		for (;;) {
-			_worker_queue.wait(INFINITE);
-			while (!_worker_queue.empty()) {
-				if (auto task = _worker_queue.pop(); false == task->execute())
-					library::_thread_local::pool<thread_pool::task>::instance().deallocate(task);
+		while (_worker_queue.wait(INFINITE)) {
+			while (auto task = _worker_queue.pop()) {
+				if (false == (*task)->execute())
+					library::_thread_local::pool<thread_pool::task>::instance().deallocate(*task);
 				else
-					_scheduler_queue.emplace(task);
+					_scheduler_queue.emplace(*task);
 			}
 		}
 	}
 	inline void schedule(void) noexcept {
 		library::priority_queue<task*> ready_queue;
-		for (;;) {
-			auto wait = INFINITE;
+		auto wait = INFINITE;
+		while (_scheduler_queue.wait(wait)) {
+			while (!_scheduler_queue.empty())
+				ready_queue.emplace(_scheduler_queue.pop());
 			auto time = library::time_get_time();
+			wait = INFINITE;
 			while (!ready_queue.empty()) {
 				if (auto top = ready_queue.top(); time < top->_time) {
 					wait = top->_time - time;
@@ -120,9 +143,9 @@ private:
 					_worker_queue.emplace(top);
 				}
 			}
-			_scheduler_queue.wait(wait);
-			while (!_scheduler_queue.empty())
-				ready_queue.emplace(_scheduler_queue.pop());
 		}
 	}
 };
+
+// 워커 스레드에서 하나의 큐를 대상으로 WaitOnAddress에 성능 병목이 걸림
+// 워크 스틸링 구조로 변경한 경우에도 문제가 생기는지 파악이 필요
