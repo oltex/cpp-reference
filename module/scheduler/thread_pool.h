@@ -7,55 +7,43 @@
 #include "library/container/intrusive/share_pointer.h"
 #include "library/container/thread-local/pool.h"
 #include "library/container/lockfree/queue.h"
+#include "library/container/priority_queue.h"
+#include "library/system/time.h"
 #include <functional>
-
-
-//		class queue final : public library::lockfree::queue<task, false> {
-//		public:
-//			inline explicit queue(void) noexcept = default;
-//			inline explicit queue(queue const&) noexcept = delete;
-//			inline explicit queue(queue&&) noexcept = delete;
-//			inline auto operator=(queue const&) noexcept -> queue & = delete;
-//			inline auto operator=(queue&&) noexcept -> queue & = delete;
-//			inline ~queue(void) noexcept = default;
-//
-//			//inline void wake(void) noexcept {
-//			//	library::wake_by_address_single();
-//			//}
-//			//inline bool wait(void* compare, unsigned long const wait_time) noexcept {
-//			//	library::wait_on_address()
-//			//	return system_component::wait_on_address::wait(&_size, compare, sizeof(size_type), wait_time);
-//			//}
-//		};
 
 class thread_pool : public library::singleton<thread_pool, true> {
 	friend class library::singleton<thread_pool, true>;
 	using size_type = unsigned int;
-
-	struct node : public library::intrusive::share_pointer_hook<0> {
+	struct task {
 		unsigned long _time;
 		std::function<int(void)> _function;
 
 		template <typename function, typename... argument>
-		inline explicit node(function&& func, argument&&... arg) noexcept
-			:_function(std::bind(std::forward<function>(func), std::forward<argument>(arg)...)) {
+		inline explicit task(function&& func, argument&&... arg) noexcept
+			: _time(library::time_get_time()), _function(std::bind(std::forward<function>(func), std::forward<argument>(arg)...)) {
 		};
-		inline explicit node(node const&) noexcept = delete;
-		inline explicit node(node&&) noexcept = delete;
-		inline auto operator=(node const&) noexcept -> node & = delete;
-		inline auto operator=(node&&) noexcept -> node & = delete;
-		inline ~node(void) noexcept = default;
+		inline explicit task(task const&) noexcept = delete;
+		inline explicit task(task&&) noexcept = delete;
+		inline auto operator=(task const&) noexcept -> task & = delete;
+		inline auto operator=(task&&) noexcept -> task & = delete;
+		inline ~task(void) noexcept = default;
 
-		template<size_t index>
-		inline void destructor(void) noexcept;
-		template<>
-		inline void destructor<0>(void) noexcept {
-			library::_thread_local::pool<node>::instance().deallocate(this);
+		inline bool execute(void) noexcept {
+			for (;;) {
+				switch (int time = _function()) {
+				case 0:
+					break;
+				case -1:
+					return false;
+				default:
+					_time += time;
+					return true;
+				}
+			}
 		}
 	};
-	using task = library::intrusive::share_pointer<node, 0>;
-	class queue final : public library::lockfree::queue<task> {
-		using base = library::lockfree::queue<task>;
+	class queue final : public library::lockfree::queue<task*, false> {
+		using base = library::lockfree::queue<task*, false>;
 		unsigned long _size;
 	public:
 		inline explicit queue(void) noexcept
@@ -73,53 +61,27 @@ class thread_pool : public library::singleton<thread_pool, true> {
 			base::emplace(std::forward<argument>(arg)...);
 			library::wake_by_address_single(_size);
 		}
-		inline auto pop(void) noexcept -> std::optional<task> {
+		inline auto pop(void) noexcept -> task* {
 			auto result = base::pop();
-			if (result)
-				library::interlock_decrement(_size);
+			library::interlock_decrement(_size);
 			return result;
 		}
-		inline void wait(void) noexcept {
-			unsigned long _compare = 0;
-			library::wait_on_address(_size, _compare, INFINITE);
-		}
-	};
-	class worker final {
-		queue _queue;
-		library::thread _thread;
-	public:
-		inline explicit worker(void) noexcept
-			: _thread(&worker::function, 0, this) {
-		}
-		inline explicit worker(worker const&) noexcept = default;
-		inline explicit worker(worker&&) noexcept = default;
-		inline auto operator=(worker const&) noexcept -> worker&;
-		inline auto operator=(worker&&) noexcept -> worker&;
-		inline ~worker(void) noexcept = default;
-
-		inline void enque(task task) noexcept {
-			_queue.emplace(task);
-		}
-		inline auto deque(void) noexcept {
-			return _queue.pop();
-		}
-		inline void function(void) noexcept {
-			for (;;) {
-				_queue.wait();
-				for (;;) {
-					auto task = deque();
-					if (!task)
-						break;
-				}
-			}
+		inline void wait(unsigned long mili_second) noexcept {
+			unsigned long compare = 0;
+			library::wait_on_address(_size, compare, mili_second);
 		}
 	};
 
-	library::vector<worker> _worker;
+	library::thread _scheduler_thread;
+	queue _scheduler_queue;
+	library::vector<library::thread> _worker_thread;
+	queue _worker_queue;
 public:
-	inline explicit thread_pool(size_type worker) noexcept {
+	inline explicit thread_pool(size_type worker) noexcept
+		: _scheduler_thread(&thread_pool::schedule, 0, this) {
+		_worker_thread.reserve(worker);
 		for (size_type index = 0; index < worker; ++index)
-			_worker.emplace_back();
+			_worker_thread.emplace_back(&thread_pool::worker, 0, this);
 	}
 	inline explicit thread_pool(thread_pool const&) noexcept = delete;
 	inline explicit thread_pool(thread_pool&&) noexcept = delete;
@@ -129,7 +91,38 @@ public:
 
 	template <typename function, typename... argument>
 	inline void execute(function&& func, argument&&... arg) noexcept {
-		library::_thread_local::pool<node>::instance().allocate(std::forward<function>(func), std::forward<argument>(arg)...);
-		//_worker[_round_robin].enque(coroutine.data());
+		_worker_queue.emplace(library::_thread_local::pool<task>::instance().allocate(std::forward<function>(func), std::forward<argument>(arg)...));
+	}
+private:
+	inline void worker(void) noexcept {
+		for (;;) {
+			_worker_queue.wait(INFINITE);
+			while (!_worker_queue.empty()) {
+				if (auto task = _worker_queue.pop(); false == task->execute())
+					library::_thread_local::pool<thread_pool::task>::instance().deallocate(task);
+				else
+					_scheduler_queue.emplace(task);
+			}
+		}
+	}
+	inline void schedule(void) noexcept {
+		library::priority_queue<task*> ready_queue;
+		for (;;) {
+			auto wait = INFINITE;
+			auto time = library::time_get_time();
+			while (!ready_queue.empty()) {
+				if (auto top = ready_queue.top(); time < top->_time) {
+					wait = top->_time - time;
+					break;
+				}
+				else {
+					ready_queue.pop();
+					_worker_queue.emplace(top);
+				}
+			}
+			_scheduler_queue.wait(wait);
+			while (!_scheduler_queue.empty())
+				ready_queue.emplace(_scheduler_queue.pop());
+		}
 	}
 };
