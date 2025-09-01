@@ -6,6 +6,7 @@
 namespace library::lockfree {
 	template<typename type>
 	class free_list {
+	protected:
 		using size_type = unsigned int;
 		struct node final {
 			node* _next;
@@ -17,12 +18,51 @@ namespace library::lockfree {
 			inline auto operator=(node&&) noexcept -> node & = delete;
 			inline ~node(void) noexcept = delete;
 		};
-		using iterator = node*;
-
 		unsigned long long _head;
 		size_type _capacity;
 		node* _array;
 	public:
+		class iterator final {
+			node* _node;
+		public:
+			inline explicit iterator(node* const node = nullptr) noexcept
+				: _node(node) {
+			}
+			inline explicit iterator(iterator const&) noexcept = default;
+			inline explicit iterator(iterator&&) noexcept = default;
+			inline auto operator=(iterator const&) noexcept -> iterator & = default;
+			inline auto operator=(iterator&&) noexcept -> iterator & = default;
+			inline ~iterator() noexcept = default;
+
+			inline auto operator*(void) const noexcept -> type& {
+				return _node->_value;
+			}
+			inline auto operator->(void) const noexcept -> type* {
+				return &_node->_value;
+			}
+			inline auto operator++(void) noexcept -> iterator& {
+				++_node;
+				return *this;
+			}
+			inline auto operator++(int) noexcept -> iterator {
+				iterator iter(*this);
+				++_node;
+				return iter;
+			}
+			inline auto operator--(void) noexcept -> iterator& {
+				--_node;
+				return *this;
+			}
+			inline auto operator--(int) noexcept -> iterator {
+				iterator iter(*this);
+				--_node;
+				return iter;
+			}
+			inline bool operator==(iterator const& rhs) const noexcept {
+				return _node == rhs._node;
+			}
+		};
+
 		template<typename... argument>
 		inline explicit free_list(size_type const capacity, argument&&... arg)noexcept {
 			_array = library::allocate<node>(capacity);
@@ -78,8 +118,11 @@ namespace library::lockfree {
 		inline auto end(void) const noexcept -> iterator {
 			return _array + _capacity;
 		}
-		inline auto operator[](size_type index) noexcept -> type& {
+		inline auto operator[](size_type const index) noexcept -> type& {
 			return _array[index]._value;
+		}
+		inline auto data(void) noexcept {
+			return _array;
 		}
 	};
 }

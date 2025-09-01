@@ -21,6 +21,7 @@ int main(void) noexcept {
 		server.start_listen("127.0.0.1", 6000, 65535);
 		system("pause");
 		server.stop_listen();
+		system("pause");
 	}
 	//-------------------------
 	library::wsa_clean_up();

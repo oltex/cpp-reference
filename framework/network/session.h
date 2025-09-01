@@ -12,15 +12,9 @@
 #include <optional>
 
 namespace framework {
+	class session_array;
 	struct session final {
 		using size_type = unsigned int;
-		enum class task : unsigned char {
-			recv, send
-		};
-		struct context {
-			task _task;
-			library::overlap _overlap;
-		};
 		inline static unsigned long long _id = 0x10000;
 
 		unsigned long long _key;
@@ -29,16 +23,15 @@ namespace framework {
 		unsigned long _cancel_flag;
 
 		message _receive_message;
-		context _receive_context;
+		library::overlap _receive_overlap;
+
 		unsigned long _send_flag;
 		unsigned long _send_size;
 		queue _send_queue;
-		context _send_context;
+		library::overlap _send_overlap;
 	public:
 		inline session(size_type& index) noexcept
 			: _key(index++), _io_count(0x80000000) {
-			_receive_context._task = task::recv;
-			_send_context._task = task::send;
 		};
 		inline explicit session(session const&) noexcept = delete;
 		inline explicit session(session&&) noexcept = delete;
@@ -90,7 +83,7 @@ namespace framework {
 
 			if (0 == _cancel_flag) {
 				WSABUF wsa_buffer{ .len = _receive_message.remain(), .buf = _receive_message.data() + _receive_message.rear() };
-				switch (_socket.receive(wsa_buffer, _receive_context._overlap)) {
+				switch (_socket.receive(wsa_buffer, _receive_overlap)) {
 					using enum library::socket::result;
 				case complet:
 				case pending:
@@ -122,7 +115,7 @@ namespace framework {
 						wsa_buffer[_send_size].buf = reinterpret_cast<char*>(iter->data() + iter->front());
 						wsa_buffer[_send_size].len = iter->size();
 					}
-					switch (_socket.send(wsa_buffer, _send_size, _send_context._overlap)) {
+					switch (_socket.send(wsa_buffer, _send_size, _send_overlap)) {
 						using enum library::socket::result;
 					case complet:
 					case pending:
@@ -144,22 +137,14 @@ namespace framework {
 			_cancel_flag = 1;
 			_socket.cancel_io_ex();
 		}
-		inline static auto recover(OVERLAPPED* overlapped) noexcept -> library::pair<session&, task> {
-			auto context = reinterpret_cast<session::context*>(reinterpret_cast<unsigned char*>(library::overlap::recover(overlapped)) - offsetof(session::context, _overlap));
-			if (task::recv == context->_task)
-				return library::pair<session&, task>(*reinterpret_cast<session*>(reinterpret_cast<unsigned char*>(context) - offsetof(session, _receive_context)), context->_task);
-			else
-				return library::pair<session&, task>(*reinterpret_cast<session*>(reinterpret_cast<unsigned char*>(context) - offsetof(session, _send_context)), context->_task);
-		}
 	};
-	class session_array final {
+	class session_array final : public library::lockfree::free_list<session> {
 		using size_type = unsigned int;
+		using base = library::lockfree::free_list<session>;
 		size_type _size;
-		library::lockfree::free_list<session> _free_list;
-		size_type index = 0;
 	public:
-		inline explicit session_array(size_type capacity) noexcept 
-			: _size(0), _free_list(capacity, index){
+		inline explicit session_array(size_type capacity, size_type index = 0) noexcept
+			: base(capacity, index), _size(0) {
 		};
 		inline explicit session_array(session_array const&) noexcept = delete;
 		inline explicit session_array(session_array&&) noexcept = delete;
@@ -168,17 +153,30 @@ namespace framework {
 		inline ~session_array(void) noexcept = default;
 
 		inline auto allocate(void) noexcept -> session* {
-			auto result = _free_list.allocate();
+			auto result = base::allocate();
 			if (nullptr != result)
 				library::interlock_increment(_size);
 			return result;
 		}
 		inline void deallocate(session* value) noexcept {
-			_free_list.deallocate(value);
+			base::deallocate(value);
 			library::interlock_decrement(_size);
 		}
 		inline auto operator[](unsigned long long const key) noexcept -> session& {
-			return _free_list[key & 0xffff];
+			return base::operator[](key & 0xffff);
+		}
+		inline auto operator[](OVERLAPPED* overlapped) noexcept -> session& {
+			auto offset = reinterpret_cast<char*>(overlapped) - reinterpret_cast<char*>(base::_array);
+			auto index = static_cast<size_type>(offset / sizeof(base::node));
+			return base::operator[](index);
 		}
 	};
+
 }
+
+//	auto context = reinterpret_cast<session::context*>(reinterpret_cast<unsigned char*>(library::overlap::recover(overlapped)) - offsetof(session::context, _overlap));
+//	if (task::recv == context->_task)
+//		return library::pair<session&, task>(*reinterpret_cast<session*>(reinterpret_cast<unsigned char*>(context) - offsetof(session, _receive_context)), context->_task);
+//	else
+//		return library::pair<session&, task>(*reinterpret_cast<session*>(reinterpret_cast<unsigned char*>(context) - offsetof(session, _send_context)), context->_task);
+//}

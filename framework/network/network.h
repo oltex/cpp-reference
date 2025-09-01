@@ -36,7 +36,6 @@ namespace framework {
 			return *reinterpret_cast<connection*>(reinterpret_cast<unsigned char*>(library::overlap::recover(overlapped)) - offsetof(connection, _overlap));
 		}
 	};
-
 	struct network final {
 		using size_type = unsigned int;
 		library::socket _listen;
@@ -92,7 +91,6 @@ namespace framework {
 			for (size_type index = 0; index < 1; ++index) {
 				auto& connect = _connect.emplace_back();
 				connect.create();
-				connect.connect()
 				//_listen.accept(accept._socket, accept._buffer.data(), sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16, accept._overlap);
 			}
 		}
@@ -100,5 +98,4 @@ namespace framework {
 	inline auto connection::inherit(framework::network& network) noexcept {
 		_socket.set_option_update_accept_context(network._listen);
 	}
-
 }

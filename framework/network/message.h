@@ -130,7 +130,6 @@ namespace framework {
 			return nullptr == lhs._buffer;
 		}
 	};
-
 	class pool final : public library::_thread_local::singleton<pool> {
 		friend class library::_thread_local::singleton<pool>;
 		using size_type = unsigned int;

@@ -14,6 +14,7 @@ namespace framework {
 	public:
 		inline explicit server(size_type sessions) noexcept
 			: _session_array(sessions) {
+			//_iocp.execute(&server::monitor, this);
 		}
 		inline explicit server(server const&) noexcept = delete;
 		inline explicit server(server&&) noexcept = delete;
@@ -90,9 +91,9 @@ namespace framework {
 				}
 			} break;
 			case task::session: {
-				auto [session, task] = session::recover(overlapped);
-				if (session::task::recv == task) {
-					if (0 != transferred) {
+				auto& session = _session_array[overlapped];
+				if (0 != transferred) {
+					if (&session._receive_overlap.data() == overlapped) {
 						session._receive_message.move_rear(transferred);
 						while (auto message = session.message()) {
 							if (false == on_receive_session(session._key, *message)) {
@@ -103,21 +104,20 @@ namespace framework {
 						if (session.receive())
 							break;
 					}
-					if (session.release<false>()) {
-						on_destroy_session(session._key);
-						_session_array.deallocate(&session);
-					}
-				}
-				else {
-					if (0 != transferred) {
+					else {
 						session.flush();
 						if (session.send())
 							break;
 					}
-					if (session.release<true>()) {
-						on_destroy_session(session._key);
-						_session_array.deallocate(&session);
-					}
+				}
+				bool flag;
+				if (&session._receive_overlap.data() == overlapped)
+					flag = session.release<false>();
+				else
+					flag = session.release<true>();
+				if (flag) {
+					on_destroy_session(session._key);
+					_session_array.deallocate(&session);
 				}
 			} break;
 			case task::destory: {
@@ -129,7 +129,17 @@ namespace framework {
 			} break;
 			}
 		};
-
+		inline int monitor(void) noexcept {
+			printf("hello\n");
+			return 1000;
+		}
+		inline int timeout(void) noexcept {
+			//for (auto& iter : _session_array) {
+			//	
+			//}
+			return 1000;
+		}
+	public:
 		inline virtual bool on_accept(library::socket_address_ipv4& socket_address) noexcept {
 			return true;
 		}

@@ -119,6 +119,9 @@ public:
 			handle[index] = _worker_thread[index].data();
 		}
 		library::handle::wait_for_multiple(_worker_thread.capacity(), handle, true, INFINITE);
+
+		_scheduler_queue.stop();
+		_scheduler_thread.wait_for_single(INFINITE);
 	};
 
 	inline void connect(io_complet_object& object, library::socket& socket, uintptr_t key) noexcept {
