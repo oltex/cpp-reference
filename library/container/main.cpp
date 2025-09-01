@@ -10,8 +10,8 @@
 //#include "example/stack.h"
 //#include "example/queue.h"
 //#include "example/compress_pair.h"
-#include "example/array.h"
-//#include "example/priority_queue.h"
+//#include "example/array.h"
+#include "example/priority_queue.h"
 //#include "example/serialize_buffer.h"
 //#include "example/string.h"
 //#include "example/storage.h"
@@ -39,8 +39,8 @@ int main(void) noexcept {
 	//example::stack();
 	//example::queue();
 	//example::compress_pair();
-	example::array();
-	//example::priority_queue();
+	//example::array();
+	example::priority_queue();
 	//example::serialize_buffer();
 	//example::string();
 	//example::stroage();

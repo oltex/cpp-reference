@@ -11,6 +11,13 @@ int function(void) noexcept {
 	return 500;
 }
 
+
+int function2(void) noexcept {
+	printf("hello 10000\n");
+	library::interlock_increment(_count);
+	return 10000;
+}
+
 int main(void) noexcept {
 	//library::event event(false, false);
 	//{
@@ -36,7 +43,8 @@ int main(void) noexcept {
 		auto& instance = io_complet_port::construct(4, 1);
 		system("pause");
 		//for (auto index = 0; index < 64; ++index)
-			instance.execute(function);
+		instance.execute(function2);
+		instance.execute(function);
 		//Sleep(30000);
 		//__debugbreak();
 		system("pause");

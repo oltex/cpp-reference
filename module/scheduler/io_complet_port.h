@@ -80,6 +80,9 @@ class io_complet_port : public library::singleton<io_complet_port, true> {
 			library::wake_by_address_all(_size);
 		}
 	};
+	inline static bool less(task const* const left, task const* const right) noexcept {
+		return right < left;
+	}
 public:
 	library::inputoutput_complet_port _complet_port;
 	library::array<library::thread, 0> _worker_thread;
@@ -149,8 +152,9 @@ private:
 			}
 		}
 	}
+
 	inline void scheduler(void) noexcept {
-		library::priority_queue<task*> ready_queue;
+		library::priority_queue<task*, less> ready_queue;
 		auto wait = INFINITE;
 		while (_scheduler_queue.wait(wait)) {
 			while (!_scheduler_queue.empty())

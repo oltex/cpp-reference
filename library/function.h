@@ -25,8 +25,21 @@ namespace library {
 	inline constexpr auto less(type const& left, type const& right) noexcept {
 		return left < right;
 	}
+	template<typename type = void>
+	class lesser final {
+		inline constexpr auto operator()(type const& left, type const& right) noexcept {
+			return right < left;
+		}
+	};
+	template<>
+	class lesser<void> final {
+		template <typename type>
+		inline constexpr auto operator()(type const& left, type const& right) noexcept {
+			return right < left;
+		}
+	};
 	template<typename type>
-	inline constexpr auto greater(type const& left, type const& right) noexcept {
+	inline constexpr auto great(type const& left, type const& right) noexcept {
 		return right < left;
 	}
 	template<typename type>

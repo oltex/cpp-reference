@@ -6,7 +6,7 @@
 #include <type_traits>
 
 namespace library {
-	template<typename type, auto predicate = library::less<type>, typename allocator = std::nullptr_t/*library::pool<type>*/, bool placement = true>
+	template<typename type, auto predicate = library::less<type>, typename allocator = std::nullptr_t/*library::pool<type>*/>
 	class priority_queue final {
 		using size_type = unsigned int;
 		struct node final {
@@ -38,8 +38,7 @@ namespace library {
 		template<typename... argument>
 		inline void emplace(argument&&... arg) noexcept {
 			auto current = _allocator.allocate();
-			if constexpr (true == placement)
-				library::construct<type>(current->_value, std::forward<argument>(arg)...);
+			library::construct<type>(current->_value, std::forward<argument>(arg)...);
 
 			auto mask = library::bit_mask_reverse(++_size);
 			auto parent = _root;
@@ -66,10 +65,10 @@ namespace library {
 		};
 	};
 
-	template<typename type, auto predicate, bool placement>
-	class priority_queue<type, predicate, std::nullptr_t, placement> final {
+	template<typename type, auto predicate>
+	class priority_queue<type, predicate, std::nullptr_t> final {
 		using size_type = unsigned int;
-		vector<type, placement> _vector;
+		vector<type, true> _vector;
 	public:
 		inline explicit priority_queue(void) noexcept = default;
 		inline explicit priority_queue(priority_queue const&) noexcept = default;
