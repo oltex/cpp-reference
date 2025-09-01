@@ -80,7 +80,7 @@ class thread_pool : public library::singleton<thread_pool, true> {
 		}
 		inline void stop(void) noexcept {
 			library::interlock_or(_size, 0x80000000);
-			library::wake_by_address_single(_size);
+			library::wake_by_address_all(_size);
 		}
 	};
 	class worker final {

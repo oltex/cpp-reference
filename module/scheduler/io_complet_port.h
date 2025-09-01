@@ -16,7 +16,7 @@ class io_complet_port : public library::singleton<io_complet_port, true> {
 	friend class library::singleton<io_complet_port, true>;
 	using size_type = unsigned int;
 	enum class type : unsigned char {
-		close = 0, schedule, worker
+		close = 0, worker, scheduler
 	};
 	struct task {
 		unsigned long _time;
@@ -77,7 +77,7 @@ class io_complet_port : public library::singleton<io_complet_port, true> {
 		}
 		inline void stop(void) noexcept {
 			library::interlock_or(_size, 0x80000000);
-			library::wake_by_address_single(_size);
+			library::wake_by_address_all(_size);
 		}
 	};
 public:
@@ -103,7 +103,7 @@ public:
 	};
 
 	inline explicit io_complet_port(size_type concurrent, size_type worker) noexcept
-		: _scheduler_thread(&io_complet_port::schedule, 0, this), _complet_port(concurrent), _worker_thread(worker, &io_complet_port::worker, 0, this) {
+		: _scheduler_thread(&io_complet_port::scheduler, 0, this), _complet_port(concurrent), _worker_thread(worker, &io_complet_port::worker, 0, this) {
 	}
 	inline explicit io_complet_port(io_complet_port const&) noexcept = delete;
 	inline explicit io_complet_port(io_complet_port&&) noexcept = delete;
@@ -119,34 +119,37 @@ public:
 	};
 
 	inline void connect(io_complet_object& object, library::socket& socket, uintptr_t key) noexcept {
-		_complet_port.connect(socket, (key << 47) | reinterpret_cast<uintptr_t>(&object));
+		_complet_port.connect(socket, (static_cast<unsigned long long>(type::worker) << 56) | (key << 47) | reinterpret_cast<uintptr_t>(&object));
 	}
 	inline void post(io_complet_object& object, unsigned long transferred, uintptr_t key, OVERLAPPED* overlapped) noexcept {
 		_complet_port.post_queue_state(transferred, (key << 47) | reinterpret_cast<uintptr_t>(&object), overlapped);
 	}
-
 	template <typename function, typename... argument>
 	inline void execute(function&& func, argument&&... arg) noexcept {
 		auto task = library::_thread_local::pool<io_complet_port::task>::instance().allocate(std::forward<function>(func), std::forward<argument>(arg)...);
-		_complet_port.post_queue_state(0, 1, reinterpret_cast<OVERLAPPED*>(task));
+		_complet_port.post_queue_state(0, 0xFF00000000000000ULL & (static_cast<unsigned long long>(type::scheduler) << 56), reinterpret_cast<OVERLAPPED*>(task));
 	}
 private:
 	inline void worker(void) noexcept {
 		for (;;) {
 			auto [result, transferred, key, overlapped] = _complet_port.get_queue_state(INFINITE);
-			if (0 == key)
+			switch (static_cast<type>(key >> 56)) {
+			case type::close:
 				return;
-			else {
+			case type::worker:
+				reinterpret_cast<io_complet_object*>(0x00007FFFFFFFFFFFULL & key)->worker(result, transferred, (0x00FF800000000000ULL & key) >> 47, overlapped);
+				break;
+			case type::scheduler: {
 				auto task = reinterpret_cast<io_complet_port::task*>(overlapped);
 				if (false == task->execute())
 					library::_thread_local::pool<io_complet_port::task>::instance().deallocate(task);
 				else
 					_scheduler_queue.emplace(task);
+			} break;
 			}
-				//reinterpret_cast<io_complet_object*>(0x00007FFFFFFFFFFF & key)->worker(result, transferred, (key >> 47), overlapped);
 		}
 	}
-	inline void schedule(void) noexcept {
+	inline void scheduler(void) noexcept {
 		library::priority_queue<task*> ready_queue;
 		auto wait = INFINITE;
 		while (_scheduler_queue.wait(wait)) {
@@ -161,7 +164,7 @@ private:
 				}
 				else {
 					ready_queue.pop();
-					_complet_port.post_queue_state(0, 1, reinterpret_cast<OVERLAPPED*>(top));
+					_complet_port.post_queue_state(0, 0xFF00000000000000ULL & (static_cast<unsigned long long>(type::scheduler) << 56), reinterpret_cast<OVERLAPPED*>(top));
 				}
 			}
 		}

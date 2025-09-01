@@ -1,4 +1,5 @@
 #pragma once
+#define _WINSOCKAPI_
 #include "template.h"
 #pragma comment(lib, "onecore.lib")
 #include <malloc.h>

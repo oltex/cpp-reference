@@ -6,9 +6,9 @@
 
 int _count;
 int function(void) noexcept {
-	//printf("hello\n");
+	printf("hello\n");
 	library::interlock_increment(_count);
-	return 1;
+	return 500;
 }
 
 int main(void) noexcept {
@@ -33,12 +33,12 @@ int main(void) noexcept {
 	//	printf("%lld\n", __rdtsc() - rdtsc);
 	//}
 	{
-		auto& instance = io_complet_port::construct(4, 16);
+		auto& instance = io_complet_port::construct(4, 1);
 		system("pause");
-		for (auto index = 0; index < 64; ++index)
+		//for (auto index = 0; index < 64; ++index)
 			instance.execute(function);
-		Sleep(30000);
-		__debugbreak();
+		//Sleep(30000);
+		//__debugbreak();
 		system("pause");
 		io_complet_port::destruct();
 	}

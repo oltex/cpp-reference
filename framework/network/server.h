@@ -30,6 +30,7 @@ namespace framework {
 			_network.close();
 		}
 		inline void connect(char const* const ip, unsigned short port) noexcept {
+			_network.connect();
 			//_socket.create(AF_INET, SOCK_STREAM, IPPROTO_TCP, WSA_FLAG_OVERLAPPED);
 			//_socket.set_option_linger(1, 0);
 			//_socket.set_option_send_buffer(0);

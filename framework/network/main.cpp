@@ -10,7 +10,6 @@ int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
 	io_complet_port::construct(16, 16);
-	thread_pool::construct(16);
 	//-------------------------
 	library::wsa_start_up();
 	library::socket::wsa_io_control_acccept_ex();
@@ -26,7 +25,6 @@ int main(void) noexcept {
 	//-------------------------
 	library::wsa_clean_up();
 	//-------------------------
-	thread_pool::destruct();
 	io_complet_port::destruct();
 	return 0;
 }

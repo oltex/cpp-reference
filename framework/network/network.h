@@ -26,7 +26,7 @@ namespace framework {
 			_socket.close();
 		}
 		inline void connect(void) noexcept {
-			//_socket.connect();
+			//_socket.connect()
 		}
 		inline auto inherit(framework::network& network) noexcept;
 		inline auto address(void) noexcept -> library::socket_address_ipv4 {
@@ -92,6 +92,7 @@ namespace framework {
 			for (size_type index = 0; index < 1; ++index) {
 				auto& connect = _connect.emplace_back();
 				connect.create();
+				connect.connect()
 				//_listen.accept(accept._socket, accept._buffer.data(), sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16, accept._overlap);
 			}
 		}
