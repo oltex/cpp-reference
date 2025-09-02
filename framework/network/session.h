@@ -24,31 +24,20 @@ namespace framework {
 
 		message _receive_message;
 		library::overlap _receive_overlap;
-
+		
 		unsigned long _send_flag;
 		unsigned long _send_size;
 		queue _send_queue;
 		library::overlap _send_overlap;
 	public:
 		inline session(size_type const index) noexcept
-			: _key(index), _io_count(0x80000000) {
-		};
-		inline session(framework::connection& connection, unsigned long long timeout_duration) noexcept
-			: _key(_key = 0xffff & _key | library::interlock_exchange_add(_id, 0x10000)), _io_count(0x80000000) {
-			_socket = std::move(connection._socket);
-			//_timeout_currnet = GetTickCount64();
-				//_timeout_duration = timeout_duration;
-			_cancel_flag = 0;
-			_send_flag = 0;
-			library::interlock_or(_io_count, 0x40000000);
-			library::interlock_and(_io_count, 0x7FFFFFFF);
+			: _key(index), _io_count(0x80000000), _receive_message(pool::instance().allocate()) {
 		};
 		inline explicit session(session const&) noexcept = delete;
 		inline explicit session(session&&) noexcept = delete;
 		inline auto operator=(session const&) noexcept -> session & = delete;
 		inline auto operator=(session&&) noexcept -> session & = delete;
-		inline ~session(void) noexcept {
-		};
+		inline ~session(void) noexcept = default;
 
 		inline void initialize(framework::connection& connection, unsigned long long timeout_duration) noexcept {
 			_key = 0xffff & _key | library::interlock_exchange_add(_id, 0x10000);
@@ -81,11 +70,12 @@ namespace framework {
 				_receive_message.clear();
 				_socket.close();
 			}
+			return flag;
 		}
 
 		inline bool receive(void) noexcept {
 			framework::message message = pool::instance().allocate();
-			if (nullptr != _receive_message && !_receive_message.empty())
+			if (!_receive_message.empty())
 				message.push(_receive_message.data() + _receive_message.front(), _receive_message.size());
 			_receive_message = std::move(message);
 
@@ -159,13 +149,17 @@ namespace framework {
 		inline explicit session_array(session_array&&) noexcept = delete;
 		inline auto operator=(session_array const&) noexcept -> session_array & = delete;
 		inline auto operator=(session_array&&) noexcept -> session_array & = delete;
-		inline ~session_array(void) noexcept = default;
+		inline ~session_array(void) noexcept {
+			for (size_type index = 0; index < _capacity; ++index)
+				library::destruct(_array[index]._value);
+		};
 
-		template<typename... argument>
-		inline auto allocate(argument&&... arg) noexcept -> session* {
-			auto result = base::allocate(std::forward<argument>(arg)...);
-			if (nullptr != result)
+		inline auto allocate(framework::connection& connection, unsigned long long timeout_duration) noexcept -> session* {
+			auto result = base::allocate();
+			if (nullptr != result) {
 				library::interlock_increment(_size);
+				result->initialize(connection, timeout_duration);
+			}
 			return result;
 		}
 		inline void deallocate(session* value) noexcept {

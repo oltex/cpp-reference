@@ -5,6 +5,7 @@
 #include "library/container/lockfree/queue.h"
 
 namespace framework {
+	class pool;
 	struct header final {
 		unsigned short _size;
 		inline explicit header(void) noexcept = default;
@@ -25,10 +26,6 @@ namespace framework {
 
 		template<size_t index>
 		inline void destructor(void) noexcept;
-		template<>
-		inline void destructor<0>(void) noexcept {
-			library::_thread_local::pool<buffer>::instance().deallocate(this);
-		}
 	};
 	class message final {
 		using size_type = unsigned int;
@@ -132,30 +129,37 @@ namespace framework {
 	};
 	class pool final : public library::_thread_local::pool<buffer>, public library::_thread_local::singleton<pool> {
 		friend class library::_thread_local::singleton<pool>;
-		using library::_thread_local::singleton<pool>::instance;
+		using base = library::_thread_local::pool<buffer>;
 		using size_type = unsigned int;
 		message _message;
-	public:
-		inline explicit pool(void) noexcept = default;
+		inline static size_type _size = 0;
+
+		inline explicit pool(void) noexcept
+			: _message(base::allocate()) {
+		};
 		inline explicit pool(pool const&) noexcept = delete;
 		inline explicit pool(pool&&) noexcept = delete;
 		inline auto operator=(pool const&) noexcept -> pool & = delete;
 		inline auto operator=(pool&&) noexcept -> pool & = delete;
 		inline ~pool(void) noexcept = default;
 	public:
+		using library::_thread_local::singleton<pool>::instance;
+
 		inline auto allocate(void) noexcept {
-			auto& instance = library::_thread_local::pool<buffer>::instance();
-			return framework::message(instance.allocate());
+			library::interlock_increment(_size);
+			return framework::message(base::allocate());
 		}
 		inline auto allocate(size_type const size) noexcept {
-			if (nullptr == _message || _message.remain() < sizeof(header) + size) {
-				auto& instance = library::_thread_local::pool<buffer>::instance();
-				_message = framework::message(instance.allocate());
-			}
+			if (_message.remain() < sizeof(header) + size)
+				_message = framework::message(base::allocate());
 			message message(_message);
 			_message.move_rear(sizeof(header) + size);
 			_message.move_front(sizeof(header) + size);
 			return message;
+		}
+		inline void deallocate(buffer* value) noexcept {
+			base::deallocate(value);
+			library::interlock_decrement(_size);
 		}
 	};
 	class queue final : public library::lockfree::queue<message, false> {
@@ -167,4 +171,9 @@ namespace framework {
 		inline auto operator=(queue&&) noexcept -> queue & = delete;
 		inline ~queue(void) noexcept = default;
 	};
+
+	template<>
+	inline void buffer::destructor<0>(void) noexcept {
+		pool::instance().deallocate(this);
+	}
 }
