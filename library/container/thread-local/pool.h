@@ -8,7 +8,8 @@
 
 namespace library::_thread_local {
 	template<typename type, size_t bucket_size = 1024, bool placement = true, bool compress = true>
-	class pool final : public singleton<pool<type, bucket_size, placement, compress>> {
+	class pool : public singleton<pool<type, bucket_size, placement, compress>> {
+	protected:
 		friend class singleton<pool<type, bucket_size, placement, compress>>;
 		using size_type = unsigned int;
 		union union_node final {

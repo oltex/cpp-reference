@@ -18,9 +18,9 @@ int main(void) noexcept {
 	//-------------------------
 	{
 		framework::server server(100);
-		server.start_listen("127.0.0.1", 6000, 65535);
+		//server.start_listen("127.0.0.1", 6000, 65535);
 		system("pause");
-		server.stop_listen();
+		//server.stop_listen();
 		system("pause");
 	}
 	//-------------------------

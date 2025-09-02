@@ -30,14 +30,25 @@ namespace framework {
 		queue _send_queue;
 		library::overlap _send_overlap;
 	public:
-		inline session(size_type& index) noexcept
-			: _key(index++), _io_count(0x80000000) {
+		inline session(size_type const index) noexcept
+			: _key(index), _io_count(0x80000000) {
+		};
+		inline session(framework::connection& connection, unsigned long long timeout_duration) noexcept
+			: _key(_key = 0xffff & _key | library::interlock_exchange_add(_id, 0x10000)), _io_count(0x80000000) {
+			_socket = std::move(connection._socket);
+			//_timeout_currnet = GetTickCount64();
+				//_timeout_duration = timeout_duration;
+			_cancel_flag = 0;
+			_send_flag = 0;
+			library::interlock_or(_io_count, 0x40000000);
+			library::interlock_and(_io_count, 0x7FFFFFFF);
 		};
 		inline explicit session(session const&) noexcept = delete;
 		inline explicit session(session&&) noexcept = delete;
 		inline auto operator=(session const&) noexcept -> session & = delete;
 		inline auto operator=(session&&) noexcept -> session & = delete;
-		inline ~session(void) noexcept = default;
+		inline ~session(void) noexcept {
+		};
 
 		inline void initialize(framework::connection& connection, unsigned long long timeout_duration) noexcept {
 			_key = 0xffff & _key | library::interlock_exchange_add(_id, 0x10000);
@@ -45,7 +56,6 @@ namespace framework {
 			//_timeout_currnet = GetTickCount64();
 			//_timeout_duration = timeout_duration;
 			_cancel_flag = 0;
-
 			_send_flag = 0;
 			library::interlock_or(_io_count, 0x40000000);
 			library::interlock_and(_io_count, 0x7FFFFFFF);
@@ -55,8 +65,7 @@ namespace framework {
 			return !(0x80000000 & io_count) && (0x40000000 & io_count);
 		}
 		inline auto acquire(unsigned long long key) noexcept -> bool {
-			auto io_count = library::interlock_increment(_io_count);
-			return !(0x80000000 & io_count) && (0x40000000 & io_count) && (_key == key);
+			return acquire() && (_key == key);
 		}
 		template<bool send = true>
 		inline bool release(void) noexcept {
@@ -65,14 +74,13 @@ namespace framework {
 				flag = (0x40000000 == library::interlock_and(_io_count, ~0x40000000) && 0 == library::interlock_compare_exhange(_io_count, 0x80000000, 0));
 			else
 				flag = (0 == library::interlock_decrement(_io_count) && 0 == library::interlock_compare_exhange(_io_count, 0x80000000, 0));
+
 			if (flag) {
-				_receive_message = nullptr;
 				while (!_send_queue.empty())
 					_send_queue.pop();
+				_receive_message.clear();
 				_socket.close();
-				return true;
 			}
-			return false;
 		}
 
 		inline bool receive(void) noexcept {
@@ -132,19 +140,20 @@ namespace framework {
 				_send_queue.pop();
 			library::interlock_exchange(_send_flag, 0);
 		}
-
 		inline void cancel(void) noexcept {
 			_cancel_flag = 1;
 			_socket.cancel_io_ex();
 		}
 	};
-	class session_array final : public library::lockfree::free_list<session> {
+	class session_array final : public library::lockfree::free_list<session, false, false> {
 		using size_type = unsigned int;
-		using base = library::lockfree::free_list<session>;
+		using base = library::lockfree::free_list<session, false, false>;
 		size_type _size;
 	public:
-		inline explicit session_array(size_type capacity, size_type index = 0) noexcept
-			: base(capacity, index), _size(0) {
+		inline explicit session_array(size_type const capacity) noexcept
+			: base(capacity), _size(0) {
+			for (size_type index = 0; index < capacity; ++index)
+				library::construct(_array[index]._value, index);
 		};
 		inline explicit session_array(session_array const&) noexcept = delete;
 		inline explicit session_array(session_array&&) noexcept = delete;
@@ -152,8 +161,9 @@ namespace framework {
 		inline auto operator=(session_array&&) noexcept -> session_array & = delete;
 		inline ~session_array(void) noexcept = default;
 
-		inline auto allocate(void) noexcept -> session* {
-			auto result = base::allocate();
+		template<typename... argument>
+		inline auto allocate(argument&&... arg) noexcept -> session* {
+			auto result = base::allocate(std::forward<argument>(arg)...);
 			if (nullptr != result)
 				library::interlock_increment(_size);
 			return result;
@@ -171,12 +181,4 @@ namespace framework {
 			return base::operator[](index);
 		}
 	};
-
 }
-
-//	auto context = reinterpret_cast<session::context*>(reinterpret_cast<unsigned char*>(library::overlap::recover(overlapped)) - offsetof(session::context, _overlap));
-//	if (task::recv == context->_task)
-//		return library::pair<session&, task>(*reinterpret_cast<session*>(reinterpret_cast<unsigned char*>(context) - offsetof(session, _receive_context)), context->_task);
-//	else
-//		return library::pair<session&, task>(*reinterpret_cast<session*>(reinterpret_cast<unsigned char*>(context) - offsetof(session, _send_context)), context->_task);
-//}

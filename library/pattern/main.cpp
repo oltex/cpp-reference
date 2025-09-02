@@ -9,6 +9,5 @@ int main(void) noexcept {
 
 	example::singleton();
 
-
 	return 0;
 }

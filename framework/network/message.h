@@ -14,7 +14,7 @@ namespace framework {
 		inline auto operator=(header&&) noexcept -> header & = delete;
 		inline ~header(void) noexcept = default;
 	};
-	class buffer : public library::intrusive::share_pointer_hook<0>, public library::array<char, 128> {
+	class buffer final : public library::intrusive::share_pointer_hook<0>, public library::array<char, 128> {
 	public:
 		inline explicit buffer(void) noexcept = delete;
 		inline explicit buffer(buffer const&) noexcept = delete;
@@ -130,11 +130,12 @@ namespace framework {
 			return nullptr == lhs._buffer;
 		}
 	};
-	class pool final : public library::_thread_local::singleton<pool> {
+	class pool final : public library::_thread_local::pool<buffer>, public library::_thread_local::singleton<pool> {
 		friend class library::_thread_local::singleton<pool>;
+		using library::_thread_local::singleton<pool>::instance;
 		using size_type = unsigned int;
 		message _message;
-
+	public:
 		inline explicit pool(void) noexcept = default;
 		inline explicit pool(pool const&) noexcept = delete;
 		inline explicit pool(pool&&) noexcept = delete;

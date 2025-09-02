@@ -7,7 +7,7 @@ namespace framework {
 	class server final : public io_complet_port::io_complet_object {
 		using size_type = unsigned int;
 		enum class task : unsigned char {
-			accept = 0, connect, session, destory, function
+			accept = 0, connect, session, destory
 		};
 		network _network;
 		session_array _session_array;
@@ -72,18 +72,17 @@ namespace framework {
 					library::socket_address_ipv4 address;
 					if (task::accept == task)
 						address = connection.address();
-					else {
-						// 林家甫 备窍扁
-					}
+					else
+						int a = 10; //林家 备窍扁
 					if (true == on_accept(address)) {
-						auto& session = *_session_array.allocate();
-						session.initialize(connection, 400000);
-						_iocp.connect(*this, session._socket, static_cast<uintptr_t>(task::session));
-
-						on_create_session(session._key);
-						if (!session.receive() && session.release<false>()) {
-							on_destroy_session(session._key);
-							_session_array.deallocate(&session);
+						auto session = _session_array.allocate(connection, 400000);
+						if (nullptr != session) {
+							_iocp.connect(*this, session->_socket, static_cast<uintptr_t>(task::session));
+							on_create_session(session->_key);
+							if (!session->receive() && session->release<false>()) {
+								on_destroy_session(session->_key);
+								_session_array.deallocate(session);
+							}
 						}
 					}
 					if (task::accept == task)
@@ -124,8 +123,6 @@ namespace framework {
 				session& session = *reinterpret_cast<framework::session*>(overlapped);
 				on_destroy_session(session._key);
 				_session_array.deallocate(&session);
-			} break;
-			case task::function: {
 			} break;
 			}
 		};

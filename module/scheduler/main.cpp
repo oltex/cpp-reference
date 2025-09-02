@@ -1,3 +1,7 @@
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+
 #define _WINSOCKAPI_
 #include "io_complet_port.h"
 #include "thread_pool.h"
@@ -19,6 +23,7 @@ int function2(void) noexcept {
 }
 
 int main(void) noexcept {
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	//library::event event(false, false);
 	//{
 	//	auto rdtsc = __rdtsc();
@@ -41,23 +46,23 @@ int main(void) noexcept {
 	//}
 	{
 		auto& instance = io_complet_port::construct(4, 1);
-		system("pause");
+		//system("pause");
 		//for (auto index = 0; index < 64; ++index)
-		instance.execute(function2);
-		instance.execute(function);
+		//instance.execute(function2);
+		//instance.execute(function);
 		//Sleep(30000);
 		//__debugbreak();
 		system("pause");
 		io_complet_port::destruct();
 	}
-	{
-		auto& instance = thread_pool::construct(16);
-		system("pause");
-		for (auto index = 0; index < 64; ++index)
-			instance.execute(function);
-		Sleep(30000);
-		__debugbreak();
-		system("pause");
-		thread_pool::destruct();
-	}
+	//{
+	//	auto& instance = thread_pool::construct(16);
+	//	system("pause");
+	//	for (auto index = 0; index < 64; ++index)
+	//		instance.execute(function);
+	//	Sleep(30000);
+	//	__debugbreak();
+	//	system("pause");
+	//	thread_pool::destruct();
+	//}
 }
