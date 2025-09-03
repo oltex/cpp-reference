@@ -110,18 +110,14 @@
     </ClInclude>
     <ClInclude Include="map.h" />
     <ClInclude Include="set.h" />
-    <ClInclude Include="example\unorder_map.h">
-      <Filter>example</Filter>
-    </ClInclude>
-    <ClInclude Include="example\unorder_set.h">
-      <Filter>example</Filter>
-    </ClInclude>
     <ClInclude Include="example\my_class.h">
       <Filter>example</Filter>
     </ClInclude>
-    <ClInclude Include="unorder_map.h" />
-    <ClInclude Include="unorder_set.h" />
     <ClInclude Include="tuple.h" />
+    <ClInclude Include="hash_table.h" />
+    <ClInclude Include="example\hash_table.h">
+      <Filter>example</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

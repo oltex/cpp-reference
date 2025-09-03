@@ -7,18 +7,15 @@
 #include <malloc.h>
 #include <cassert>
 
+namespace detail {
+	template<typename trait, auto hash>
+	class hash_table;
+}
 namespace library {
-	template<typename type, auto hash>
-	class unorder_set;
-	template<typename key_type, typename type, auto hash>
-	class unorder_map;
-
 	template<typename type, typename allocator = pool<type>, bool placement = true>
 	class list final {
-		template<typename type, auto hash>
-		friend class unorder_set;
-		template<typename key_type, typename type, auto hash>
-		friend class unorder_map;
+		template<typename trait, auto hash>
+		friend class detail::hash_table;
 		using size_type = unsigned int;
 		struct node final {
 			node* _prev, * _next;

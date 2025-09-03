@@ -167,7 +167,7 @@ namespace framework {
 				_iocp.post(*this, 0, static_cast<uintptr_t>(task::destory), reinterpret_cast<OVERLAPPED*>(&session_));
 		}
 		inline static auto create_message(size_type size) noexcept -> message {
-			message _message = pool::instance().allocate(size);
+			message _message(pool::instance().allocate(sizeof(header) + size));
 			header header_;
 			header_._size = 8;
 			_message.push(reinterpret_cast<char*>(&header_), sizeof(header));

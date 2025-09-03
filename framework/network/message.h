@@ -150,7 +150,7 @@ namespace framework {
 			return framework::message(base::allocate());
 		}
 		inline auto allocate(size_type const size) noexcept {
-			if (_message.remain() < sizeof(header) + size)
+			if (_message.remain() < size)
 				_message = framework::message(base::allocate());
 			message message(_message);
 			_message.move_rear(sizeof(header) + size);
@@ -171,7 +171,6 @@ namespace framework {
 		inline auto operator=(queue&&) noexcept -> queue & = delete;
 		inline ~queue(void) noexcept = default;
 	};
-
 	template<>
 	inline void buffer::destructor<0>(void) noexcept {
 		pool::instance().deallocate(this);

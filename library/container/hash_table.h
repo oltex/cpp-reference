@@ -1,49 +1,74 @@
 #pragma once
-#include "../pair/pair.h"
-#include "../tuple/tuple.h"
-#include "../list/list.h"
-#include "../vector/vector.h"
-#include "../../function/function.h"
+#include "../function.h"
+#include "../template.h"
+#include "pair.h"
+#include "tuple.h"
+#include "list.h"
+#include "vector.h"
 
-namespace library {
-	template<typename key_type, typename type, auto hash = fnv_hash<key_type>>
-	class unorder_map final {
-	private:
+namespace detail {
+	template<typename type>
+	class unorder_set {
+	protected:
+		using key_type = type;
+		using value_type = type;
+		using element = type;
+		using iterator = typename library::list<element>::iterator;
+
+		template <typename... argument>
+		using key_exist = library::key_exist_set<type, argument...>;
+		inline static auto key_extract(element const& elem) noexcept -> type const& {
+			return elem;
+		}
+		inline static auto value_extract(element const& elem) noexcept -> type const& {
+			return elem;
+		}
+	};
+	template<typename _key_type, typename _value_type>
+	class unorder_map {
+	protected:
+		using key_type = _key_type;
+		using value_type = _value_type;
+		using element = library::pair<key_type, value_type>;
+		using iterator = typename library::list<element>::iterator;
+
+		template <typename... argument>
+		using key_exist = library::key_exist_map<key_type, argument...>;
+		inline static auto key_extract(element const& elem) noexcept -> key_type const& {
+			return elem._first;
+		}
+		inline static auto value_extract(element const& elem) noexcept -> value_type const& {
+			return elem._second;
+		}
+	};
+
+	template <typename trait, auto hash = library::fnv_hash<trait::key_type>>
+	class hash_table final : public trait {
 		using size_type = unsigned int;
-		using pair = pair<key_type, type>;
+		using key_type = trait::key_type;
+		using value_type = trait::value_type;
+		using element = trait::element;
+		using iterator = trait::iterator;
+
+		library::vector<iterator> _vector;
+		library::list<element> _list;
 	public:
-		using iterator = typename list<pair>::iterator;
-	private:
-		template <typename key_type, typename... argument>
-		struct extract {
-			static constexpr bool able = false;
-		};
-		template <typename key_type, typename type>
-		struct extract<key_type, key_type, type> {
-			static constexpr bool able = true;
-			static auto execute(key_type const& key, type const&) noexcept -> key_type const& {
-				return key;
-			}
-		};
-		vector<iterator> _vector;
-		list<pair> _list;
-	public:
-		inline explicit unorder_map(void) noexcept {
+		inline explicit hash_table(void) noexcept {
 			rehash(8);
 		}
-		inline explicit unorder_map(unorder_map const& rhs) noexcept;
-		inline explicit unorder_map(unorder_map&& rhs) noexcept;
-		inline auto operator=(unorder_map const& rhs) noexcept -> unorder_map&;
-		inline auto operator=(unorder_map&& rhs) noexcept -> unorder_map&;
-		inline ~unorder_map(void) noexcept = default;
-	public:
+		inline explicit hash_table(hash_table const& rhs) noexcept;
+		inline explicit hash_table(hash_table&& rhs) noexcept;
+		inline auto operator=(hash_table const& rhs) noexcept -> hash_table&;
+		inline auto operator=(hash_table&& rhs) noexcept -> hash_table&;
+		inline ~hash_table(void) noexcept = default;
+
 		template<typename... argument>
 		inline auto emplace(argument&&... arg) noexcept -> iterator {
 			iterator current;
 
-			using extract = extract<key_type, std::remove_cvref_t<argument>...>;
-			if constexpr (true == extract::able) {
-				auto const& value = extract::execute(std::forward<argument>(arg)...);
+			using exist = typename trait::template key_exist<std::remove_cvref_t<argument>...>;
+			if constexpr (true == exist::able) {
+				auto const& value = exist::execute(std::forward<argument>(arg)...);
 
 				auto index = bucket(value);
 				auto& first = _vector[index << 1];
@@ -51,7 +76,7 @@ namespace library {
 
 				if (first != _list.end()) {
 					for (auto iter = first;; ++iter) {
-						if ((*iter)._first == value)
+						if (trait::key_extract(*iter) == value)
 							return iter;
 						if (iter == last)
 							break;
@@ -64,7 +89,7 @@ namespace library {
 				first = current;
 			}
 			else {
-				assert((std::is_constructible_v<pair, argument...>));
+				assert((std::is_constructible_v<element, argument...>));
 				current = iterator(_list.allocate(std::forward<argument>(arg)...));
 
 				auto index = bucket((*current)._first);
@@ -73,7 +98,7 @@ namespace library {
 
 				if (first != _list.end()) {
 					for (auto iter = first;; ++iter) {
-						if ((*iter)._first == (*current)._first) {
+						if (trait::key_extract(*iter) == trait::key_extract(*current)) {
 							_list.deallocate(current._node);
 							return iter;
 						}
@@ -110,8 +135,8 @@ namespace library {
 				--last;
 			_list.erase(iter);
 		}
-		inline auto operator[](key_type const& key) noexcept -> type& {
-			return (*emplace(key))._second;
+		inline auto operator[](key_type const& key) noexcept -> value_type& {
+			return trait::value_extract(*emplace(key));
 		}
 		inline auto begin(void) const noexcept -> typename iterator {
 			return _list.begin();
@@ -141,8 +166,7 @@ namespace library {
 		//inline auto bucket_size(size_type const index) const noexcept -> size_type;
 
 		inline void rehash(size_type count) noexcept {
-			unsigned long bit;
-			_BitScanReverse64(&bit, ((count - 1) | 1));
+			unsigned long bit =  library::bit_scan_reverse((count - 1) | 1);
 			count = static_cast<size_type>(1) << (1 + bit);
 
 			auto begin = _list.begin();
@@ -152,7 +176,7 @@ namespace library {
 			while (begin != end) {
 				auto current = begin++;
 
-				auto index = bucket((*current)._first);
+				auto index = bucket(trait::key_extract(*current));
 
 				auto& first = _vector[index << 1];
 				auto& last = _vector[(index << 1) + 1];
@@ -173,7 +197,7 @@ namespace library {
 
 			if (first != end) {
 				for (auto iter = first;; ++iter) {
-					if ((*iter)._first == key)
+					if (trait::key_extract(*iter) == key)
 						return iter;
 					if (iter == last)
 						break;
@@ -189,7 +213,14 @@ namespace library {
 			return _list.size();
 		}
 		inline bool empty(void) const noexcept {
-			return  _list.empty();
+			return _list.empty();
 		}
 	};
+}
+
+namespace library {
+	template <typename type, auto hash = library::fnv_hash<type>>
+	using unorder_set = detail::hash_table<detail::unorder_set<type>, hash>;
+	template <typename key_type, typename value_type, auto hash = library::fnv_hash<key_type>>
+	using unorder_map = detail::hash_table<detail::unorder_map<key_type, value_type>, hash>;
 }

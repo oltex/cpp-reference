@@ -102,4 +102,29 @@ namespace library {
 	inline constexpr bool arithmetic_type = integral_type<type> || floating_point_type<type>;
 	//template <typename type>
 	//inline constexpr bool fundamental_type = arithmetic_type<type> || void_type<type> || is_null_pointer_v<type>;
+
+
+	template <typename type, typename... argument>
+	struct key_exist_set {
+		static constexpr bool able = false;
+	};
+	template <typename type>
+	struct key_exist_set<type, type> {
+		static constexpr bool able = true;
+		static auto execute(type const& value) noexcept -> type const& {
+			return value;
+		}
+	};
+
+	template <typename key_type, typename... argument>
+	struct key_exist_map {
+		static constexpr bool able = false;
+	};
+	template <typename key_type, typename type>
+	struct key_exist_map<key_type, key_type, type> {
+		static constexpr bool able = true;
+		static auto execute(key_type const& key, type const&) noexcept -> key_type const& {
+			return key;
+		}
+	};
 }

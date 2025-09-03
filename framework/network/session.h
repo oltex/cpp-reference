@@ -24,7 +24,7 @@ namespace framework {
 
 		message _receive_message;
 		library::overlap _receive_overlap;
-		
+
 		unsigned long _send_flag;
 		unsigned long _send_size;
 		queue _send_queue;
@@ -79,18 +79,27 @@ namespace framework {
 				message.push(_receive_message.data() + _receive_message.front(), _receive_message.size());
 			_receive_message = std::move(message);
 
-			if (0 == _cancel_flag) {
+			if (1 == _cancel_flag)
+				return false;
+			else {
 				WSABUF wsa_buffer{ .len = _receive_message.remain(), .buf = _receive_message.data() + _receive_message.rear() };
 				switch (_socket.receive(wsa_buffer, _receive_overlap)) {
 					using enum library::socket::result;
+				case pending: {
+		/*			if (1 == _cancel_flag) {
+						if (acquire(key))
+							_socket.cancel_io_ex();
+						return false;
+					}
+					else*/
+						return true;
+				}
 				case complet:
-				case pending:
 					return true;
 				case close:
 					return false;
 				}
 			}
-			return false;
 		}
 		inline auto message(void) noexcept -> std::optional<framework::message> {
 			if (sizeof(header) > _receive_message.size())
