@@ -65,41 +65,33 @@ namespace detail {
 		template<typename... argument>
 		inline auto emplace(argument&&... arg) noexcept -> iterator {
 			iterator current;
+			key_type const* key;
+
 			using exist = typename trait::template key_exist<std::remove_cvref_t<argument>...>;
-			if constexpr (true == exist::able) {
-				auto const& key = exist::execute(std::forward<argument>(arg)...);
-
-				auto index = bucket(key);
-				auto& first = _vector[index << 1];
-				auto& last = _vector[(index << 1) + 1];
-
-				if (auto result = find(key, first, last); end() != result)
-					return result;
-
-				current = _list.emplace(first, std::forward<argument>(arg)...);
-				if (first == _list.end())
-					last = current;
-				first = current;
-			}
+			if constexpr (true == exist::able)
+				key = &exist::execute(std::forward<argument>(arg)...);
 			else {
 				assert((std::is_constructible_v<element, argument...>));
 				current = iterator(_list.allocate(std::forward<argument>(arg)...));
-
-				auto const& key = trait::key_extract(*current);
-				auto index = bucket(key);
-				auto& first = _vector[index << 1];
-				auto& last = _vector[(index << 1) + 1];
-
-				if (auto result = find(key, first, last); end() != result) {
-					_list.deallocate(current._node);
-					return result;
-				}
-
-				_list.link(first._node, current._node);
-				if (first == _list.end())
-					last = current;
-				first = current;
+				key = &trait::key_extract(*current);
 			}
+
+			auto index = bucket(*key);
+			auto& first = _vector[index << 1];
+			auto& last = _vector[(index << 1) + 1];
+			if (auto result = find(*key, first, last); end() != result) {
+				if constexpr (false == exist::able)
+					_list.deallocate(current._node);
+				return result;
+			}
+
+			if constexpr (true == exist::able)
+				current = _list.emplace(first, std::forward<argument>(arg)...);
+			else
+				_list.link(first._node, current._node);
+			if (first == _list.end())
+				last = current;
+			first = current;
 
 			if (1.f <= load_factor())
 				rehash((_vector.size() >> 1) < 512 ? (_vector.size() >> 1) * 8 : (_vector.size() >> 1) + 1);
