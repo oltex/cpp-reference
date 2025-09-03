@@ -140,7 +140,6 @@ namespace detail {
 			return (_vector.size() >> 1);
 		}
 		//inline auto bucket_size(size_type const index) const noexcept -> size_type;
-
 		inline void rehash(size_type count) noexcept {
 			unsigned long bit = library::bit_scan_reverse((count - 1) | 1);
 			count = static_cast<size_type>(1) << (1 + bit);
