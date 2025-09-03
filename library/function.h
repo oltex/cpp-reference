@@ -20,6 +20,12 @@ namespace library {
 		}
 		return value;
 	}
+	template <typename type = void>
+	struct equal {
+		inline static constexpr bool execute(const type& _Left, const type& _Right) noexcept {
+			return _Left == _Right;
+		}
+	};
 
 	template<typename type>
 	inline constexpr auto less(type const& left, type const& right) noexcept {
@@ -34,7 +40,7 @@ namespace library {
 	template<>
 	class lesser<void> final {
 		template <typename type>
-		inline constexpr auto operator()(type const& left, type const& right) noexcept {
+		inline constexpr auto operator()(type const&& left, type const&& right) noexcept {
 			return right < left;
 		}
 	};
@@ -42,6 +48,21 @@ namespace library {
 	inline constexpr auto great(type const& left, type const& right) noexcept {
 		return right < left;
 	}
+	template <typename type = void>
+	struct equal {
+		inline static constexpr bool execute(const type& _Left, const type& _Right) noexcept {
+			return _Left == _Right;
+		}
+	};
+	template <>
+	struct equal<void> {
+		using transparent = int;
+		template <typename type_1, typename type_2>
+		inline static constexpr auto execute(type_1&& left, type_2&& right) noexcept {
+			return static_cast<type_1&&>(left) == static_cast<type_2&&>(right);
+		}
+	};
+
 	template<typename type>
 	inline constexpr auto ordering(type const& left, type const& right) noexcept {
 		return left <=> right;

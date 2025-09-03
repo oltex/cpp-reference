@@ -5,7 +5,7 @@
 #include "tuple.h"
 #include "list.h"
 #include "vector.h"
-
+//key_equal
 namespace detail {
 	template<typename type>
 	class unorder_set {
@@ -42,7 +42,7 @@ namespace detail {
 		}
 	};
 
-	template <typename trait, auto hash = library::fnv_hash<trait::key_type>>
+	template <typename trait, auto hash = library::fnv_hash<trait::key_type>, typename predicate = library::equal<typename trait::key_type>>
 	class hash_table final : public trait {
 		using size_type = unsigned int;
 		using key_type = trait::key_type;
@@ -92,7 +92,7 @@ namespace detail {
 				assert((std::is_constructible_v<element, argument...>));
 				current = iterator(_list.allocate(std::forward<argument>(arg)...));
 
-				auto index = bucket((*current)._first);
+				auto index = bucket(trait::key_extract(*current));
 				auto& first = _vector[index << 1];
 				auto& last = _vector[(index << 1) + 1];
 
@@ -166,7 +166,7 @@ namespace detail {
 		//inline auto bucket_size(size_type const index) const noexcept -> size_type;
 
 		inline void rehash(size_type count) noexcept {
-			unsigned long bit =  library::bit_scan_reverse((count - 1) | 1);
+			unsigned long bit = library::bit_scan_reverse((count - 1) | 1);
 			count = static_cast<size_type>(1) << (1 + bit);
 
 			auto begin = _list.begin();
@@ -188,8 +188,8 @@ namespace detail {
 				first = current;
 			}
 		}
-		inline auto find(key_type const& key) const noexcept -> iterator {
-			size_type index = bucket(key);
+		inline auto find(auto const& key) const noexcept -> iterator {
+			auto index = bucket(key);
 
 			auto end = _list.end();
 			auto first = _vector[index << 1];
@@ -219,8 +219,8 @@ namespace detail {
 }
 
 namespace library {
-	template <typename type, auto hash = library::fnv_hash<type>>
+	template <typename type, auto hash = library::fnv_hash<type>, typename predicate = library::equal<type>>
 	using unorder_set = detail::hash_table<detail::unorder_set<type>, hash>;
-	template <typename key_type, typename value_type, auto hash = library::fnv_hash<key_type>>
+	template <typename key_type, typename value_type, auto hash = library::fnv_hash<key_type>, typename predicate = library::equal<key_type>>
 	using unorder_map = detail::hash_table<detail::unorder_map<key_type, value_type>, hash>;
 }
