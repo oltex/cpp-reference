@@ -10,10 +10,18 @@
 
 namespace example {
 	inline void hash_table(void) noexcept {
+		library::unorder_set<int> _set;
+		_set.emplace(10);
+		auto res  = _set.find(10);
+		if (res == _set.end()) 
+			printf("a");
+		_set.erase(10);
+		if (res == _set.end())
+			printf("a");
+
+
 		library::unorder_set<int> set;
 		std::unordered_set<int> std_set;
-		std_set.find()
-		std_set.find(10);
 		for (int i = 0; i < 10000; ++i)
 			set.emplace(i);
 		for (int i = 0; i < 10000; ++i)

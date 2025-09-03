@@ -5,7 +5,7 @@
 #include "tuple.h"
 #include "list.h"
 #include "vector.h"
-//key_equal
+
 namespace detail {
 	template<typename type>
 	class unorder_set {
@@ -42,7 +42,7 @@ namespace detail {
 		}
 	};
 
-	template <typename trait, auto hash = library::fnv_hash<trait::key_type>, typename predicate = library::equal<typename trait::key_type>>
+	template <typename trait, typename hash = library::fnv_hash<typename trait::key_type>, typename predicate = library::equal<typename trait::key_type>>
 	class hash_table final : public trait {
 		using size_type = unsigned int;
 		using key_type = trait::key_type;
@@ -65,23 +65,16 @@ namespace detail {
 		template<typename... argument>
 		inline auto emplace(argument&&... arg) noexcept -> iterator {
 			iterator current;
-
 			using exist = typename trait::template key_exist<std::remove_cvref_t<argument>...>;
 			if constexpr (true == exist::able) {
-				auto const& value = exist::execute(std::forward<argument>(arg)...);
+				auto const& key = exist::execute(std::forward<argument>(arg)...);
 
-				auto index = bucket(value);
+				auto index = bucket(key);
 				auto& first = _vector[index << 1];
 				auto& last = _vector[(index << 1) + 1];
 
-				if (first != _list.end()) {
-					for (auto iter = first;; ++iter) {
-						if (trait::key_extract(*iter) == value)
-							return iter;
-						if (iter == last)
-							break;
-					}
-				}
+				if (auto result = find(key, first, last); end() != result)
+					return result;
 
 				current = _list.emplace(first, std::forward<argument>(arg)...);
 				if (first == _list.end())
@@ -92,19 +85,14 @@ namespace detail {
 				assert((std::is_constructible_v<element, argument...>));
 				current = iterator(_list.allocate(std::forward<argument>(arg)...));
 
-				auto index = bucket(trait::key_extract(*current));
+				auto const& key = trait::key_extract(*current);
+				auto index = bucket(key);
 				auto& first = _vector[index << 1];
 				auto& last = _vector[(index << 1) + 1];
 
-				if (first != _list.end()) {
-					for (auto iter = first;; ++iter) {
-						if (trait::key_extract(*iter) == trait::key_extract(*current)) {
-							_list.deallocate(current._node);
-							return iter;
-						}
-						if (iter == last)
-							break;
-					}
+				if (auto result = find(key, first, last); end() != result) {
+					_list.deallocate(current._node);
+					return result;
 				}
 
 				_list.link(first._node, current._node);
@@ -117,23 +105,19 @@ namespace detail {
 				rehash((_vector.size() >> 1) < 512 ? (_vector.size() >> 1) * 8 : (_vector.size() >> 1) + 1);
 			return current;
 		}
-		inline void erase(key_type const& key) noexcept {
+		inline void erase(auto const& key) noexcept {
 			assert(_list.size() > 0 && "called on empty");
-			erase(find(key));
-		}
-		inline void erase(iterator const& iter) noexcept {
-			size_type index = bucket((*iter)._first);
 
+			auto index = bucket(key);
 			auto& first = _vector[index << 1];
 			auto& last = _vector[(index << 1) + 1];
-
-			if (first == last)
-				first = last = _list.end();
-			else if (first == iter)
-				++first;
-			else if (last == iter)
-				--last;
-			_list.erase(iter);
+			erase(find(key, first, last), first, last);
+		}
+		inline void erase(iterator iter) noexcept {
+			auto index = bucket(trait::key_extract(*iter));
+			auto& first = _vector[index << 1];
+			auto& last = _vector[(index << 1) + 1];
+			erase(iter, first, last);
 		}
 		inline auto operator[](key_type const& key) noexcept -> value_type& {
 			return trait::value_extract(*emplace(key));
@@ -157,8 +141,8 @@ namespace detail {
 		inline auto load_factor(void) const noexcept -> float {
 			return static_cast<float>(_list.size()) / (_vector.size() >> 1);
 		}
-		inline auto bucket(key_type const& key) const noexcept -> size_type {
-			return hash(key) % (_vector.size() >> 1);
+		inline auto bucket(auto const& key) const noexcept -> size_type {
+			return hash::execute(key) % (_vector.size() >> 1);
 		}
 		inline auto bucket_count(void) const noexcept -> size_type {
 			return (_vector.size() >> 1);
@@ -190,20 +174,9 @@ namespace detail {
 		}
 		inline auto find(auto const& key) const noexcept -> iterator {
 			auto index = bucket(key);
-
-			auto end = _list.end();
 			auto first = _vector[index << 1];
 			auto last = _vector[(index << 1) + 1];
-
-			if (first != end) {
-				for (auto iter = first;; ++iter) {
-					if (trait::key_extract(*iter) == key)
-						return iter;
-					if (iter == last)
-						break;
-				}
-			}
-			return end;
+			return find(key, first, last);
 		}
 		inline void clear(void) noexcept {
 			_vector.assign(_vector.size(), _list.end());
@@ -215,12 +188,32 @@ namespace detail {
 		inline bool empty(void) const noexcept {
 			return _list.empty();
 		}
+	private:
+		inline auto find(auto const& key, iterator first, iterator last) const noexcept -> iterator {
+			auto end = _list.end();
+			if (first != end) {
+				++last;
+				for (auto iter = first; iter != last; ++iter)
+					if (predicate::execute(trait::key_extract(*iter), key))
+						return iter;
+			}
+			return end;
+		}
+		inline void erase(iterator iter, iterator& first, iterator& last) noexcept {
+			if (first == last)
+				first = last = _list.end();
+			else if (first == iter)
+				++first;
+			else if (last == iter)
+				--last;
+			_list.erase(iter);
+		}
 	};
 }
 
 namespace library {
-	template <typename type, auto hash = library::fnv_hash<type>, typename predicate = library::equal<type>>
+	template <typename type, typename hash = library::fnv_hash<type>, typename predicate = library::equal<type>>
 	using unorder_set = detail::hash_table<detail::unorder_set<type>, hash>;
-	template <typename key_type, typename value_type, auto hash = library::fnv_hash<key_type>, typename predicate = library::equal<key_type>>
+	template <typename key_type, typename value_type, typename hash = library::fnv_hash<key_type>, typename predicate = library::equal<key_type>>
 	using unorder_map = detail::hash_table<detail::unorder_map<key_type, value_type>, hash>;
 }

@@ -8,13 +8,13 @@
 #include <cassert>
 
 namespace detail {
-	template<typename trait, auto hash, typename predicate>
+	template<typename trait, typename hash, typename predicate>
 	class hash_table;
 }
 namespace library {
 	template<typename type, typename allocator = pool<type>, bool placement = true>
 	class list final {
-		template<typename trait, auto hash, typename predicate>
+		template<typename trait, typename hash, typename predicate>
 		friend class detail::hash_table;
 		using size_type = unsigned int;
 		struct node final {

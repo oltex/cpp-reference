@@ -60,6 +60,5 @@ int main(void) noexcept {
 	//example::_thread_local::pool();
 	//example::unorder_map();
 	example::hash_table();
-	std::hash<int>
 	return 0;
 }
