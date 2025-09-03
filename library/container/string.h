@@ -6,7 +6,7 @@
 #include <cassert>
 
 namespace detail {
-	template<typename type, size_t sso = 16> //small string optimization
+	template<typename type, size_t sso = 3> //small string optimization
 		requires (library::any_of_type<type, char, wchar_t>)
 	class string final {
 		using size_type = unsigned int;
@@ -14,7 +14,6 @@ namespace detail {
 			library::array<type, sso> _array;
 			type* _pointer;
 		};
-		//using node = typename std::conditional<resize, union union_node, struct strcut_node>::type;
 
 		size_type _size;
 		size_type _capacity;
@@ -23,7 +22,7 @@ namespace detail {
 		using iterator = type*;
 
 		inline explicit string(void) noexcept
-			: _size(0), _capacity(sso), _buffer() {
+			: _size(0), _capacity(sso)/*, _buffer()*/ {
 		};
 		template<typename argument>
 			requires (library::same_type<library::remove_cp<argument>, type>)
@@ -32,10 +31,11 @@ namespace detail {
 			insert(end(), arg);
 		}
 		inline string(string const& rhs) noexcept
-			: string(const_cast<string&>(rhs).c_str()) {
+			: string(const_cast<string&>(rhs).data()) {
 		};
 		inline explicit string(string&& rhs) noexcept
 			: _size(library::exchange(rhs._size, 0)), _capacity(library::exchange(rhs._capacity, static_cast<size_type>(sso))), _buffer(rhs._buffer) {
+			rhs.null();
 		};
 		inline auto operator=(string const& rhs) noexcept -> string& {
 			assign(const_cast<string&>(rhs).c_str());
@@ -48,6 +48,7 @@ namespace detail {
 			_size = library::exchange(rhs._size, 0);
 			_capacity = library::exchange(rhs._capacity, static_cast<size_type>(sso));
 			_buffer = rhs._buffer;
+			rhs.null();
 			return *this;
 		};
 		inline ~string(void) noexcept {
@@ -76,6 +77,7 @@ namespace detail {
 			else
 				library::memory_copy(iter, arg, char_size);
 			_size += char_size;
+			null();
 			return iter;
 		}
 		inline auto push_back(type character) noexcept -> type& {
@@ -85,6 +87,7 @@ namespace detail {
 			assert(_size > 0 && "called on empty");
 			library::memory_move(iter, iter + 1, end() - (iter + 1));
 			--_size;
+			null();
 			return iter;
 		}
 		inline void pop_back(void) noexcept {
@@ -184,7 +187,7 @@ namespace detail {
 		inline void reserve(size_type capacity) noexcept {
 			if (_capacity < capacity) {
 				if (sso >= _capacity)
-					_buffer._pointer = reinterpret_cast<type*>(library::memory_copy(library::allocate<type>(capacity), _buffer._array.data(), _size));
+					_buffer._pointer = reinterpret_cast<type*>(library::memory_copy(library::allocate<type>(capacity), _buffer._array.data(), _size + 1));
 				else
 					_buffer._pointer = reinterpret_cast<type*>(library::reallocate(_buffer._pointer, capacity));
 				_capacity = capacity;
@@ -192,6 +195,7 @@ namespace detail {
 		}
 		inline void clear(void) noexcept {
 			_size = 0;
+			null();
 		}
 		inline void swap(string& rhs) noexcept {
 			library::swap(_size, rhs._size);
@@ -210,17 +214,54 @@ namespace detail {
 			else
 				return _buffer._pointer;
 		}
-		inline auto c_str(void) noexcept -> type* {
-			if (sso >= _capacity) {
-				_buffer._array[_size] = '\0';
-				return _buffer._array.data();
-			}
-			else {
-				_buffer._pointer[_size] = '\0';
-				return _buffer._pointer;
-			}
+	private:
+		inline void null(void) noexcept {
+			if constexpr (library::same_type<type, char>)
+				data()[_size] = '\0';
+			else
+				data()[_size] = L'\0';
 		}
 	};
+
+
+	//template<typename type>
+	//class string_view {
+	//	type* _pointer;
+
+	//public:
+	//	inline explicit string_view(void) noexcept
+	//		_pointer(nullptr) {
+	//	};
+	//	template<typename argument>
+	//		requires (library::same_type<library::remove_cp<argument>, type>)
+	//	inline string(argument arg) noexcept
+	//		: string() {
+	//		insert(end(), arg);
+	//	}
+	//	inline string(string const& rhs) noexcept
+	//		: string(const_cast<string&>(rhs).c_str()) {
+	//	};
+	//	inline explicit string(string&& rhs) noexcept
+	//		: _size(library::exchange(rhs._size, 0)), _capacity(library::exchange(rhs._capacity, static_cast<size_type>(sso))), _buffer(rhs._buffer) {
+	//	};
+	//	inline auto operator=(string const& rhs) noexcept -> string& {
+	//		assign(const_cast<string&>(rhs).c_str());
+	//		return *this;
+	//	};
+	//	inline auto operator=(string&& rhs) noexcept -> string& {
+	//		if (sso < _capacity)
+	//			library::deallocate(_buffer._pointer);
+
+	//		_size = library::exchange(rhs._size, 0);
+	//		_capacity = library::exchange(rhs._capacity, static_cast<size_type>(sso));
+	//		_buffer = rhs._buffer;
+	//		return *this;
+	//	};
+	//	inline ~string(void) noexcept {
+	//		if (sso < _capacity)
+	//			library::deallocate(_buffer._pointer);
+	//	};
+	//};
 }
 
 namespace library {
