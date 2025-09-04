@@ -1,5 +1,6 @@
 #pragma once
 #include "module/scheduler/io_complet_port.h"
+#include "library/utility/performance_data_help.h"
 #include "network.h"
 #include "session.h"
 
@@ -14,7 +15,7 @@ namespace framework {
 	public:
 		inline explicit server(size_type sessions) noexcept
 			: _session_array(sessions) {
-			//_iocp.execute(&server::monitor, this);
+			_iocp.execute(&server::monitor, this);
 		}
 		inline explicit server(server const&) noexcept = delete;
 		inline explicit server(server&&) noexcept = delete;
@@ -58,6 +59,8 @@ namespace framework {
 			//	return 0;
 			//}
 			//return session_._key;
+
+
 		}
 	private:
 		inline virtual void worker(bool result, unsigned long transferred, uintptr_t key, OVERLAPPED* overlapped) noexcept override {
@@ -127,7 +130,58 @@ namespace framework {
 			}
 		};
 		inline int monitor(void) noexcept {
-			printf("hello\n");
+			auto& query = library::pdh_query::instance();
+			static auto& system_total_time = query.add_counter(L"\\Processor(_Total)\\% Processor Time");
+			static auto& system_user_time = query.add_counter(L"\\Processor(_Total)\\% User Time");
+			static auto& system_kernel_time = query.add_counter(L"\\Processor(_Total)\\% Privileged Time");
+			static auto& process_total_time = query.add_counter(L"\\Process(network)\\% Processor Time");
+			static auto& process_user_time = query.add_counter(L"\\Process(network)\\% User Time");
+			static auto& process_kernel_time = query.add_counter(L"\\Process(network)\\% Privileged Time");
+			static auto& system_available_memory = query.add_counter(L"\\Memory\\Available Bytes");
+			static auto& system_nonpage_memory = query.add_counter(L"\\Memory\\Pool Nonpaged Bytes");
+			static auto& process_private_memory = query.add_counter(L"\\Process(network)\\Private Bytes");
+			static auto& process_nonpage_memory = query.add_counter(L"\\Process(network)\\Pool Nonpaged Bytes");
+			static auto& network_receive = query.add_counter(L"\\Network Interface(*)\\Bytes Received/sec");
+			static auto& network_send = query.add_counter(L"\\Network Interface(*)\\Bytes Sent/sec");
+			static auto& tcpv4_segments_received_sec = query.add_counter(L"\\TCPv4\\Segments Received/sec");
+			static auto& tcpv4_segments_sent_sec = query.add_counter(L"\\TCPv4\\Segments Sent/sec");
+			static auto& tcpv4_segments_retransmitted_sec = query.add_counter(L"\\TCPv4\\Segments Retransmitted/sec");
+
+			query.collect_query_data();
+			printf("--------------------------------------\n"\
+				"[ System Monitor ]\n"\
+				"CPU Usage\n"\
+				" System  - Total  :   %f %%\n"\
+				"           User   :   %f %%\n"\
+				"           Kernel :   %f %%\n"\
+				" Process - Total  :   %f %%\n"\
+				"           User   :   %f %%\n"\
+				"           Kernel :   %f %%\n"\
+				"Memory Usage\n"\
+				" System  - Available :   %f GB\n"\
+				"           Non-Paged :   %f MB\n"\
+				" Process - Private   :   %f MB\n"\
+				"           Non-Paged :   %f MB\n"\
+				"Network Usage\n"\
+				" Receive        :   %f\n"\
+				" Send           :   %f\n",
+				//" Retransmission :   %f\n",
+				system_total_time.get_format_value<double>(),
+				system_user_time.get_format_value<double>(),
+				system_kernel_time.get_format_value<double>(),
+				process_total_time.get_format_value<double>(PDH_FMT_NOCAP100),
+				process_user_time.get_format_value<double>(PDH_FMT_NOCAP100),
+				process_kernel_time.get_format_value<double>(PDH_FMT_NOCAP100),
+				system_available_memory.get_format_value<double>() / 0x40000000,
+				system_nonpage_memory.get_format_value<double>() / 0x100000,
+				process_private_memory.get_format_value<double>() / 0x100000,
+				process_nonpage_memory.get_format_value<double>() / 0x100000,
+				network_receive.get_format_value<double>(),
+				network_send.get_format_value<double>());
+				//tcpv4_segments_received_sec.get_format_value(PDH_FMT_DOUBLE).doubleValue,
+				//tcpv4_segments_sent_sec.get_format_value(PDH_FMT_DOUBLE).doubleValue,
+				//tcpv4_segments_retransmitted_sec.get_format_value(PDH_FMT_DOUBLE).doubleValue);
+
 			return 1000;
 		}
 		inline int timeout(void) noexcept {

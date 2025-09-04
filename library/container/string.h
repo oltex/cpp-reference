@@ -6,7 +6,7 @@
 #include <cassert>
 
 namespace detail {
-	template<typename type, size_t sso = 3> //small string optimization
+	template<typename type, size_t sso = 16> //small string optimization
 		requires (library::any_of_type<type, char, wchar_t>)
 	class string final {
 		using size_type = unsigned int;
@@ -22,7 +22,7 @@ namespace detail {
 		using iterator = type*;
 
 		inline explicit string(void) noexcept
-			: _size(0), _capacity(sso)/*, _buffer()*/ {
+			: _size(0), _capacity(sso), _buffer() {
 		};
 		template<typename argument>
 			requires (library::same_type<library::remove_cp<argument>, type>)
@@ -60,7 +60,7 @@ namespace detail {
 			requires (library::same_type<library::remove_cp<argument>, type>)
 		inline auto insert(iterator iter, argument arg) noexcept -> iterator {
 			size_type char_size;
-			if constexpr (std::is_same_v<argument, type>)
+			if constexpr (library::same_type<argument, type>)
 				char_size = 1;
 			else
 				char_size = static_cast<size_type>(library::string_length(arg));
@@ -72,7 +72,7 @@ namespace detail {
 			}
 			library::memory_move(iter + char_size, iter, end() - iter);
 
-			if constexpr (std::is_same_v<argument, type>)
+			if constexpr (library::same_type<argument, type>)
 				*iter = arg;
 			else
 				library::memory_copy(iter, arg, char_size);
@@ -121,7 +121,7 @@ namespace detail {
 		template<typename argument>
 			requires (library::same_type<library::remove_cp<argument>, type>)
 		inline friend auto operator==(string const& lhs, argument rhs) noexcept -> bool {
-			if constexpr (std::is_same_v<argument, type>) {
+			if constexpr (library::same_type<argument, type>) {
 				if (lhs._size != 1)
 					return false;
 				return *const_cast<string&>(lhs).data() == rhs;
@@ -156,7 +156,7 @@ namespace detail {
 		inline friend auto operator+(argument lhs, string const& rhs) noexcept -> string {
 			string result;
 			size_type char_size;
-			if constexpr (std::is_same_v<argument, type>)
+			if constexpr (library::same_type<argument, type>)
 				char_size = 1;
 			else
 				char_size = static_cast<size_type>(library::string_length(lhs));
@@ -209,6 +209,9 @@ namespace detail {
 			return _size;
 		}
 		inline auto data(void) noexcept -> type* {
+			return const_cast<type*>(static_cast<string const&>(*this).data());
+		}
+		inline auto data(void) const noexcept -> type const* {
 			if (sso >= _capacity)
 				return _buffer._array.data();
 			else
@@ -223,43 +226,12 @@ namespace detail {
 		}
 	};
 
-
 	//template<typename type>
 	//class string_view {
 	//	type* _pointer;
-
 	//public:
 	//	inline explicit string_view(void) noexcept
-	//		_pointer(nullptr) {
-	//	};
-	//	template<typename argument>
-	//		requires (library::same_type<library::remove_cp<argument>, type>)
-	//	inline string(argument arg) noexcept
-	//		: string() {
-	//		insert(end(), arg);
-	//	}
-	//	inline string(string const& rhs) noexcept
-	//		: string(const_cast<string&>(rhs).c_str()) {
-	//	};
-	//	inline explicit string(string&& rhs) noexcept
-	//		: _size(library::exchange(rhs._size, 0)), _capacity(library::exchange(rhs._capacity, static_cast<size_type>(sso))), _buffer(rhs._buffer) {
-	//	};
-	//	inline auto operator=(string const& rhs) noexcept -> string& {
-	//		assign(const_cast<string&>(rhs).c_str());
-	//		return *this;
-	//	};
-	//	inline auto operator=(string&& rhs) noexcept -> string& {
-	//		if (sso < _capacity)
-	//			library::deallocate(_buffer._pointer);
-
-	//		_size = library::exchange(rhs._size, 0);
-	//		_capacity = library::exchange(rhs._capacity, static_cast<size_type>(sso));
-	//		_buffer = rhs._buffer;
-	//		return *this;
-	//	};
-	//	inline ~string(void) noexcept {
-	//		if (sso < _capacity)
-	//			library::deallocate(_buffer._pointer);
+	//		: _pointer(nullptr) {
 	//	};
 	//};
 }
@@ -267,4 +239,39 @@ namespace detail {
 namespace library {
 	using string = typename detail::string<char>;
 	using wstring = typename detail::string<wchar_t>;
+
+	template<typename type, typename size_type>
+		requires (library::any_of_type<type, string, wstring>)
+	struct fnv_hash_string {
+		inline static constexpr size_type _offset_basis = sizeof(size_type) == 4 ? 2166136261U : 14695981039346656037ULL;
+		inline static constexpr size_type _prime = sizeof(size_type) == 4 ? 16777619U : 1099511628211ULL;
+
+		inline static constexpr auto execute(type const& key) -> size_type {
+			auto value = _offset_basis;
+			auto byte = reinterpret_cast<unsigned char const*>(key.data());
+			for (size_type index = 0; index < key.size(); ++index) {
+				value ^= static_cast<size_type>(byte[index]);
+				value *= _prime;
+			}
+			return value;
+		}
+		template <typename argument>
+			requires (library::same_type<type, string>&& library::same_type<argument, char>) || (library::same_type<type, wstring> && library::same_type<argument, wchar_t>)
+		inline static constexpr auto execute(argument const* key) -> size_type {
+			auto value = _offset_basis;
+			auto byte = reinterpret_cast<unsigned char const*>(key);
+			auto size = library::string_length(key);
+			for (size_type index = 0; index < size; ++index) {
+				value ^= static_cast<size_type>(byte[index]);
+				value *= _prime;
+			}
+			return value;
+		}
+	};
+	template<typename size_type>
+	struct fnv_hash<string, size_type> : public fnv_hash_string<string, size_type> {
+	};
+	template<typename size_type>
+	struct fnv_hash<wstring, size_type> : public fnv_hash_string<wstring, size_type> {
+	};
 }

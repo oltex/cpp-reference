@@ -13,8 +13,8 @@ namespace library {
 		inline static constexpr size_type _prime = sizeof(size_type) == 4 ? 16777619U : 1099511628211ULL;
 
 		inline static constexpr auto execute(type const& key) -> size_type {
-			size_type value = _offset_basis;
-			unsigned char const* const byte = reinterpret_cast<unsigned char const*>(&key);
+			auto value = _offset_basis;
+			auto byte = reinterpret_cast<unsigned char const*>(&key);
 			for (size_type index = 0; index < sizeof(type); ++index) {
 				value ^= static_cast<size_type>(byte[index]);
 				value *= _prime;
@@ -58,7 +58,6 @@ namespace library {
 			return static_cast<type_1&&>(left) == static_cast<type_2&&>(right);
 		}
 	};
-
 	template<typename type>
 	inline constexpr auto ordering(type const& left, type const& right) noexcept {
 		return left <=> right;
@@ -197,10 +196,35 @@ namespace library {
 		return iter;
 	}
 
-	inline auto string_length(char const* const character) noexcept -> size_t {
-		return ::strlen(character);
+	template <typename type>
+		requires (library::any_of_type<type, char, wchar_t>)
+	inline auto string_length(type const* const character) noexcept -> size_t {
+		if constexpr (library::same_type<type, char>)
+			return ::strlen(character);
+		else
+			return ::wcslen(character);
+
 	}
-	inline auto string_length(wchar_t const* const wide_character) noexcept -> size_t {
-		return ::wcslen(wide_character);
+	template <typename type>
+		requires (library::any_of_type<type, char, wchar_t>)
+	inline auto string_copy(type* const destine, type const* const source) noexcept -> type* {
+		if constexpr (library::same_type<type, char>)
+			return ::strcpy(destine, source);
+		else
+			return ::wcscpy(destine, source);
 	}
+	template <typename type>
+		requires (library::any_of_type<type, char, wchar_t>)
+	inline auto string_print(type* buffer, size_t const count, type const* format, ...) noexcept {
+		va_list arg;
+		va_start(arg, format);
+		if constexpr (library::same_type<type, char>)
+			::vsprintf_s(buffer, count, format, arg);
+		else
+			::vswprintf_s(buffer, count, format, arg);
+		va_end(arg);
+	}
+
+	//swprintf_s(path, size / sizeof(wchar_t), L"\\%s(%s)\\%% %s", object.data(), instance.data(), item.data());
+
 }

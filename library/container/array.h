@@ -43,6 +43,9 @@ namespace library {
 		inline auto data(void) noexcept -> type* {
 			return _array;
 		}
+		inline auto data(void) const noexcept -> type const* {
+			return _array;
+		}
 	};
 	template<typename type>
 	class array<type, 0> {

@@ -1,5 +1,6 @@
 #pragma once
 #include "../hash_table.h"
+#include "../string.h"
 #include "my_class.h"
 
 #include <unordered_set>
@@ -10,15 +11,9 @@
 
 namespace example {
 	inline void hash_table(void) noexcept {
-		library::unorder_set<int> _set;
-		_set.emplace(10);
-		auto res  = _set.find(10);
-		if (res == _set.end()) 
-			printf("a");
-		_set.erase(10);
-		if (res == _set.end())
-			printf("a");
-
+		library::unorder_set<library::string> string_set;
+		string_set.emplace("hello");
+		string_set.find("hello");
 
 		library::unorder_set<int> set;
 		std::unordered_set<int> std_set;
@@ -29,7 +24,7 @@ namespace example {
 		if (set.bucket_count() != std_set.bucket_count())
 			__debugbreak();
 
-		for (int i = 0; i < set.bucket_count(); ++i) {
+		for (unsigned int i = 0; i < set.bucket_count(); ++i) {
 			auto set_iter = set.begin(i);
 			auto std_set_iter = std_set.begin(i);
 
@@ -46,13 +41,13 @@ namespace example {
 		std::unordered_map<int, int> std_umap;
 		//std_umap.emplace(std::piecewise_construct, std::forward_as_tuple(10), std::forward_as_tuple(10));
 		//umap.emplace(library::piecewise_construct, library::forward_as_tuple(10), library::forward_as_tuple(10));
-		for (int i = 0; i < 10000; ++i)
+		for (unsigned int i = 0; i < 10000; ++i)
 			umap.emplace(i, i);
-		for (int i = 0; i < 10000; ++i)
+		for (unsigned int i = 0; i < 10000; ++i)
 			std_umap.emplace(i, i);
 		if (umap.bucket_count() != std_umap.bucket_count())
 			__debugbreak();
-		for (int i = 0; i < umap.bucket_count(); ++i) {
+		for (unsigned int i = 0; i < umap.bucket_count(); ++i) {
 			auto set_iter = umap.begin(i);
 			auto std_set_iter = std_umap.begin(i);
 

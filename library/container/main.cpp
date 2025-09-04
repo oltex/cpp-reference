@@ -27,8 +27,7 @@
 //#include "example/lockfree/pool.h"
 //#include "example/lockfree/queue.h"
 //#include "example/thread-local/pool.h"
-//#include "example/unorder_map.h"
-//#include "example/hash_table.h"
+#include "example/hash_table.h"
 
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -58,7 +57,6 @@ int main(void) noexcept {
 	//example::lockfree::pool();
 	//example::lockfree::queue();
 	//example::_thread_local::pool();
-	//example::unorder_map();
-	//example::hash_table();
+	example::hash_table();
 	return 0;
 }
