@@ -8,58 +8,41 @@
 namespace library {
 	//multimidia
 	inline void time_begin_period(unsigned int const peroid) noexcept {
-		timeBeginPeriod(peroid);
+		::timeBeginPeriod(peroid);
 	}
 	inline void time_end_period(unsigned int const peroid) noexcept {
-		timeEndPeriod(peroid);
+		::timeEndPeriod(peroid);
 	}
 	inline auto time_get_time(void) noexcept -> unsigned long {
-		return timeGetTime();
+		return ::timeGetTime();
 	}
 
 	//system
 	inline auto get_tick_count(void) noexcept -> unsigned long {
 #pragma warning(suppress: 28159)
-		return GetTickCount();
+		return ::GetTickCount();
 	}
 	inline auto get_tick_count64(void) noexcept -> unsigned long long {
-		return GetTickCount64();
+		return ::GetTickCount64();
 	}
 
-	class unix final {
-	public:
-		inline explicit unix(void) noexcept = default;
-		inline explicit unix(__time64_t time_t) noexcept
-			: _time_t(time_t) {
-		};
-		inline explicit unix(unix const& rhs) noexcept
-			: _time_t(rhs._time_t) {
-		}
-		inline explicit unix(unix&& rhs) noexcept
-			: _time_t(rhs._time_t) {
-		}
-		inline auto operator=(unix const& rhs) noexcept -> unix& {
-			_time_t = rhs._time_t;
-		}
-		inline auto operator=(unix&& rhs) noexcept -> unix& {
-			_time_t = rhs._time_t;
-		}
-		inline ~unix(void) noexcept = default;
+	//unix timestamp
+	inline auto time32(void) noexcept -> __time32_t {
+		__time32_t time_t;
+		::_time32(&time_t);
+		return time_t;
+	}
+	inline auto time64(void) noexcept -> __time64_t {
+		__time64_t time_t;
+		::_time64(&time_t);
+		return time_t;
+	}
+	inline auto local_time(__time64_t time_t) noexcept -> std::tm {
+		std::tm tm;
+		_localtime64_s(&tm, &time_t);
+		return tm;
+	}
 
-		inline void time(void) noexcept {
-			_time64(&_time_t);
-		}
-		inline auto local_time(void) const noexcept -> tm {
-			std::tm tm;
-			_localtime64_s(&tm, &_time_t);
-			return tm;
-		}
-		inline auto data(void) noexcept -> __time64_t& {
-			return _time_t;
-		}
-	private:
-		__time64_t _time_t;
-	};
 	class date final {
 	public:
 		inline explicit date(void) noexcept = default;

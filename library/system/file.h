@@ -1,9 +1,9 @@
 #pragma once
-#include "../handle/handle.h"
+#include "handle.h"
 #include <string_view>
 #include <Windows.h>
 
-namespace library::system {
+namespace library {
 	class file : public handle {
 	public:
 		inline explicit file(void) noexcept = default;
@@ -50,7 +50,6 @@ namespace library::system {
 		inline bool set_file_completion_notification_mode(unsigned char flag) noexcept {
 			return SetFileCompletionNotificationModes(_handle, flag);
 		}
-
 		inline static auto get_attribute(std::wstring_view const path) noexcept -> unsigned long {
 			return GetFileAttributesW(path.data());
 		}

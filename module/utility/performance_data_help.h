@@ -1,9 +1,9 @@
 #pragma once
-#include "../pattern/singleton.h"
-#include "../container/pair.h"
-#include "../container/hash_table.h"
-#include "../container/unique_pointer.h"
-#include "../container/string.h"
+#include "library/pattern/singleton.h"
+#include "library/container/pair.h"
+#include "library/container/hash_table.h"
+#include "library/container/unique_pointer.h"
+#include "library/container/string.h"
 #include <Pdh.h>
 #pragma comment(lib,"pdh.lib")
 #include <list>

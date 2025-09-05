@@ -62,39 +62,38 @@ namespace library {
 				__debugbreak();
 		}
 		inline void suspend(void) noexcept {
-			SuspendThread(_handle);
+			::SuspendThread(_handle);
 		}
 		inline void resume(void) noexcept {
-			ResumeThread(_handle);
+			::ResumeThread(_handle);
 		}
 		inline void terminate(void) noexcept {
 #pragma warning(suppress: 6258)
-			TerminateThread(_handle, 0);
-		}
-		inline void get_current(void) noexcept {
-			_handle = GetCurrentThread();
+			::TerminateThread(_handle, 0);
 		}
 		inline auto get_id(void) noexcept -> unsigned long {
-			GetThreadId(_handle);
+			::GetThreadId(_handle);
 		}
 		inline auto get_exit_code(void) noexcept -> unsigned long {
 			unsigned long code;
-			GetExitCodeThread(_handle, &code);
+			::GetExitCodeThread(_handle, &code);
 			return code;
 		}
 		inline void set_affinity_mask(DWORD_PTR mask) noexcept {
-			SetThreadAffinityMask(_handle, mask);
+			::SetThreadAffinityMask(_handle, mask);
 		}
 		inline void set_priority(int const priority) noexcept {
-			SetThreadPriority(_handle, priority);
+			::SetThreadPriority(_handle, priority);
 		}
 
 		inline static void switch_to(void) noexcept {
-			SwitchToThread();
+			::SwitchToThread();
 		}
-
-		inline static auto get_current_id(void) noexcept {
-			return GetCurrentThreadId();
+		inline static auto get_current(void) noexcept -> HANDLE {
+			return ::GetCurrentThread();
+		}
+		inline static auto get_current_id(void) noexcept -> unsigned long {
+			return ::GetCurrentThreadId();
 		}
 	};
 }

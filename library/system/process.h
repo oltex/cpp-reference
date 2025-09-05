@@ -7,7 +7,7 @@ namespace library {
 	class process final : public handle {
 	public:
 		inline explicit process(void) noexcept
-			: handle(GetCurrentProcess()) {
+			: handle(get_current()) {
 		};
 		inline explicit process(process const&) noexcept = delete;
 		inline explicit process(process&& rhs) noexcept
@@ -29,6 +29,12 @@ namespace library {
 				}
 			}
 			return token_;
+		}
+		inline static auto get_current(void) noexcept -> HANDLE {
+			return ::GetCurrentProcess();
+		}
+		inline static auto get_current_id(void) noexcept -> unsigned long {
+			return ::GetCurrentProcessId();
 		}
 	};
 }
