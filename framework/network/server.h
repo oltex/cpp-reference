@@ -16,6 +16,7 @@ namespace framework {
 		inline explicit server(size_type sessions) noexcept
 			: _session_array(sessions) {
 			_iocp.execute(&server::monitor, this);
+			_iocp.execute(&server::timeout, this);
 		}
 		inline explicit server(server const&) noexcept = delete;
 		inline explicit server(server&&) noexcept = delete;
@@ -78,7 +79,7 @@ namespace framework {
 					else
 						int a = 10; //주소 구하기
 					if (true == on_accept(address)) {
-						auto session = _session_array.allocate(connection, 400000);
+						auto session = _session_array.allocate(connection, 40000, 40000);
 						if (nullptr != session) {
 							_iocp.connect(*this, session->_socket, static_cast<uintptr_t>(task::session));
 							on_create_session(session->_key);
@@ -143,9 +144,9 @@ namespace framework {
 			static auto& process_nonpage_memory = query.add_counter(L"\\Process(network)\\Pool Nonpaged Bytes");
 			static auto& network_receive = query.add_counter(L"\\Network Interface(*)\\Bytes Received/sec");
 			static auto& network_send = query.add_counter(L"\\Network Interface(*)\\Bytes Sent/sec");
-			static auto& tcpv4_segments_received_sec = query.add_counter(L"\\TCPv4\\Segments Received/sec");
-			static auto& tcpv4_segments_sent_sec = query.add_counter(L"\\TCPv4\\Segments Sent/sec");
-			static auto& tcpv4_segments_retransmitted_sec = query.add_counter(L"\\TCPv4\\Segments Retransmitted/sec");
+			static auto& segment_receive = query.add_counter(L"\\TCPv4\\Segments Received/sec");
+			static auto& segment_sent = query.add_counter(L"\\TCPv4\\Segments Sent/sec");
+			static auto& segment_retransmitted = query.add_counter(L"\\TCPv4\\Segments Retransmitted/sec");
 
 			query.collect_query_data();
 			printf("--------------------------------------\n"\
@@ -178,16 +179,24 @@ namespace framework {
 				process_nonpage_memory.get_format_value<double>() / 0x100000,
 				network_receive.get_format_value<double>(),
 				network_send.get_format_value<double>());
-				//tcpv4_segments_received_sec.get_format_value(PDH_FMT_DOUBLE).doubleValue,
-				//tcpv4_segments_sent_sec.get_format_value(PDH_FMT_DOUBLE).doubleValue,
-				//tcpv4_segments_retransmitted_sec.get_format_value(PDH_FMT_DOUBLE).doubleValue);
+			//tcpv4_segments_received_sec.get_format_value(PDH_FMT_DOUBLE).doubleValue,
+			//tcpv4_segments_sent_sec.get_format_value(PDH_FMT_DOUBLE).doubleValue,
+			//tcpv4_segments_retransmitted_sec.get_format_value(PDH_FMT_DOUBLE).doubleValue);
 
 			return 1000;
 		}
 		inline int timeout(void) noexcept {
-			//for (auto& iter : _session_array) {
-			//	
-			//}
+			for (auto iter = _session_array.begin(), end = _session_array.end(); iter != end; ++iter) {
+				if (iter->acquire()) {
+					if (library::get_tick_count64() > iter->_receive_expire || library::get_tick_count64() > iter->_send_expire) {
+						iter->cancel();
+					}
+				}
+				if (iter->release()) {
+					on_destroy_session(iter->_key);
+					_session_array.deallocate(&*iter);
+				}
+			}
 			return 1000;
 		}
 	public:

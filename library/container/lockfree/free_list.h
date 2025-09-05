@@ -120,10 +120,10 @@ namespace library::lockfree {
 			}
 		}
 		inline auto begin(void) const noexcept -> iterator {
-			return _array;
+			return iterator(_array);
 		}
 		inline auto end(void) const noexcept -> iterator {
-			return _array + _capacity;
+			return iterator(_array + _capacity);
 		}
 		inline auto operator[](size_type const index) noexcept -> type& {
 			return _array[index]._value;

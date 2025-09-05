@@ -1,7 +1,18 @@
 #pragma once
 #include "../interlock.h"
+#include <thread>
 
 namespace example {
+	int _value;
+
+	inline static unsigned int __stdcall function(void* arg) noexcept {
+		for (auto index = 0; index < 1000000; ++index) {
+			//library::interlock_exchange(_value, rand());
+			library::interlock_compare_exhange(_value, 0, 0);
+		}
+		return 0;
+	}
+
 	inline void interlock(void) noexcept {
 		unsigned char a = 0;
 		unsigned short b = 0;
@@ -36,10 +47,14 @@ namespace example {
 		auto res20 = library::interlock_compare_exhange(d, 30, 20);
 		auto res21 = library::interlock_compare_exhange(e, (void*)20, (void*)10);
 
-		//long test = 0;
-		//_InlineInterlockedAdd(&test, 10);
-		//InterlockedAdd(&test, 10);
-		//InterlockedAdd64();
-		//InterlockedExchangeAdd()
+
+		HANDLE handle[4];
+		int count;
+		scanf_s("%d", &count);
+		auto rdtsc = __rdtsc();
+		for (int index = 0; index < count; ++index)
+			handle[index] = (HANDLE)_beginthreadex(nullptr, 0, function, nullptr, 0, 0);
+		WaitForMultipleObjects(count, handle, true, INFINITE);
+		printf("%lld\n", __rdtsc() - rdtsc);
 	}
 }

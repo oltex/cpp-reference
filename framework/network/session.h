@@ -1,14 +1,11 @@
 #pragma once
 #include "library/system/socket.h"
 #include "library/system/interlock.h"
-
 #include "library/container/thread-local/pool.h"
 #include "library/container/lockfree/free_list.h"
 #include "library/container/vector.h"
 #include "library/container/array.h"
-
 #include "message.h"
-
 #include <optional>
 
 namespace framework {
@@ -22,11 +19,14 @@ namespace framework {
 		unsigned long _io_count; // release_flag // recv_flag // io count
 		unsigned long _cancel_flag;
 
+		unsigned long long _receive_timeout;
+		unsigned long long _receive_expire;
 		message _receive_message;
 		library::overlap _receive_overlap;
 
-		unsigned long _send_flag;
 		unsigned long _send_size;
+		unsigned long long _send_timeout;
+		unsigned long long _send_expire;
 		queue _send_queue;
 		library::overlap _send_overlap;
 	public:
@@ -39,13 +39,16 @@ namespace framework {
 		inline auto operator=(session&&) noexcept -> session & = delete;
 		inline ~session(void) noexcept = default;
 
-		inline void initialize(framework::connection& connection, unsigned long long timeout_duration) noexcept {
+		inline void initialize(framework::connection& connection, unsigned long long receive_timeout, unsigned long long send_timeout) noexcept {
 			_key = 0xffff & _key | library::interlock_exchange_add(_id, 0x10000);
 			_socket = std::move(connection._socket);
-			//_timeout_currnet = GetTickCount64();
-			//_timeout_duration = timeout_duration;
 			_cancel_flag = 0;
-			_send_flag = 0;
+
+			_receive_timeout = receive_timeout;
+			_receive_expire = library::get_tick_count() + receive_timeout;
+			_send_timeout = send_timeout;
+			_send_expire = 0xFFFFFFFFFFFFFFFFULL;
+
 			library::interlock_or(_io_count, 0x40000000);
 			library::interlock_and(_io_count, 0x7FFFFFFF);
 		}
@@ -86,13 +89,13 @@ namespace framework {
 				switch (_socket.receive(wsa_buffer, _receive_overlap)) {
 					using enum library::socket::result;
 				case pending: {
-		/*			if (1 == _cancel_flag) {
-						if (acquire(key))
-							_socket.cancel_io_ex();
-						return false;
-					}
-					else*/
-						return true;
+					/*			if (1 == _cancel_flag) {
+									if (acquire(key))
+										_socket.cancel_io_ex();
+									return false;
+								}
+								else*/
+					return true;
 				}
 				case complet:
 					return true;
@@ -112,9 +115,11 @@ namespace framework {
 			return framework::message(_receive_message, _receive_message.front() - header_._size, _receive_message.front());
 		}
 		inline bool send(void) noexcept {
-			while (!_send_queue.empty() && 0 == library::interlock_exchange(_send_flag, 1)) {
+			if (1 == _cancel_flag)
+				return false;
+			while (!_send_queue.empty() && 0xFFFFFFFFFFFFFFFFULL == library::interlock_compare_exhange(_send_expire, library::get_tick_count64() + _send_timeout, 0xFFFFFFFFFFFFFFFFULL)) {
 				if (_send_queue.empty())
-					library::interlock_exchange(_send_flag, 0);
+					library::interlock_exchange(_send_expire, 0xFFFFFFFFFFFFFFFFULL);
 				else {
 					WSABUF wsa_buffer[512];
 					_send_size = 0;
@@ -137,7 +142,7 @@ namespace framework {
 		inline void flush(void) noexcept {
 			for (size_type index = 0; index < _send_size; ++index)
 				_send_queue.pop();
-			library::interlock_exchange(_send_flag, 0);
+			library::interlock_exchange(_send_expire, 0);
 		}
 		inline void cancel(void) noexcept {
 			_cancel_flag = 1;
@@ -163,11 +168,11 @@ namespace framework {
 				library::destruct(_array[index]._value);
 		};
 
-		inline auto allocate(framework::connection& connection, unsigned long long timeout_duration) noexcept -> session* {
+		inline auto allocate(framework::connection& connection, unsigned long long receive_timeout, unsigned long long send_timeout) noexcept -> session* {
 			auto result = base::allocate();
 			if (nullptr != result) {
 				library::interlock_increment(_size);
-				result->initialize(connection, timeout_duration);
+				result->initialize(connection, receive_timeout, send_timeout);
 			}
 			return result;
 		}
