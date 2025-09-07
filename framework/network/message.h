@@ -127,13 +127,32 @@ namespace framework {
 		}
 	};
 	class queue final : public library::lockfree::queue<message, false> {
+		using base = library::lockfree::queue<message, false>;
+		using size_type = unsigned int;
+		size_type _size;
 	public:
-		inline explicit queue(void) noexcept = default;
+		inline explicit queue(void) noexcept 
+			: base(), _size(0) {
+		};
 		inline explicit queue(queue const&) noexcept = delete;
 		inline explicit queue(queue&&) noexcept = delete;
 		inline auto operator=(queue const&) noexcept -> queue & = delete;
 		inline auto operator=(queue&&) noexcept -> queue & = delete;
 		inline ~queue(void) noexcept = default;
+
+		template<typename... argument>
+		inline void emplace(argument&&... arg) noexcept {
+			library::interlock_increment(_size);
+			base::emplace(std::forward<argument>(arg)...);
+		}
+		inline auto pop(void) noexcept -> message {
+			auto result = base::pop();
+			library::interlock_decrement(_size);
+			return result;
+		}
+		inline auto size(void) const noexcept -> size_type {
+			return _size;
+		}
 	};
 	class pool final : public library::_thread_local::pool<buffer>, public library::_thread_local::singleton<pool> {
 		friend class library::_thread_local::singleton<pool>;

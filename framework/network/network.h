@@ -29,8 +29,9 @@ namespace framework {
 			//_socket.connect()
 		}
 		inline auto inherit(framework::network& network) noexcept;
-		inline auto address(void) noexcept -> library::socket_address_ipv4 {
-			return library::socket::get_accept_ex_socket_address(_buffer.data())._second;
+		inline auto address(bool accept) noexcept -> library::socket_address_ipv4 {
+			if (accept)
+				return library::socket::get_accept_ex_socket_address(_buffer.data())._second;
 		};
 		inline static auto recover(OVERLAPPED* overlapped) noexcept -> connection& {
 			return *reinterpret_cast<connection*>(reinterpret_cast<unsigned char*>(library::overlap::recover(overlapped)) - offsetof(connection, _overlap));
@@ -66,17 +67,19 @@ namespace framework {
 				_listen.accept(connection._socket, connection._buffer.data(), sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16, connection._overlap);
 			}
 		}
-		inline void accept(framework::connection& connection) noexcept {
-			connection.close();
-			connection.create();
-			switch (_listen.accept(connection._socket, connection._buffer.data(), sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16, connection._overlap)) {
-				using enum library::socket::result;
-			case complet:
-			case pending:
-				break;
-			case close:
-				connection._socket.close();
-				break;
+		inline void release_connection(bool accept, framework::connection& connection) noexcept {
+			if (accept) {
+				connection.close();
+				connection.create();
+				switch (_listen.accept(connection._socket, connection._buffer.data(), sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16, connection._overlap)) {
+					using enum library::socket::result;
+				case complet:
+				case pending:
+					break;
+				case close:
+					connection._socket.close();
+					break;
+				}
 			}
 		}
 		inline void close(void) noexcept {

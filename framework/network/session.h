@@ -52,22 +52,21 @@ namespace framework {
 			library::interlock_or(_io_count, 0x40000000);
 			library::interlock_and(_io_count, 0x7FFFFFFF);
 		}
-		inline auto acquire(void) noexcept -> bool {
+		inline auto acquire_iocount(void) noexcept -> bool {
 			auto io_count = library::interlock_increment(_io_count);
 			return !(0x80000000 & io_count) && (0x40000000 & io_count);
 		}
-		inline auto acquire(unsigned long long key) noexcept -> bool {
-			return acquire() && (_key == key);
+		inline auto acquire_iocount(unsigned long long key) noexcept -> bool {
+			return acquire_iocount() && (_key == key);
 		}
-		template<bool send = true>
-		inline bool release(void) noexcept {
+		inline bool release_iocount(bool receive) noexcept {
 			bool flag;
-			if constexpr (false == send)
-				flag = (0x40000000 == library::interlock_and(_io_count, ~0x40000000) && 0 == library::interlock_compare_exhange(_io_count, 0x80000000, 0));
+			if (true == receive)
+				flag = (0x40000000 == library::interlock_and(_io_count, ~0x40000000));
 			else
-				flag = (0 == library::interlock_decrement(_io_count) && 0 == library::interlock_compare_exhange(_io_count, 0x80000000, 0));
+				flag = (0 == library::interlock_decrement(_io_count));
 
-			if (flag) {
+			if (flag && 0 == library::interlock_compare_exhange(_io_count, 0x80000000, 0)) {
 				while (!_send_queue.empty())
 					_send_queue.pop();
 				_receive_message.clear();
@@ -80,8 +79,21 @@ namespace framework {
 			_socket.cancel_io_ex();
 		}
 
-		inline void receive_timeout(void) noexcept {
-			_receive_expire = library::get_tick_count64() + _receive_timeout;
+		inline bool network_start(bool receive, unsigned long transferred) noexcept {
+			if (0 == transferred)
+				return false;
+			else {
+				if (receive) {
+					_receive_expire = library::get_tick_count64() + _receive_timeout;
+					_receive_message.move_rear(transferred);
+				}
+				else {
+					for (size_type index = 0; index < _send_size; ++index)
+						_send_queue.pop();
+					library::interlock_exchange(_send_expire, 0xFFFFFFFFFFFFFFFFULL);
+				}
+				return true;
+			}
 		}
 		inline auto receive_message(void) noexcept -> std::optional<framework::message> {
 			if (sizeof(header) > _receive_message.size())
@@ -93,66 +105,58 @@ namespace framework {
 			_receive_message.pop(sizeof(header) + header_._size);
 			return framework::message(_receive_message, _receive_message.front() - header_._size, _receive_message.front());
 		}
-		inline bool receive(void) noexcept {
-			framework::message message = pool::instance().allocate();
-			if (!_receive_message.empty())
-				message.push(_receive_message.data() + _receive_message.front(), _receive_message.size());
-			_receive_message = std::move(message);
-
+		inline bool send_message(framework::message& message) noexcept {
+			if (512 < _send_queue.size())
+				return false;
+			_send_queue.emplace(message);
+			bool flag = false;
+			return network_post(flag);
+		}
+		inline bool network_post(bool& receive) noexcept {
 			if (1 == _cancel_flag)
 				return false;
-			else {
+			auto key = _key;
+			library::socket::result result;
+			if (receive) {
+				framework::message message = pool::instance().allocate();
+				if (!_receive_message.empty())
+					message.push(_receive_message.data() + _receive_message.front(), _receive_message.size());
+				_receive_message = std::move(message);
 				WSABUF wsa_buffer{ .len = _receive_message.remain(), .buf = _receive_message.data() + _receive_message.rear() };
-				switch (_socket.receive(wsa_buffer, _receive_overlap)) {
-					using enum library::socket::result;
-				case pending: {
-					/*			if (1 == _cancel_flag) {
-									if (acquire(key))
-										_socket.cancel_io_ex();
-									return false;
-								}
-								else*/
-					return true;
+				result = _socket.receive(wsa_buffer, _receive_overlap);
+			}
+			else {
+				for (;;) {
+					if (_send_queue.empty() || 0xFFFFFFFFFFFFFFFFULL != library::interlock_compare_exhange(_send_expire, library::get_tick_count64() + _send_timeout, 0xFFFFFFFFFFFFFFFFULL))
+						return false;
+					else if (_send_queue.empty())
+						library::interlock_exchange(_send_expire, 0xFFFFFFFFFFFFFFFFULL);
+					else
+						break;
 				}
-				case complet:
-					return true;
-				case close:
+				WSABUF wsa_buffer[512];
+				_send_size = 0;
+				for (auto iter = _send_queue.begin(), end = _send_queue.end(); iter != end; ++iter, ++_send_size) {
+					wsa_buffer[_send_size].buf = reinterpret_cast<char*>(iter->data() + iter->front());
+					wsa_buffer[_send_size].len = iter->size();
+				}
+				result = _socket.send(wsa_buffer, _send_size, _send_overlap);
+			}
+			switch (result) {
+				using enum library::socket::result;
+			case pending:
+				if (1 == _cancel_flag) {
+					if (acquire_iocount(key))
+						_socket.cancel_io_ex();
+					receive = false;
 					return false;
 				}
-			}
-		}
-
-		inline void send_finish(void) noexcept {
-			for (size_type index = 0; index < _send_size; ++index)
-				_send_queue.pop();
-			library::interlock_exchange(_send_expire, 0xFFFFFFFFFFFFFFFFULL);
-		}
-		inline bool send(void) noexcept {
-			if (1 == _cancel_flag)
+			case complet:
+				return true;
+			case close:
 				return false;
-			while (!_send_queue.empty() && 0xFFFFFFFFFFFFFFFFULL == library::interlock_compare_exhange(_send_expire, library::get_tick_count64() + _send_timeout, 0xFFFFFFFFFFFFFFFFULL)) {
-				if (_send_queue.empty())
-					library::interlock_exchange(_send_expire, 0xFFFFFFFFFFFFFFFFULL);
-				else {
-					WSABUF wsa_buffer[512];
-					_send_size = 0;
-					for (auto iter = _send_queue.begin(), end = _send_queue.end(); iter != end; ++iter, ++_send_size) {
-						wsa_buffer[_send_size].buf = reinterpret_cast<char*>(iter->data() + iter->front());
-						wsa_buffer[_send_size].len = iter->size();
-					}
-					switch (_socket.send(wsa_buffer, _send_size, _send_overlap)) {
-						using enum library::socket::result;
-					case complet:
-					case pending:
-						return true;
-					case close:
-						return false;
-					}
-				}
 			}
-			return false;
 		}
-
 	};
 	class session_array final : public library::lockfree::free_list<session, false, false> {
 		using size_type = unsigned int;

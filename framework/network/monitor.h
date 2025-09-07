@@ -49,5 +49,12 @@ namespace framework {
 		inline auto operator=(monitor const&) noexcept -> monitor & = delete;
 		inline auto operator=(monitor&&) noexcept -> monitor & = delete;
 		inline ~monitor(void) noexcept = default;
+
+		inline void update_session(bool receive) noexcept {
+			if (receive)
+				library::interlock_increment(_receive_tps);
+			else
+				library::interlock_increment(_send_tps);
+		}
 	};
 }

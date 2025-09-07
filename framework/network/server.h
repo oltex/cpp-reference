@@ -33,7 +33,7 @@ namespace framework {
 		inline void stop_listen(void) noexcept {
 			_network.close();
 		}
-		inline void connect(char const* const ip, unsigned short port) noexcept {
+		inline void connect_socket(char const* const ip, unsigned short port) noexcept {
 			_network.connect();
 			//_socket.create(AF_INET, SOCK_STREAM, IPPROTO_TCP, WSA_FLAG_OVERLAPPED);
 			//_socket.set_option_linger(1, 0);
@@ -64,71 +64,87 @@ namespace framework {
 
 
 		}
+		inline virtual bool accept_socket(library::socket_address_ipv4& socket_address) noexcept {
+			return true;
+		}
+		inline virtual void create_session(unsigned long long key) noexcept {
+			//message_pointer message_ = server::create_message();
+			//*message_ << 0x7fffffffffffffff;
+			//do_send_session(key, message_);
+		}
+		inline virtual bool receive_session(unsigned long long key, message& message) noexcept {
+			unsigned long long value;
+			message >> value;
+			auto message_ = create_message(10);
+			message_ << value;
+
+			send_session(key, message_);
+			return true;
+		};
+		inline virtual void destroy_session(unsigned long long key) noexcept {
+		};
+		inline void send_session(unsigned long long key, message& message) noexcept {
+			session& session_ = _session_array[key];
+			if (session_.acquire_iocount(key)) {
+				if (session_.send_message(message))
+					return;
+			}
+			if (session_.release_iocount(false))
+				_iocp.post(*this, 0, static_cast<uintptr_t>(task::destory), reinterpret_cast<OVERLAPPED*>(&session_));
+		}
+		inline static auto create_message(size_type size) noexcept -> message {
+			message _message(pool::instance().allocate(sizeof(header) + size));
+			header header_;
+			header_._size = 8;
+			_message.push(reinterpret_cast<char*>(&header_), sizeof(header));
+			return _message;
+		}
 	private:
 		inline virtual void worker(bool result, unsigned long transferred, uintptr_t key, OVERLAPPED* overlapped) noexcept override {
 			switch (auto task = static_cast<server::task>(key)) {
 			case task::accept:
 			case task::connect: {
-				auto& connection = connection::recover(overlapped);
-				if (false == result)
+				if (auto& connection = connection::recover(overlapped); false == result)
 					connection.close();
 				else {
+					bool flag = task == task::accept;
 					connection.inherit(_network);
-					library::socket_address_ipv4 address;
-					if (task::accept == task)
-						address = connection.address();
-					else
-						int a = 10; //주소 구하기
-					if (true == accept_socket(address)) {
-						auto session = _session_array.allocate(connection, 40000, 40000);
-						if (nullptr != session) {
+					if (auto address = connection.address(flag); true == accept_socket(address)) {
+						if (auto session = _session_array.allocate(connection, 40000, 40000); nullptr != session) {
 							_iocp.connect(*this, session->_socket, static_cast<uintptr_t>(task::session));
 							create_session(session->_key);
-							if (!session->receive() && session->release<false>()) {
+							bool flag = true;
+							if (!session->network_post(flag) && session->release_iocount(flag)) {
 								destroy_session(session->_key);
 								_session_array.deallocate(session);
 							}
 						}
 					}
-					if (task::accept == task)
-						_network.accept(connection);
+					_network.release_connection(flag, connection);
 				}
 			} break;
 			case task::session: {
 				auto& session = _session_array[overlapped];
-				if (0 != transferred) {
-					if (&session._receive_overlap.data() == overlapped) {
-						session._receive_message.move_rear(transferred);
-						session.receive_timeout();
-
-						while (auto message = session.receive_message()) {
+				bool flag = &session._receive_overlap.data() == overlapped;
+				if (session.network_start(flag, transferred)) {
+					_monitor.update_session(flag);
+					if (flag)
+						while (auto message = session.receive_message())
 							if (false == receive_session(session._key, *message)) {
 								session.cancel();
 								break;
 							}
-						}
-						if (session.receive())
-							break;
-					}
-					else {
-						session.send_finish();
-						if (session.send())
-							break;
-					}
+					if (session.network_post(flag))
+						break;
 				}
-				bool flag;
-				if (&session._receive_overlap.data() == overlapped)
-					flag = session.release<false>();
-				else
-					flag = session.release<true>();
-				if (flag) {
+				if (session.release_iocount(flag)) {
 					destroy_session(session._key);
 					_session_array.deallocate(&session);
 				}
 			} break;
 			case task::destory: {
 				session& session = *reinterpret_cast<framework::session*>(overlapped);
-				on_destroy_session(session._key);
+				destroy_session(session._key);
 				_session_array.deallocate(&session);
 			} break;
 			}
@@ -166,7 +182,7 @@ namespace framework {
 				_monitor._network_send.get_format_value<double>() / static_cast<double>(0x100000), _monitor._segment_send.get_format_value<long>(),
 				_monitor._segment_retransmit.get_format_value<long>());
 
-			
+
 			printf("--------------------------------------\n"\
 				"[ Server Monitor ]\n"\
 				"IOCP Usage\n"\
@@ -188,54 +204,17 @@ namespace framework {
 		}
 		inline int timeout(void) noexcept {
 			for (auto iter = _session_array.begin(), end = _session_array.end(); iter != end; ++iter) {
-				if (iter->acquire()) {
+				if (iter->acquire_iocount()) {
 					if (library::get_tick_count64() > iter->_receive_expire || library::get_tick_count64() > iter->_send_expire) {
 						iter->cancel();
 					}
 				}
-				if (iter->release()) {
+				if (iter->release_iocount(false)) {
 					destroy_session(iter->_key);
 					_session_array.deallocate(&*iter);
 				}
 			}
 			return 1000;
-		}
-	public:
-		inline virtual bool accept_socket(library::socket_address_ipv4& socket_address) noexcept {
-			return true;
-		}
-		inline virtual void create_session(unsigned long long key) noexcept {
-			//message_pointer message_ = server::create_message();
-			//*message_ << 0x7fffffffffffffff;
-			//do_send_session(key, message_);
-		}
-		inline virtual bool receive_session(unsigned long long key, message& message) noexcept {
-			unsigned long long value;
-			message >> value;
-			auto message_ = create_message(10);
-			message_ << value;
-
-			send_session(key, message_);
-			return true;
-		};
-		inline virtual void destroy_session(unsigned long long key) noexcept {
-		};
-		inline void send_session(unsigned long long key, message& message) noexcept {
-			session& session_ = _session_array[key];
-			if (session_.acquire(key)) {
-				session_._send_queue.emplace(message);
-				if (session_.send())
-					return;
-			}
-			if (session_.release())
-				_iocp.post(*this, 0, static_cast<uintptr_t>(task::destory), reinterpret_cast<OVERLAPPED*>(&session_));
-		}
-		inline static auto create_message(size_type size) noexcept -> message {
-			message _message(pool::instance().allocate(sizeof(header) + size));
-			header header_;
-			header_._size = 8;
-			_message.push(reinterpret_cast<char*>(&header_), sizeof(header));
-			return _message;
 		}
 	};
 }
