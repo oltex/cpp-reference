@@ -1,8 +1,8 @@
 #pragma once
 #include "module/scheduler/io_complet_port.h"
-#include "library/utility/performance_data_help.h"
 #include "network.h"
 #include "session.h"
+#include "monitor.h"
 
 namespace framework {
 	class server final : public io_complet_port::io_complet_object {
@@ -12,6 +12,7 @@ namespace framework {
 		};
 		network _network;
 		session_array _session_array;
+		monitor _monitor;
 	public:
 		inline explicit server(size_type sessions) noexcept
 			: _session_array(sessions) {
@@ -78,13 +79,13 @@ namespace framework {
 						address = connection.address();
 					else
 						int a = 10; //주소 구하기
-					if (true == on_accept(address)) {
+					if (true == accept_socket(address)) {
 						auto session = _session_array.allocate(connection, 40000, 40000);
 						if (nullptr != session) {
 							_iocp.connect(*this, session->_socket, static_cast<uintptr_t>(task::session));
-							on_create_session(session->_key);
+							create_session(session->_key);
 							if (!session->receive() && session->release<false>()) {
-								on_destroy_session(session->_key);
+								destroy_session(session->_key);
 								_session_array.deallocate(session);
 							}
 						}
@@ -98,8 +99,10 @@ namespace framework {
 				if (0 != transferred) {
 					if (&session._receive_overlap.data() == overlapped) {
 						session._receive_message.move_rear(transferred);
-						while (auto message = session.message()) {
-							if (false == on_receive_session(session._key, *message)) {
+						session.receive_timeout();
+
+						while (auto message = session.receive_message()) {
+							if (false == receive_session(session._key, *message)) {
 								session.cancel();
 								break;
 							}
@@ -108,7 +111,7 @@ namespace framework {
 							break;
 					}
 					else {
-						session.flush();
+						session.send_finish();
 						if (session.send())
 							break;
 					}
@@ -119,7 +122,7 @@ namespace framework {
 				else
 					flag = session.release<true>();
 				if (flag) {
-					on_destroy_session(session._key);
+					destroy_session(session._key);
 					_session_array.deallocate(&session);
 				}
 			} break;
@@ -131,58 +134,56 @@ namespace framework {
 			}
 		};
 		inline int monitor(void) noexcept {
-			auto& query = library::pdh_query::instance();
-			static auto& system_total_time = query.add_counter(L"\\Processor(_Total)\\% Processor Time");
-			static auto& system_user_time = query.add_counter(L"\\Processor(_Total)\\% User Time");
-			static auto& system_kernel_time = query.add_counter(L"\\Processor(_Total)\\% Privileged Time");
-			static auto& process_total_time = query.add_counter(L"\\Process(network)\\% Processor Time");
-			static auto& process_user_time = query.add_counter(L"\\Process(network)\\% User Time");
-			static auto& process_kernel_time = query.add_counter(L"\\Process(network)\\% Privileged Time");
-			static auto& system_available_memory = query.add_counter(L"\\Memory\\Available Bytes");
-			static auto& system_nonpage_memory = query.add_counter(L"\\Memory\\Pool Nonpaged Bytes");
-			static auto& process_private_memory = query.add_counter(L"\\Process(network)\\Private Bytes");
-			static auto& process_nonpage_memory = query.add_counter(L"\\Process(network)\\Pool Nonpaged Bytes");
-			static auto& network_receive = query.add_counter(L"\\Network Interface(*)\\Bytes Received/sec");
-			static auto& network_send = query.add_counter(L"\\Network Interface(*)\\Bytes Sent/sec");
-			static auto& segment_receive = query.add_counter(L"\\TCPv4\\Segments Received/sec");
-			static auto& segment_sent = query.add_counter(L"\\TCPv4\\Segments Sent/sec");
-			static auto& segment_retransmitted = query.add_counter(L"\\TCPv4\\Segments Retransmitted/sec");
-
-			query.collect_query_data();
+			_monitor._query.collect_query_data();
 			printf("--------------------------------------\n"\
 				"[ System Monitor ]\n"\
 				"CPU Usage\n"\
-				" System  - Total  :   %f %%\n"\
-				"           User   :   %f %%\n"\
-				"           Kernel :   %f %%\n"\
-				" Process - Total  :   %f %%\n"\
-				"           User   :   %f %%\n"\
-				"           Kernel :   %f %%\n"\
+				"          System     Process \n"\
+				" Total  : %7.3f %%  %7.3f %%\n"\
+				" User   : %7.3f %%  %7.3f %%\n"\
+				" Kernel : %7.3f %%  %7.3f %%\n"\
 				"Memory Usage\n"\
-				" System  - Available :   %f GB\n"\
-				"           Non-Paged :   %f MB\n"\
-				" Process - Private   :   %f MB\n"\
-				"           Non-Paged :   %f MB\n"\
+				"             System      Process \n"\
+				" Available : %7.3f GB\n"\
+				" Private   :             %7.3f MB\n"\
+				" Non-Page  : %7.3f MB  %7.3f MB\n"\
 				"Network Usage\n"\
-				" Receive        :   %f\n"\
-				" Send           :   %f\n",
-				//" Retransmission :   %f\n",
-				system_total_time.get_format_value<double>(),
-				system_user_time.get_format_value<double>(),
-				system_kernel_time.get_format_value<double>(),
-				process_total_time.get_format_value<double>(PDH_FMT_NOCAP100),
-				process_user_time.get_format_value<double>(PDH_FMT_NOCAP100),
-				process_kernel_time.get_format_value<double>(PDH_FMT_NOCAP100),
-				system_available_memory.get_format_value<double>() / 0x40000000,
-				system_nonpage_memory.get_format_value<double>() / 0x100000,
-				process_private_memory.get_format_value<double>() / 0x100000,
-				process_nonpage_memory.get_format_value<double>() / 0x100000,
-				network_receive.get_format_value<double>(),
-				network_send.get_format_value<double>());
-			//tcpv4_segments_received_sec.get_format_value(PDH_FMT_DOUBLE).doubleValue,
-			//tcpv4_segments_sent_sec.get_format_value(PDH_FMT_DOUBLE).doubleValue,
-			//tcpv4_segments_retransmitted_sec.get_format_value(PDH_FMT_DOUBLE).doubleValue);
+				"              Volume      Segment \n"\
+				" Receive    : %7.3f MB %8d\n"\
+				" Send       : %7.3f MB %8d\n"
+				" Retransmit :            %8d\n",
+				_monitor._system_total_time.get_format_value<double>(),
+				_monitor._system_user_time.get_format_value<double>(),
+				_monitor._system_kernel_time.get_format_value<double>(),
+				_monitor._process_total_time.get_format_value<double>(PDH_FMT_NOCAP100) / 8,
+				_monitor._process_user_time.get_format_value<double>(PDH_FMT_NOCAP100) / 8,
+				_monitor._process_kernel_time.get_format_value<double>(PDH_FMT_NOCAP100) / 8,
+				_monitor._system_available_memory.get_format_value<long long>() / static_cast<double>(0x40000000),
+				_monitor._system_nonpage_memory.get_format_value<long long>() / static_cast<double>(0x100000),
+				_monitor._process_private_memory.get_format_value<long long>() / static_cast<double>(0x100000),
+				_monitor._process_nonpage_memory.get_format_value<long long>() / static_cast<double>(0x100000),
+				_monitor._network_receive.get_format_value<double>() / static_cast<double>(0x100000), _monitor._segment_receive.get_format_value<long>(),
+				_monitor._network_send.get_format_value<double>() / static_cast<double>(0x100000), _monitor._segment_send.get_format_value<long>(),
+				_monitor._segment_retransmit.get_format_value<long>());
 
+			
+			printf("--------------------------------------\n"\
+				"[ Server Monitor ]\n"\
+				"IOCP Usage\n"\
+				"            Rate         Total\n"\
+				" Accept  : %7u TPS  %7llu \n"\
+				" Receive : %7u TPS\n"
+				" Send    : %7u TPS\n"
+				"Resource Usage\n"\
+				" Session : %8u\n"\
+				" Message : %8u\n",
+				_monitor._accept_tps, _monitor._accept_total,
+				_monitor._receive_tps, _monitor._send_tps,
+				_session_array.size(), pool::size());
+
+			library::interlock_exchange(_monitor._accept_tps, 0);
+			library::interlock_exchange(_monitor._receive_tps, 0);
+			library::interlock_exchange(_monitor._send_tps, 0);
 			return 1000;
 		}
 		inline int timeout(void) noexcept {
@@ -193,33 +194,33 @@ namespace framework {
 					}
 				}
 				if (iter->release()) {
-					on_destroy_session(iter->_key);
+					destroy_session(iter->_key);
 					_session_array.deallocate(&*iter);
 				}
 			}
 			return 1000;
 		}
 	public:
-		inline virtual bool on_accept(library::socket_address_ipv4& socket_address) noexcept {
+		inline virtual bool accept_socket(library::socket_address_ipv4& socket_address) noexcept {
 			return true;
 		}
-		inline virtual void on_create_session(unsigned long long key) noexcept {
+		inline virtual void create_session(unsigned long long key) noexcept {
 			//message_pointer message_ = server::create_message();
 			//*message_ << 0x7fffffffffffffff;
 			//do_send_session(key, message_);
 		}
-		inline virtual bool on_receive_session(unsigned long long key, message& message) noexcept {
+		inline virtual bool receive_session(unsigned long long key, message& message) noexcept {
 			unsigned long long value;
 			message >> value;
 			auto message_ = create_message(10);
 			message_ << value;
 
-			do_send_session(key, message_);
+			send_session(key, message_);
 			return true;
 		};
-		inline virtual void on_destroy_session(unsigned long long key) noexcept {
+		inline virtual void destroy_session(unsigned long long key) noexcept {
 		};
-		inline void do_send_session(unsigned long long key, message& message) noexcept {
+		inline void send_session(unsigned long long key, message& message) noexcept {
 			session& session_ = _session_array[key];
 			if (session_.acquire(key)) {
 				session_._send_queue.emplace(message);

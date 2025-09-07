@@ -17,7 +17,7 @@ namespace framework {
 		unsigned long long _key;
 		library::socket _socket;
 		unsigned long _io_count; // release_flag // recv_flag // io count
-		unsigned long _cancel_flag;
+		bool _cancel_flag;
 
 		unsigned long long _receive_timeout;
 		unsigned long long _receive_expire;
@@ -75,7 +75,24 @@ namespace framework {
 			}
 			return flag;
 		}
+		inline void cancel(void) noexcept {
+			_cancel_flag = true;
+			_socket.cancel_io_ex();
+		}
 
+		inline void receive_timeout(void) noexcept {
+			_receive_expire = library::get_tick_count64() + _receive_timeout;
+		}
+		inline auto receive_message(void) noexcept -> std::optional<framework::message> {
+			if (sizeof(header) > _receive_message.size())
+				return std::nullopt;
+			header header_;
+			_receive_message.peek(reinterpret_cast<char*>(&header_), sizeof(header));
+			if (sizeof(header) + header_._size > _receive_message.size())
+				return std::nullopt;
+			_receive_message.pop(sizeof(header) + header_._size);
+			return framework::message(_receive_message, _receive_message.front() - header_._size, _receive_message.front());
+		}
 		inline bool receive(void) noexcept {
 			framework::message message = pool::instance().allocate();
 			if (!_receive_message.empty())
@@ -104,15 +121,11 @@ namespace framework {
 				}
 			}
 		}
-		inline auto message(void) noexcept -> std::optional<framework::message> {
-			if (sizeof(header) > _receive_message.size())
-				return std::nullopt;
-			header header_;
-			_receive_message.peek(reinterpret_cast<char*>(&header_), sizeof(header));
-			if (sizeof(header) + header_._size > _receive_message.size())
-				return std::nullopt;
-			_receive_message.pop(sizeof(header) + header_._size);
-			return framework::message(_receive_message, _receive_message.front() - header_._size, _receive_message.front());
+
+		inline void send_finish(void) noexcept {
+			for (size_type index = 0; index < _send_size; ++index)
+				_send_queue.pop();
+			library::interlock_exchange(_send_expire, 0xFFFFFFFFFFFFFFFFULL);
 		}
 		inline bool send(void) noexcept {
 			if (1 == _cancel_flag)
@@ -139,15 +152,7 @@ namespace framework {
 			}
 			return false;
 		}
-		inline void flush(void) noexcept {
-			for (size_type index = 0; index < _send_size; ++index)
-				_send_queue.pop();
-			library::interlock_exchange(_send_expire, 0);
-		}
-		inline void cancel(void) noexcept {
-			_cancel_flag = 1;
-			_socket.cancel_io_ex();
-		}
+
 	};
 	class session_array final : public library::lockfree::free_list<session, false, false> {
 		using size_type = unsigned int;
@@ -187,6 +192,9 @@ namespace framework {
 			auto offset = reinterpret_cast<char*>(overlapped) - reinterpret_cast<char*>(base::_array);
 			auto index = static_cast<size_type>(offset / sizeof(base::node));
 			return base::operator[](index);
+		}
+		inline auto size(void) const noexcept -> size_type {
+			return _size;
 		}
 	};
 }

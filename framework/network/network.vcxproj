@@ -158,6 +158,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="monitor.h" />
     <ClInclude Include="network.h" />
     <ClInclude Include="message.h" />
     <ClInclude Include="sample.h">

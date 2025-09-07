@@ -92,7 +92,6 @@ namespace framework {
 			assert(length + _front <= _rear && "not enough data");
 			_front += length;
 		}
-
 		inline auto capacity(void) const noexcept -> size_type {
 			return _buffer->capacity();
 		}
@@ -127,6 +126,15 @@ namespace framework {
 			return nullptr == lhs._buffer;
 		}
 	};
+	class queue final : public library::lockfree::queue<message, false> {
+	public:
+		inline explicit queue(void) noexcept = default;
+		inline explicit queue(queue const&) noexcept = delete;
+		inline explicit queue(queue&&) noexcept = delete;
+		inline auto operator=(queue const&) noexcept -> queue & = delete;
+		inline auto operator=(queue&&) noexcept -> queue & = delete;
+		inline ~queue(void) noexcept = default;
+	};
 	class pool final : public library::_thread_local::pool<buffer>, public library::_thread_local::singleton<pool> {
 		friend class library::_thread_local::singleton<pool>;
 		using base = library::_thread_local::pool<buffer>;
@@ -145,13 +153,13 @@ namespace framework {
 	public:
 		using library::_thread_local::singleton<pool>::instance;
 
-		inline auto allocate(void) noexcept {
+		inline auto allocate(void) noexcept -> framework::message {
 			library::interlock_increment(_size);
 			return framework::message(base::allocate());
 		}
 		inline auto allocate(size_type const size) noexcept {
 			if (_message.remain() < size)
-				_message = framework::message(base::allocate());
+				_message = allocate();
 			message message(_message);
 			_message.move_rear(sizeof(header) + size);
 			_message.move_front(sizeof(header) + size);
@@ -161,15 +169,9 @@ namespace framework {
 			base::deallocate(value);
 			library::interlock_decrement(_size);
 		}
-	};
-	class queue final : public library::lockfree::queue<message, false> {
-	public:
-		inline explicit queue(void) noexcept = default;
-		inline explicit queue(queue const&) noexcept = delete;
-		inline explicit queue(queue&&) noexcept = delete;
-		inline auto operator=(queue const&) noexcept -> queue & = delete;
-		inline auto operator=(queue&&) noexcept -> queue & = delete;
-		inline ~queue(void) noexcept = default;
+		inline static auto size(void) noexcept -> size_type {
+			return _size;
+		}
 	};
 	template<>
 	inline void buffer::destructor<0>(void) noexcept {

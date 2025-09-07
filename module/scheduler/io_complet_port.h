@@ -155,7 +155,6 @@ private:
 			}
 		}
 	}
-
 	inline void scheduler(void) noexcept {
 		library::priority_queue<task*, less> ready_queue;
 		auto wait = INFINITE;
