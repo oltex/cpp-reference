@@ -74,12 +74,8 @@ namespace framework {
 			}
 			return flag;
 		}
-		inline void cancel(void) noexcept {
-			_cancel_flag = true;
-			_socket.cancel_io_ex();
-		}
 
-		inline bool network_start(bool receive, unsigned long transferred) noexcept {
+		inline bool start_network(bool receive, unsigned long transferred) noexcept {
 			if (0 == transferred)
 				return false;
 			else {
@@ -110,9 +106,9 @@ namespace framework {
 				return false;
 			_send_queue.emplace(message);
 			bool flag = false;
-			return network_post(flag);
+			return post_network(flag);
 		}
-		inline bool network_post(bool& receive) noexcept {
+		inline bool post_network(bool& receive) noexcept {
 			if (1 == _cancel_flag)
 				return false;
 			auto key = _key;
@@ -156,6 +152,10 @@ namespace framework {
 			case close:
 				return false;
 			}
+		}
+		inline void cancel_network(void) noexcept {
+			_cancel_flag = true;
+			_socket.cancel_io_ex();
 		}
 	};
 	class session_array final : public library::lockfree::free_list<session, false, false> {

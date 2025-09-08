@@ -2,16 +2,19 @@
 #include "library/system/socket.h"
 #include "library/container/vector.h"
 #include "library/container/array.h"
+#include "library/container/lockfree/free_list.h"
 
 namespace framework {
 	struct network;
 	struct connection {
 		library::socket _socket;
 		library::overlap _overlap;
-		library::array<char, 64> _buffer;
-
-		inline explicit connection(void) noexcept {
-			_socket.create(AF_INET, SOCK_STREAM, IPPROTO_TCP, WSA_FLAG_OVERLAPPED);
+		union {
+			library::socket_address_ipv4 _address;
+			library::array<char, 64> _buffer;
+		};
+		inline explicit connection(void) noexcept
+			: _socket(AF_INET, SOCK_STREAM, IPPROTO_TCP, WSA_FLAG_OVERLAPPED){
 		};
 		inline explicit connection(connection const&) noexcept = delete;
 		inline explicit connection(connection&&) noexcept = delete;
@@ -41,31 +44,43 @@ namespace framework {
 		using size_type = unsigned int;
 		library::socket _listen;
 		library::vector<connection> _accept;
-		library::vector<connection> _connect;
+		size_type _accept_size;
+		library::lockfree::free_list<connection> _connect;
 
-		inline explicit network(void) noexcept = default;
+		inline explicit network(size_type connection) noexcept 
+			: _accept_size(0), _connect(connection){
+			_accept.reserve(connection);
+		};
 		inline explicit network(network const&) noexcept = delete;
 		inline explicit network(network&&) noexcept = delete;
 		inline auto operator=(network const&) noexcept -> network & = delete;
 		inline auto operator=(network&&) noexcept -> network & = delete;
 		inline ~network(void) noexcept = default;
 
-		inline void listen(char const* const ip, unsigned short port, int backlog) noexcept {
+		inline void ready_listen(char const* const ip, unsigned short port, int backlog) noexcept {
 			_listen.create(AF_INET, SOCK_STREAM, IPPROTO_TCP, WSA_FLAG_OVERLAPPED);
 			_listen.set_option_linger(1, 0);
 			_listen.set_option_send_buffer(0);
 			library::socket_address_ipv4 sockaddr;
-			sockaddr.set_address(ip);
-			sockaddr.set_port(port);
+			sockaddr.ip(ip);
+			sockaddr.port(port);
 			_listen.bind(sockaddr);
 			_listen.listen(backlog);
 		}
-		inline void accept(size_type capacity) noexcept {
-			_accept.reserve(capacity);
-			for (size_type index = 0; index < capacity; ++index) {
+		inline void start_listen(void) noexcept {
+			_accept_size = _accept.capacity();
+			for (size_type index = 0; index < _accept.capacity(); ++index) {
 				auto& connection = _accept.emplace_back();
 				_listen.accept(connection._socket, connection._buffer.data(), sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16, connection._overlap);
 			}
+		}
+		inline void stop_listen(void) noexcept {
+			_listen.close();
+			library::sleep(1000);
+			_accept.clear();
+		}
+		inline void connect_socket(void) noexcept {
+			auto connection = _connect.allocate();
 		}
 		inline void release_connection(bool accept, framework::connection& connection) noexcept {
 			if (accept) {
@@ -80,21 +95,6 @@ namespace framework {
 					connection._socket.close();
 					break;
 				}
-			}
-		}
-		inline void close(void) noexcept {
-			_listen.close();
-			//while (0 != _accept_count) {
-			//}
-			//_accept.clear();
-		}
-
-		inline void connect(/*size_type capacity*/) noexcept {
-			_connect.reserve(1);
-			for (size_type index = 0; index < 1; ++index) {
-				auto& connect = _connect.emplace_back();
-				connect.create();
-				//_listen.accept(accept._socket, accept._buffer.data(), sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16, accept._overlap);
 			}
 		}
 	};

@@ -14,8 +14,8 @@ namespace library {
 		inline auto operator=(socket_address&& rhs) noexcept -> socket_address & = default;
 		inline ~socket_address(void) noexcept = default;
 
-		inline virtual ADDRESS_FAMILY get_family(void) const noexcept = 0;
-		inline virtual int get_length(void) const noexcept = 0;
+		inline virtual ADDRESS_FAMILY family(void) const noexcept = 0;
+		inline virtual int size(void) const noexcept = 0;
 		inline virtual sockaddr& data(void) noexcept = 0;
 	};
 	class socket_address_ipv4 final : public socket_address {
@@ -43,33 +43,33 @@ namespace library {
 		};
 		inline ~socket_address_ipv4(void) noexcept = default;
 
-		inline void set_address(unsigned long address) noexcept {
-			_sockaddr.sin_addr.S_un.S_addr = htonl(INADDR_ANY);
+		inline void ip(unsigned long address) noexcept {
+			_sockaddr.sin_addr.S_un.S_addr = ::htonl(INADDR_ANY);
 		}
-		inline void set_address(char const* const address) noexcept {
-			if (1 != inet_pton(AF_INET, address, &_sockaddr.sin_addr))
+		inline void ip(char const* const address) noexcept {
+			if (1 != ::inet_pton(AF_INET, address, &_sockaddr.sin_addr))
 				__debugbreak();
 		}
-		inline auto get_address(void) const noexcept -> library::wstring {
-			wchar_t string[INET_ADDRSTRLEN];
-			if (0 == InetNtopW(AF_INET, &_sockaddr.sin_addr, string, INET_ADDRSTRLEN))
+		inline auto ip(void) const noexcept -> library::string {
+			char string[INET_ADDRSTRLEN];
+			if (0 == ::inet_ntop(AF_INET, &_sockaddr.sin_addr, string, INET_ADDRSTRLEN))
 				__debugbreak();
-			return library::wstring(string);
+			return library::string(string);
 		}
-		inline void set_port(unsigned short port) noexcept {
+		inline void port(unsigned short port) noexcept {
 			_sockaddr.sin_port = htons(port);
 		}
-		inline auto get_port(void) const noexcept -> unsigned short {
-			return ntohs(_sockaddr.sin_port);
+		inline auto port(void) const noexcept -> unsigned short {
+			return ::ntohs(_sockaddr.sin_port);
 		}
 
-		inline virtual ADDRESS_FAMILY get_family(void) const noexcept override {
+		inline virtual auto family(void) const noexcept -> ADDRESS_FAMILY override {
 			return AF_INET;
 		}
-		inline virtual int get_length(void) const noexcept override {
+		inline virtual auto size(void) const noexcept -> int override {
 			return sizeof(sockaddr_in);
 		}
-		inline virtual sockaddr& data(void) noexcept override {
+		inline virtual auto data(void) noexcept -> sockaddr & override {
 			return *reinterpret_cast<sockaddr*>(&_sockaddr);
 		}
 	private:
@@ -99,7 +99,7 @@ namespace library {
 		inline virtual ADDRESS_FAMILY get_family(void) const noexcept {
 			return _sockaddr.ss_family;
 		}
-		inline virtual int get_length(void) const noexcept override {
+		inline virtual int size(void) const noexcept override {
 			switch (get_family()) {
 			case AF_INET:
 				return sizeof(sockaddr_in);

@@ -16,7 +16,7 @@
     <ClInclude Include="message.h">
       <Filter>component</Filter>
     </ClInclude>
-    <ClInclude Include="network.h">
+    <ClInclude Include="connection.h">
       <Filter>component</Filter>
     </ClInclude>
     <ClInclude Include="session.h">

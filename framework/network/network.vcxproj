@@ -159,7 +159,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="monitor.h" />
-    <ClInclude Include="network.h" />
+    <ClInclude Include="connection.h" />
     <ClInclude Include="message.h" />
     <ClInclude Include="sample.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>

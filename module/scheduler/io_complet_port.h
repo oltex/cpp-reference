@@ -113,15 +113,15 @@ public:
 	inline auto operator=(io_complet_port const&) noexcept -> io_complet_port & = delete;
 	inline auto operator=(io_complet_port&&) noexcept -> io_complet_port & = delete;
 	inline ~io_complet_port(void) noexcept {
+		_scheduler_queue.stop();
+		_scheduler_thread.wait_for_single(INFINITE);
+
 		HANDLE handle[128];
 		for (size_type index = 0; index < _worker_thread.capacity(); ++index) {
 			_complet_port.post_queue_state(0, 0, nullptr);
 			handle[index] = _worker_thread[index].data();
 		}
 		library::handle::wait_for_multiple(_worker_thread.capacity(), handle, true, INFINITE);
-
-		_scheduler_queue.stop();
-		_scheduler_thread.wait_for_single(INFINITE);
 	};
 
 	inline void connect(io_complet_object& object, library::socket& socket, uintptr_t key) noexcept {

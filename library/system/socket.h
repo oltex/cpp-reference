@@ -97,7 +97,7 @@ namespace library {
 			}
 		}
 		inline auto bind(socket_address& socket_address) const noexcept -> int {
-			int result = ::bind(_socket, &socket_address.data(), socket_address.get_length());
+			int result = ::bind(_socket, &socket_address.data(), socket_address.size());
 			if (SOCKET_ERROR == result) {
 				switch (GetLastError()) {
 				case WSAEADDRINUSE:
@@ -154,7 +154,7 @@ namespace library {
 			return result::complet;
 		}
 		inline auto connect(socket_address& socket_address) noexcept -> int {
-			int result = ::connect(_socket, &socket_address.data(), socket_address.get_length());
+			int result = ::connect(_socket, &socket_address.data(), socket_address.size());
 			if (SOCKET_ERROR == result) {
 				switch (GetLastError()) {
 				case WSAEWOULDBLOCK:
@@ -170,7 +170,7 @@ namespace library {
 			return result;
 		}
 		inline auto connect(socket_address& socket_address, overlap& overlap) noexcept -> int {
-			if (FALSE == _connect_ex(_socket, &socket_address.data(), socket_address.get_length(), nullptr, 0, nullptr, &overlap.data())) {
+			if (FALSE == _connect_ex(_socket, &socket_address.data(), socket_address.size(), nullptr, 0, nullptr, &overlap.data())) {
 				switch (WSAGetLastError()) {
 				case ERROR_IO_PENDING:
 					break;
@@ -207,7 +207,7 @@ namespace library {
 			return result;
 		}
 		inline auto send(char const* const buffer, int const length, int const flag, socket_address& socket_address) const noexcept -> int {
-			return ::sendto(_socket, buffer, length, flag, &socket_address.data(), socket_address.get_length());
+			return ::sendto(_socket, buffer, length, flag, &socket_address.data(), socket_address.size());
 		}
 		inline auto send(WSABUF* buffer, unsigned long count, unsigned long* byte, unsigned long flag) noexcept -> int {
 			int result = WSASend(_socket, buffer, count, byte, flag, nullptr, nullptr);
@@ -394,7 +394,7 @@ namespace library {
 		}
 		inline auto get_local_socket_address(void) const noexcept -> std::optional<socket_address_ipv4> {
 			socket_address_ipv4 socket_address;
-			int length = socket_address.get_length();
+			int length = socket_address.size();
 			if (SOCKET_ERROR == getsockname(_socket, &socket_address.data(), &length)) {
 				switch (GetLastError()) {
 				default:
@@ -407,7 +407,7 @@ namespace library {
 		}
 		inline auto get_remote_socket_address(void) const noexcept -> std::optional<socket_address_ipv4> {
 			socket_address_ipv4 socket_address;
-			int length = socket_address.get_length();
+			int length = socket_address.size();
 			if (SOCKET_ERROR == getpeername(_socket, &socket_address.data(), &length)) {
 				switch (GetLastError()) {
 				default:

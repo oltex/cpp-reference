@@ -1,6 +1,6 @@
 #pragma once
 #include "module/scheduler/io_complet_port.h"
-#include "network.h"
+#include "connection.h"
 #include "session.h"
 #include "monitor.h"
 
@@ -14,8 +14,8 @@ namespace framework {
 		session_array _session_array;
 		monitor _monitor;
 	public:
-		inline explicit server(size_type sessions) noexcept
-			: _session_array(sessions) {
+		inline explicit server(size_type connection, size_type sessions) noexcept
+			: _network(connection), _session_array(sessions) {
 			_iocp.execute(&server::monitor, this);
 			_iocp.execute(&server::timeout, this);
 		}
@@ -26,24 +26,14 @@ namespace framework {
 		inline ~server(void) noexcept = default;
 
 		inline void start_listen(char const* const ip, unsigned short port, int backlog) noexcept {
-			_network.listen(ip, port, backlog);
+			_network.ready_listen(ip, port, backlog);
 			_iocp.connect(*this, _network._listen, static_cast<uintptr_t>(task::accept));
-			_network.accept(16);
+			_network.start_listen();
 		}
 		inline void stop_listen(void) noexcept {
-			_network.close();
+			_network.stop_listen();
 		}
 		inline void connect_socket(char const* const ip, unsigned short port) noexcept {
-			_network.connect();
-			//_socket.create(AF_INET, SOCK_STREAM, IPPROTO_TCP, WSA_FLAG_OVERLAPPED);
-			//_socket.set_option_linger(1, 0);
-			//_socket.set_option_send_buffer(0);
-			//library::socket_address_ipv4 sockaddr;
-			//sockaddr.set_address(ip);
-			//sockaddr.set_port(port);
-			//_socket.bind(sockaddr);
-
-			//socket.connect()
 			//system_component::socket_address_ipv4 socket_address;
 			//socket_address.set_address(address);
 			//socket_address.set_port(port);
@@ -81,17 +71,23 @@ namespace framework {
 			send_session(key, message_);
 			return true;
 		};
-		inline virtual void destroy_session(unsigned long long key) noexcept {
-		};
 		inline void send_session(unsigned long long key, message& message) noexcept {
 			session& session_ = _session_array[key];
-			if (session_.acquire_iocount(key)) {
+			if (session_.acquire_iocount(key))
 				if (session_.send_message(message))
 					return;
-			}
 			if (session_.release_iocount(false))
 				_iocp.post(*this, 0, static_cast<uintptr_t>(task::destory), reinterpret_cast<OVERLAPPED*>(&session_));
 		}
+		inline void close_session(unsigned long long key) noexcept {
+			session& session_ = _session_array[key];
+			if (session_.acquire_iocount(key))
+				session_.cancel_network();
+			if (session_.release_iocount(false))
+				_iocp.post(*this, 0, static_cast<uintptr_t>(task::destory), reinterpret_cast<OVERLAPPED*>(&session_));
+		}
+		inline virtual void destroy_session(unsigned long long key) noexcept {
+		};
 		inline static auto create_message(size_type size) noexcept -> message {
 			message _message(pool::instance().allocate(sizeof(header) + size));
 			header header_;
@@ -114,7 +110,7 @@ namespace framework {
 							_iocp.connect(*this, session->_socket, static_cast<uintptr_t>(task::session));
 							create_session(session->_key);
 							bool flag = true;
-							if (!session->network_post(flag) && session->release_iocount(flag)) {
+							if (!session->post_network(flag) && session->release_iocount(flag)) {
 								destroy_session(session->_key);
 								_session_array.deallocate(session);
 							}
@@ -126,15 +122,15 @@ namespace framework {
 			case task::session: {
 				auto& session = _session_array[overlapped];
 				bool flag = &session._receive_overlap.data() == overlapped;
-				if (session.network_start(flag, transferred)) {
+				if (session.start_network(flag, transferred)) {
 					_monitor.update_session(flag);
 					if (flag)
 						while (auto message = session.receive_message())
 							if (false == receive_session(session._key, *message)) {
-								session.cancel();
+								session.cancel_network();
 								break;
 							}
-					if (session.network_post(flag))
+					if (session.post_network(flag))
 						break;
 				}
 				if (session.release_iocount(flag)) {
@@ -205,9 +201,8 @@ namespace framework {
 		inline int timeout(void) noexcept {
 			for (auto iter = _session_array.begin(), end = _session_array.end(); iter != end; ++iter) {
 				if (iter->acquire_iocount()) {
-					if (library::get_tick_count64() > iter->_receive_expire || library::get_tick_count64() > iter->_send_expire) {
-						iter->cancel();
-					}
+					if (library::get_tick_count64() > iter->_receive_expire || library::get_tick_count64() > iter->_send_expire)
+						iter->cancel_network();
 				}
 				if (iter->release_iocount(false)) {
 					destroy_session(iter->_key);

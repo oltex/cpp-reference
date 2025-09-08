@@ -14,10 +14,10 @@ int main(void) noexcept {
 	library::socket::wsa_io_control_connect_ex();
 	library::socket::wsa_io_control_get_accept_ex_sockaddr();
 
-	io_complet_port::construct(16, 16);
+	io_complet_port::construct(8, 8);
 	//-------------------------
 	{
-		framework::server server(100);
+		framework::server server(8, 100);
 		server.start_listen("127.0.0.1", 6000, 65535);
 		system("pause");
 		server.stop_listen();
