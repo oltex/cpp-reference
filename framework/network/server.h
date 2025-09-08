@@ -82,8 +82,8 @@ namespace framework {
 		}
 		inline virtual void destroy_session(unsigned long long key) noexcept {
 		};
-		inline static auto create_message(size_type size) noexcept -> framework::message {
-			framework::message message(message_pool::instance().allocate(sizeof(header) + size));
+		inline static auto create_message(size_type const size) noexcept -> framework::message {
+			framework::message message(message_pool::instance().allocate(sizeof(framework::header) + size));
 			framework::header header{ ._size = 8 };
 			message.push(reinterpret_cast<char*>(&header), sizeof(header));
 			return message;
