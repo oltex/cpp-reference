@@ -9,9 +9,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="sample.h">
-      <Filter>sample</Filter>
-    </ClInclude>
     <ClInclude Include="server.h" />
     <ClInclude Include="message.h">
       <Filter>component</Filter>
@@ -24,6 +21,9 @@
     </ClInclude>
     <ClInclude Include="monitor.h">
       <Filter>component</Filter>
+    </ClInclude>
+    <ClInclude Include="sample.h">
+      <Filter>sample</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

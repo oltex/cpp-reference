@@ -83,7 +83,7 @@ class io_complet_port : public library::singleton<io_complet_port, true> {
 	inline static bool less(task const* const left, task const* const right) noexcept {
 		return right < left;
 	}
-public:
+
 	library::inputoutput_complet_port _complet_port;
 	library::array<library::thread, 0> _worker_thread;
 	library::thread _scheduler_thread;
