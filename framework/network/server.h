@@ -105,12 +105,14 @@ namespace framework {
 				else {
 					bool flag = task == task::accept;
 					connection.inherit(_network);
-					if (auto address = connection.address(flag); true == accept_socket(address)) {
-						if (auto session = _session_array.allocate(connection, 40000, 40000); nullptr != session) {
+					auto address = connection.address(flag);
+					if (true == accept_socket(address)) {
+						if (auto session = _session_array.allocate(); nullptr != session) {
+							session->initialize(connection, 40000, 40000);
 							_iocp.connect(*this, session->_socket, static_cast<uintptr_t>(task::session));
 							create_session(session->_key);
 							bool flag = true;
-							if (!session->post_network(flag) && session->release_iocount(flag)) {
+							if (!session->receive_post(flag) && session->release_iocount(flag)) {
 								destroy_session(session->_key);
 								_session_array.deallocate(session);
 							}
@@ -122,16 +124,22 @@ namespace framework {
 			case task::session: {
 				auto& session = _session_array[overlapped];
 				bool flag = &session._receive_overlap.data() == overlapped;
-				if (session.start_network(flag, transferred)) {
-					_monitor.update_session(flag);
-					if (flag)
+				if (0 != transferred) {
+					if (flag) {
+						session.receive_ready(transferred);
 						while (auto message = session.receive_message())
 							if (false == receive_session(session._key, *message)) {
 								session.cancel_network();
 								break;
 							}
-					if (session.post_network(flag))
-						break;
+						if (session.receive_post(flag))
+							break;
+					}
+					else {
+						session.send_finish();
+						if (session.send_post())
+							break;
+					}
 				}
 				if (session.release_iocount(flag)) {
 					destroy_session(session._key);

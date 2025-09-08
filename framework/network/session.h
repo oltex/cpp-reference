@@ -75,21 +75,9 @@ namespace framework {
 			return flag;
 		}
 
-		inline bool start_network(bool receive, unsigned long transferred) noexcept {
-			if (0 == transferred)
-				return false;
-			else {
-				if (receive) {
-					_receive_expire = library::get_tick_count64() + _receive_timeout;
-					_receive_message.move_rear(transferred);
-				}
-				else {
-					for (size_type index = 0; index < _send_size; ++index)
-						_send_queue.pop();
-					library::interlock_exchange(_send_expire, 0xFFFFFFFFFFFFFFFFULL);
-				}
-				return true;
-			}
+		inline void receive_ready(unsigned long transferred) noexcept {
+			_receive_expire = library::get_tick_count64() + _receive_timeout;
+			_receive_message.move_rear(transferred);
 		}
 		inline auto receive_message(void) noexcept -> std::optional<framework::message> {
 			if (sizeof(header) > _receive_message.size())
@@ -101,57 +89,73 @@ namespace framework {
 			_receive_message.pop(sizeof(header) + header_._size);
 			return framework::message(_receive_message, _receive_message.front() - header_._size, _receive_message.front());
 		}
-		inline bool send_message(framework::message& message) noexcept {
-			if (512 < _send_queue.size())
-				return false;
-			_send_queue.emplace(message);
-			bool flag = false;
-			return post_network(flag);
-		}
-		inline bool post_network(bool& receive) noexcept {
+		inline bool receive_post(bool& receive) noexcept {
 			if (1 == _cancel_flag)
 				return false;
-			auto key = _key;
-			library::socket::result result;
-			if (receive) {
+			else {
 				framework::message message = pool::instance().allocate();
 				if (!_receive_message.empty())
 					message.push(_receive_message.data() + _receive_message.front(), _receive_message.size());
 				_receive_message = std::move(message);
 				WSABUF wsa_buffer{ .len = _receive_message.remain(), .buf = _receive_message.data() + _receive_message.rear() };
-				result = _socket.receive(wsa_buffer, _receive_overlap);
-			}
-			else {
-				for (;;) {
-					if (_send_queue.empty() || 0xFFFFFFFFFFFFFFFFULL != library::interlock_compare_exhange(_send_expire, library::get_tick_count64() + _send_timeout, 0xFFFFFFFFFFFFFFFFULL))
+				auto key = _key;
+				switch (_socket.receive(wsa_buffer, _receive_overlap)) {
+					using enum library::socket::result;
+				case pending:
+					if (1 == _cancel_flag) {
+						if (acquire_iocount(key))
+							_socket.cancel_io_ex();
+						receive = false;
 						return false;
-					else if (_send_queue.empty())
-						library::interlock_exchange(_send_expire, 0xFFFFFFFFFFFFFFFFULL);
-					else
-						break;
-				}
-				WSABUF wsa_buffer[512];
-				_send_size = 0;
-				for (auto iter = _send_queue.begin(), end = _send_queue.end(); iter != end; ++iter, ++_send_size) {
-					wsa_buffer[_send_size].buf = reinterpret_cast<char*>(iter->data() + iter->front());
-					wsa_buffer[_send_size].len = iter->size();
-				}
-				result = _socket.send(wsa_buffer, _send_size, _send_overlap);
-			}
-			switch (result) {
-				using enum library::socket::result;
-			case pending:
-				if (1 == _cancel_flag) {
-					if (acquire_iocount(key))
-						_socket.cancel_io_ex();
-					receive = false;
+					}
+				case complet:
+					return true;
+				case close:
 					return false;
 				}
-			case complet:
-				return true;
-			case close:
-				return false;
 			}
+		}
+		inline void send_finish(void) noexcept {
+			for (size_type index = 0; index < _send_size; ++index)
+				_send_queue.pop();
+			library::interlock_exchange(_send_expire, 0xFFFFFFFFFFFFFFFFULL);
+		}
+		inline bool send_message(framework::message& message) noexcept {
+			if (512 < _send_queue.size())
+				return false;
+			_send_queue.emplace(message);
+			return send_post();
+		}
+		inline bool send_post(void) noexcept {
+			if (1 == _cancel_flag)
+				return false;
+			while (!_send_queue.empty() && 0xFFFFFFFFFFFFFFFFULL == library::interlock_compare_exhange(_send_expire, library::get_tick_count64() + _send_timeout, 0xFFFFFFFFFFFFFFFFULL)) {
+				if (_send_queue.empty())
+					library::interlock_exchange(_send_expire, 0xFFFFFFFFFFFFFFFFULL);
+				else {
+					WSABUF wsa_buffer[512];
+					_send_size = 0;
+					for (auto iter = _send_queue.begin(), end = _send_queue.end(); iter != end; ++iter, ++_send_size) {
+						wsa_buffer[_send_size].buf = reinterpret_cast<char*>(iter->data() + iter->front());
+						wsa_buffer[_send_size].len = iter->size();
+					}
+					auto key = _key;
+					switch (_socket.send(wsa_buffer, _send_size, _send_overlap)) {
+						using enum library::socket::result;
+					case pending:
+						if (1 == _cancel_flag) {
+							if (acquire_iocount(key))
+								_socket.cancel_io_ex();
+							return false;
+						}
+					case complet:
+						return true;
+					case close:
+						return false;
+					}
+				}
+			}
+			return false;
 		}
 		inline void cancel_network(void) noexcept {
 			_cancel_flag = true;
@@ -177,12 +181,10 @@ namespace framework {
 				library::destruct(_array[index]._value);
 		};
 
-		inline auto allocate(framework::connection& connection, unsigned long long receive_timeout, unsigned long long send_timeout) noexcept -> session* {
+		inline auto allocate(void) noexcept -> session* {
 			auto result = base::allocate();
-			if (nullptr != result) {
+			if (nullptr != result)
 				library::interlock_increment(_size);
-				result->initialize(connection, receive_timeout, send_timeout);
-			}
 			return result;
 		}
 		inline void deallocate(session* value) noexcept {
