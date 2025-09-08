@@ -17,16 +17,14 @@ int main(void) noexcept {
 	io_complet_port::construct(8, 8);
 	//-------------------------
 	{
-		framework::server server(8, 100);
+		framework::server server(16, 100);
 		server.start_listen("127.0.0.1", 6000, 65535);
 		system("pause");
 		server.stop_listen();
-		system("pause");
 	}
 	//-------------------------
 	io_complet_port::destruct();
 
 	library::wsa_clean_up();
-
 	return 0;
 }

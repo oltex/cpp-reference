@@ -5,46 +5,101 @@
 #include "library/container/lockfree/free_list.h"
 
 namespace framework {
-	struct network;
 	struct connection {
 		library::socket _socket;
 		library::overlap _overlap;
-		union {
-			library::socket_address_ipv4 _address;
-			library::array<char, 64> _buffer;
-		};
-		inline explicit connection(void) noexcept
-			: _socket(AF_INET, SOCK_STREAM, IPPROTO_TCP, WSA_FLAG_OVERLAPPED) {
-		};
+		library::socket_address_ipv4 _address;
+		library::array<char, 64> _buffer;
+
+		inline explicit connection(void) noexcept = default;
 		inline explicit connection(connection const&) noexcept = delete;
 		inline explicit connection(connection&&) noexcept = delete;
 		inline auto operator=(connection const&) noexcept -> connection & = delete;
 		inline auto operator=(connection&&) noexcept -> connection & = delete;
 		inline ~connection(void) noexcept = default;
 
-		inline void create(void) noexcept {
+		inline void create_socket(void) noexcept {
 			_socket.create(AF_INET, SOCK_STREAM, IPPROTO_TCP, WSA_FLAG_OVERLAPPED);
 		}
-		inline void close(void) noexcept {
+		inline void close_socket(void) noexcept {
 			_socket.close();
 		}
-
+		inline void listen_socket(char const* const ip, unsigned short port, int backlog) noexcept {
+			_socket.create(AF_INET, SOCK_STREAM, IPPROTO_TCP, WSA_FLAG_OVERLAPPED);
+			_socket.set_option_linger(1, 0);
+			_socket.set_option_send_buffer(0);
+			library::socket_address_ipv4 sockaddr;
+			sockaddr.ip(ip);
+			sockaddr.port(port);
+			_socket.bind(sockaddr);
+			_socket.listen(backlog);
+		}
+		inline bool accept_post(connection& connection) noexcept {
+			switch (_socket.accept(connection._socket, connection._buffer.data(), sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16, connection._overlap)) {
+				using enum library::socket::result;
+			case pending:
+			case complet:
+				return true;
+			case close:
+				return false;
+			}
+		}
+		inline void accept_inherit(connection& connection) const noexcept {
+			_socket.set_option_update_accept_context(connection._socket);
+		}
 		inline auto accept_address(void) noexcept -> library::socket_address_ipv4 {
 			return library::socket::get_accept_ex_socket_address(_buffer.data())._second;
 		};
-		inline void connect_socket(char const* const ip, unsigned short port) noexcept {
+		inline void connect_inherit(connection& connection) const noexcept {
+			_socket.set_option_update_connect_context(connection._socket);
+		}
+		inline bool connect_post(char const* const ip, unsigned short port) noexcept {
 			library::socket_address_ipv4 address;
 			address.ip(ip);
 			address.port(port);
-			_socket.connect(address, _overlap);
+			switch (_socket.connect(address, _overlap)) {
+				using enum library::socket::result;
+			case pending:
+			case complet:
+				return true;
+			case close:
+				return false;
+			}
 		}
 		inline auto connect_address(void) noexcept -> library::socket_address_ipv4& {
 			return _address;
 		}
+
 		inline static auto recover(OVERLAPPED* overlapped) noexcept -> connection& {
 			return *reinterpret_cast<connection*>(reinterpret_cast<unsigned char*>(library::overlap::recover(overlapped)) - offsetof(connection, _overlap));
 		}
 	};
+	class connection_array final : public library::lockfree::free_list<connection, true, true> {
+		using size_type = unsigned int;
+		using base = library::lockfree::free_list<connection, true, true>;
+		size_type _size;
+	public:
+		inline explicit connection_array(size_type const capacity) noexcept
+			: base(capacity), _size(0) {
+		};
+		inline explicit connection_array(connection_array const&) noexcept = delete;
+		inline explicit connection_array(connection_array&&) noexcept = delete;
+		inline auto operator=(connection_array const&) noexcept -> connection_array & = delete;
+		inline auto operator=(connection_array&&) noexcept -> connection_array & = delete;
+		inline ~connection_array(void) noexcept = default;
+
+		inline auto allocate(void) noexcept -> connection* {
+			auto result = base::allocate();
+			if (nullptr != result)
+				library::interlock_increment(_size);
+			return result;
+		}
+		inline void deallocate(connection* value) noexcept {
+			base::deallocate(value);
+			library::interlock_decrement(_size);
+		}
+	};
+
 	struct network final {
 		using size_type = unsigned int;
 		library::socket _listen;
@@ -62,23 +117,6 @@ namespace framework {
 		inline auto operator=(network&&) noexcept -> network & = delete;
 		inline ~network(void) noexcept = default;
 
-		inline void accept_inherit(connection& connection) noexcept {
-			connection._socket.set_option_update_accept_context(_listen);
-		}
-		inline void connect_inherit(connection& connection) noexcept {
-			connection._socket.set_option_update_connect_context(_listen);
-		}
-
-		inline void listen_ready(char const* const ip, unsigned short port, int backlog) noexcept {
-			_listen.create(AF_INET, SOCK_STREAM, IPPROTO_TCP, WSA_FLAG_OVERLAPPED);
-			_listen.set_option_linger(1, 0);
-			_listen.set_option_send_buffer(0);
-			library::socket_address_ipv4 sockaddr;
-			sockaddr.ip(ip);
-			sockaddr.port(port);
-			_listen.bind(sockaddr);
-			_listen.listen(backlog);
-		}
 		inline void listen_start(void) noexcept {
 			_accept_size = _accept.capacity();
 			for (size_type index = 0; index < _accept.capacity(); ++index) {
@@ -95,8 +133,6 @@ namespace framework {
 			return *_connect.allocate();
 		}
 		inline void release_connection(framework::connection& connection) noexcept {
-			connection.close();
-			connection.create();
 			switch (_listen.accept(connection._socket, connection._buffer.data(), sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16, connection._overlap)) {
 				using enum library::socket::result;
 			case complet:
@@ -108,4 +144,5 @@ namespace framework {
 			}
 		}
 	};
+
 }

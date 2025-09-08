@@ -169,16 +169,21 @@ namespace library {
 			}
 			return result;
 		}
-		inline auto connect(socket_address& socket_address, overlap& overlap) noexcept -> int {
+		inline auto connect(socket_address& socket_address, overlap& overlap) noexcept -> result {
 			overlap.clear();
 			if (FALSE == _connect_ex(_socket, &socket_address.data(), socket_address.size(), nullptr, 0, nullptr, &overlap.data())) {
 				switch (WSAGetLastError()) {
-				case ERROR_IO_PENDING:
-					break;
+				case WSA_IO_PENDING:
+					return result::pending;
+				case WSAENOTSOCK:
+					return result::close;
+				case WSAECONNRESET:
+				case WSAECONNABORTED:
 				default:
 					__debugbreak();
 				}
 			}
+			return result::complet;
 		}
 		inline void shutdown(int const how) const noexcept {
 			if (SOCKET_ERROR == ::shutdown(_socket, how))

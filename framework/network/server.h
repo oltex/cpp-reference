@@ -10,12 +10,14 @@ namespace framework {
 		enum class task : unsigned char {
 			accept = 0, connect, session, destory
 		};
-		network _network;
+		//network _network;
+		connection _listen;
+		connection_array _connection_array;
 		session_array _session_array;
 		monitor _monitor;
 	public:
-		inline explicit server(size_type connection, size_type sessions) noexcept
-			: _network(connection), _session_array(sessions) {
+		inline explicit server(size_type connection, size_type session) noexcept
+			: _connection_array(connection), _session_array(session) {
 			_iocp.execute(&server::monitor, this);
 			_iocp.execute(&server::timeout, this);
 		}
@@ -26,19 +28,22 @@ namespace framework {
 		inline ~server(void) noexcept = default;
 
 		inline void start_listen(char const* const ip, unsigned short port, int backlog) noexcept {
-			_network.listen_ready(ip, port, backlog);
-			_iocp.connect(*this, _network._listen, static_cast<uintptr_t>(task::accept));
-			_network.listen_start();
+			_listen.listen_socket(ip, port, backlog);
+			_iocp.connect(*this, _listen._socket, static_cast<uintptr_t>(task::accept));
+			//_listen.accept_post();
 		}
 		inline void stop_listen(void) noexcept {
-			_network.listen_stop();
+			_listen.close_socket();
+			//_network.listen_stop();
 		}
 		inline void connect_socket(char const* const ip, unsigned short port) noexcept {
-			auto& connection = _network.ready_connect();
-			_iocp.connect(*this, connection._socket, static_cast<uintptr_t>(task::connect));
-			connection.connect_socket(ip, port);
+			auto connection = _connection_array.allocate();
+			connection->create_socket();
+			_iocp.connect(*this, connection->_socket, static_cast<uintptr_t>(task::connect));
+			if (!connection->connect_post(ip, port))
+				_connection_array.deallocate(connection);
 		}
-		inline virtual bool accept_socket(library::socket_address_ipv4& socket_address) noexcept {
+		inline virtual bool create_socket(char const* const ip, unsigned short port) noexcept {
 			return true;
 		}
 		inline virtual void create_session(unsigned long long key) noexcept {
@@ -56,7 +61,7 @@ namespace framework {
 			return true;
 		};
 		inline void send_session(unsigned long long key, message& message) noexcept {
-			session& session_ = _session_array[key];
+			auto& session_ = _session_array[key];
 			if (session_.acquire_iocount(key))
 				if (session_.send_message(message))
 					return;
@@ -64,7 +69,7 @@ namespace framework {
 				_iocp.post(*this, 0, static_cast<uintptr_t>(task::destory), reinterpret_cast<OVERLAPPED*>(&session_));
 		}
 		inline void close_session(unsigned long long key) noexcept {
-			session& session_ = _session_array[key];
+			auto& session_ = _session_array[key];
 			if (session_.acquire_iocount(key))
 				session_.cancel_network();
 			if (session_.release_iocount(false))
@@ -85,11 +90,17 @@ namespace framework {
 			case task::accept:
 			case task::connect: {
 				auto& connection = connection::recover(overlapped);
-				bool flag = task == task::accept;
 				if (false != result) {
-					_network.accept_inherit(connection);
-					auto address = connection.accept_address();
-					if (true == accept_socket(address)) {
+					library::socket_address_ipv4 address;
+					if (task == task::accept) {
+						_listen.accept_inherit(connection);
+						address = connection.accept_address();
+					}
+					else {
+						_listen.connect_inherit(connection);
+						address = connection.connect_address();
+					}
+					if (true == create_socket(address.ip().data(), address.port())) {
 						if (auto session = _session_array.allocate(); nullptr != session) {
 							session->initialize(connection, 40000, 40000);
 							_iocp.connect(*this, session->_socket, static_cast<uintptr_t>(task::session));
@@ -102,7 +113,13 @@ namespace framework {
 						}
 					}
 				}
-				_network.release_connection(connection);
+				if (task == task::accept) {
+					connection.close_socket();
+					connection.create_socket();
+					if (_listen.accept_post(connection))
+						break;
+				}
+				_connection_array.deallocate(&connection);
 			} break;
 			case task::session: {
 				auto& session = _session_array[overlapped];
