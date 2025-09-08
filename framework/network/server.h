@@ -26,33 +26,17 @@ namespace framework {
 		inline ~server(void) noexcept = default;
 
 		inline void start_listen(char const* const ip, unsigned short port, int backlog) noexcept {
-			_network.ready_listen(ip, port, backlog);
+			_network.listen_ready(ip, port, backlog);
 			_iocp.connect(*this, _network._listen, static_cast<uintptr_t>(task::accept));
-			_network.start_listen();
+			_network.listen_start();
 		}
 		inline void stop_listen(void) noexcept {
-			_network.stop_listen();
+			_network.listen_stop();
 		}
 		inline void connect_socket(char const* const ip, unsigned short port) noexcept {
-			//system_component::socket_address_ipv4 socket_address;
-			//socket_address.set_address(address);
-			//socket_address.set_port(port);
-			//system_component::socket socket(AF_INET, SOCK_STREAM, 0);
-			//socket.set_linger(1, 0);
-			//socket.connect(socket_address);
-
-			//session& session_ = *_session_array.acquire();
-			//session_.initialize(std::move(socket), _timeout_duration);
-			//_complation_port.connect(session_._socket, reinterpret_cast<ULONG_PTR>(&session_));
-
-			//if (!session_.receive() && session_.release()) {
-			//	on_destroy_session(session_._key);
-			//	_session_array.release(session_);
-			//	return 0;
-			//}
-			//return session_._key;
-
-
+			auto& connection = _network.ready_connect();
+			_iocp.connect(*this, connection._socket, static_cast<uintptr_t>(task::connect));
+			connection.connect_socket(ip, port);
 		}
 		inline virtual bool accept_socket(library::socket_address_ipv4& socket_address) noexcept {
 			return true;
@@ -100,12 +84,11 @@ namespace framework {
 			switch (auto task = static_cast<server::task>(key)) {
 			case task::accept:
 			case task::connect: {
-				if (auto& connection = connection::recover(overlapped); false == result)
-					connection.close();
-				else {
-					bool flag = task == task::accept;
-					connection.inherit(_network);
-					auto address = connection.address(flag);
+				auto& connection = connection::recover(overlapped);
+				bool flag = task == task::accept;
+				if (false != result) {
+					_network.accept_inherit(connection);
+					auto address = connection.accept_address();
 					if (true == accept_socket(address)) {
 						if (auto session = _session_array.allocate(); nullptr != session) {
 							session->initialize(connection, 40000, 40000);
@@ -118,8 +101,8 @@ namespace framework {
 							}
 						}
 					}
-					_network.release_connection(flag, connection);
 				}
+				_network.release_connection(connection);
 			} break;
 			case task::session: {
 				auto& session = _session_array[overlapped];

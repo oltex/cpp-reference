@@ -170,6 +170,7 @@ namespace library {
 			return result;
 		}
 		inline auto connect(socket_address& socket_address, overlap& overlap) noexcept -> int {
+			overlap.clear();
 			if (FALSE == _connect_ex(_socket, &socket_address.data(), socket_address.size(), nullptr, 0, nullptr, &overlap.data())) {
 				switch (WSAGetLastError()) {
 				case ERROR_IO_PENDING:
@@ -344,6 +345,9 @@ namespace library {
 		}
 		inline void set_option_update_accept_context(socket& socket_) const noexcept {
 			set_option(SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT, reinterpret_cast<char*>(&socket_.data()), sizeof(SOCKET));
+		}
+		inline void set_option_update_connect_context(socket& socket_) const noexcept {
+			set_option(SOL_SOCKET, SO_UPDATE_CONNECT_CONTEXT, reinterpret_cast<char*>(&socket_.data()), sizeof(SOCKET));
 		}
 		inline void set_option(int const level, int const name, char const* value, int const length) const noexcept {
 			if (SOCKET_ERROR == setsockopt(_socket, level, name, value, length))
