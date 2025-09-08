@@ -5,15 +5,9 @@
 #include "library/container/lockfree/queue.h"
 
 namespace framework {
-	class pool;
+	class message_pool;
 	struct header final {
 		unsigned short _size;
-		inline explicit header(void) noexcept = default;
-		inline explicit header(header const&) noexcept = delete;
-		inline explicit header(header&&) noexcept = delete;
-		inline auto operator=(header const&) noexcept -> header & = delete;
-		inline auto operator=(header&&) noexcept -> header & = delete;
-		inline ~header(void) noexcept = default;
 	};
 	class buffer final : public library::intrusive::share_pointer_hook<0>, public library::array<char, 128> {
 	public:
@@ -126,19 +120,19 @@ namespace framework {
 			return nullptr == lhs._buffer;
 		}
 	};
-	class queue final : public library::lockfree::queue<message, false> {
+	class message_queue final : public library::lockfree::queue<message, false> {
 		using base = library::lockfree::queue<message, false>;
 		using size_type = unsigned int;
 		size_type _size;
 	public:
-		inline explicit queue(void) noexcept 
+		inline explicit message_queue(void) noexcept
 			: base(), _size(0) {
 		};
-		inline explicit queue(queue const&) noexcept = delete;
-		inline explicit queue(queue&&) noexcept = delete;
-		inline auto operator=(queue const&) noexcept -> queue & = delete;
-		inline auto operator=(queue&&) noexcept -> queue & = delete;
-		inline ~queue(void) noexcept = default;
+		inline explicit message_queue(message_queue const&) noexcept = delete;
+		inline explicit message_queue(message_queue&&) noexcept = delete;
+		inline auto operator=(message_queue const&) noexcept -> message_queue & = delete;
+		inline auto operator=(message_queue&&) noexcept -> message_queue & = delete;
+		inline ~message_queue(void) noexcept = default;
 
 		template<typename... argument>
 		inline void emplace(argument&&... arg) noexcept {
@@ -154,21 +148,21 @@ namespace framework {
 			return _size;
 		}
 	};
-	class pool final : public library::_thread_local::pool<buffer>, public library::_thread_local::singleton<pool> {
+	class message_pool final : public library::_thread_local::pool<buffer>, public library::_thread_local::singleton<message_pool> {
 		friend class library::_thread_local::singleton<pool>;
 		using base = library::_thread_local::pool<buffer>;
 		using size_type = unsigned int;
 		message _message;
 		inline static size_type _size = 0;
 
-		inline explicit pool(void) noexcept
+		inline explicit message_pool(void) noexcept
 			: _message(base::allocate()) {
 		};
-		inline explicit pool(pool const&) noexcept = delete;
-		inline explicit pool(pool&&) noexcept = delete;
-		inline auto operator=(pool const&) noexcept -> pool & = delete;
-		inline auto operator=(pool&&) noexcept -> pool & = delete;
-		inline ~pool(void) noexcept = default;
+		inline explicit message_pool(message_pool const&) noexcept = delete;
+		inline explicit message_pool(message_pool&&) noexcept = delete;
+		inline auto operator=(message_pool const&) noexcept -> message_pool & = delete;
+		inline auto operator=(message_pool&&) noexcept -> message_pool & = delete;
+		inline ~message_pool(void) noexcept = default;
 	public:
 		using library::_thread_local::singleton<pool>::instance;
 
@@ -194,6 +188,6 @@ namespace framework {
 	};
 	template<>
 	inline void buffer::destructor<0>(void) noexcept {
-		pool::instance().deallocate(this);
+		message_pool::instance().deallocate(this);
 	}
 }

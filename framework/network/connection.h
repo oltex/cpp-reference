@@ -5,7 +5,8 @@
 #include "library/container/lockfree/free_list.h"
 
 namespace framework {
-	struct connection {
+	class connection {
+	public:
 		library::socket _socket;
 		library::overlap _overlap;
 		library::socket_address_ipv4 _address;
@@ -99,50 +100,51 @@ namespace framework {
 			library::interlock_decrement(_size);
 		}
 	};
-
-	struct network final {
-		using size_type = unsigned int;
-		library::socket _listen;
-		library::vector<connection> _accept;
-		size_type _accept_size;
-		library::lockfree::free_list<connection> _connect;
-
-		inline explicit network(size_type connection) noexcept
-			: _accept_size(0), _connect(connection) {
-			_accept.reserve(connection);
-		};
-		inline explicit network(network const&) noexcept = delete;
-		inline explicit network(network&&) noexcept = delete;
-		inline auto operator=(network const&) noexcept -> network & = delete;
-		inline auto operator=(network&&) noexcept -> network & = delete;
-		inline ~network(void) noexcept = default;
-
-		inline void listen_start(void) noexcept {
-			_accept_size = _accept.capacity();
-			for (size_type index = 0; index < _accept.capacity(); ++index) {
-				auto& connection = _accept.emplace_back();
-				_listen.accept(connection._socket, connection._buffer.data(), sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16, connection._overlap);
-			}
-		}
-		inline void listen_stop(void) noexcept {
-			_listen.close();
-			library::sleep(1000);
-			_accept.clear();
-		}
-		inline auto ready_connect(void) noexcept -> framework::connection& {
-			return *_connect.allocate();
-		}
-		inline void release_connection(framework::connection& connection) noexcept {
-			switch (_listen.accept(connection._socket, connection._buffer.data(), sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16, connection._overlap)) {
-				using enum library::socket::result;
-			case complet:
-			case pending:
-				break;
-			case close:
-				connection._socket.close();
-				break;
-			}
-		}
-	};
-
 }
+
+
+/*struct network final {
+	using size_type = unsigned int;
+	library::socket _listen_socket;
+	library::vector<connection> _accept_array;
+	size_type _accept_size;
+	library::lockfree::free_list<connection> _connect_array;
+	size_type _connect_size;
+
+	inline explicit network(size_type connection) noexcept
+		: _accept_size(0), _connect_connection(connection) {
+		_accept_connection.reserve(connection);
+	};
+	inline explicit network(network const&) noexcept = delete;
+	inline explicit network(network&&) noexcept = delete;
+	inline auto operator=(network const&) noexcept -> network & = delete;
+	inline auto operator=(network&&) noexcept -> network & = delete;
+	inline ~network(void) noexcept = default;
+
+	inline void listen_start(void) noexcept {
+		_accept_size = _accept_array.capacity();
+		for (size_type index = 0; index < _accept_array.capacity(); ++index) {
+			auto& connection = _accept_array.emplace_back();
+			_listen_socket.accept(connection._socket, connection._buffer.data(), sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16, connection._overlap);
+		}
+	}
+	inline void listen_stop(void) noexcept {
+		_listen.close();
+		library::sleep(1000);
+		_accept.clear();
+	}
+	inline auto ready_connect(void) noexcept -> framework::connection& {
+		return *_connect.allocate();
+	}
+	inline void release_connection(framework::connection& connection) noexcept {
+		switch (_listen.accept(connection._socket, connection._buffer.data(), sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16, connection._overlap)) {
+			using enum library::socket::result;
+		case complet:
+		case pending:
+			break;
+		case close:
+			connection._socket.close();
+			break;
+		}
+	}
+};*/

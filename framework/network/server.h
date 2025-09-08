@@ -10,7 +10,6 @@ namespace framework {
 		enum class task : unsigned char {
 			accept = 0, connect, session, destory
 		};
-		//network _network;
 		connection _listen;
 		connection_array _connection_array;
 		session_array _session_array;
@@ -30,18 +29,24 @@ namespace framework {
 		inline void start_listen(char const* const ip, unsigned short port, int backlog) noexcept {
 			_listen.listen_socket(ip, port, backlog);
 			_iocp.connect(*this, _listen._socket, static_cast<uintptr_t>(task::accept));
-			//_listen.accept_post();
+			for (auto index = 0; index < 8; ++index) {
+				auto connection = _connection_array.allocate();
+				connection->create_socket();
+				if(!_listen.accept_post(*connection))
+					_connection_array.deallocate(connection);
+			}
 		}
 		inline void stop_listen(void) noexcept {
 			_listen.close_socket();
 			//_network.listen_stop();
 		}
 		inline void connect_socket(char const* const ip, unsigned short port) noexcept {
-			auto connection = _connection_array.allocate();
-			connection->create_socket();
-			_iocp.connect(*this, connection->_socket, static_cast<uintptr_t>(task::connect));
-			if (!connection->connect_post(ip, port))
-				_connection_array.deallocate(connection);
+			if (auto connection = _connection_array.allocate(); nullptr != connection) {
+				connection->create_socket();
+				_iocp.connect(*this, connection->_socket, static_cast<uintptr_t>(task::connect));
+				if (!connection->connect_post(ip, port))
+					_connection_array.deallocate(connection);
+			}
 		}
 		inline virtual bool create_socket(char const* const ip, unsigned short port) noexcept {
 			return true;
@@ -51,7 +56,7 @@ namespace framework {
 			//*message_ << 0x7fffffffffffffff;
 			//do_send_session(key, message_);
 		}
-		inline virtual bool receive_session(unsigned long long key, message& message) noexcept {
+		inline virtual bool receive_session(unsigned long long key, framework::message& message) noexcept {
 			unsigned long long value;
 			message >> value;
 			auto message_ = create_message(10);
@@ -60,29 +65,28 @@ namespace framework {
 			send_session(key, message_);
 			return true;
 		};
-		inline void send_session(unsigned long long key, message& message) noexcept {
-			auto& session_ = _session_array[key];
-			if (session_.acquire_iocount(key))
-				if (session_.send_message(message))
+		inline void send_session(unsigned long long key, framework::message& message) noexcept {
+			auto& session = _session_array[key];
+			if (session.acquire_iocount(key))
+				if (session.send_message(message))
 					return;
-			if (session_.release_iocount(false))
-				_iocp.post(*this, 0, static_cast<uintptr_t>(task::destory), reinterpret_cast<OVERLAPPED*>(&session_));
+			if (session.release_iocount(false))
+				_iocp.post(*this, 0, static_cast<uintptr_t>(task::destory), reinterpret_cast<OVERLAPPED*>(&session));
 		}
 		inline void close_session(unsigned long long key) noexcept {
-			auto& session_ = _session_array[key];
-			if (session_.acquire_iocount(key))
-				session_.cancel_network();
-			if (session_.release_iocount(false))
-				_iocp.post(*this, 0, static_cast<uintptr_t>(task::destory), reinterpret_cast<OVERLAPPED*>(&session_));
+			auto& session = _session_array[key];
+			if (session.acquire_iocount(key))
+				session.cancel_network();
+			if (session.release_iocount(false))
+				_iocp.post(*this, 0, static_cast<uintptr_t>(task::destory), reinterpret_cast<OVERLAPPED*>(&session));
 		}
 		inline virtual void destroy_session(unsigned long long key) noexcept {
 		};
-		inline static auto create_message(size_type size) noexcept -> message {
-			message _message(pool::instance().allocate(sizeof(header) + size));
-			header header_;
-			header_._size = 8;
-			_message.push(reinterpret_cast<char*>(&header_), sizeof(header));
-			return _message;
+		inline static auto create_message(size_type size) noexcept -> framework::message {
+			framework::message message(message_pool::instance().allocate(sizeof(header) + size));
+			framework::header header{ ._size = 8 };
+			message.push(reinterpret_cast<char*>(&header), sizeof(header));
+			return message;
 		}
 	private:
 		inline virtual void worker(bool result, unsigned long transferred, uintptr_t key, OVERLAPPED* overlapped) noexcept override {
@@ -93,7 +97,7 @@ namespace framework {
 				if (false != result) {
 					library::socket_address_ipv4 address;
 					if (task == task::accept) {
-						_listen.accept_inherit(connection);
+						connection.accept_inherit(_listen);
 						address = connection.accept_address();
 					}
 					else {
@@ -199,7 +203,7 @@ namespace framework {
 				" Message : %8u\n",
 				_monitor._accept_tps, _monitor._accept_total,
 				_monitor._receive_tps, _monitor._send_tps,
-				_session_array.size(), pool::size());
+				_session_array.size(), message_pool::size());
 
 			library::interlock_exchange(_monitor._accept_tps, 0);
 			library::interlock_exchange(_monitor._receive_tps, 0);

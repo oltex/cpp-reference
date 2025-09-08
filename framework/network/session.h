@@ -9,8 +9,8 @@
 #include <optional>
 
 namespace framework {
-	class session_array;
-	struct session final {
+	class session final {
+	public:
 		using size_type = unsigned int;
 		inline static unsigned long long _id = 0x10000;
 
@@ -27,11 +27,11 @@ namespace framework {
 		unsigned long _send_size;
 		unsigned long long _send_timeout;
 		unsigned long long _send_expire;
-		queue _send_queue;
+		message_queue _send_queue;
 		library::overlap _send_overlap;
-	public:
+
 		inline session(size_type const index) noexcept
-			: _key(index), _io_count(0x80000000), _receive_message(pool::instance().allocate()) {
+			: _key(index), _io_count(0x80000000), _receive_message(message_pool::instance().allocate()) {
 		};
 		inline explicit session(session const&) noexcept = delete;
 		inline explicit session(session&&) noexcept = delete;
@@ -93,7 +93,7 @@ namespace framework {
 			if (1 == _cancel_flag)
 				return false;
 			else {
-				framework::message message = pool::instance().allocate();
+				framework::message message(message_pool::instance().allocate());
 				if (!_receive_message.empty())
 					message.push(_receive_message.data() + _receive_message.front(), _receive_message.size());
 				_receive_message = std::move(message);
