@@ -30,7 +30,6 @@ namespace directx {
 			_component->CreateDeferredContext(0, &context);
 			return context;
 		}
-
 		inline auto texture_2d(D3D11_TEXTURE2D_DESC& desc, D3D11_SUBRESOURCE_DATA* data = nullptr) const noexcept -> ID3D11Texture2D* {
 			ID3D11Texture2D* texture;
 			_component->CreateTexture2D(&desc, data, &texture);

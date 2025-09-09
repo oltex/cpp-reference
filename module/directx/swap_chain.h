@@ -39,7 +39,7 @@ namespace directx {
 				.Windowed = true,
 				.SwapEffect = DXGI_SWAP_EFFECT_DISCARD
 			};
-			factory->CreateSwapChain(instance.data(), &desc, &data());
+			factory->CreateSwapChain(instance.data(), &desc, &_component);
 
 			factory->Release();
 			adapter->Release();
@@ -52,11 +52,11 @@ namespace directx {
 		inline ~swap_chain(void) noexcept = default;
 
 		inline void present(void) noexcept {
-			data()->Present(0, 0);
+			_component->Present(0, 0);
 		}
-		inline auto texture(void) noexcept -> ID3D11Texture2D* {
+		inline auto texture_2d(void) noexcept -> ID3D11Texture2D* {
 			ID3D11Texture2D* texture;
-			data()->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&texture));
+			_component->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&texture));
 			return texture;
 		}
 	};
