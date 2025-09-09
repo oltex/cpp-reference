@@ -18,7 +18,7 @@ namespace library {
 		//	_overlapped.hEvent = event.data();
 		//}
 		inline auto get_result(HANDLE handle, unsigned long* byte, bool const wait) noexcept -> bool {
-			return GetOverlappedResult(handle, &_overlapped, byte, wait);
+			return ::GetOverlappedResult(handle, &_overlapped, byte, wait);
 		}
 		inline auto has_completed(void) const noexcept -> bool {
 			return HasOverlappedIoCompleted(&_overlapped);

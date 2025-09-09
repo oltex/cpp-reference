@@ -3,12 +3,12 @@
 
 namespace library {
 	inline void read_barrier(void) noexcept {
-		_ReadBarrier();
+		::_ReadBarrier();
 	}
 	inline void write_barrier(void) noexcept {
-		_WriteBarrier();
+		::_WriteBarrier();
 	}
 	inline void read_write_barrier(void) noexcept {
-		_ReadWriteBarrier();
+		::_ReadWriteBarrier();
 	}
 }

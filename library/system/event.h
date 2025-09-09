@@ -6,7 +6,7 @@ namespace library {
 	public:
 		inline explicit event(void) noexcept = default;
 		inline explicit event(bool const manual, bool const initial_state) noexcept
-			: handle(CreateEventW(nullptr, manual, initial_state, nullptr)) {
+			: handle(::CreateEventW(nullptr, manual, initial_state, nullptr)) {
 		};
 		inline explicit event(event const&) noexcept = delete;
 		inline explicit event(event&& rhs) noexcept
@@ -20,16 +20,16 @@ namespace library {
 		inline virtual ~event(void) noexcept override = default;
 
 		inline void create(bool const manual, bool const initial_state) noexcept {
-			_handle = CreateEventW(nullptr, manual, initial_state, nullptr);
+			_handle = ::CreateEventW(nullptr, manual, initial_state, nullptr);
 		}
 		inline void set(void) noexcept {
-			SetEvent(_handle);
+			::SetEvent(_handle);
 		}
 		inline void reset(void) noexcept {
-			ResetEvent(_handle);
+			::ResetEvent(_handle);
 		}
 		inline void pulse(void) noexcept {
-			PulseEvent(_handle);
+			::PulseEvent(_handle);
 		}
 	};
 }

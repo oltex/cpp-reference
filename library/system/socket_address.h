@@ -19,6 +19,7 @@ namespace library {
 		inline virtual sockaddr& data(void) noexcept = 0;
 	};
 	class socket_address_ipv4 final : public socket_address {
+		sockaddr_in _sockaddr;
 	public:
 		inline explicit socket_address_ipv4(void) noexcept
 			: _sockaddr() {
@@ -72,10 +73,10 @@ namespace library {
 		inline virtual auto data(void) noexcept -> sockaddr & override {
 			return *reinterpret_cast<sockaddr*>(&_sockaddr);
 		}
-	private:
-		sockaddr_in _sockaddr;
 	};
 	class socket_address_storage final : public socket_address {
+	protected:
+		sockaddr_storage _sockaddr;
 	public:
 		inline explicit socket_address_storage(void) noexcept
 			:_sockaddr{} {
@@ -109,7 +110,5 @@ namespace library {
 		inline virtual sockaddr& data(void) noexcept override {
 			return *reinterpret_cast<sockaddr*>(&_sockaddr);
 		}
-	protected:
-		sockaddr_storage _sockaddr;
 	};
 }

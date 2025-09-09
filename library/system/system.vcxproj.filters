@@ -41,6 +41,7 @@
     <ClInclude Include="fence.h" />
     <ClInclude Include="barrier.h" />
     <ClInclude Include="file_descript.h" />
+    <ClInclude Include="component.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="example">

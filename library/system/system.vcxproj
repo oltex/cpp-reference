@@ -155,6 +155,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="barrier.h" />
+    <ClInclude Include="component.h" />
     <ClInclude Include="console.h" />
     <ClInclude Include="coroutine.h" />
     <ClInclude Include="critical_section.h" />

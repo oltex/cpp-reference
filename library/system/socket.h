@@ -15,21 +15,26 @@
 namespace library {
 	inline static void wsa_start_up(void) noexcept {
 		WSAData wsadata;
-		if (0 != WSAStartup(0x0202, &wsadata))
-			__debugbreak();
+		if (0 != ::WSAStartup(0x0202, &wsadata))
+			::__debugbreak();
 	};
 	inline static void wsa_clean_up(void) noexcept {
-		if (SOCKET_ERROR == WSACleanup())
-			__debugbreak();
+		if (SOCKET_ERROR == ::WSACleanup())
+			::__debugbreak();
 	};
 	inline static auto select(fd_set* read, fd_set* write, fd_set* exception, timeval* time) noexcept -> int {
 		int result = ::select(0, read, write, exception, time);
 		if (SOCKET_ERROR == result)
-			__debugbreak();
+			::__debugbreak();
 		return result;
 	}
 
 	class socket final {
+		SOCKET _socket;
+		inline static LPFN_ACCEPTEX _accept_ex;
+		inline static LPFN_CONNECTEX _connect_ex;
+		inline static LPFN_GETACCEPTEXSOCKADDRS _get_accept_ex_sockaddr;
+		inline static LPFN_DISCONNECTEX _disconnect_ex;
 	public:
 		enum class result : unsigned char {
 			complet, pending, close, fail
@@ -43,17 +48,17 @@ namespace library {
 				switch (GetLastError()) {
 				case WSANOTINITIALISED:
 				default:
-					__debugbreak();
+					::__debugbreak();
 				}
 			}
 		}
 		inline explicit socket(ADDRESS_FAMILY const address_family, int const type, int const protocol, unsigned long const flag) noexcept
-			: _socket(::WSASocket(address_family, type, protocol, nullptr, 0, flag)) {
+			: _socket(::WSASocketW(address_family, type, protocol, nullptr, 0, flag)) {
 			if (_socket == INVALID_SOCKET) {
 				switch (::WSAGetLastError()) {
 				case WSANOTINITIALISED:
 				default:
-					__debugbreak();
+					::__debugbreak();
 				}
 			}
 		}
@@ -67,22 +72,22 @@ namespace library {
 		inline auto operator=(socket const&) noexcept -> socket & = delete;
 		inline auto operator=(socket&& rhs) noexcept -> socket& {
 			if (INVALID_SOCKET == _socket)
-				closesocket(_socket);
+				::closesocket(_socket);
 			_socket = library::exchange(rhs._socket, INVALID_SOCKET);
 			return *this;
 		};
 		inline ~socket(void) noexcept {
 			if (INVALID_SOCKET == _socket)
-				closesocket(_socket);
+				::closesocket(_socket);
 		}
 
 		inline void create(ADDRESS_FAMILY const address_family, int const type, int const protocol) noexcept {
 			_socket = ::socket(address_family, type, protocol);
 			if (INVALID_SOCKET == _socket) {
-				switch (GetLastError()) {
+				switch (::GetLastError()) {
 				case WSANOTINITIALISED:
 				default:
-					__debugbreak();
+					::__debugbreak();
 				}
 			}
 		}
@@ -92,7 +97,7 @@ namespace library {
 				switch (::WSAGetLastError()) {
 				case WSANOTINITIALISED:
 				default:
-					__debugbreak();
+					::__debugbreak();
 				}
 			}
 		}
@@ -102,7 +107,7 @@ namespace library {
 				switch (GetLastError()) {
 				case WSAEADDRINUSE:
 				default:
-					__debugbreak();
+					::__debugbreak();
 				}
 			}
 			return result;
@@ -115,7 +120,7 @@ namespace library {
 				switch (GetLastError()) {
 				case WSAEINVAL:
 				default:
-					__debugbreak();
+					::__debugbreak();
 				}
 			}
 			return result;
@@ -132,7 +137,7 @@ namespace library {
 				case WSAEINTR:
 					break;
 				default:
-					__debugbreak();
+					::__debugbreak();
 				}
 			}
 			return library::pair<socket, socket_address_ipv4>(sock, socket_address);
@@ -148,7 +153,7 @@ namespace library {
 				case WSAECONNRESET:
 				case WSAECONNABORTED:
 				default:
-					__debugbreak();
+					::__debugbreak();
 				}
 			}
 			return result::complet;
@@ -164,7 +169,7 @@ namespace library {
 					close();
 					break;
 				default:
-					__debugbreak();
+					::__debugbreak();
 				}
 			}
 			return result;
@@ -180,18 +185,18 @@ namespace library {
 				case WSAECONNRESET:
 				case WSAECONNABORTED:
 				default:
-					__debugbreak();
+					::__debugbreak();
 				}
 			}
 			return result::complet;
 		}
 		inline void shutdown(int const how) const noexcept {
 			if (SOCKET_ERROR == ::shutdown(_socket, how))
-				__debugbreak();
+				::__debugbreak();
 		}
 		inline void close(void) noexcept {
 			if (INVALID_SOCKET != _socket) {
-				closesocket(_socket);
+				::closesocket(_socket);
 				_socket = INVALID_SOCKET;
 			}
 		}
@@ -207,7 +212,7 @@ namespace library {
 					break;
 				case WSAENOTCONN:
 				default:
-					__debugbreak();
+					::__debugbreak();
 				}
 			}
 			return result;
@@ -225,7 +230,7 @@ namespace library {
 					break;
 				case WSAENOTSOCK:
 				default:
-					__debugbreak();
+					::__debugbreak();
 				}
 			}
 			return result;
@@ -241,8 +246,8 @@ namespace library {
 		}
 		inline auto send(WSABUF* buffer, unsigned long count, unsigned long flag, overlap& overlap) noexcept -> result {
 			overlap.clear();
-			if (SOCKET_ERROR == WSASend(_socket, buffer, count, nullptr, flag, &overlap.data(), nullptr)) {
-				switch (GetLastError()) {
+			if (SOCKET_ERROR == ::WSASend(_socket, buffer, count, nullptr, flag, &overlap.data(), nullptr)) {
+				switch (::GetLastError()) {
 				case WSA_IO_PENDING:
 					return result::pending;
 				case WSAECONNRESET:
@@ -252,7 +257,7 @@ namespace library {
 					return result::close;
 				case WSAENOTSOCK:
 				default:
-					__debugbreak();
+					::__debugbreak();
 				}
 			}
 			return result::complet;
@@ -260,7 +265,7 @@ namespace library {
 		inline auto receive(char* const buffer, int const length, int const flag) noexcept -> int {
 			int result = ::recv(_socket, buffer, length, flag);
 			if (SOCKET_ERROR == result) {
-				switch (GetLastError()) {
+				switch (::GetLastError()) {
 				case WSAEWOULDBLOCK:
 					break;
 				case WSAECONNRESET:
@@ -269,7 +274,7 @@ namespace library {
 					break;
 				case WSAENOTCONN:
 				default:
-					__debugbreak();
+					::__debugbreak();
 				}
 			}
 			else if (0 == result)
@@ -280,16 +285,16 @@ namespace library {
 			return ::recvfrom(_socket, buffer, length, flag, &socket_address.data(), &from_length);
 		}
 		inline auto receive(WSABUF* buffer, unsigned long count, unsigned long* byte, unsigned long* flag) noexcept -> int {
-			int result = WSARecv(_socket, buffer, count, byte, flag, nullptr, nullptr);
+			int result = ::WSARecv(_socket, buffer, count, byte, flag, nullptr, nullptr);
 			if (SOCKET_ERROR == result) {
-				switch (GetLastError()) {
+				switch (::GetLastError()) {
 				case WSAECONNRESET:
 				case WSAECONNABORTED:
 					close();
 					break;
 				case WSAENOTSOCK:
 				default:
-					__debugbreak();
+					::__debugbreak();
 				}
 			}
 			return result;
@@ -306,8 +311,8 @@ namespace library {
 		}
 		inline auto receive(WSABUF* buffer, unsigned long count, unsigned long* flag, overlap& overlap) noexcept -> result {
 			overlap.clear();
-			if (SOCKET_ERROR == WSARecv(_socket, buffer, count, nullptr, flag, &overlap.data(), nullptr)) {
-				switch (GetLastError()) {
+			if (SOCKET_ERROR == ::WSARecv(_socket, buffer, count, nullptr, flag, &overlap.data(), nullptr)) {
+				switch (::GetLastError()) {
 				case WSA_IO_PENDING:
 					return result::pending;
 				case WSAECONNRESET:
@@ -315,22 +320,56 @@ namespace library {
 					return result::close;
 				case WSAENOTSOCK:
 				default:
-					__debugbreak();
+					::__debugbreak();
 				}
 			}
 			return result::complet;
 		}
 		inline void cancel_io(void) const noexcept {
-			CancelIo(reinterpret_cast<HANDLE>(_socket));
+			::CancelIo(reinterpret_cast<HANDLE>(_socket));
 		}
 		inline void cancel_io_ex(void) const noexcept {
-			CancelIoEx(reinterpret_cast<HANDLE>(_socket), nullptr);
+			::CancelIoEx(reinterpret_cast<HANDLE>(_socket), nullptr);
 		}
 		inline void cancel_io_ex(overlap& overlap) const noexcept {
-			CancelIoEx(reinterpret_cast<HANDLE>(_socket), &overlap.data());
+			::CancelIoEx(reinterpret_cast<HANDLE>(_socket), &overlap.data());
+		}
+		inline auto get_local_socket_address(void) const noexcept -> std::optional<socket_address_ipv4> {
+			socket_address_ipv4 address;
+			int length = address.size();
+			if (SOCKET_ERROR == ::getsockname(_socket, &address.data(), &length)) {
+				switch (::GetLastError()) {
+				default:
+					break;
+#pragma warning(suppress: 4065)
+				}
+				return std::nullopt;
+			}
+			return address;
+		}
+		inline auto get_remote_socket_address(void) const noexcept -> std::optional<socket_address_ipv4> {
+			socket_address_ipv4 address;
+			int length = address.size();
+			if (SOCKET_ERROR == ::getpeername(_socket, &address.data(), &length)) {
+				switch (::GetLastError()) {
+				default:
+					break;
+#pragma warning(suppress: 4065)
+				}
+				return std::nullopt;
+			}
+			return address;
+		}
+		inline static auto get_accept_ex_socket_address(void* buffer) noexcept -> library::pair<socket_address_ipv4, socket_address_ipv4> {
+			sockaddr* local_sockaddr = nullptr;
+			int local_sockaddr_length = 0;
+			sockaddr* remote_sockaddr = nullptr;
+			int remote_sockaddr_length = 0;
+			_get_accept_ex_sockaddr(buffer, 0, sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16, &local_sockaddr, &local_sockaddr_length, &remote_sockaddr, &remote_sockaddr_length);
+			return library::pair<socket_address_ipv4, socket_address_ipv4>(*reinterpret_cast<sockaddr_in*>(local_sockaddr), *reinterpret_cast<sockaddr_in*>(remote_sockaddr));
 		}
 		inline bool wsa_get_overlapped_result(overlap& overlap, unsigned long* transfer, bool const wait, unsigned long* flag) noexcept {
-			return WSAGetOverlappedResult(_socket, &overlap.data(), transfer, wait, flag);
+			return ::WSAGetOverlappedResult(_socket, &overlap.data(), transfer, wait, flag);
 		}
 		inline void set_option_tcp_nodelay(int const enable) const noexcept {
 			set_option(IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<char const*>(&enable), sizeof(int));
@@ -355,23 +394,21 @@ namespace library {
 			set_option(SOL_SOCKET, SO_UPDATE_CONNECT_CONTEXT, reinterpret_cast<char*>(&socket_.data()), sizeof(SOCKET));
 		}
 		inline void set_option(int const level, int const name, char const* value, int const length) const noexcept {
-			if (SOCKET_ERROR == setsockopt(_socket, level, name, value, length))
-				__debugbreak();
+			if (SOCKET_ERROR == ::setsockopt(_socket, level, name, value, length))
+				::__debugbreak();
 		}
-
 		//inline void get_option_connect_time(unsigned short const onoff, unsigned short const time) const noexcept {
 		//}
 		//inline void get_option(int const level, int const name, char* value, int* length) const noexcept {
 		//	if (SOCKET_ERROR == getsockopt(_socket, level, name, value, length))
-		//		__debugbreak(); /*SOL_SOCKET*/
+		//		::__debugbreak(); /*SOL_SOCKET*/
 		//}
-
 		inline void io_control_nonblocking(unsigned long const enable) const noexcept {
 			io_control(FIONBIO, enable);
 		}
 		inline void io_control(long const cmd, unsigned long arg) const noexcept {
-			if (SOCKET_ERROR == ioctlsocket(_socket, cmd, &arg))
-				__debugbreak();
+			if (SOCKET_ERROR == ::ioctlsocket(_socket, cmd, &arg))
+				::__debugbreak();
 		}
 		inline static void wsa_io_control_acccept_ex(void) noexcept {
 			socket sock(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -399,50 +436,10 @@ namespace library {
 		}
 		inline void wsa_io_control(unsigned long control_code, void* in_buffer, unsigned long in_buffer_size, void* out_buffer, unsigned long out_buffer_size, unsigned long& byte_returned) noexcept {
 			if (SOCKET_ERROR == ::WSAIoctl(_socket, control_code, in_buffer, in_buffer_size, out_buffer, out_buffer_size, &byte_returned, nullptr, nullptr))
-				__debugbreak();
-		}
-		inline auto get_local_socket_address(void) const noexcept -> std::optional<socket_address_ipv4> {
-			socket_address_ipv4 socket_address;
-			int length = socket_address.size();
-			if (SOCKET_ERROR == getsockname(_socket, &socket_address.data(), &length)) {
-				switch (GetLastError()) {
-				default:
-					break;
-#pragma warning(suppress: 4065)
-				}
-				return std::nullopt;
-			}
-			return socket_address;
-		}
-		inline auto get_remote_socket_address(void) const noexcept -> std::optional<socket_address_ipv4> {
-			socket_address_ipv4 socket_address;
-			int length = socket_address.size();
-			if (SOCKET_ERROR == getpeername(_socket, &socket_address.data(), &length)) {
-				switch (GetLastError()) {
-				default:
-					break;
-#pragma warning(suppress: 4065)
-				}
-				return std::nullopt;
-			}
-			return socket_address;
-		}
-		inline static auto get_accept_ex_socket_address(void* buffer) noexcept -> library::pair<socket_address_ipv4, socket_address_ipv4> {
-			sockaddr* local_sockaddr = nullptr;
-			int local_sockaddr_length = 0;
-			sockaddr* remote_sockaddr = nullptr;
-			int remote_sockaddr_length = 0;
-			_get_accept_ex_sockaddr(buffer, 0, sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16, &local_sockaddr, &local_sockaddr_length, &remote_sockaddr, &remote_sockaddr_length);
-			return library::pair<socket_address_ipv4, socket_address_ipv4>(*reinterpret_cast<sockaddr_in*>(local_sockaddr), *reinterpret_cast<sockaddr_in*>(remote_sockaddr));
+				::__debugbreak();
 		}
 		inline auto data(void) noexcept -> SOCKET& {
 			return _socket;
 		}
-	private:
-		SOCKET _socket;
-		inline static LPFN_ACCEPTEX _accept_ex;
-		inline static LPFN_CONNECTEX _connect_ex;
-		inline static LPFN_GETACCEPTEXSOCKADDRS _get_accept_ex_sockaddr;
-		inline static LPFN_DISCONNECTEX _disconnect_ex;
 	};
 }

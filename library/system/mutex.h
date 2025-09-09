@@ -5,7 +5,7 @@ namespace library {
 	class mutex final : public handle {
 	public:
 		inline explicit mutex(bool const initial_owner) noexcept
-			: handle(CreateMutexW(nullptr, initial_owner, nullptr)) {
+			: handle(::CreateMutexW(nullptr, initial_owner, nullptr)) {
 		};
 		inline explicit mutex(mutex const& rhs) noexcept = delete;
 		inline explicit mutex(mutex&& rhs) noexcept

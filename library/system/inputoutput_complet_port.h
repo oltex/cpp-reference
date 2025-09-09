@@ -10,7 +10,7 @@ namespace library {
 	public:
 		inline explicit inputoutput_complet_port(void) noexcept = default;
 		inline explicit inputoutput_complet_port(unsigned long const concurrent_thread) noexcept
-			: handle(CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, concurrent_thread)) {
+			: handle(::CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, concurrent_thread)) {
 		};
 		inline explicit inputoutput_complet_port(inputoutput_complet_port const&) noexcept = delete;
 		inline explicit inputoutput_complet_port(inputoutput_complet_port&& rhs) noexcept
@@ -24,21 +24,21 @@ namespace library {
 		inline virtual ~inputoutput_complet_port(void) noexcept override = default;
 
 		inline void create(unsigned long const concurrent_thread) noexcept {
-			_handle = CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, concurrent_thread);
+			_handle = ::CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, concurrent_thread);
 		}
 		inline void connect(socket& socket, ULONG_PTR const key) noexcept {
-			CreateIoCompletionPort(reinterpret_cast<HANDLE>(socket.data()), _handle, key, 0);
+			::CreateIoCompletionPort(reinterpret_cast<HANDLE>(socket.data()), _handle, key, 0);
 		}
 		inline auto get_queue_state(unsigned long const milli_second) noexcept -> library::tuple<bool, DWORD, ULONG_PTR, OVERLAPPED*> {
 			library::tuple<bool, DWORD, ULONG_PTR, OVERLAPPED*> result;
-			result.get<0>() = GetQueuedCompletionStatus(_handle, &result.get<1>(), &result.get<2>(), &result.get<3>(), milli_second);
+			result.get<0>() = ::GetQueuedCompletionStatus(_handle, &result.get<1>(), &result.get<2>(), &result.get<3>(), milli_second);
 			return result;
 		}
 		//inline auto get_queue_state_ex(void) noexcept {
 		//	GetQueuedCompletionStatusEx()
 		//}
 		inline void post_queue_state(unsigned long transferred, uintptr_t key, OVERLAPPED* overlapped) noexcept {
-			PostQueuedCompletionStatus(_handle, transferred, key, overlapped);
+			::PostQueuedCompletionStatus(_handle, transferred, key, overlapped);
 		}
 	};
 }

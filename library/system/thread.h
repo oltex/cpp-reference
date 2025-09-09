@@ -12,7 +12,6 @@ namespace library {
 	}
 
 	class thread final : public handle {
-	private:
 		template <typename tuple, size_t... index>
 		inline static unsigned int __stdcall invoke(void* arg) noexcept {
 			const std::unique_ptr<tuple> value(reinterpret_cast<tuple*>(arg));
