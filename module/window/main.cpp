@@ -1,6 +1,35 @@
-#include "Windows.h"
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
 
-//auto message(void) noexcept -> MSG;
-//LRESULT CALLBACK procedure(HWND const wnd, UINT const message, WPARAM const wparam, LPARAM const lparam) noexcept;
-int __stdcall wWinMain(_In_ HINSTANCE hinstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow) {
+#include "instance.h"
+#include "class.h"
+#include "struct.h"
+#include <Windows.h>
+
+int __stdcall wWinMain(_In_ HINSTANCE hinstance, _In_opt_ HINSTANCE prev_hinstance, _In_ LPWSTR command_line, _In_ int command_show) {
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
+	window::instance::construct(hinstance);
+	window::cursor cursor(window::load_image(IDC_ARROW, IMAGE_CURSOR, 0, 0, LR_DEFAULTSIZE | LR_SHARED));
+
+	window::_class _class;
+	_class.class_name(L"window");
+	_class.procedure(window::procedure);
+	_class.style(CS_HREDRAW | CS_VREDRAW);
+	_class.cursor(cursor);
+	_class.regist();
+
+	window::_struct _struct;
+	_struct.class_name(L"window");
+	_struct.style(WS_OVERLAPPEDWINDOW);
+	_struct.x(CW_USEDEFAULT);
+	_struct.width(CW_USEDEFAULT);
+
+	window::handle* handle = new window::handle;
+	_struct.create_window(handle);
+
+	handle->show(true);
+	MSG msg = window::message();
+	return static_cast<int>(msg.wParam);
 }

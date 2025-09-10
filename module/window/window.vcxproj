@@ -154,6 +154,7 @@
     <ClInclude Include="class.h" />
     <ClInclude Include="cursor.h" />
     <ClInclude Include="handle.h" />
+    <ClInclude Include="icon.h" />
     <ClInclude Include="instance.h" />
     <ClInclude Include="struct.h" />
   </ItemGroup>
