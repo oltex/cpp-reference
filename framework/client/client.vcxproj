@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{2eb759eb-e820-4d88-8988-dd5091a4429f}</ProjectGuid>
-    <RootNamespace>directx</RootNamespace>
+    <ProjectGuid>{42c34441-8eec-465a-9f10-913ec7c51391}</ProjectGuid>
+    <RootNamespace>client</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -151,15 +151,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="buffer.h" />
-    <ClInclude Include="context.h" />
-    <ClInclude Include="device.h" />
-    <ClInclude Include="float.h" />
-    <ClInclude Include="render_target_view.h" />
-    <ClInclude Include="shader_resource_view.h" />
-    <ClInclude Include="swap_chain.h" />
-    <ClInclude Include="texture_2d.h" />
-    <ClInclude Include="unorder_access_view.h" />
+    <ClInclude Include="client.h" />
+    <ClInclude Include="헤더.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

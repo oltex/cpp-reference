@@ -1,7 +1,7 @@
 #pragma once
-#pragma comment(lib, "d3d11.lib")
 #include "library/system/component.h"
 #include "device.h"
+#pragma comment(lib, "d3d11.lib")
 #include <d3d11.h>
 
 namespace directx {

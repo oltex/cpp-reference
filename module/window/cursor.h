@@ -1,5 +1,4 @@
 #pragma once
-#include "instance.h"
 #include <Windows.h>
 
 namespace window {
@@ -12,6 +11,9 @@ namespace window {
 		};
 		inline explicit cursor(HANDLE handle) noexcept
 			: _hcursor(static_cast<HCURSOR>(handle)), _share(true) {
+		};
+		inline explicit cursor(HCURSOR handle) noexcept
+			: _hcursor(handle), _share(true) {
 		};
 		inline explicit cursor(cursor const&) noexcept = delete;
 		inline explicit cursor(cursor&&) noexcept = delete;

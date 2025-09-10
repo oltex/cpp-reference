@@ -1,7 +1,8 @@
 #pragma once
+#include "library/system/component.h"
+#include "render_target_view.h"
 #pragma comment(lib, "d3d11.lib")
 #include <d3d11.h>
-#include "library/system/component.h"
 
 namespace directx {
 	class context : public library::component<ID3D11DeviceContext> {
@@ -15,5 +16,9 @@ namespace directx {
 		inline auto operator=(context const&) noexcept -> context & = delete;
 		inline auto operator=(context&&) noexcept -> context & = default;
 		inline ~context(void) noexcept = default;
+
+		inline auto clear_render_target_view(render_target_view& rtv, ) {
+			_component->ClearRenderTargetView(rtv.data(),)
+		}
 	};
 }

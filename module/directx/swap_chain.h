@@ -1,7 +1,7 @@
 #pragma once
-#pragma comment(lib, "d3d11.lib")
 #include "device.h"
 #include "library/system/component.h"
+#pragma comment(lib, "d3d11.lib")
 #include <d3d11.h>
 
 namespace directx {
@@ -54,7 +54,7 @@ namespace directx {
 		inline void present(void) noexcept {
 			_component->Present(0, 0);
 		}
-		inline auto texture_2d(void) noexcept -> ID3D11Texture2D* {
+		inline auto create_texture_2d(void) noexcept -> ID3D11Texture2D* {
 			ID3D11Texture2D* texture;
 			_component->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&texture));
 			return texture;

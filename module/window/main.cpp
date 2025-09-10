@@ -15,7 +15,6 @@ int __stdcall wWinMain(_In_ HINSTANCE hinstance, _In_opt_ HINSTANCE prev_hinstan
 
 	window::_class _class;
 	_class.class_name(L"window");
-	_class.procedure(window::procedure);
 	_class.style(CS_HREDRAW | CS_VREDRAW);
 	_class.cursor(cursor);
 	_class.regist();
@@ -26,10 +25,14 @@ int __stdcall wWinMain(_In_ HINSTANCE hinstance, _In_opt_ HINSTANCE prev_hinstan
 	_struct.x(CW_USEDEFAULT);
 	_struct.width(CW_USEDEFAULT);
 
-	window::handle* handle = new window::handle;
+	window::handle handle;
 	_struct.create_window(handle);
 
-	handle->show(true);
-	MSG msg = window::message();
-	return static_cast<int>(msg.wParam);
+	handle.show(true);
+	while (auto msg = window::get_message()) {
+		window::translate_message(*msg);
+		window::dispatch_message(*msg);
+	}
+	//return static_cast<int>(msg.wParam);
+	return 0;
 }

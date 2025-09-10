@@ -13,6 +13,7 @@
     <ClInclude Include="brush.h" />
     <ClInclude Include="pen.h" />
     <ClInclude Include="font.h" />
+    <ClInclude Include="procedure.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

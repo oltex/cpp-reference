@@ -162,6 +162,7 @@
     <ClInclude Include="instance.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="pen.h" />
+    <ClInclude Include="procedure.h" />
     <ClInclude Include="struct.h" />
   </ItemGroup>
   <ItemGroup>

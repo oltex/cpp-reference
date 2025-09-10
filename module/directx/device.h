@@ -1,8 +1,8 @@
 #pragma once
-#pragma comment(lib, "d3d11.lib")
-#include <d3d11.h>
 #include "library/system/component.h"
 #include "library/pattern/singleton.h"
+#pragma comment(lib, "d3d11.lib")
+#include <d3d11.h>
 
 namespace directx {
 	class device : public library::component<ID3D11Device>, public library::singleton<device> {

@@ -5,6 +5,11 @@
     <ClInclude Include="swap_chain.h" />
     <ClInclude Include="texture_2d.h" />
     <ClInclude Include="context.h" />
+    <ClInclude Include="render_target_view.h" />
+    <ClInclude Include="shader_resource_view.h" />
+    <ClInclude Include="unorder_access_view.h" />
+    <ClInclude Include="buffer.h" />
+    <ClInclude Include="float.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

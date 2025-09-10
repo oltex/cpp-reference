@@ -1,14 +1,15 @@
 #pragma once
 #include "library/pattern/singleton.h"
 #include "library/memory.h"
+#include "cursor.h"
 #include <Windows.h>
 
 namespace window {
 	inline static auto load_image(wchar_t const* const name, unsigned int const type, int const cx, int const cy, unsigned int const fu_load) noexcept -> HANDLE {
 		return ::LoadImageW(nullptr, name, type, cy, cy, fu_load);
 	}
-	inline static auto load_cursor(wchar_t const* const name) noexcept -> HCURSOR {
-		return ::LoadCursorW(nullptr, name);
+	inline static auto load_cursor(wchar_t const* const name) noexcept -> cursor {
+		return cursor(::LoadCursorW(nullptr, name));
 	}
 	inline static auto load_icon(wchar_t const* const name) noexcept -> HICON {
 		return ::LoadIconW(nullptr, name);

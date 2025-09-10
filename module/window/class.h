@@ -1,5 +1,6 @@
 #pragma once
 #include "instance.h"
+#include "procedure.h"
 #include "icon.h"
 #include "cursor.h"
 #include "handle.h"
@@ -24,12 +25,8 @@ namespace window {
 		//inline static void unregist(void) const noexcept {
 		//	UnregisterClassW(_wndclassex.lpszClassName, _wndclassex.hInstance);
 		//}
-
 		inline void style(unsigned int style) noexcept {
 			_wndclassex.style = style;
-		}
-		inline void procedure(WNDPROC const lpfnWndProc) noexcept {
-			_wndclassex.lpfnWndProc = lpfnWndProc;
 		}
 		inline void class_extra(int const cbClsExtra) noexcept {
 			_wndclassex.cbClsExtra = cbClsExtra;
@@ -60,4 +57,3 @@ namespace window {
 		}
 	};
 }
-//_wcex.lpfnWndProc = DefWindowProcW;
