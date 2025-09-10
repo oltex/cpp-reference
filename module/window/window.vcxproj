@@ -151,11 +151,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="bitmap.h" />
+    <ClInclude Include="brush.h" />
     <ClInclude Include="class.h" />
     <ClInclude Include="cursor.h" />
+    <ClInclude Include="device_context.h" />
+    <ClInclude Include="font.h" />
     <ClInclude Include="handle.h" />
     <ClInclude Include="icon.h" />
     <ClInclude Include="instance.h" />
+    <ClInclude Include="object.h" />
+    <ClInclude Include="pen.h" />
     <ClInclude Include="struct.h" />
   </ItemGroup>
   <ItemGroup>

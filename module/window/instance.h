@@ -38,3 +38,5 @@ namespace window {
 		}
 	};
 }
+
+//(static_cast<HBITMAP>(LoadImageW(hInst, name, IMAGE_BITMAP, cx, cy, fuLoad)))

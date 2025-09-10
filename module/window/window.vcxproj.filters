@@ -7,6 +7,12 @@
     <ClInclude Include="instance.h" />
     <ClInclude Include="cursor.h" />
     <ClInclude Include="icon.h" />
+    <ClInclude Include="device_context.h" />
+    <ClInclude Include="object.h" />
+    <ClInclude Include="bitmap.h" />
+    <ClInclude Include="brush.h" />
+    <ClInclude Include="pen.h" />
+    <ClInclude Include="font.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
