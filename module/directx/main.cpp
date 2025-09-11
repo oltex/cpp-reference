@@ -7,15 +7,14 @@
 #include "module/window/class.h"
 #include "module/window/struct.h"
 
-#include "device.h"
-#include "float.h"
+//#include "d3d11/device.h"
+#include "dxgi/device.h"
 
 
 int __stdcall wWinMain(_In_ HINSTANCE hinstance, _In_opt_ HINSTANCE prev_hinstance, _In_ LPWSTR command_line, _In_ int command_show) {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-
 	window::instance::construct(hinstance);
-	directx::device::instance();
+	//d3d11::device::instance();
 	window::handle handle;
 	{
 		window::_class _class;
@@ -44,6 +43,5 @@ int __stdcall wWinMain(_In_ HINSTANCE hinstance, _In_opt_ HINSTANCE prev_hinstan
 			}
 		}
 	}
-	//return static_cast<int>(msg.wParam);
 	return 0;
 }

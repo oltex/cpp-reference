@@ -1,25 +1,27 @@
 #pragma once
 #include "library/system/component.h"
 #include "library/pattern/singleton.h"
+#include "../dxgi/device.h"
 #pragma comment(lib, "d3d11.lib")
 #include <d3d11.h>
+#include <cassert>
 
-namespace directx {
-	class device : public library::component<ID3D11Device>, public library::singleton<device> {
-		friend class library::singleton<device>;
+namespace d3d11 {
+	class declspec_dll device : public library::component<ID3D11Device>, public library::singleton<device, true> {
+		friend class library::singleton<device, true>;
 		using base = library::component<ID3D11Device>;
 
-		inline explicit device(void) noexcept
+		inline explicit device(D3D_DRIVER_TYPE driver_type, unsigned int flag) noexcept
 			: base() {
-			D3D_FEATURE_LEVEL freature_level{};
-			::D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, 0, D3D11_CREATE_DEVICE_DEBUG, nullptr, 0, D3D11_SDK_VERSION, &_component, &freature_level, nullptr);
+			auto result = ::D3D11CreateDevice(nullptr, driver_type, 0, flag, nullptr, 0, D3D11_SDK_VERSION, &_component, nullptr, nullptr);
+			assert(SUCCEEDED(result));
 		}
 		inline explicit device(device const&) noexcept = delete;
 		inline explicit device(device&&) noexcept = delete;
 		inline auto operator=(device const&) noexcept -> device & = delete;
 		inline auto operator=(device&&) noexcept -> device & = delete;
 		inline ~device(void) noexcept = default;
-
+	public:
 		inline auto get_immediate_context(void) const noexcept -> ID3D11DeviceContext* {
 			ID3D11DeviceContext* context;
 			_component->GetImmediateContext(&context);
@@ -34,6 +36,10 @@ namespace directx {
 			ID3D11Texture2D* texture;
 			_component->CreateTexture2D(&desc, data, &texture);
 			return texture;
+		}
+		inline auto query_interface_dxgi_device(void) noexcept -> dxgi::device {
+			IDXGIDevice* device = reinterpret_cast<IDXGIDevice*>(base::query_interface(__uuidof(IDXGIDevice)));
+			return dxgi::device(device);
 		}
 	};
 }

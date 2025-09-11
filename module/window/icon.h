@@ -25,4 +25,8 @@ namespace window {
 			return _hicon;
 		};
 	};
+
+	inline static auto load_icon(wchar_t const* const name) noexcept -> icon {
+		return icon(::LoadIconW(nullptr, name));
+	}
 }

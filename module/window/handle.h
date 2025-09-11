@@ -84,7 +84,6 @@ namespace window {
 			return ::InvalidateRect(_hwnd, rect, erase);
 		}
 
-
 		inline void virtual mouse_move(int const x, int const y) noexcept {
 		}
 		inline void virtual left_butten_down(int const x, int const y) noexcept {

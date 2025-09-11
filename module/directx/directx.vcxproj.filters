@@ -1,17 +1,68 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="device.h" />
-    <ClInclude Include="swap_chain.h" />
-    <ClInclude Include="texture_2d.h" />
-    <ClInclude Include="context.h" />
-    <ClInclude Include="render_target_view.h" />
-    <ClInclude Include="shader_resource_view.h" />
-    <ClInclude Include="unorder_access_view.h" />
-    <ClInclude Include="buffer.h" />
-    <ClInclude Include="float.h" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="dxgi\factory.cpp">
+      <Filter>dxgi</Filter>
+    </ClCompile>
+    <ClCompile Include="d3d11\texture_2d.cpp">
+      <Filter>d3d11</Filter>
+    </ClCompile>
+    <ClCompile Include="d3d11\device.cpp">
+      <Filter>d3d11</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
+    <Filter Include="dxgi">
+      <UniqueIdentifier>{72fca465-90fe-47b6-94de-a40b05e27180}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="d3d11">
+      <UniqueIdentifier>{5691e213-2028-4895-8223-98da4686d8cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dmath">
+      <UniqueIdentifier>{64cb965d-f149-47a4-92a0-daa95e4aa2e5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="d3d11\buffer.h">
+      <Filter>d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="d3d11\context.h">
+      <Filter>d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="d3d11\device.h">
+      <Filter>d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="d3d11\render_target_view.h">
+      <Filter>d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="d3d11\shader_resource_view.h">
+      <Filter>d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="d3d11\texture_2d.h">
+      <Filter>d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="d3d11\unorder_access_view.h">
+      <Filter>d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="dxgi\swap_chain.h">
+      <Filter>dxgi</Filter>
+    </ClInclude>
+    <ClInclude Include="dxgi\device.h">
+      <Filter>dxgi</Filter>
+    </ClInclude>
+    <ClInclude Include="dxgi\adapter.h">
+      <Filter>dxgi</Filter>
+    </ClInclude>
+    <ClInclude Include="dmath\float.h">
+      <Filter>dmath</Filter>
+    </ClInclude>
+    <ClInclude Include="dxgi\factory.h">
+      <Filter>dxgi</Filter>
+    </ClInclude>
+    <ClInclude Include="d3d11\depth_stencil_view.h">
+      <Filter>d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="directx.h" />
   </ItemGroup>
 </Project>

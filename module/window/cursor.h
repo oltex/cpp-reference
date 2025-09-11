@@ -37,4 +37,8 @@ namespace window {
 			return _hcursor;
 		}
 	};
+
+	inline static auto load_cursor(wchar_t const* const name) noexcept -> cursor {
+		return cursor(::LoadCursorW(nullptr, name));
+	}
 }

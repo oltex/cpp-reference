@@ -1,18 +1,10 @@
 #pragma once
-#include "library/pattern/singleton.h"
 #include "library/memory.h"
-#include "cursor.h"
 #include <Windows.h>
 
 namespace window {
 	inline static auto load_image(wchar_t const* const name, unsigned int const type, int const cx, int const cy, unsigned int const fu_load) noexcept -> HANDLE {
 		return ::LoadImageW(nullptr, name, type, cy, cy, fu_load);
-	}
-	inline static auto load_cursor(wchar_t const* const name) noexcept -> cursor {
-		return cursor(::LoadCursorW(nullptr, name));
-	}
-	inline static auto load_icon(wchar_t const* const name) noexcept -> HICON {
-		return ::LoadIconW(nullptr, name);
 	}
 
 	class instance final {
@@ -28,9 +20,6 @@ namespace window {
 		inline static void construct(HINSTANCE const hinstance) noexcept {
 			_hinstance = hinstance;
 		}
-		inline static void destruct(void) noexcept {
-		}
-
 		inline static auto load_image(wchar_t const* const name, unsigned int const type, int const cx, int const cy, unsigned int const fu_load) noexcept -> HANDLE {
 			return ::LoadImageW(_hinstance, name, type, cy, cy, fu_load);
 		}

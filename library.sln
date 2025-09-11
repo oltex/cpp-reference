@@ -5,6 +5,7 @@ VisualStudioVersion = 17.9.34723.18
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "library", "library", "{16C02BB2-DD27-40EE-8ECE-B93587C9E562}"
 	ProjectSection(SolutionItems) = preProject
+		library\define.h = library\define.h
 		library\function.h = library\function.h
 		library\memory.h = library\memory.h
 		library\template.h = library\template.h

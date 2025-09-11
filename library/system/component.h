@@ -65,7 +65,8 @@ namespace library {
 		inline auto operator=(component const&) noexcept -> component & = delete;
 		inline auto operator=(component&&) noexcept -> component & = delete;
 		inline ~component(void) noexcept {
-			_unknown->Release();
+			if (nullptr != _unknown)
+				_unknown->Release();
 		};
 
 		template<typename type>
