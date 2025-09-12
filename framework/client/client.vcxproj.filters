@@ -2,9 +2,19 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="client.h" />
-    <ClInclude Include="헤더.h" />
+    <ClInclude Include="graphic.h">
+      <Filter>component</Filter>
+    </ClInclude>
+    <ClInclude Include="window.h">
+      <Filter>component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="component">
+      <UniqueIdentifier>{26fd3a4f-278f-45c1-bfd6-547c8013bd47}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

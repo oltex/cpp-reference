@@ -151,6 +151,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="singleton.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="command.h" />

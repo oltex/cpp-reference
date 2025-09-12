@@ -27,7 +27,7 @@
     <ClInclude Include="d3d11\buffer.h">
       <Filter>d3d11</Filter>
     </ClInclude>
-    <ClInclude Include="d3d11\context.h">
+    <ClInclude Include="d3d11\device_context.h">
       <Filter>d3d11</Filter>
     </ClInclude>
     <ClInclude Include="d3d11\device.h">
@@ -64,5 +64,11 @@
       <Filter>d3d11</Filter>
     </ClInclude>
     <ClInclude Include="directx.h" />
+    <ClInclude Include="d3d11\view_port.h">
+      <Filter>d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="d3d11\texture_2d_descript.h">
+      <Filter>d3d11</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

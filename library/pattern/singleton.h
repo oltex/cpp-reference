@@ -33,14 +33,21 @@ namespace library {
 		template<typename... argument>
 		inline static auto construct(argument&&... arg) noexcept -> type& {
 			_instance = library::allocate<type>();
-			library::construct(*_instance, std::forward<argument>(arg)...);
+			if constexpr (std::is_class_v<type>)
+				if constexpr (sizeof...(argument) == 0)
+					::new(reinterpret_cast<void*>(_instance)) type;
+				else
+					::new(reinterpret_cast<void*>(_instance)) type(std::forward<argument>(arg)...);
+			else if constexpr (0 < sizeof...(argument))
+#pragma warning(suppress: 6011)
+				* _instance = type(std::forward<argument>(arg)...);
 			return *_instance;
 		}
 		inline static auto instance(void) noexcept -> type& {
 			return *_instance;
 		}
 		inline static void destruct(void) noexcept {
-			library::destruct(*_instance);
+			_instance->~type();
 			library::deallocate(_instance);
 		}
 	};
@@ -58,8 +65,12 @@ namespace library {
 		inline explicit singleton(void) noexcept = default;
 		inline ~singleton(void) noexcept = default;
 	public:
-		static auto construct(void) noexcept -> type&;
-		//inline static auto instance(void) noexcept -> type&;
-		//inline static void destruct(void) noexcept;
+		template<typename... argument>
+#pragma warning(suppress: 4506)
+		inline static auto construct(argument&&... arg) noexcept -> type&;
+#pragma warning(suppress: 4506)
+		inline static auto instance(void) noexcept -> type&;
+		inline static void destruct(void) noexcept;
+#pragma warning(suppress: 4661)
 	};
 }
