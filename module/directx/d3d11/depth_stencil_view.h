@@ -7,7 +7,7 @@ namespace d3d11 {
 	class depth_stencil_view : public library::component<ID3D11DepthStencilView> {
 		using base = library::component<ID3D11DepthStencilView>;
 	public:
-		inline explicit depth_stencil_view(ID3D11DepthStencilView* view) noexcept
+		inline explicit depth_stencil_view(ID3D11DepthStencilView* view = nullptr) noexcept
 			: base(view) {
 		}
 		inline explicit depth_stencil_view(depth_stencil_view const&) noexcept = default;

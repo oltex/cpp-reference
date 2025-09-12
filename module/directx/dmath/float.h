@@ -1,7 +1,7 @@
 #pragma once
 #include <DirectXMath.h>
 
-namespace d3d11 {
+namespace dmath {
 	//typedef XMINT2 _int2;
 	//typedef XMINT3 _int3;
 	//typedef XMINT4 _int4;
@@ -26,7 +26,7 @@ namespace d3d11 {
 	//	inline auto load(void) const noexcept -> vector {
 	//		return DirectX::XMLoadInt4(&_int4);
 	//	}
-	//	inline void store(d3d11::fvector vector) noexcept {
+	//	inline void store(dmath::fvector vector) noexcept {
 	//		DirectX::XMStoreInt4(&_int4, vector);
 	//	}
 	//};
@@ -46,7 +46,7 @@ namespace d3d11 {
 		inline auto load(void) const noexcept -> vector {
 			return DirectX::XMLoadFloat2(&_float2);
 		}
-		inline void store(d3d11::fvector vector) noexcept {
+		inline void store(dmath::fvector vector) noexcept {
 			DirectX::XMStoreFloat2(&_float2, vector);
 		}
 	};
@@ -63,14 +63,17 @@ namespace d3d11 {
 		inline auto load(void) const noexcept -> vector {
 			return DirectX::XMLoadFloat3(&_float3);
 		}
-		inline void store(d3d11::fvector vector) noexcept {
+		inline void store(dmath::fvector vector) noexcept {
 			DirectX::XMStoreFloat3(&_float3, vector);
 		}
 	};
-	class float4 {
-		DirectX::XMFLOAT4 _float4;
-	public:
-		inline explicit float4(void) noexcept = default;
+	struct float4 : public DirectX::XMFLOAT4 {
+		inline explicit float4(float x, float y, float z, float w) noexcept {
+			this->x = x;
+			this->y = y;
+			this->z = z;
+			this->w = w;
+		};
 		inline explicit float4(float4 const&) noexcept = default;
 		inline explicit float4(float4&&) noexcept = default;
 		inline auto operator=(float4 const&) noexcept -> float4 & = default;
@@ -78,10 +81,10 @@ namespace d3d11 {
 		inline ~float4(void) noexcept = default;
 
 		inline auto load(void) const noexcept -> vector {
-			return DirectX::XMLoadFloat4(&_float4);
+			return DirectX::XMLoadFloat4(this);
 		}
-		inline void store(d3d11::fvector vector) noexcept {
-			DirectX::XMStoreFloat4(&_float4, vector);
+		inline void store(dmath::fvector vector) noexcept {
+			DirectX::XMStoreFloat4(this, vector);
 		}
 	};
 

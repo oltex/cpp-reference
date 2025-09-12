@@ -10,7 +10,7 @@ namespace d3d11 {
 	class device_context : public library::component<ID3D11DeviceContext> {
 		using base = library::component<ID3D11DeviceContext>;
 	public:
-		inline explicit device_context(ID3D11DeviceContext* device_context) noexcept
+		inline explicit device_context(ID3D11DeviceContext* device_context = nullptr) noexcept
 			: base(device_context) {
 		}
 		inline explicit device_context(device_context const&) noexcept = default;
@@ -19,12 +19,7 @@ namespace d3d11 {
 		inline auto operator=(device_context&&) noexcept -> device_context & = default;
 		inline ~device_context(void) noexcept = default;
 
-		inline auto clear_render_target_view(render_target_view& rtv, float color[4]) noexcept {
-			_component->ClearRenderTargetView(rtv.data(), color);
-		}
-		inline auto set_render_target(render_target_view& rtv, depth_stencil_view& dsv) noexcept {
-			_component->OMGetRenderTargets(1, &rtv.data(), &dsv.data());
-		}
+
 		inline void set_view_port(unsigned int number, view_port* view_port) noexcept {
 			_component->RSSetViewports(number, view_port);
 		}
@@ -35,6 +30,16 @@ namespace d3d11 {
 			unsigned int count;
 			_component->RSGetViewports(&count, nullptr);
 		}
+		inline auto set_render_target(render_target_view& rtv, depth_stencil_view& dsv) noexcept {
+			_component->OMSetRenderTargets(1, &rtv.data(), dsv.data());
+		}
+		inline auto clear_render_target_view(render_target_view& rtv, float color[4]) noexcept {
+			_component->ClearRenderTargetView(rtv.data(), color);
+		}
+		inline auto clear_depth_stencil_view(depth_stencil_view& dsv, unsigned int clear_flag,float depth, unsigned char stencil) noexcept {
+			_component->ClearDepthStencilView(dsv.data(), clear_flag, depth, stencil);
+		}
+
 
 		//m_pContext->RSSetViewports(1, &Viewport);
 

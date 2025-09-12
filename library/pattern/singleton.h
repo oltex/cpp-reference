@@ -70,6 +70,7 @@ namespace library {
 		inline static auto construct(argument&&... arg) noexcept -> type&;
 #pragma warning(suppress: 4506)
 		inline static auto instance(void) noexcept -> type&;
+#pragma warning(suppress: 4506)
 		inline static void destruct(void) noexcept;
 #pragma warning(suppress: 4661)
 	};

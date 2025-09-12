@@ -7,7 +7,7 @@ namespace d3d11 {
 	class render_target_view : public library::component<ID3D11RenderTargetView> {
 		using base = library::component<ID3D11RenderTargetView>;
 	public:
-		inline explicit render_target_view(ID3D11RenderTargetView* view) noexcept
+		inline explicit render_target_view(ID3D11RenderTargetView* view = nullptr) noexcept
 			: base(view) {
 		}
 		inline explicit render_target_view(render_target_view const&) noexcept = default;

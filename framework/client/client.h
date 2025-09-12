@@ -25,7 +25,9 @@ namespace framework {
 						::window::translate_message(*msg);
 						::window::dispatch_message(*msg);
 					}
+
 				}
+				_graphic.render();
 			}
 		}
 	};
