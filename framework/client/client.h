@@ -6,6 +6,12 @@
 #pragma comment(lib, "directx.lib")
 #include "module/directx/directx.h"
 
+namespace library {
+	//extern template d3d11::device* library::singleton< d3d11::device, true, true>::_instance;
+	//extern template auto singleton<d3d11::device, true, true>::construct(void) noexcept -> d3d11::device&;
+	//extern template class declspec_dll singleton<d3d11::device, true, true>;
+}
+
 namespace framework {
 	class client {
 		d3d11::device& _device;
@@ -14,7 +20,7 @@ namespace framework {
 		window::handle _handle;
 	public:
 		inline explicit client(void) noexcept
-			: _device(library::singleton<d3d11::device, true, true>::construct(D3D_DRIVER_TYPE_HARDWARE, D3D11_CREATE_DEVICE_DEBUG)) {
+			: _device(library::singleton<d3d11::device, true, true>::construct()) {
 			window::_class _class;
 			_class.class_name(L"window");
 			_class.style(CS_HREDRAW | CS_VREDRAW);
@@ -44,7 +50,7 @@ namespace framework {
 		inline auto operator=(client const&) noexcept -> client & = delete;
 		inline auto operator=(client&&) noexcept -> client & = default;
 		inline ~client(void) noexcept {
-			library::singleton<d3d11::device, true, true>::destruct();
+			//library::singleton<d3d11::device, true, true>::destruct();
 		};
 
 		inline void execute(void) noexcept {

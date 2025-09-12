@@ -1,8 +1,9 @@
 #pragma once
+#include "../define.h"
 #include "../memory.h"
 
 namespace library {
-	template<typename type, bool placement = false>
+	template<typename type, bool placement = false, bool dll = false>
 	class singleton {
 		inline explicit singleton(singleton const&) noexcept = delete;
 		inline explicit singleton(singleton&&) noexcept = delete;
@@ -18,7 +19,7 @@ namespace library {
 		}
 	};
 	template<typename type>
-	class singleton<type, true> {
+	class singleton<type, true, false> {
 		inline static type* _instance;
 
 		inline explicit singleton(singleton const&) noexcept = delete;
@@ -42,5 +43,23 @@ namespace library {
 			library::destruct(*_instance);
 			library::deallocate(_instance);
 		}
+	};
+
+
+	template<typename type>
+	class declspec_dll singleton<type, true, true> {
+		static type* _instance;
+
+		inline explicit singleton(singleton const&) noexcept = delete;
+		inline explicit singleton(singleton&&) noexcept = delete;
+		inline auto operator=(singleton const&) noexcept -> singleton & = delete;
+		inline auto operator=(singleton&&) noexcept -> singleton & = delete;
+	protected:
+		inline explicit singleton(void) noexcept = default;
+		inline ~singleton(void) noexcept = default;
+	public:
+		static auto construct(void) noexcept -> type&;
+		//inline static auto instance(void) noexcept -> type&;
+		//inline static void destruct(void) noexcept;
 	};
 }

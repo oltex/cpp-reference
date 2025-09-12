@@ -28,9 +28,9 @@ namespace dxgi {
 			.Windowed = window,
 			.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD //DXGI_SWAP_EFFECT_DISCARD 
 		};
-		IDXGISwapChain* component;
-		auto result = _component->CreateSwapChain(d3d11::device::instance().data(), &desc, &component);
-		assert(SUCCEEDED(result));
-		return dxgi::swap_chain(component);
+		//IDXGISwapChain* component;
+		//auto result = _component->CreateSwapChain(d3d11::device::instance().data(), &desc, &component);
+		//assert(SUCCEEDED(result));
+		return dxgi::swap_chain(nullptr);
 	}
 }

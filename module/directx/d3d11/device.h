@@ -7,8 +7,8 @@
 #include <cassert>
 
 namespace d3d11 {
-	class declspec_dll device : public library::component<ID3D11Device>, public library::singleton<device, true> {
-		friend class library::singleton<device, true>;
+	class declspec_dll device : public library::component<ID3D11Device>/*, public library::singleton<device, true>*/ {
+		//friend class library::singleton<device, true>;
 		using base = library::component<ID3D11Device>;
 
 		inline explicit device(D3D_DRIVER_TYPE driver_type, unsigned int flag) noexcept
