@@ -44,33 +44,3 @@ namespace library {
 		}
 	};
 }
-//, typename trait = local_static<type>
-//	template<typename type>
-//	class local_static {
-//	};
-//	template<typename type>
-//	class member_static {
-//		//inline static auto constructor(void) noexcept -> type&;
-//	protected:
-//		inline static type* _instance;
-//	};
-//	template<typename type>
-//	class global_static {
-//	private:
-//		inline static type _instance;
-//	};
-//	template<typename type>
-//	class member_static_thread_safe {
-//	private:
-//		inline static type* _instance;
-//	};
-//	inline static auto instance(void) noexcept -> type& requires std::is_same<member_static<type>, trait>::value {
-//		return *trait::_instance;
-//	}
-//	inline static void destructor(void) noexcept requires std::is_same<member_static<type>, trait>::value {
-//		delete trait::_instance;
-//	}
-//	inline static auto instance(void) noexcept -> type& requires std::is_same<global_static<type>, trait>::value {
-//		return trait::_instance
-// 
-		//inline static library::storage<type> _instance;
