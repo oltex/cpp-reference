@@ -22,7 +22,11 @@ namespace framework {
 			_struct.create_window(*this);
 
 			show(true);
-			update();
 		}
+		inline explicit window(window const&) noexcept = delete;
+		inline explicit window(window&&) noexcept = delete;
+		inline auto operator=(window const&) noexcept -> window & = delete;
+		inline auto operator=(window&&) noexcept -> window & = delete;
+		inline ~window(void) noexcept = default;
 	};
 }

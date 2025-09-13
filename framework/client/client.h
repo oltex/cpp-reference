@@ -1,11 +1,13 @@
 #pragma once
-#include "graphic.h"
 #include "window.h"
+#include "graphic.h"
+#include "frame.h"
 
 namespace framework {
 	class client {
 		window _window;
 		graphic _graphic;
+		frame _frame;
 	public:
 		inline explicit client(void) noexcept 
 			: _window(), _graphic(_window) {
@@ -25,9 +27,11 @@ namespace framework {
 						::window::translate_message(*msg);
 						::window::dispatch_message(*msg);
 					}
-
 				}
-				_graphic.render();
+
+				_frame.update();
+				
+				//_graphic.render();
 			}
 		}
 	};

@@ -8,6 +8,9 @@
     <ClInclude Include="window.h">
       <Filter>component</Filter>
     </ClInclude>
+    <ClInclude Include="frame.h">
+      <Filter>component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

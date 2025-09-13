@@ -33,6 +33,10 @@ namespace framework {
 				_depth_stencil_view = texture.create_depth_stencil_view();
 			}
 		}
+		inline explicit graphic(graphic const&) noexcept = delete;
+		inline explicit graphic(graphic&&) noexcept = delete;
+		inline auto operator=(graphic const&) noexcept -> graphic & = delete;
+		inline auto operator=(graphic&&) noexcept -> graphic & = delete;
 		inline ~graphic(void) noexcept {
 			d3d11::device::destruct();
 		}
