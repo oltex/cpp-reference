@@ -6,6 +6,11 @@
 #include <ctime>
 
 namespace library {
+
+	inline void sleep(unsigned long milli_second) noexcept {
+		::Sleep(milli_second);
+	}
+
 	//multimidia
 	inline void time_begin_period(unsigned int const peroid) noexcept {
 		::timeBeginPeriod(peroid);
@@ -44,6 +49,7 @@ namespace library {
 	}
 
 	class date final {
+		std::tm _tm;
 	public:
 		inline explicit date(void) noexcept = default;
 		inline explicit date(std::tm tm) noexcept
@@ -90,68 +96,72 @@ namespace library {
 		inline auto second(void) const noexcept -> int {
 			return _tm.tm_sec;
 		}
-	private:
-		std::tm _tm;
 	};
 
-	class query_performance final {
-		LARGE_INTEGER _large_integer;
+	class time final {
+		inline static LARGE_INTEGER _frequency = []() {
+			LARGE_INTEGER frequency;
+			::QueryPerformanceFrequency(&frequency);
+			return frequency;
+			}();
+			LARGE_INTEGER _counter;
 	public:
-		inline explicit query_performance(void) noexcept = default;
-		inline explicit query_performance(LARGE_INTEGER large_integer) noexcept
-			: _large_integer(large_integer) {
+		inline explicit time(void) noexcept = default;
+		inline explicit time(LARGE_INTEGER counter) noexcept
+			: _counter(counter) {
 		}
-		inline explicit query_performance(LONGLONG quad_part) noexcept {
-			_large_integer.QuadPart = quad_part;
+		inline explicit time(LONGLONG quad_part) noexcept
+			: _counter{ .QuadPart = quad_part } {
 		}
-		inline explicit query_performance(query_performance const& rhs) noexcept
-			: _large_integer(rhs._large_integer) {
+		inline explicit time(time const& rhs) noexcept
+			: _counter(rhs._counter) {
 		};
-		inline explicit query_performance(query_performance&& rhs) noexcept
-			: _large_integer(rhs._large_integer) {
+		inline explicit time(time&& rhs) noexcept
+			: _counter(rhs._counter) {
 		}
-		inline auto operator=(query_performance const& rhs) noexcept -> query_performance& {
-			_large_integer = rhs._large_integer;
+		inline auto operator=(time const& rhs) noexcept -> time& {
+			_counter = rhs._counter;
 			return *this;
 		}
-		inline auto operator=(query_performance&& rhs) noexcept -> query_performance& {
-			_large_integer = rhs._large_integer;
+		inline auto operator=(time&& rhs) noexcept -> time& {
+			_counter = rhs._counter;
 			return *this;
 		}
-		inline ~query_performance(void) noexcept = default;
+		inline ~time(void) noexcept = default;
 
-		inline void counter(void) noexcept {
-			QueryPerformanceCounter(&_large_integer);
+		inline bool operator<(time const& rhs) const noexcept {
+			return _counter.QuadPart < rhs._counter.QuadPart;
 		}
-		inline void frequency(void) noexcept {
-			QueryPerformanceFrequency(&_large_integer);
+		inline bool operator>(time const& rhs) const noexcept {
+			return _counter.QuadPart > rhs._counter.QuadPart;
 		}
-		inline void clear(void) noexcept {
-			_large_integer.QuadPart = 0;
+		inline bool operator==(time const& rhs) const noexcept {
+			return _counter.QuadPart == rhs._counter.QuadPart;
 		}
-		inline auto operator+(query_performance const& rhs) noexcept -> query_performance {
-			return query_performance(_large_integer.QuadPart + rhs._large_integer.QuadPart);
+		inline auto operator-(time const& rhs) noexcept -> double {
+			return (_counter.QuadPart - rhs._counter.QuadPart) / static_cast<double>(_frequency.QuadPart);
 		}
-		inline auto operator+=(query_performance const& rhs) noexcept ->query_performance& {
-			_large_integer.QuadPart += rhs._large_integer.QuadPart;
+		inline auto operator-=(double duration) noexcept -> time& {
+			_counter.QuadPart -= static_cast<LONGLONG>(duration * _frequency.QuadPart);
 			return *this;
 		}
-		inline auto operator-(query_performance const& rhs) noexcept ->query_performance {
-			return query_performance(_large_integer.QuadPart - rhs._large_integer.QuadPart);
+		inline auto operator-(double duration) const noexcept -> time {
+			return time(_counter.QuadPart - static_cast<LONGLONG>(duration * _frequency.QuadPart));
 		}
-		inline auto operator-=(query_performance const& rhs) noexcept ->query_performance& {
-			_large_integer.QuadPart -= rhs._large_integer.QuadPart;
+		inline auto operator+=(double duration) noexcept -> time& {
+			_counter.QuadPart += static_cast<LONGLONG>(duration * _frequency.QuadPart);
 			return *this;
 		}
-		inline auto operator/(query_performance const& rhs) noexcept ->query_performance {
-			return query_performance(_large_integer.QuadPart / rhs._large_integer.QuadPart);
-		}
-		inline auto operator/=(query_performance const& rhs) noexcept ->query_performance& {
-			_large_integer.QuadPart /= rhs._large_integer.QuadPart;
-			return *this;
+		inline auto operator+(double duration) const noexcept -> time {
+			return time(_counter.QuadPart + static_cast<LONGLONG>(duration * _frequency.QuadPart));
 		}
 		inline auto data(void) noexcept -> LARGE_INTEGER& {
-			return _large_integer;
+			return _counter;
 		}
 	};
+	inline auto query_performance_count(void) noexcept -> time {
+		LARGE_INTEGER _counter;
+		::QueryPerformanceCounter(&_counter);
+		return time(_counter);
+	}
 }

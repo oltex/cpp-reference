@@ -162,6 +162,7 @@
     <ClInclude Include="event.h" />
     <ClInclude Include="example\coroutine.h" />
     <ClInclude Include="example\interlock.h" />
+    <ClInclude Include="example\time.h" />
     <ClInclude Include="example\token.h" />
     <ClInclude Include="example\console.h" />
     <ClInclude Include="file_descript.h" />

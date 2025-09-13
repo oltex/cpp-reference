@@ -20,7 +20,6 @@ namespace framework {
 			_struct.x(CW_USEDEFAULT);
 			_struct.width(CW_USEDEFAULT);
 			_struct.create_window(*this);
-
 			show(true);
 		}
 		inline explicit window(window const&) noexcept = delete;

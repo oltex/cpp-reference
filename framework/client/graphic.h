@@ -45,7 +45,7 @@ namespace framework {
 		inline void render(void) noexcept {
 			_device_context.set_view_port(_view_port);
 			_device_context.set_render_target(_render_target_view, _depth_stencil_view);
-			float color[4]{ 0.f, 0.f, 1.f, 1.f };
+			float color[4]{ rand() / (float)RAND_MAX, rand() / (float)RAND_MAX, rand() / (float)RAND_MAX, 1.f };
 			_device_context.clear_render_target_view(_render_target_view, color);
 			_device_context.clear_depth_stencil_view(_depth_stencil_view, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
 

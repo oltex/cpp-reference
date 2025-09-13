@@ -28,10 +28,11 @@ namespace framework {
 						::window::dispatch_message(*msg);
 					}
 				}
-
 				_frame.update();
-				
-				//_graphic.render();
+
+
+				_graphic.render();
+				_frame.sleep();
 			}
 		}
 	};

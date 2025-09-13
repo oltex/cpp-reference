@@ -152,8 +152,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="client.h" />
+    <ClInclude Include="component.h" />
     <ClInclude Include="frame.h" />
     <ClInclude Include="graphic.h" />
+    <ClInclude Include="object.h" />
+    <ClInclude Include="transform.h" />
     <ClInclude Include="window.h" />
   </ItemGroup>
   <ItemGroup>

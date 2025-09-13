@@ -42,6 +42,9 @@
     <ClInclude Include="barrier.h" />
     <ClInclude Include="file_descript.h" />
     <ClInclude Include="component.h" />
+    <ClInclude Include="example\time.h">
+      <Filter>example</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="example">

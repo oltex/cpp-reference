@@ -7,10 +7,6 @@
 #include <memory>
 
 namespace library {
-	inline void sleep(unsigned long milli_second) noexcept {
-		::Sleep(milli_second);
-	}
-
 	class thread final : public handle {
 		template <typename tuple, size_t... index>
 		inline static unsigned int __stdcall invoke(void* arg) noexcept {

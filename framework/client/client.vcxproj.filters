@@ -11,6 +11,15 @@
     <ClInclude Include="frame.h">
       <Filter>component</Filter>
     </ClInclude>
+    <ClInclude Include="object.h">
+      <Filter>component</Filter>
+    </ClInclude>
+    <ClInclude Include="component.h">
+      <Filter>component</Filter>
+    </ClInclude>
+    <ClInclude Include="transform.h">
+      <Filter>component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

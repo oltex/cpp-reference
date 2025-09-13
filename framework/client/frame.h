@@ -4,15 +4,13 @@
 
 namespace framework {
 	class frame {
-		unsigned long _time;
-		unsigned long _frame = 1000 / 30;
-
-		unsigned long _current_time;
-		unsigned long _last_time;
+		double _frame = 1. / 30.;
+		library::time _time;
+		library::time _current, _prev;
 	public:
-		inline explicit frame(void) noexcept {
+		inline explicit frame(void) noexcept
+			: _time(library::query_performance_count()), _prev(library::query_performance_count()) {
 			library::time_begin_period(1);
-			_time = library::time_get_time();
 		};
 		inline explicit frame(frame const&) noexcept = delete;
 		inline explicit frame(frame&&) noexcept = delete;
@@ -22,16 +20,16 @@ namespace framework {
 			library::time_end_period(1);
 		};
 
-		inline auto update(void) noexcept {
-			_current_time = library::time_get_time();
-			auto delta = (float)(_current_time - _last_time) / 1000.f;
+		inline auto update(void) noexcept -> double {
+			_current = library::query_performance_count();
+			auto delta = _current - _prev;
+			_prev = _current;
+			return delta;
+		}
+		inline void sleep(void) noexcept {
 			_time += _frame;
-			_last_time = _current_time;
-
-			if (_time > _current_time) {
-				auto a = _time - _current_time;
-				Sleep(_time - _current_time);
-			}
+			if (_time > _current)
+				library::sleep(static_cast<unsigned long>((_time - _current) * 1000.));
 		}
 	};
 }
