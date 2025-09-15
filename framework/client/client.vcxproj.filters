@@ -20,6 +20,12 @@
     <ClInclude Include="transform.h">
       <Filter>component</Filter>
     </ClInclude>
+    <ClInclude Include="component_manager.h">
+      <Filter>component</Filter>
+    </ClInclude>
+    <ClInclude Include="scene.h">
+      <Filter>component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

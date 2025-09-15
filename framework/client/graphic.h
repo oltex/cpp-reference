@@ -41,7 +41,6 @@ namespace framework {
 			d3d11::device::destruct();
 		}
 
-
 		inline void render(void) noexcept {
 			_device_context.set_view_port(_view_port);
 			_device_context.set_render_target(_render_target_view, _depth_stencil_view);

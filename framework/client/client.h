@@ -3,13 +3,15 @@
 #include "graphic.h"
 #include "frame.h"
 
+
 namespace framework {
 	class client {
 		window _window;
 		graphic _graphic;
 		frame _frame;
+
 	public:
-		inline explicit client(void) noexcept 
+		inline explicit client(void) noexcept
 			: _window(), _graphic(_window) {
 		}
 		inline explicit client(client const&) noexcept = delete;
@@ -29,11 +31,10 @@ namespace framework {
 					}
 				}
 				_frame.update();
-
-
 				_graphic.render();
 				_frame.sleep();
 			}
 		}
+
 	};
 }
