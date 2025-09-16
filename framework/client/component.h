@@ -2,16 +2,20 @@
 
 namespace framework {
 	class component {
+		using size_type = unsigned int;
+		inline static size_type _type_id = 0;
 	public:
 		inline explicit component(void) noexcept = default;
 		inline explicit component(component const&) noexcept = delete;
 		inline explicit component(component&&) noexcept = delete;
 		inline auto operator=(component const&) noexcept -> component & = delete;
 		inline auto operator=(component&&) noexcept -> component & = delete;
-		inline ~component(void) noexcept = default;
+		inline virtual ~component(void) noexcept = default;
 
-		inline void add_component(void) {
-			_component.emplace()
+		template<typename type>
+		inline static auto type_id(void) noexcept -> size_type {
+			static size_type type_id = _type_id++;
+			return type_id;
 		}
 	};
 }

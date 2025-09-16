@@ -151,15 +151,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="camera.h" />
     <ClInclude Include="client.h" />
     <ClInclude Include="component.h" />
     <ClInclude Include="component_manager.h" />
     <ClInclude Include="frame.h" />
     <ClInclude Include="graphic.h" />
     <ClInclude Include="object.h" />
+    <ClInclude Include="object_manager.h" />
     <ClInclude Include="scene.h" />
+    <ClInclude Include="system_manager.h" />
     <ClInclude Include="transform.h" />
     <ClInclude Include="window.h" />
+    <ClInclude Include="system.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

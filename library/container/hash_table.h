@@ -20,7 +20,7 @@ namespace detail {
 		inline static auto key_extract(element const& elem) noexcept -> type const& {
 			return elem;
 		}
-		inline static auto value_extract(element const& elem) noexcept -> type const& {
+		inline static auto value_extract(element& elem) noexcept -> type& {
 			return elem;
 		}
 	};
@@ -37,7 +37,7 @@ namespace detail {
 		inline static auto key_extract(element const& elem) noexcept -> key_type const& {
 			return elem._first;
 		}
-		inline static auto value_extract(element const& elem) noexcept -> value_type const& {
+		inline static auto value_extract(element& elem) noexcept -> value_type& {
 			return elem._second;
 		}
 	};

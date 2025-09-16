@@ -2,18 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="client.h" />
-    <ClInclude Include="graphic.h">
-      <Filter>component</Filter>
-    </ClInclude>
-    <ClInclude Include="window.h">
-      <Filter>component</Filter>
-    </ClInclude>
-    <ClInclude Include="frame.h">
-      <Filter>component</Filter>
-    </ClInclude>
-    <ClInclude Include="object.h">
-      <Filter>component</Filter>
-    </ClInclude>
     <ClInclude Include="component.h">
       <Filter>component</Filter>
     </ClInclude>
@@ -23,8 +11,26 @@
     <ClInclude Include="component_manager.h">
       <Filter>component</Filter>
     </ClInclude>
+    <ClInclude Include="system.h">
+      <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="object.h">
+      <Filter>object</Filter>
+    </ClInclude>
     <ClInclude Include="scene.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="camera.h">
       <Filter>component</Filter>
+    </ClInclude>
+    <ClInclude Include="frame.h" />
+    <ClInclude Include="graphic.h" />
+    <ClInclude Include="window.h" />
+    <ClInclude Include="system_manager.h">
+      <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="object_manager.h">
+      <Filter>object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -33,6 +39,15 @@
   <ItemGroup>
     <Filter Include="component">
       <UniqueIdentifier>{26fd3a4f-278f-45c1-bfd6-547c8013bd47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="system">
+      <UniqueIdentifier>{9b6eb6da-e6e7-41ff-b6de-2def6a5c2ff6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="object">
+      <UniqueIdentifier>{7adcc674-fb12-4430-8d5d-db3fd33ad4ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="scene">
+      <UniqueIdentifier>{4d75da38-b1c1-4942-afc4-c93c56e85de8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

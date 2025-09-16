@@ -12,7 +12,7 @@ namespace dmath {
 	//typedef XMINT2 _int2;
 	//typedef XMINT3 _int3;
 	//typedef XMINT4 _int4;
-	
+
 	//class int4 {
 	//	DirectX::XMINT4 _int4;
 	//public:
@@ -31,6 +31,7 @@ namespace dmath {
 	//	}
 	//};
 
+
 	using vector = DirectX::XMVECTOR;
 	using fvector = DirectX::FXMVECTOR;
 	class float2 {
@@ -44,6 +45,7 @@ namespace dmath {
 		inline ~float2(void) noexcept = default;
 
 		inline auto load(void) const noexcept -> vector {
+
 			return DirectX::XMLoadFloat2(&_float2);
 		}
 		inline void store(dmath::fvector vector) noexcept {
@@ -107,4 +109,11 @@ namespace dmath {
 			DirectX::XMStoreFloat4x4(&_float4x4, matrix);
 		}
 	};
+
+	inline auto convert_to_radian(float degree) noexcept -> float {
+		return DirectX::XMConvertToRadians(degree);
+	}
+	inline auto matrix_perspective_field_of_view_left_hand(float field_of_view, float aspect_ratio, float _near, float _far) noexcept -> matrix {
+		return DirectX::XMMatrixPerspectiveFovLH(field_of_view, aspect_ratio, _near, _far);
+	}
 }

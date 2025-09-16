@@ -2,7 +2,10 @@
 #include "window.h"
 #include "graphic.h"
 #include "frame.h"
+#include "component_manager.h"
 
+#include "transform.h"
+#include "camera.h"
 
 namespace framework {
 	class client {
@@ -10,9 +13,12 @@ namespace framework {
 		graphic _graphic;
 		frame _frame;
 
+		component_manager _component_manager;
 	public:
 		inline explicit client(void) noexcept
 			: _window(), _graphic(_window) {
+			_component_manager.add_component<transform>();
+			_component_manager.add_component<camera>();
 		}
 		inline explicit client(client const&) noexcept = delete;
 		inline explicit client(client&&) noexcept = default;

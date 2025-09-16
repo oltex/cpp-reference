@@ -12,6 +12,6 @@ namespace framework {
 		inline explicit transform(transform&&) noexcept = delete;
 		inline auto operator=(transform const&) noexcept -> transform & = delete;
 		inline auto operator=(transform&&) noexcept -> transform & = delete;
-		inline ~transform(void) noexcept = default;
+		inline virtual ~transform(void) noexcept override = default;
 	};
 }
