@@ -151,6 +151,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="behaviour.h" />
+    <ClInclude Include="behave.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="client.h" />
     <ClInclude Include="component.h" />

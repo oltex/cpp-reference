@@ -1,9 +1,13 @@
 #pragma once
+#include "library/container/list.h"
 
 namespace framework {
+	class object;
+	class system;
 	class component {
 		using size_type = unsigned int;
 		inline static size_type _type_id = 0;
+		object* _object;
 	public:
 		inline explicit component(void) noexcept = default;
 		inline explicit component(component const&) noexcept = delete;

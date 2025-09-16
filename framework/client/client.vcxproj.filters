@@ -32,6 +32,12 @@
     <ClInclude Include="object_manager.h">
       <Filter>object</Filter>
     </ClInclude>
+    <ClInclude Include="behaviour.h">
+      <Filter>component</Filter>
+    </ClInclude>
+    <ClInclude Include="behave.h">
+      <Filter>system</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
