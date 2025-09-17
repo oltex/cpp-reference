@@ -4,7 +4,7 @@
 #include "library/memory.h"
 #include <Windows.h>
 
-namespace window {
+namespace winapi {
 	class _struct final {
 		struct WNDSTRUCTEXW final {
 			DWORD dwExStyle;
@@ -29,13 +29,13 @@ namespace window {
 		inline auto operator=(_struct&&) noexcept -> _struct & = delete;
 		inline ~_struct(void) noexcept = default;
 
-		inline void create_window(window::handle& handle) noexcept {
+		inline void create_window(winapi::handle& handle) noexcept {
 			::CreateWindowExW(
 				_wsex.dwExStyle, _wsex.lpClassName, _wsex.lpWindowName, _wsex.dwStyle,
 				_wsex.x, _wsex.y, _wsex.nWidth, _wsex.nHeight, _wsex.hWndParent,
-				_wsex.hMenu, window::instance::data(), &handle);
+				_wsex.hMenu, winapi::instance::data(), &handle);
 		}
-		inline void adjust_window_rect(void) noexcept {
+		inline void adjust_winapi_rect(void) noexcept {
 			RECT rect{ _wsex.x, _wsex.y, _wsex.x + _wsex.nWidth, _wsex.y + _wsex.nHeight };
 			AdjustWindowRect(&rect, _wsex.dwStyle, nullptr == _wsex.hMenu ? false : true);
 			_wsex.x = rect.left;
@@ -49,7 +49,7 @@ namespace window {
 		inline void class_name(LPCWSTR const lpClassName) noexcept {
 			_wsex.lpClassName = lpClassName;
 		}
-		inline void window_name(LPCWSTR const lpWindowName) noexcept {
+		inline void winapi_name(LPCWSTR const lpWindowName) noexcept {
 			_wsex.lpWindowName = lpWindowName;
 		}
 		inline void style(DWORD const dwStyle) noexcept {

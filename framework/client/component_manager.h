@@ -5,7 +5,6 @@
 #include "component.h"
 
 namespace framework {
-
 	class component_interfance {
 	public:
 		inline virtual ~component_interfance(void) = default;
@@ -28,13 +27,11 @@ namespace framework {
 		inline ~component_manager(void) noexcept = default;
 
 		template<typename type>
-		inline void add_component(void) noexcept {
-			_component.emplace(component::type_id<type>(), new component_vector<type>);
-			//auto result = _component.find(component::type_id<type>());
-			//static_cast<component_vector<type>*>(result->_second)->emplace_back();
-		}
-		inline void get_component(void) noexcept {
-
+		inline auto create_component(void) noexcept {
+			auto result = _component.find(component::type_id<type>());
+			if (_component.end() == result)
+				result = _component.emplace(component::type_id<type>(), new component_vector<type>);
+			return static_cast<component_vector<type>*>(result->_second)->emplace_back();
 		}
 	};
 }

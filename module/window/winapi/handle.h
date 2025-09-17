@@ -4,7 +4,7 @@
 #include "device_context.h"
 #include <Windows.h>
 
-namespace window {
+namespace winapi {
 	class handle {
 	protected:
 		HWND _hwnd;
@@ -72,12 +72,12 @@ namespace window {
 			::GetClientRect(_hwnd, &rect);
 			return rect;
 		}
-		inline auto get_window_rect(void) const noexcept -> RECT {
+		inline auto get_winapi_rect(void) const noexcept -> RECT {
 			RECT rect;
 			::GetWindowRect(_hwnd, &rect);
 			return rect;
 		}
-		inline auto set_window_text(wchar_t const* const string) const noexcept -> BOOL {
+		inline auto set_winapi_text(wchar_t const* const string) const noexcept -> BOOL {
 			return ::SetWindowTextW(_hwnd, string);
 		}
 		inline auto invalidate_rect(RECT const* rect, bool const erase) const noexcept -> bool {

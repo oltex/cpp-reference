@@ -7,7 +7,9 @@ namespace framework {
 	class transform : public component {
 		dmath::float4x4 _float4x4;
 	public:
-		inline explicit transform(void) noexcept = default;
+		inline explicit transform(void) noexcept
+			: component(component::type_id<transform>()) {
+		};
 		inline explicit transform(transform const&) noexcept = delete;
 		inline explicit transform(transform&&) noexcept = delete;
 		inline auto operator=(transform const&) noexcept -> transform & = delete;

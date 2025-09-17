@@ -2,7 +2,7 @@
 #include "object.h"
 #include <utility>
 
-namespace window {
+namespace winapi {
 	class font final : public object {
 	public:
 		inline explicit font(int const height, int const width, int const escapement, int const orientation, int const weight, bool const italic, bool const under_line, bool strike_out,

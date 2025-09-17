@@ -2,7 +2,7 @@
 #include "object.h"
 #include <utility>
 
-namespace window {
+namespace winapi {
 	class bitmap final : public object {
 	public:
 		inline explicit bitmap(HBITMAP const hbitmap) noexcept

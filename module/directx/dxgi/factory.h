@@ -4,7 +4,7 @@
 #include "swap_chain.h"
 #include <dxgi.h>
 
-namespace window {
+namespace winapi {
 	class handle;
 }
 
@@ -21,7 +21,7 @@ namespace dxgi {
 		inline auto operator=(factory&&) noexcept -> factory & = default;
 		inline ~factory(void) noexcept = default;
 
-		inline auto create_swap_chain(window::handle& handle, unsigned int Numerator, bool window) noexcept -> dxgi::swap_chain;
+		inline auto create_swap_chain(winapi::handle& handle, unsigned int numerator, bool window) noexcept -> dxgi::swap_chain;
 	};
 }
 

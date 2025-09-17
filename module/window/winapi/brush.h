@@ -3,7 +3,7 @@
 #include <utility>
 #include <Windows.h>
 
-namespace window {
+namespace winapi {
 	class brush final : public object {
 	public:
 		inline explicit brush(COLORREF const color) noexcept

@@ -6,11 +6,15 @@ namespace framework {
 	class system_interface;
 	class component {
 		using size_type = unsigned int;
-		inline static size_type _type_id = 0;
+		inline static size_type _static_type_id = 0;
+	protected:
+		size_type _type_id;
 		object* _object;
 		library::list<system_interface*> _system;
 	public:
-		inline explicit component(void) noexcept = default;
+		inline explicit component(size_type type_id) noexcept
+			: _type_id(type_id) {
+		};
 		inline explicit component(component const&) noexcept = delete;
 		inline explicit component(component&&) noexcept = delete;
 		inline auto operator=(component const&) noexcept -> component & = delete;
@@ -19,8 +23,11 @@ namespace framework {
 
 		template<typename type>
 		inline static auto type_id(void) noexcept -> size_type {
-			static size_type type_id = _type_id++;
+			static size_type type_id = _static_type_id++;
 			return type_id;
+		}
+		inline auto get_type_id(void) const noexcept -> size_type {
+			return _type_id;
 		}
 	};
 }

@@ -159,10 +159,12 @@
     <ClInclude Include="component_manager.h" />
     <ClInclude Include="frame.h" />
     <ClInclude Include="graphic.h" />
+    <ClInclude Include="my_client.h" />
+    <ClInclude Include="my_scene.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="object_manager.h" />
     <ClInclude Include="scene.h" />
-    <ClInclude Include="system_manager.h" />
+    <ClInclude Include="scene_manager.h" />
     <ClInclude Include="transform.h" />
     <ClInclude Include="window.h" />
     <ClInclude Include="system.h" />

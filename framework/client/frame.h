@@ -4,7 +4,7 @@
 
 namespace framework {
 	class frame {
-		double _frame = 1. / 30.;
+		double _frame = 1. / 3.;
 		library::time _time;
 		library::time _current, _prev;
 	public:

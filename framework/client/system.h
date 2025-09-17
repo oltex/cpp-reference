@@ -4,6 +4,7 @@
 
 namespace framework {
 	class system_interface {
+	public:
 		inline virtual void update(void) noexcept = 0;
 	};
 

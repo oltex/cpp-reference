@@ -45,7 +45,7 @@ namespace library {
 		inline explicit socket(ADDRESS_FAMILY const address_family, int const type, int const protocol) noexcept
 			: _socket(::socket(address_family, type, protocol)) {
 			if (INVALID_SOCKET == _socket) {
-				switch (GetLastError()) {
+				switch (::GetLastError()) {
 				case WSANOTINITIALISED:
 				default:
 					::__debugbreak();
@@ -117,7 +117,7 @@ namespace library {
 				backlog = SOMAXCONN_HINT(backlog);
 			int result = ::listen(_socket, backlog);
 			if (SOCKET_ERROR == result) {
-				switch (GetLastError()) {
+				switch (::GetLastError()) {
 				case WSAEINVAL:
 				default:
 					::__debugbreak();
@@ -130,7 +130,7 @@ namespace library {
 			int length = sizeof(sockaddr_in);
 			SOCKET sock = ::accept(_socket, &socket_address.data(), &length);
 			if (INVALID_SOCKET == sock) {
-				switch (GetLastError()) {
+				switch (::GetLastError()) {
 				case WSAEWOULDBLOCK:
 				case WSAEINVAL:
 				case WSAENOTSOCK:
@@ -145,7 +145,7 @@ namespace library {
 		inline auto accept(socket& socket_, void* output_buffer, unsigned long address_length, unsigned long remote_address_length, overlap& overlap_) noexcept -> result {
 			overlap_.clear();
 			if (FALSE == _accept_ex(_socket, socket_.data(), output_buffer, 0, address_length, remote_address_length, nullptr, &overlap_.data())) {
-				switch (WSAGetLastError()) {
+				switch (::WSAGetLastError()) {
 				case WSA_IO_PENDING:
 					return result::pending;
 				case WSAENOTSOCK:
@@ -161,7 +161,7 @@ namespace library {
 		inline auto connect(socket_address& socket_address) noexcept -> int {
 			int result = ::connect(_socket, &socket_address.data(), socket_address.size());
 			if (SOCKET_ERROR == result) {
-				switch (GetLastError()) {
+				switch (::GetLastError()) {
 				case WSAEWOULDBLOCK:
 					break;
 				case WSAETIMEDOUT:
@@ -177,7 +177,7 @@ namespace library {
 		inline auto connect(socket_address& socket_address, overlap& overlap) noexcept -> result {
 			overlap.clear();
 			if (FALSE == _connect_ex(_socket, &socket_address.data(), socket_address.size(), nullptr, 0, nullptr, &overlap.data())) {
-				switch (WSAGetLastError()) {
+				switch (::WSAGetLastError()) {
 				case WSA_IO_PENDING:
 					return result::pending;
 				case WSAENOTSOCK:
@@ -203,7 +203,7 @@ namespace library {
 		inline auto send(char const* const buffer, int const length, int const flag) noexcept -> int {
 			int result = ::send(_socket, buffer, length, flag);
 			if (SOCKET_ERROR == result) {
-				switch (GetLastError()) {
+				switch (::GetLastError()) {
 				case WSAEWOULDBLOCK:
 					break;
 				case WSAECONNRESET:
@@ -221,9 +221,9 @@ namespace library {
 			return ::sendto(_socket, buffer, length, flag, &socket_address.data(), socket_address.size());
 		}
 		inline auto send(WSABUF* buffer, unsigned long count, unsigned long* byte, unsigned long flag) noexcept -> int {
-			int result = WSASend(_socket, buffer, count, byte, flag, nullptr, nullptr);
+			int result = ::WSASend(_socket, buffer, count, byte, flag, nullptr, nullptr);
 			if (SOCKET_ERROR == result) {
-				switch (GetLastError()) {
+				switch (::GetLastError()) {
 				case WSAECONNRESET:
 				case WSAECONNABORTED:
 					close();

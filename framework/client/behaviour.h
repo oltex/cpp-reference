@@ -4,7 +4,9 @@
 namespace framework {
 	class behaviour : public component {
 	public:
-		inline explicit behaviour(void) noexcept = default;
+		inline explicit behaviour(void) noexcept 
+			: component(component::type_id<behaviour>()) {
+		};
 		inline explicit behaviour(behaviour const&) noexcept = delete;
 		inline explicit behaviour(behaviour&&) noexcept = delete;
 		inline auto operator=(behaviour const&) noexcept -> behaviour & = delete;

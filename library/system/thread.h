@@ -31,7 +31,7 @@ namespace library {
 			if (_handle)
 				copy.release();
 			else
-				__debugbreak();
+				::__debugbreak();
 		}
 		inline explicit thread(thread const& rhs) noexcept = delete;
 		inline explicit thread(thread&& rhs) noexcept
@@ -54,7 +54,7 @@ namespace library {
 			if (_handle)
 				copy.release();
 			else
-				__debugbreak();
+				::__debugbreak();
 		}
 		inline void suspend(void) noexcept {
 			::SuspendThread(_handle);

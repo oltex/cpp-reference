@@ -5,7 +5,7 @@
 #include "brush.h"
 #include <Windows.h>
 
-namespace window {
+namespace winapi {
 	class device_context final {
 		HDC _hdc;
 	public:

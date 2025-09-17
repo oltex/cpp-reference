@@ -1,9 +1,10 @@
 #pragma once
 #include "client.h"
-#include "module/window/handle.h"
-
+#include "module/window/window.h"
 #pragma comment(lib, "directx.lib")
 #include "module/directx/directx.h"
+
+#include "library/system/thread.h"
 
 namespace framework {
 	class graphic {
@@ -15,7 +16,7 @@ namespace framework {
 		d3d11::render_target_view _render_target_view;
 		d3d11::depth_stencil_view _depth_stencil_view;
 	public:
-		inline explicit graphic(::window::handle& handle) noexcept
+		inline explicit graphic(::winapi::handle& handle) noexcept
 			: _device(d3d11::device::construct(D3D_DRIVER_TYPE_HARDWARE, static_cast<unsigned int>(D3D11_CREATE_DEVICE_DEBUG))),
 			_device_context(_device.get_immediate_context()),
 			_view_port(0, 0, 1424, 720, 0.f, 1.f) {

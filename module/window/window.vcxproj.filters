@@ -1,19 +1,51 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="handle.h" />
-    <ClInclude Include="class.h" />
-    <ClInclude Include="struct.h" />
-    <ClInclude Include="instance.h" />
-    <ClInclude Include="cursor.h" />
-    <ClInclude Include="icon.h" />
-    <ClInclude Include="device_context.h" />
-    <ClInclude Include="object.h" />
-    <ClInclude Include="bitmap.h" />
-    <ClInclude Include="brush.h" />
-    <ClInclude Include="pen.h" />
-    <ClInclude Include="font.h" />
-    <ClInclude Include="procedure.h" />
+    <Filter Include="winapi">
+      <UniqueIdentifier>{9384ccd0-2613-4e89-8180-eff8b0ceaac9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="winapi\bitmap.h">
+      <Filter>winapi</Filter>
+    </ClInclude>
+    <ClInclude Include="winapi\brush.h">
+      <Filter>winapi</Filter>
+    </ClInclude>
+    <ClInclude Include="winapi\class.h">
+      <Filter>winapi</Filter>
+    </ClInclude>
+    <ClInclude Include="winapi\cursor.h">
+      <Filter>winapi</Filter>
+    </ClInclude>
+    <ClInclude Include="winapi\device_context.h">
+      <Filter>winapi</Filter>
+    </ClInclude>
+    <ClInclude Include="winapi\font.h">
+      <Filter>winapi</Filter>
+    </ClInclude>
+    <ClInclude Include="winapi\handle.h">
+      <Filter>winapi</Filter>
+    </ClInclude>
+    <ClInclude Include="winapi\icon.h">
+      <Filter>winapi</Filter>
+    </ClInclude>
+    <ClInclude Include="winapi\instance.h">
+      <Filter>winapi</Filter>
+    </ClInclude>
+    <ClInclude Include="winapi\object.h">
+      <Filter>winapi</Filter>
+    </ClInclude>
+    <ClInclude Include="winapi\pen.h">
+      <Filter>winapi</Filter>
+    </ClInclude>
+    <ClInclude Include="winapi\procedure.h">
+      <Filter>winapi</Filter>
+    </ClInclude>
+    <ClInclude Include="winapi\struct.h">
+      <Filter>winapi</Filter>
+    </ClInclude>
+    <ClInclude Include="window.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

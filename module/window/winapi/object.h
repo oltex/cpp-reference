@@ -2,7 +2,7 @@
 #include <Windows.h>
 #include "library/function.h"
 
-namespace window {
+namespace winapi {
 	class object {
 	protected:
 		HGDIOBJ _hgdiobj;

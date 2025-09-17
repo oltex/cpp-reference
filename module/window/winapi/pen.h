@@ -2,7 +2,7 @@
 #include "object.h"
 #include <utility>
 
-namespace window {
+namespace winapi {
 	class pen final : public object {
 	public:
 		inline explicit pen(int const iStyle, int const cWidth, COLORREF const color) noexcept

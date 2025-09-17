@@ -13,12 +13,12 @@ namespace library {
 
 		inline void lock(void) noexcept {
 			volatile long compare = 1;
-			while (1 == _address || 1 == _InterlockedExchange(&_address, 1))
-				WaitOnAddress(&_address, (void*)&compare, sizeof(long), INFINITE);
+			while (1 == _address || 1 == ::_InterlockedExchange(&_address, 1))
+				::WaitOnAddress(&_address, (void*)&compare, sizeof(long), INFINITE);
 		}
 		inline void unlock(void) noexcept {
 			_address = 0;
-			WakeByAddressSingle((void*)&_address);
+			::WakeByAddressSingle((void*)&_address);
 		}
 	private:
 		volatile long _address = 0;

@@ -26,17 +26,23 @@
     <ClInclude Include="frame.h" />
     <ClInclude Include="graphic.h" />
     <ClInclude Include="window.h" />
-    <ClInclude Include="system_manager.h">
-      <Filter>system</Filter>
-    </ClInclude>
-    <ClInclude Include="object_manager.h">
-      <Filter>object</Filter>
-    </ClInclude>
     <ClInclude Include="behaviour.h">
       <Filter>component</Filter>
     </ClInclude>
     <ClInclude Include="behave.h">
       <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="scene_manager.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="my_scene.h">
+      <Filter>1.custom</Filter>
+    </ClInclude>
+    <ClInclude Include="object_manager.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="my_client.h">
+      <Filter>1.custom</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -54,6 +60,9 @@
     </Filter>
     <Filter Include="scene">
       <UniqueIdentifier>{4d75da38-b1c1-4942-afc4-c93c56e85de8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="1.custom">
+      <UniqueIdentifier>{f4030fed-f4bb-4b1a-a5a0-c3e5c3eaa2eb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

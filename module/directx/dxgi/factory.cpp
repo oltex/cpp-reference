@@ -4,14 +4,14 @@
 #include <cassert>
 
 namespace dxgi {
-	inline auto factory::create_swap_chain(window::handle& handle, unsigned int Numerator, bool window) noexcept -> dxgi::swap_chain {
+	inline auto factory::create_swap_chain(winapi::handle& handle, unsigned int numerator, bool window) noexcept -> dxgi::swap_chain {
 		auto rect = handle.get_client_rect();
 		DXGI_SWAP_CHAIN_DESC desc{
 			.BufferDesc{
 				.Width = static_cast<unsigned int>(rect.right - rect.left),
 				.Height = static_cast<unsigned int>(rect.bottom - rect.top),
 				.RefreshRate{
-					.Numerator = Numerator,
+					.Numerator = numerator,
 					.Denominator = 1
 				},
 				.Format = DXGI_FORMAT_B8G8R8A8_UNORM,

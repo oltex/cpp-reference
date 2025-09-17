@@ -1,7 +1,7 @@
 #pragma once
 #include <Windows.h>
 
-namespace window {
+namespace winapi {
 	class cursor final {
 		HCURSOR _hcursor;
 		bool _share;

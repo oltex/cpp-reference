@@ -2,7 +2,7 @@
 #include "library/memory.h"
 #include <Windows.h>
 
-namespace window {
+namespace winapi {
 	inline static auto load_image(wchar_t const* const name, unsigned int const type, int const cx, int const cy, unsigned int const fu_load) noexcept -> HANDLE {
 		return ::LoadImageW(nullptr, name, type, cy, cy, fu_load);
 	}

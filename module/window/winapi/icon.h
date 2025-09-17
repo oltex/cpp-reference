@@ -1,7 +1,7 @@
 #pragma once
 #include <Windows.h>
 
-namespace window {
+namespace winapi {
 	class icon final {
 		HICON _hicon;
 		bool _share;

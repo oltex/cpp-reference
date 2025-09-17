@@ -3,7 +3,7 @@
 #include <Windows.h>
 #include <optional>
 
-namespace window {
+namespace winapi {
 	inline auto get_message(void) noexcept -> std::optional<MSG> {
 		MSG msg;
 		if (!::GetMessageW(&msg, nullptr, 0, 0)) 
@@ -26,15 +26,15 @@ namespace window {
 	}
 
 	inline auto __stdcall procedure(HWND const hwnd, UINT const message, WPARAM const wparam, LPARAM const lparam) noexcept -> LRESULT {
-		window::handle* handle;
+		winapi::handle* handle;
 		if (WM_NCCREATE == message) {
 			auto& _struct = *reinterpret_cast<CREATESTRUCT*>(lparam);
-			auto& handle = *reinterpret_cast<window::handle*>(_struct.lpCreateParams);
+			auto& handle = *reinterpret_cast<winapi::handle*>(_struct.lpCreateParams);
 			handle.data() = hwnd;
 			::SetWindowLongPtrW(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(&handle));
 		}
 		else {
-			handle = reinterpret_cast<window::handle*>(::GetWindowLongPtrW(hwnd, GWLP_USERDATA));
+			handle = reinterpret_cast<winapi::handle*>(::GetWindowLongPtrW(hwnd, GWLP_USERDATA));
 			switch (message) {
 			case WM_MOUSEMOVE:
 				handle->mouse_move(LOWORD(lparam), HIWORD(lparam));

@@ -49,12 +49,12 @@ namespace library {
 		}
 		inline void ip(char const* const address) noexcept {
 			if (1 != ::inet_pton(AF_INET, address, &_sockaddr.sin_addr))
-				__debugbreak();
+				::__debugbreak();
 		}
 		inline auto ip(void) const noexcept -> library::string {
 			char string[INET_ADDRSTRLEN];
 			if (0 == ::inet_ntop(AF_INET, &_sockaddr.sin_addr, string, INET_ADDRSTRLEN))
-				__debugbreak();
+				::__debugbreak();
 			return library::string(string);
 		}
 		inline void port(unsigned short port) noexcept {
