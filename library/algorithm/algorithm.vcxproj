@@ -155,6 +155,7 @@
     <ClInclude Include="select_sort.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="debug\peterson.h" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

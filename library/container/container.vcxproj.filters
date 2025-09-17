@@ -118,6 +118,12 @@
     <ClInclude Include="example\hash_table.h">
       <Filter>example</Filter>
     </ClInclude>
+    <ClInclude Include="debug\lockfree_stack.h">
+      <Filter>debug</Filter>
+    </ClInclude>
+    <ClInclude Include="debug\lockfree_queue.h">
+      <Filter>debug</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -158,6 +164,9 @@
     </Filter>
     <Filter Include="example\lockfree">
       <UniqueIdentifier>{17d04edf-2959-4472-85a7-8fba7dfd59b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="debug">
+      <UniqueIdentifier>{a33e0a06-65aa-49f3-b8b3-e947c0846a0b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -18,8 +18,14 @@
     <Filter Include="example">
       <UniqueIdentifier>{af2b94b9-76ad-430a-889c-b48e8889f6c5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="debug">
+      <UniqueIdentifier>{69af3591-f7f7-41b3-8894-501ac0722e82}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="debug\peterson.h">
+      <Filter>debug</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

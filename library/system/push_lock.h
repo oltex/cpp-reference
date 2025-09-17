@@ -1,9 +1,9 @@
 #pragma once
 #include <Windows.h>
-#include "library/memory.h"
-#include "library/system/interlock.h"
-#include "library/system/fence.h"
-#include "library/system/event.h"
+#include "../memory.h"
+#include "interlock.h"
+#include "fence.h"
+#include "event.h"
 #include <cassert>
 #include <intrin.h>
 

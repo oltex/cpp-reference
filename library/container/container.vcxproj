@@ -155,6 +155,8 @@
     <ClInclude Include="bit_grid.h" />
     <ClInclude Include="circle_queue.h" />
     <ClInclude Include="compress_pair.h" />
+    <ClInclude Include="debug\lockfree_queue.h" />
+    <ClInclude Include="debug\lockfree_stack.h" />
     <ClInclude Include="example\array.h" />
     <ClInclude Include="example\circle_queue.h" />
     <ClInclude Include="example\compress_pair.h" />

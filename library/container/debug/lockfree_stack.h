@@ -1,9 +1,14 @@
+#include <thread>
+#include <intrin.h>
+#include <Windows.h>
+#include <intrin.h>
+
+
 #pragma once
 #include <utility>
 #include <Windows.h>
 #include <intrin.h>
 #include <string>
-
 class lockfree_stack final {
 private:
 	using size_type = unsigned int;
@@ -49,7 +54,7 @@ public:
 			auto head = _head;
 			auto next = head->_next;
 			if (head == (node*)_InterlockedCompareExchangePointer((void* volatile*)(&_head), next, head)) {
-				#pragma region log
+#pragma region log
 				auto order = _InterlockedIncrement(&_order) % 10000000;
 				_log[order]._thread_id = GetCurrentThreadId();
 				_log[order]._action = L"pop";
@@ -67,3 +72,29 @@ private:
 	volatile unsigned int _order = 0;
 	log* _log = new log[10000000]{};
 };
+
+lockfree_stack _lockfree_stack;
+
+inline static unsigned int __stdcall func(void* arg) noexcept {
+	for (;;) {
+		for (int i = 0; i < 2; ++i) {
+			//auto value = _InterlockedIncrement(&_value);
+			_lockfree_stack.push(0);
+		}
+		for (int i = 0; i < 2; ++i) {
+			_lockfree_stack.pop();
+		}
+	}
+}
+
+int main(void) noexcept {
+	//for (int i = 0; i < 10000000; ++i) {
+	//	auto value = _InterlockedIncrement(&_value);
+	//	_lockfree_stack.push(value);
+	//}
+
+	HANDLE _handle0 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
+	HANDLE _handle1 = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, func, nullptr, 0, 0));
+	Sleep(INFINITE);
+	return 0;
+}

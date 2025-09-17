@@ -151,6 +151,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="example\pushlock.h" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -175,6 +176,7 @@
     <ClInclude Include="mutex.h" />
     <ClInclude Include="overlap.h" />
     <ClInclude Include="process.h" />
+    <ClInclude Include="push_lock.h" />
     <ClInclude Include="register_inputoutput.h" />
     <ClInclude Include="slim_read_write_lock.h" />
     <ClInclude Include="socket.h" />

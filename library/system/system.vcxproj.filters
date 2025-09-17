@@ -2,6 +2,9 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="example\pushlock.h">
+      <Filter>example</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="interlock.h" />
@@ -45,6 +48,7 @@
     <ClInclude Include="example\time.h">
       <Filter>example</Filter>
     </ClInclude>
+    <ClInclude Include="push_lock.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="example">
