@@ -3,11 +3,12 @@
 
 namespace framework {
 	class object;
-	class system;
+	class system_interface;
 	class component {
 		using size_type = unsigned int;
 		inline static size_type _type_id = 0;
 		object* _object;
+		library::list<system_interface*> _system;
 	public:
 		inline explicit component(void) noexcept = default;
 		inline explicit component(component const&) noexcept = delete;
