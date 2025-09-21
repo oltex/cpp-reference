@@ -1,8 +1,6 @@
 #pragma once
 #include "library/container/hash_table.h"
 #include "library/container/string.h"
-//#include "library/container/intrusive/list.h"
-//#include "library/container/intrusive/share_pointer.h"
 #include "component.h"
 
 namespace framework {
@@ -11,6 +9,7 @@ namespace framework {
 		//library::intrusive::list<object, 0> _child;
 		
 		library::unorder_map<library::string, framework::component*> _component;
+		library::unorder_map<library::string, library::vector<library::string>> _system;
 	public:
 		inline explicit object(void) noexcept = default;
 		inline explicit object(object const&) noexcept {

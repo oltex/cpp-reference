@@ -28,7 +28,7 @@ namespace framework {
 		inline ~component_manager(void) noexcept = default;
 
 		template<typename type>
-		inline auto create_component(void) noexcept {
+		inline auto create_component(void) noexcept -> type& {
 			auto result = _component.find(component::type_id<type>());
 			if (_component.end() == result)
 				result = _component.emplace(component::type_id<type>(), new component_vector<type>);

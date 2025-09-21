@@ -23,7 +23,6 @@ namespace framework {
 	public:
 		inline explicit client(void) noexcept
 			: _window(), _graphic(_window) {
-
 			auto camera = create_object();
 			camera->add_component("transform", &create_component<framework::transform>());
 			//camera->add_component("camera", &create_component<framework::camera>());
@@ -58,7 +57,7 @@ namespace framework {
 		}
 
 		template<typename type, typename... argument>
-		inline auto create_component(void) noexcept {
+		inline auto create_component(void) noexcept -> type& {
 			return _component_manager.create_component<type>();
 		}
 
