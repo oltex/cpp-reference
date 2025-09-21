@@ -5,6 +5,8 @@
 #include <malloc.h>
 
 namespace library::intrusive {
+	template<typename type, size_t>
+	class list;
 	template<size_t index>
 	class list_hook {
 	private:

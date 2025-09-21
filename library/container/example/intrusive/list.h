@@ -1,4 +1,5 @@
 #pragma once
+#include "../list.h"
 #include "../../intrusive/list.h"
 #include <iostream>
 
@@ -17,7 +18,7 @@ namespace example::intrusive {
 		library::intrusive::list<hook_class, 1> list2;
 		list1.push_back(hookclass);
 		list2.push_back(hookclass);
-
+		list2.erase(hookclass);
 		//virtual »ó¼Ó
 
 

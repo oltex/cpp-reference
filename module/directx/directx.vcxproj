@@ -152,8 +152,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="d3d11\device.cpp" />
+    <ClCompile Include="d3d11\device_context.cpp" />
     <ClCompile Include="d3d11\texture_2d.cpp" />
+    <ClCompile Include="dxgi\adapter.cpp" />
+    <ClCompile Include="dxgi\device.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)\dxgi_device</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)\dxgi_device</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)\dxgi_device</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)\dxgi_device</ObjectFileName>
+    </ClCompile>
     <ClCompile Include="dxgi\factory.cpp" />
+    <ClCompile Include="dxgi\swap_chain.cpp" />
     <ClCompile Include="main.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>

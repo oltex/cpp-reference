@@ -2,6 +2,7 @@
 #include "library/container/hash_table.h"
 #include "library/container/string.h"
 #include "library/container/vector.h"
+#include "library/pattern/singleton.h"
 #include "component.h"
 
 namespace framework {

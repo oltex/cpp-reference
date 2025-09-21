@@ -13,14 +13,21 @@ namespace framework {
 		inline auto operator=(scene_manager&&) noexcept -> scene_manager & = delete;
 		inline virtual ~scene_manager(void) noexcept = default;
 
-		inline void load_scene(framework::scene* scene) noexcept {
-			_previous_scene = scene;
-		}
 		inline void update(void) noexcept {
 			if (nullptr != _previous_scene)
 				_current_scene = _previous_scene;
 			if (nullptr != _current_scene)
 				_current_scene->update();
+		}
+
+		inline void create_scene(library::string path) noexcept {
+			auto _previous_scene = new framework::scene;
+		}
+		inline auto add_object(object* object) noexcept {
+			_current_scene->add_object();
+		}
+		inline auto add_system(void) noexcept {
+			_current_scene->add_object();
 		}
 	};
 }

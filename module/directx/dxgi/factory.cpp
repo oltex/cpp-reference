@@ -1,6 +1,6 @@
 #include "factory.h"
 #include "../d3d11/device.h"
-#include "module/window/handle.h"
+#include "module/window/winapi/handle.h"
 #include <cassert>
 
 namespace dxgi {

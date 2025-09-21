@@ -1,5 +1,6 @@
 #pragma once
 #include "../../function.h"
+#include "../../memory.h"
 #include "../../system/interlock.h"
 #include <malloc.h>
 #include <utility>
@@ -7,24 +8,34 @@
 
 namespace library::intrusive {
 	template<size_t index>
-	class share_pointer_hook {
+	class pointer_hook {
 		using size_type = unsigned int;
 		template<typename type, size_t>
 		friend class share_pointer;
+		template<typename type, size_t>
+		friend class weak_pointer;
 		size_type _use;
+		size_type _weak;
 	public:
-		inline explicit share_pointer_hook(void) noexcept = default;
-		inline explicit share_pointer_hook(share_pointer_hook const&) noexcept = default;
-		inline explicit share_pointer_hook(share_pointer_hook&&) noexcept = default;
-		inline auto operator=(share_pointer_hook const&) noexcept -> share_pointer_hook & = default;
-		inline auto operator=(share_pointer_hook&&) noexcept -> share_pointer_hook & = default;
-		inline ~share_pointer_hook(void) noexcept = default;
+		inline explicit pointer_hook(void) noexcept = default;
+		inline explicit pointer_hook(pointer_hook const&) noexcept = default;
+		inline explicit pointer_hook(pointer_hook&&) noexcept = default;
+		inline auto operator=(pointer_hook const&) noexcept -> pointer_hook & = default;
+		inline auto operator=(pointer_hook&&) noexcept -> pointer_hook & = default;
+		inline ~pointer_hook(void) noexcept = default;
+
+		template<size_t index>
+		inline void destruct(void) noexcept {};
+		template<size_t index>
+		inline static void deallocate(void* pointer) noexcept {};
 	};
 
 	template<typename type, size_t index>
-	class share_pointer final {
+	class share_pointer {
+		template<typename type, size_t>
+		friend class weak_pointer;
 		using size_type = unsigned int;
-		using hook = share_pointer_hook<index>;
+		using hook = pointer_hook<index>;
 		static_assert(std::is_base_of<hook, type>::value);
 		hook* _pointer;
 	public:
@@ -34,14 +45,17 @@ namespace library::intrusive {
 		inline constexpr share_pointer(nullptr_t) noexcept
 			: _pointer(nullptr) {
 		};
-		inline explicit share_pointer(type* value) noexcept {
-			_pointer = static_cast<hook*>(value);
+		inline explicit share_pointer(type* value) noexcept
+			: _pointer(static_cast<hook*>(value)) {
 			library::interlock_exchange(_pointer->_use, 1);
+			library::interlock_exchange(_pointer->_weak, 1);
 		}
 		inline share_pointer(share_pointer const& rhs) noexcept
 			: _pointer(rhs._pointer) {
-			if (nullptr != _pointer)
+			if (nullptr != _pointer) {
 				library::interlock_increment(_pointer->_use);
+				library::interlock_increment(_pointer->_weak);
+			}
 		};
 		inline explicit share_pointer(share_pointer&& rhs) noexcept
 			: _pointer(library::exchange(rhs._pointer, nullptr)) {
@@ -55,8 +69,11 @@ namespace library::intrusive {
 			return *this;
 		};
 		inline ~share_pointer(void) noexcept {
-			if (nullptr != _pointer && 0 == library::interlock_decrement(_pointer->_use))
-				static_cast<type*>(_pointer)->template destructor<index>();
+			if (nullptr != _pointer && 0 == library::interlock_decrement(_pointer->_use)) {
+				static_cast<type*>(_pointer)->template destruct<index>();
+				if (0 == library::interlock_decrement(_pointer->_weak))
+					type::deallocate<index>(static_cast<type*>(_pointer));
+			}
 		}
 
 		inline auto operator*(void) const noexcept -> type& {
@@ -85,6 +102,45 @@ namespace library::intrusive {
 		}
 		friend inline bool operator==(share_pointer const& lhs, nullptr_t) noexcept {
 			return nullptr == lhs._pointer;
+		}
+	};
+	template<typename type, size_t index>
+	class weak_pointer {
+		using size_type = unsigned int;
+		using hook = pointer_hook<index>;
+		static_assert(std::is_base_of<hook, type>::value);
+		hook* _pointer;
+	public:
+		inline constexpr explicit weak_pointer(void) noexcept
+			: _pointer(nullptr) {
+		}
+		inline constexpr explicit weak_pointer(nullptr_t) noexcept
+			: _pointer(nullptr) {
+		}
+		inline weak_pointer(share_pointer<type, index> const& shared_ptr) noexcept
+			: _pointer(shared_ptr._pointer) {
+			if (nullptr != _pointer)
+				library::interlock_increment(_pointer->_weak);
+		}
+		inline explicit weak_pointer(weak_pointer const& rhs) noexcept
+			: _pointer(rhs._pointer) {
+			if (nullptr != _pointer)
+				library::interlock_increment(_pointer._weak);
+		};
+		inline explicit weak_pointer(weak_pointer&& rhs) noexcept
+			: _pointer(library::exchange(rhs._pointer, nullptr)) {
+		};
+		inline auto operator=(weak_pointer const& rhs) noexcept -> weak_pointer& {
+			weak_pointer(rhs).swap(*this);
+			return *this;
+		}
+		inline auto operator=(weak_pointer&& rhs) noexcept -> weak_pointer& {
+			weak_pointer(std::move(rhs)).swap(*this);
+			return *this;
+		};
+		inline ~weak_pointer(void) noexcept {
+			if (nullptr != _pointer && 0 == library::interlock_decrement(_pointer->_weak))
+				type::deallocate<index>(static_cast<type*>(_pointer));
 		}
 	};
 }

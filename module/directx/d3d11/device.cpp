@@ -1,5 +1,6 @@
 #include "library/pattern/singleton.h"
 #include "device.h"
+#include <cassert>
 
 namespace library {
 	template<>
@@ -24,5 +25,23 @@ namespace library {
 }
 
 namespace d3d11 {
-
+	inline device::device(D3D_DRIVER_TYPE driver_type, unsigned int flag) noexcept
+		: base() {
+		auto result = ::D3D11CreateDevice(nullptr, driver_type, 0, flag, nullptr, 0, D3D11_SDK_VERSION, &_component, nullptr, nullptr);
+		assert(SUCCEEDED(result));
+	}
+	inline auto device::get_immediate_context(void) const noexcept -> device_context {
+		ID3D11DeviceContext* context;
+		_component->GetImmediateContext(&context);
+		return device_context(context);
+	}
+	inline auto device::create_deferred_context(void) const noexcept -> device_context {
+		ID3D11DeviceContext* context;
+		_component->CreateDeferredContext(0, &context);
+		return device_context(context);
+	}
+	inline auto device::query_interface_dxgi_device(void) noexcept -> dxgi::device {
+		IDXGIDevice* device = reinterpret_cast<IDXGIDevice*>(base::query_interface(__uuidof(IDXGIDevice)));
+		return dxgi::device(device);
+	}
 }

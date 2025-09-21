@@ -13,7 +13,7 @@
 //#include "example/array.h"
 //#include "example/priority_queue.h"
 //#include "example/serialize_buffer.h"
-#include "example/string.h"
+//#include "example/string.h"
 //#include "example/storage.h"
 //#include "example/unique_pointer.h"
 //#include "example/share_pointer.h"
@@ -22,12 +22,12 @@
 //#include "example/bit_grid.h"
 //#include "example/ring_buffer.h"
 //#include "example/intrusive/list.h"
-//#include "example/intrusive/share_pointer.h"
+#include "example/intrusive/share_pointer.h"
 //#include "example/lockfree/stack.h"
 //#include "example/lockfree/pool.h"
 //#include "example/lockfree/queue.h"
 //#include "example/thread-local/pool.h"
-#include "example/hash_table.h"
+//#include "example/hash_table.h"
 
 int main(void) noexcept {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -42,7 +42,7 @@ int main(void) noexcept {
 	//example::array();
 	//example::priority_queue();
 	//example::serialize_buffer();
-	example::string();
+	//example::string();
 	//example::stroage();
 	//example::unique_pointer();
 	//example::share_pointer();
@@ -51,11 +51,11 @@ int main(void) noexcept {
 	//example::bit_grid();
 	//example::ring_buffer();
 	//example::intrusive::list();
-	//example::intrusive::share_pointer();
+	example::intrusive::share_pointer();
 	//example::lockfree::stack();
 	//example::lockfree::pool();
 	//example::lockfree::queue();
 	//example::_thread_local::pool();
-	example::hash_table();
+	//example::hash_table();
 	return 0;
 }

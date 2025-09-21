@@ -11,6 +11,18 @@
     <ClCompile Include="d3d11\device.cpp">
       <Filter>d3d11</Filter>
     </ClCompile>
+    <ClCompile Include="dxgi\device.cpp">
+      <Filter>dxgi</Filter>
+    </ClCompile>
+    <ClCompile Include="dxgi\adapter.cpp">
+      <Filter>dxgi</Filter>
+    </ClCompile>
+    <ClCompile Include="d3d11\device_context.cpp">
+      <Filter>d3d11</Filter>
+    </ClCompile>
+    <ClCompile Include="dxgi\swap_chain.cpp">
+      <Filter>dxgi</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="dxgi">
