@@ -23,8 +23,8 @@ namespace framework {
 	public:
 		inline explicit client(void) noexcept
 			: _window(), _graphic(_window) {
-			auto camera = create_object();
-			camera->add_component("transform", &create_component<framework::transform>());
+			//auto camera = create_object();
+			//camera->add_component("transform", &create_component<framework::transform>());
 			//camera->add_component("camera", &create_component<framework::camera>());
 			//regist_object("camera", camera);
 
@@ -38,6 +38,8 @@ namespace framework {
 
 		inline void execute(void) noexcept {
 			for (;;) {
+				if (_window.is_exit())
+					return;
 				_frame.update();
 				_scene_manager.update();
 				_graphic.render();
@@ -45,13 +47,13 @@ namespace framework {
 			}
 		}
 
-		inline auto create_object(void) noexcept {
+		inline auto create_object(void) noexcept -> object_share_ptr {
 			return _object_manager.create_object();
 		}
-		inline void regist_object(library::string const& name, framework::object* object) noexcept {
+		inline void regist_object(library::string const& name, object_share_ptr& object) noexcept {
 			_object_manager.regist_prototype(name, object);
 		}
-		inline auto clone_object(library::string const& name) noexcept {
+		inline auto clone_object(library::string const& name, object_share_ptr& object) noexcept {
 			auto clone = _object_manager.clone_prototype(name);
 			_scene_manager.add_object(clone);
 		}

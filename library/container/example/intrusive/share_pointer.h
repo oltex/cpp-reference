@@ -25,8 +25,15 @@ namespace example::intrusive {
 		}
 	};
 	inline void share_pointer(void) noexcept {
-		share_hook_class* myclass = new share_hook_class(1);
-		library::intrusive::share_pointer<share_hook_class, 1> shared_pointer(myclass);
-		//library::intrusive::weak_pointer<share_hook_class, 1> weak_pointer(shared_pointer);
+		std::shared_ptr<int> b(new int(10));
+		std::weak_ptr<int> a(b);
+		a.lock();
+		share_hook_class* my_class = new share_hook_class(1);
+
+		library::intrusive::share_pointer<share_hook_class, 1> shared_pointer(my_class);
+		library::intrusive::weak_pointer<share_hook_class, 1> weak_pointer(shared_pointer);
+
+		auto shared_pointer2 = weak_pointer.lock();
+
 	}
 }

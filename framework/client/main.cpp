@@ -10,7 +10,6 @@ int __stdcall wWinMain(_In_ HINSTANCE hinstance, _In_opt_ HINSTANCE prev_hinstan
 	{
 		framework::client _client;
 		_client.execute();
-		Sleep(INFINITE);
 	}
 	//return static_cast<int>(msg.wParam);
 	return 0;

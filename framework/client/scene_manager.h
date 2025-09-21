@@ -23,11 +23,11 @@ namespace framework {
 		inline void create_scene(library::string path) noexcept {
 			auto _previous_scene = new framework::scene;
 		}
-		inline auto add_object(object* object) noexcept {
-			_current_scene->add_object();
+		inline auto add_object(object_share_ptr& object) noexcept {
+			//_current_scene->add_object();
 		}
 		inline auto add_system(void) noexcept {
-			_current_scene->add_object();
+			//_current_scene->add_object();
 		}
 	};
 }

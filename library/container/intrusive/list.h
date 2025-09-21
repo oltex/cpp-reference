@@ -24,10 +24,11 @@ namespace library::intrusive {
 
 	template<typename type, size_t index>
 	//requires std::is_base_of<list_hook<index>, type>::value
-	class list final {
+	class list {
+	protected:
 		using size_type = unsigned int;
 		using node = list_hook<index>;
-		static_assert(std::is_base_of<node, type>::value);
+		//static_assert(std::is_base_of<node, type>::value);
 		node _head;
 	public:
 		class iterator final {

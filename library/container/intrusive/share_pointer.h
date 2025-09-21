@@ -14,6 +14,7 @@ namespace library::intrusive {
 		friend class share_pointer;
 		template<typename type, size_t>
 		friend class weak_pointer;
+	public:
 		size_type _use;
 		size_type _weak;
 	public:
@@ -36,7 +37,7 @@ namespace library::intrusive {
 		friend class weak_pointer;
 		using size_type = unsigned int;
 		using hook = pointer_hook<index>;
-		static_assert(std::is_base_of<hook, type>::value);
+		//static_assert(std::is_base_of<hook, type>::value);
 		hook* _pointer;
 	public:
 		inline constexpr explicit share_pointer(void) noexcept
@@ -49,6 +50,15 @@ namespace library::intrusive {
 			: _pointer(static_cast<hook*>(value)) {
 			library::interlock_exchange(_pointer->_use, 1);
 			library::interlock_exchange(_pointer->_weak, 1);
+		}
+		inline share_pointer(weak_pointer<type, index> const& weak_ptr) noexcept
+			: _pointer(weak_ptr._pointer) {
+			if (nullptr != _pointer) {
+				for (size_type use = _pointer->_use, prev; 0 != use; use = prev)
+					if (prev = library::interlock_compare_exhange(_pointer->_use, use + 1, use), use == prev)
+						return;
+				_pointer = nullptr;
+			}
 		}
 		inline share_pointer(share_pointer const& rhs) noexcept
 			: _pointer(rhs._pointer) {
@@ -106,6 +116,8 @@ namespace library::intrusive {
 	};
 	template<typename type, size_t index>
 	class weak_pointer {
+		template<typename type, size_t>
+		friend class share_pointer;
 		using size_type = unsigned int;
 		using hook = pointer_hook<index>;
 		static_assert(std::is_base_of<hook, type>::value);
@@ -141,6 +153,13 @@ namespace library::intrusive {
 		inline ~weak_pointer(void) noexcept {
 			if (nullptr != _pointer && 0 == library::interlock_decrement(_pointer->_weak))
 				type::deallocate<index>(static_cast<type*>(_pointer));
+		}
+
+		inline bool expire(void) const noexcept {
+			return nullptr != _pointer || 0 == _pointer->_use;
+		}
+		inline auto lock(void) noexcept {
+			return share_pointer(*this);
 		}
 	};
 }

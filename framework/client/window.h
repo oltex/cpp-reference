@@ -17,6 +17,9 @@ namespace framework {
 		inline auto operator=(window&&) noexcept -> window & = delete;
 		inline ~window(void) noexcept = default;
 
+		inline bool is_exit(void) noexcept {
+			return WAIT_OBJECT_0 == _thread.wait_for_single(0);
+		}
 		inline void execute(void) noexcept {
 			winapi::_class _class;
 			_class.class_name(L"window");

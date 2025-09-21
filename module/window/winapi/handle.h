@@ -19,7 +19,7 @@ namespace winapi {
 		inline auto operator=(handle const&) noexcept -> handle & = delete;
 		inline auto operator=(handle&& rhs) noexcept -> handle& {
 			if (nullptr != _hwnd)
-				DestroyWindow(_hwnd);
+				::DestroyWindow(_hwnd);
 			_hwnd = library::exchange(rhs._hwnd, nullptr);
 			return *this;
 		};
@@ -84,19 +84,14 @@ namespace winapi {
 			return ::InvalidateRect(_hwnd, rect, erase);
 		}
 
-		inline void virtual mouse_move(int const x, int const y) noexcept {
-		}
-		inline void virtual left_butten_down(int const x, int const y) noexcept {
-		}
-		inline void virtual left_butten_up(int const x, int const y) noexcept {
-		}
-		inline void virtual right_butten_down(int const x, int const y) noexcept {
-		}
-		inline void virtual right_butten_up(int const x, int const y) noexcept {
-		}
-		inline void virtual middle_butten_down(int const x, int const y) noexcept {
-		}
-		inline void virtual middle_butten_up(int const x, int const y) noexcept {
+		inline void virtual mouse_move(int const x, int const y) noexcept {}
+		inline void virtual left_butten_down(int const x, int const y) noexcept {}
+		inline void virtual left_butten_up(int const x, int const y) noexcept {}
+		inline void virtual right_butten_down(int const x, int const y) noexcept {}
+		inline void virtual right_butten_up(int const x, int const y) noexcept {}
+		inline void virtual middle_butten_down(int const x, int const y) noexcept {}
+		inline void virtual middle_butten_up(int const x, int const y) noexcept {}
+		inline void virtual destory(void) noexcept {
 		}
 
 		inline auto data(void) noexcept -> HWND& {
