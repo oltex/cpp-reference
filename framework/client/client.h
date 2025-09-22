@@ -21,50 +21,16 @@ namespace framework {
 		component_manager _component_manager;
 		scene_manager _scene_manager;
 	public:
-		inline explicit client(void) noexcept
-			: _window(), _graphic(_window) {
-			//auto camera = create_object();
-			//camera->add_component("transform", &create_component<framework::transform>());
-			//camera->add_component("camera", &create_component<framework::camera>());
-			//regist_object("camera", camera);
-
-			//create_scene();
-		}
+		explicit client(void) noexcept;
 		inline explicit client(client const&) noexcept = delete;
 		inline explicit client(client&&) noexcept = default;
 		inline auto operator=(client const&) noexcept -> client & = delete;
 		inline auto operator=(client&&) noexcept -> client & = default;
 		inline ~client(void) noexcept = default;
 
-		inline void execute(void) noexcept {
-			for (;;) {
-				if (_window.is_exit())
-					return;
-				_frame.update();
-				_scene_manager.update();
-				_graphic.render();
-				_frame.sleep();
-			}
-		}
+		void execute(void) noexcept;
+		auto create_scene(library::string const& path) noexcept;
 
-		inline auto create_object(void) noexcept -> object_share_ptr {
-			return _object_manager.create_object();
-		}
-		inline void regist_object(library::string const& name, object_share_ptr& object) noexcept {
-			_object_manager.regist_prototype(name, object);
-		}
-		inline auto clone_object(library::string const& name, object_share_ptr& object) noexcept {
-			auto clone = _object_manager.clone_prototype(name);
-			_scene_manager.add_object(clone);
-		}
-
-		template<typename type, typename... argument>
-		inline auto create_component(void) noexcept -> type& {
-			return _component_manager.create_component<type>();
-		}
-
-		inline auto create_scene(library::string path) noexcept {
-			_scene_manager.create_scene(path);
-		}
+		void regist_object(library::string const& name, object_share_ptr& object) noexcept;
 	};
 }

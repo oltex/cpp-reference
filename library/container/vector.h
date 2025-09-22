@@ -9,6 +9,7 @@
 namespace library {
 	template<typename type, bool placement = true>
 	class vector {
+	protected:
 		using size_type = unsigned int;
 		size_type _size;
 		size_type _capacity;

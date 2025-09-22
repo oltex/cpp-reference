@@ -22,9 +22,10 @@ namespace framework {
 			return object_share_ptr(object);
 		}
 		inline void regist_prototype(library::string const& name, object_share_ptr& object) noexcept {
-			_object.emplace(name, object);
+			auto clone = create_object(*object);
+			_object.emplace(name, clone);
 		}
-		inline auto clone_prototype(library::string const& name) noexcept -> object_share_ptr {
+		inline auto clone_prototype(library::string const& name, object_share_ptr& parent) noexcept -> object_share_ptr {
 			auto result = _object.find(name);
 			return create_object(*result->_second);
 		}

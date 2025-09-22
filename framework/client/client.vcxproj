@@ -168,7 +168,9 @@
     <ClInclude Include="system.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="client.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="scene.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

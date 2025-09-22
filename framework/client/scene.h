@@ -9,24 +9,20 @@
 namespace framework {
 	class scene {
 		using size_type = unsigned int;
-		//library::intrusive::list<object_share_ptr, 0> _object;
+		object_list _object_list;
 		library::unorder_map<library::string, object_weak_ptr> _object_tag;
 		library::unorder_map<size_type, library::vector<framework::system_interface*>> _system;
 	public:
-		inline explicit scene(void) noexcept = default;
+		explicit scene(void) noexcept;
 		inline explicit scene(scene const&) noexcept = delete;
 		inline explicit scene(scene&&) noexcept = delete;
 		inline auto operator=(scene const&) noexcept -> scene & = delete;
 		inline auto operator=(scene&&) noexcept -> scene & = delete;
 		inline ~scene(void) noexcept = default;
 
-		inline void update(void) noexcept {
-			for (auto& vector : _system)
-				for (auto& system : vector._second)
-					system->update();
-		};
-		inline auto add_object(object_share_ptr object) noexcept {
-		}
+		void update(void) noexcept;
+		auto create_object(object_share_ptr& parent) noexcept -> object_share_ptr;
+		auto clone_object(library::string const& name, object_share_ptr& parent) noexcept -> object_share_ptr;
 		//inline auto find_object(library::string const& name) noexcept -> library::vector<framework::object>& {
 		//	auto result = _object.find(name);
 		//	return result->_second;

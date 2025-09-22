@@ -26,7 +26,7 @@ namespace framework {
 			static size_type type_id = _static_type_id++;
 			return type_id;
 		}
-		inline auto get_type_id(void) const noexcept -> size_type {
+		inline auto type_id(void) const noexcept -> size_type {
 			return _type_id;
 		}
 	};

@@ -3,7 +3,7 @@
 #include "../function.h"
 
 namespace library {
-	template<typename type, bool placement = true, bool compress = true>
+	template<typename type, bool placement = true, bool compress = true, size_t bucket_size = 0>
 	class pool final {
 		union union_node final {
 			inline explicit union_node(void) noexcept = delete;

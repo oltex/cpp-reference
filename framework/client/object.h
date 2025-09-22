@@ -38,7 +38,10 @@ namespace framework {
 		library::unorder_map<library::string, library::vector<library::string>> _system;
 	public:
 		inline explicit object(void) noexcept = default;
-		inline explicit object(object const&) noexcept {
+		inline explicit object(object const& rhs) noexcept {
+			//for (auto& component : rhs._component) {
+			//	 component._second->get_type_id();
+			//}
 		};
 		inline explicit object(object&&) noexcept = delete;
 		inline auto operator=(object const&) noexcept -> object & = delete;
@@ -56,10 +59,10 @@ namespace framework {
 		//inline void add_child(object& child) noexcept {
 		//	_child.push_back(child);
 		//}
-		inline void add_component(library::string const& name, framework::component* component) noexcept {
+		template<typename type, typename... argument>
+		inline void add_component(library::string const& name) noexcept {
+			_component_manager.create_component<type>();
 			_component.emplace(name, component);
 		}
 	};
-
-
 }
