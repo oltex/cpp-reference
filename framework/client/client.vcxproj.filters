@@ -8,9 +8,6 @@
     <ClInclude Include="transform.h">
       <Filter>component</Filter>
     </ClInclude>
-    <ClInclude Include="component_manager.h">
-      <Filter>component</Filter>
-    </ClInclude>
     <ClInclude Include="system.h">
       <Filter>system</Filter>
     </ClInclude>
@@ -32,11 +29,8 @@
     <ClInclude Include="behave.h">
       <Filter>system</Filter>
     </ClInclude>
-    <ClInclude Include="scene_manager.h">
-      <Filter>scene</Filter>
-    </ClInclude>
-    <ClInclude Include="object_manager.h">
-      <Filter>object</Filter>
+    <ClInclude Include="resource.h">
+      <Filter>resource</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -44,6 +38,12 @@
     <ClCompile Include="client.cpp" />
     <ClCompile Include="scene.cpp">
       <Filter>scene</Filter>
+    </ClCompile>
+    <ClCompile Include="object.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="component.cpp">
+      <Filter>component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

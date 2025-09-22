@@ -32,12 +32,12 @@ namespace framework {
 		}
 	};
 	class object : public library::intrusive::pointer_hook<0>, public library::intrusive::list_hook<0> {
-		//object* _parent;
+		object_weak_ptr _parent;
 		object_list _child;
 		library::unorder_map<library::string, framework::component*> _component;
 		library::unorder_map<library::string, library::vector<library::string>> _system;
 	public:
-		inline explicit object(void) noexcept = default;
+		explicit object(object_share_ptr& parent) noexcept;
 		inline explicit object(object const& rhs) noexcept {
 			//for (auto& component : rhs._component) {
 			//	 component._second->get_type_id();
@@ -59,10 +59,38 @@ namespace framework {
 		//inline void add_child(object& child) noexcept {
 		//	_child.push_back(child);
 		//}
-		template<typename type, typename... argument>
+		template<typename type>
 		inline void add_component(library::string const& name) noexcept {
-			_component_manager.create_component<type>();
+			auto component = implement::component_manager::create_component<type>();
 			_component.emplace(name, component);
+		}
+	};
+}
+
+namespace implement {
+	class object_manager final {
+		library::pool<framework::object> _object_pool;
+		library::unorder_map<library::string, library::intrusive::share_pointer<framework::object, 0>> _object_prototype;
+	public:
+		inline explicit object_manager(void) noexcept = default;
+		inline explicit object_manager(object_manager const&) noexcept = delete;
+		inline explicit object_manager(object_manager&&) noexcept = delete;
+		inline auto operator=(object_manager const&) noexcept -> object_manager & = delete;
+		inline auto operator=(object_manager&&) noexcept -> object_manager & = delete;
+		inline ~object_manager(void) noexcept = default;
+
+		template<typename... argument>
+		inline auto create_object(argument&&... arg) noexcept -> framework::object_share_ptr {
+			auto object = _object_pool.allocate(std::forward<argument>(arg)...);
+			return object_share_ptr(object);
+		}
+		inline void regist_prototype(library::string const& name, framework::object_share_ptr& object) noexcept {
+			auto clone = create_object(*object);
+			_object_prototype.emplace(name, clone);
+		}
+		inline auto clone_prototype(library::string const& name, framework::object_share_ptr& parent) noexcept -> library::intrusive::share_pointer<framework::object, 0> {
+			auto result = _object_prototype.find(name);
+			return create_object(*result->_second);
 		}
 	};
 }

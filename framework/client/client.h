@@ -18,7 +18,6 @@ namespace framework {
 		frame _frame;
 	protected:
 		object_manager _object_manager;
-		component_manager _component_manager;
 		scene_manager _scene_manager;
 	public:
 		explicit client(void) noexcept;
