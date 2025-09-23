@@ -38,6 +38,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "client", "framework\client\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "scheduler", "module\scheduler\scheduler.vcxproj", "{AA5C4512-19AE-4338-8F77-A412D1AC3B08}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "game_input", "module\game_input\game_input.vcxproj", "{DB4B2A24-D711-46B0-9929-A80CB473C035}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -134,6 +136,14 @@ Global
 		{AA5C4512-19AE-4338-8F77-A412D1AC3B08}.Release|x64.Build.0 = Release|x64
 		{AA5C4512-19AE-4338-8F77-A412D1AC3B08}.Release|x86.ActiveCfg = Release|Win32
 		{AA5C4512-19AE-4338-8F77-A412D1AC3B08}.Release|x86.Build.0 = Release|Win32
+		{DB4B2A24-D711-46B0-9929-A80CB473C035}.Debug|x64.ActiveCfg = Debug|x64
+		{DB4B2A24-D711-46B0-9929-A80CB473C035}.Debug|x64.Build.0 = Debug|x64
+		{DB4B2A24-D711-46B0-9929-A80CB473C035}.Debug|x86.ActiveCfg = Debug|Win32
+		{DB4B2A24-D711-46B0-9929-A80CB473C035}.Debug|x86.Build.0 = Debug|Win32
+		{DB4B2A24-D711-46B0-9929-A80CB473C035}.Release|x64.ActiveCfg = Release|x64
+		{DB4B2A24-D711-46B0-9929-A80CB473C035}.Release|x64.Build.0 = Release|x64
+		{DB4B2A24-D711-46B0-9929-A80CB473C035}.Release|x86.ActiveCfg = Release|Win32
+		{DB4B2A24-D711-46B0-9929-A80CB473C035}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -150,6 +160,7 @@ Global
 		{2EB759EB-E820-4D88-8988-DD5091A4429F} = {5FE7E891-5452-49AD-B69B-74DECBD9CAAE}
 		{42C34441-8EEC-465A-9F10-913EC7C51391} = {9E061FC9-D46F-4980-95C4-9EE400541711}
 		{AA5C4512-19AE-4338-8F77-A412D1AC3B08} = {5FE7E891-5452-49AD-B69B-74DECBD9CAAE}
+		{DB4B2A24-D711-46B0-9929-A80CB473C035} = {5FE7E891-5452-49AD-B69B-74DECBD9CAAE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C69985D6-20AB-4E9A-AD82-08BFBE490891}

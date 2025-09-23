@@ -6,17 +6,17 @@ namespace game_input {
 	}
 
 	inline auto input::get_current_reading(GameInput::v2::GameInputKind kind) noexcept -> reading {
-		GameInput::v2::IGameInputReading* current;
+		GameInput::v2::IGameInputReading* current = nullptr;
 		_component->GetCurrentReading(kind, nullptr, &current);
 		return reading(current);
 	}
 	inline auto input::get_previous_reading(reading& current, GameInput::v2::GameInputKind kind) noexcept -> reading {
-		GameInput::v2::IGameInputReading* previous;
+		GameInput::v2::IGameInputReading* previous = nullptr;
 		_component->GetPreviousReading(current.data(), kind, nullptr, &previous);
 		return reading(previous);
 	}
 	inline auto input::get_next_reading(reading& current, GameInput::v2::GameInputKind kind) noexcept -> reading {
-		GameInput::v2::IGameInputReading* next;
+		GameInput::v2::IGameInputReading* next = nullptr;
 		_component->GetNextReading(current.data(), kind, nullptr, &next);
 		return reading(next);
 	}

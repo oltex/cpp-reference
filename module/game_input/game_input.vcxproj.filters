@@ -5,13 +5,16 @@
     <ClInclude Include="input.h" />
     <ClInclude Include="key_state.h" />
     <ClInclude Include="mouse_state.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
+    <ClInclude Include="device.h" />
+    <ClInclude Include="game_input.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="reading.cpp" />
+    <ClCompile Include="device.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

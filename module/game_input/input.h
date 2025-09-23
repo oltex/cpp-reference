@@ -2,7 +2,7 @@
 #include "library/define.h"
 #include "library/system/component.h"
 #include "reading.h"
-#include "GameInput.h"
+#include <GameInput.h>
 
 namespace game_input {
 	class declspec_dll input : public library::component<GameInput::v2::IGameInput> {
