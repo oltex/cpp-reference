@@ -7,7 +7,9 @@ namespace game_input {
 
 	inline auto input::get_current_reading(GameInput::v2::GameInputKind kind) noexcept -> reading {
 		GameInput::v2::IGameInputReading* current = nullptr;
-		_component->GetCurrentReading(kind, nullptr, &current);
+		auto hr = _component->GetCurrentReading(kind, nullptr, &current);
+		if(FAILED(hr))
+			return reading();
 		return reading(current);
 	}
 	inline auto input::get_previous_reading(reading& current, GameInput::v2::GameInputKind kind) noexcept -> reading {

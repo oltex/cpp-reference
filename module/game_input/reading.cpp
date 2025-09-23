@@ -9,18 +9,27 @@ namespace game_input {
 		_component->GetDevice(&device);
 		return game_input::device(device);
 	}
+	inline auto reading::get_input_kind(void) noexcept -> GameInput::v2::GameInputKind {
+		return _component->GetInputKind();
+	}
 	inline auto reading::get_mouse_state(void) noexcept -> mouse_state {
 		mouse_state state;
-		_component->GetMouseState(&state);
+		bool result = _component->GetMouseState(&state);
+		if (false == result)
+			int a = 10;
 		return state;
 	}
 	inline auto reading::get_key_count(void) noexcept -> unsigned int {
 		return _component->GetKeyCount();
 	}
-	inline auto reading::get_key_state(void) noexcept {
-		_component->GetKeyState();
+	inline auto reading::get_key_state(void) noexcept -> library::array<key_state, 16> {
+		library::array<key_state, 16> key_state;
+		int result = _component->GetKeyState(_component->GetKeyCount(), key_state.data());
+		if (0 == result)
+			int a = 10;
+		return key_state;
 	}
-	 bool declspec_dll operator==(reading& lhs, nullptr_t) noexcept {
+	bool declspec_dll operator==(reading& lhs, nullptr_t) noexcept {
 		return nullptr == lhs.data();
 	}
 }

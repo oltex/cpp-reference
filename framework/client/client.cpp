@@ -17,7 +17,7 @@ namespace framework {
 				return;
 			_timer.update_frame();
 			//_scene_manager.update();
-			_input.update_current();
+			_input.update_state();
 
 			_graphic.render_ready();
 			_graphic.render_start();

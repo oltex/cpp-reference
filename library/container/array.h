@@ -11,9 +11,6 @@ namespace library {
 		using iterator = type*;
 	public:
 		type _array[_capacity];
-		inline auto operator=(array const&) noexcept -> array & = default;
-		inline auto operator=(array&&) noexcept -> array & = default;
-		inline ~array(void) noexcept = default;
 
 		inline auto operator[](size_type const index) noexcept ->type& {
 			return _array[index];
