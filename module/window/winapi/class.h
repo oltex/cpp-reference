@@ -22,9 +22,9 @@ namespace winapi {
 		inline void regist(void) const noexcept {
 			::RegisterClassExW(&_wndclassex);
 		}
-		//inline static void unregist(void) const noexcept {
-		//	UnregisterClassW(_wndclassex.lpszClassName, _wndclassex.hInstance);
-		//}
+		inline static void unregist(wchar_t const* const name) noexcept {
+			::UnregisterClassW(name, winapi::instance::data());
+		}
 		inline void style(unsigned int style) noexcept {
 			_wndclassex.style = style;
 		}
@@ -33,9 +33,6 @@ namespace winapi {
 		}
 		inline void winapi_extra(int const cbWndExtra) noexcept {
 			_wndclassex.cbWndExtra = cbWndExtra;
-		}
-		inline void instance(instance const& instance) noexcept {
-			_wndclassex.hInstance = instance.data();
 		}
 		inline void icon(winapi::icon const& icon) noexcept {
 			_wndclassex.hIcon = icon.data();

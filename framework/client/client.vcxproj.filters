@@ -20,7 +20,7 @@
     <ClInclude Include="camera.h">
       <Filter>component</Filter>
     </ClInclude>
-    <ClInclude Include="frame.h" />
+    <ClInclude Include="timer.h" />
     <ClInclude Include="graphic.h" />
     <ClInclude Include="window.h" />
     <ClInclude Include="behaviour.h">
@@ -35,6 +35,7 @@
     <ClInclude Include="texture.h">
       <Filter>resource</Filter>
     </ClInclude>
+    <ClInclude Include="input.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -51,6 +52,10 @@
     <ClCompile Include="texture.cpp">
       <Filter>resource</Filter>
     </ClCompile>
+    <ClCompile Include="timer.cpp" />
+    <ClCompile Include="graphic.cpp" />
+    <ClCompile Include="window.cpp" />
+    <ClCompile Include="input.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="component">
@@ -68,5 +73,8 @@
     <Filter Include="resource">
       <UniqueIdentifier>{465a10f0-daac-4a71-b933-d1638d9289a4}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

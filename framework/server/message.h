@@ -9,7 +9,7 @@ namespace framework {
 	struct header final {
 		unsigned short _size;
 	};
-	class buffer final : public library::intrusive::share_pointer_hook<0>, public library::array<char, 128> {
+	class buffer final : public library::intrusive::pointer_hook<0>, public library::array<char, 128> {
 	public:
 		inline explicit buffer(void) noexcept = delete;
 		inline explicit buffer(buffer const&) noexcept = delete;
