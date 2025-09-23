@@ -64,6 +64,7 @@ namespace framework {
 			auto component = implement::component_manager::create_component<type>();
 			_component.emplace(name, component);
 		}
+
 	};
 }
 

@@ -29,7 +29,5 @@ namespace framework {
 
 		void execute(void) noexcept;
 		auto create_scene(library::string const& path) noexcept;
-
-		void regist_object(library::string const& name, object_share_ptr& object) noexcept;
 	};
 }

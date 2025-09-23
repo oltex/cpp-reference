@@ -61,8 +61,7 @@ namespace implement {
 			base::deallocate(value);
 		}
 	};
-	class component_manager : public library::singleton<component_manager> {
-		friend class library::singleton<component_manager>;
+	class component_manager {
 		using size_type = unsigned int;
 		library::unorder_map<size_type, component_pool_interface*> _component;
 

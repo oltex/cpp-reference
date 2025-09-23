@@ -7,6 +7,7 @@ namespace d3d11 {
 	class shader_resource_view : public library::component<ID3D11ShaderResourceView> {
 		using base = library::component<ID3D11ShaderResourceView>;
 	public:
+		inline explicit shader_resource_view(void) noexcept = default;
 		inline explicit shader_resource_view(ID3D11ShaderResourceView* view) noexcept
 			: base(view) {
 		}

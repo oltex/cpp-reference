@@ -11,6 +11,7 @@ namespace framework {
 				system->update();
 	}
 	auto scene::create_object(object_share_ptr& parent) noexcept -> object_share_ptr {
+		auto& object_mgr = 
 		auto object = _object_manager.create_object();
 		return object;
 	}

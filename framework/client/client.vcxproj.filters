@@ -32,6 +32,9 @@
     <ClInclude Include="resource.h">
       <Filter>resource</Filter>
     </ClInclude>
+    <ClInclude Include="texture.h">
+      <Filter>resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -44,6 +47,9 @@
     </ClCompile>
     <ClCompile Include="component.cpp">
       <Filter>component</Filter>
+    </ClCompile>
+    <ClCompile Include="texture.cpp">
+      <Filter>resource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

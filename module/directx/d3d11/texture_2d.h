@@ -29,3 +29,4 @@ namespace d3d11 {
 		inline auto create_depth_stencil_view(D3D11_DEPTH_STENCIL_VIEW_DESC* desc = nullptr) const noexcept -> depth_stencil_view;
 	};
 }
+

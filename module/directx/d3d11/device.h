@@ -9,7 +9,7 @@
 #include <d3d11.h>
 
 namespace d3d11 {
-	class declspec_dll device : library::component<ID3D11Device>, public library::singleton<device, true, true> {
+	class declspec_dll device : public library::component<ID3D11Device>, public library::singleton<device, true, true> {
 		friend class library::singleton<device, true, true>;
 		using base = library::component<ID3D11Device>;
 
@@ -23,5 +23,6 @@ namespace d3d11 {
 		inline auto get_immediate_context(void) const noexcept -> device_context;
 		inline auto create_deferred_context(void) const noexcept -> device_context;
 		inline auto query_interface_dxgi_device(void) noexcept -> dxgi::device;
+		inline void create_texture_from_file(wchar_t const* const path, shader_resource_view* srv) noexcept;
 	};
 }

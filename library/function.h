@@ -215,6 +215,22 @@ namespace library {
 	}
 	template <typename type>
 		requires (library::any_of_type<type, char, wchar_t>)
+	inline auto string_compare(type const* const string1, type const* const string2) noexcept -> int{
+		if constexpr (library::same_type<type, char>)
+			return ::strcmp(string1, string2);
+		else
+			return ::wcscmp(string1, string2);
+	}
+	template <typename type>
+		requires (library::any_of_type<type, char, wchar_t>)
+	inline auto string_string(type const* const string, type const* const sub_string) noexcept {
+		if constexpr (library::same_type<type, char>)
+			return ::strstr(string, sub_string);
+		else
+			return ::wcsstr(string, sub_string);
+	}
+	template <typename type>
+		requires (library::any_of_type<type, char, wchar_t>)
 	inline auto string_print(type* buffer, size_t const count, type const* format, ...) noexcept {
 		va_list arg;
 		va_start(arg, format);
@@ -225,6 +241,7 @@ namespace library {
 		va_end(arg);
 	}
 
+	//_wsplitpath_s(szFullPath, nullptr, 0, nullptr, 0, nullptr, 0, szExt, MAX_PATH);
 	//swprintf_s(path, size / sizeof(wchar_t), L"\\%s(%s)\\%% %s", object.data(), instance.data(), item.data());
 
 }

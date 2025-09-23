@@ -120,7 +120,7 @@ namespace library::intrusive {
 		friend class share_pointer;
 		using size_type = unsigned int;
 		using hook = pointer_hook<index>;
-		static_assert(std::is_base_of<hook, type>::value);
+		//static_assert(std::is_base_of<hook, type>::value);
 		hook* _pointer;
 	public:
 		inline constexpr explicit weak_pointer(void) noexcept

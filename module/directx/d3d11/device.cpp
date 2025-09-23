@@ -1,6 +1,13 @@
-#include "library/pattern/singleton.h"
 #include "device.h"
+#include "library/function.h"
 #include <cassert>
+#include "../DirectXTK/DDSTextureLoader.h"
+#include "../DirectXTK/WICTextureLoader.h"
+#ifdef _DEBUG
+#pragma comment(lib, "DirectXTK/DirectXTKd.lib")
+#else
+#pragma comment(lib, "DirectXTK/DirectXTK.lib")
+#endif
 
 namespace library {
 	template<>
@@ -43,5 +50,11 @@ namespace d3d11 {
 	inline auto device::query_interface_dxgi_device(void) noexcept -> dxgi::device {
 		IDXGIDevice* device = reinterpret_cast<IDXGIDevice*>(base::query_interface(__uuidof(IDXGIDevice)));
 		return dxgi::device(device);
+	}
+	inline void device::create_texture_from_file(wchar_t const* const path, shader_resource_view* srv) noexcept {
+		if (nullptr != library::string_string(path, L".dds"))
+			DirectX::CreateDDSTextureFromFile(_component, path, nullptr, nullptr == srv ? nullptr : &srv->data());
+		else
+			DirectX::CreateWICTextureFromFile(_component, path, nullptr, nullptr == srv ? nullptr : &srv->data());
 	}
 }
