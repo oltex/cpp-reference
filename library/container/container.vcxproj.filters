@@ -124,6 +124,10 @@
     <ClInclude Include="debug\lockfree_queue.h">
       <Filter>debug</Filter>
     </ClInclude>
+    <ClInclude Include="bit_set.h" />
+    <ClInclude Include="example\bit_set.h">
+      <Filter>example</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

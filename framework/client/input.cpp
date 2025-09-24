@@ -8,44 +8,51 @@ namespace framework {
 		if (nullptr != reading) {
 			auto kind = reading.get_input_kind();
 			if (GameInput::v2::GameInputKindMouse & kind) {
-				_previous_mouse_state = _current_mouse_state;
-				_current_mouse_state = reading.get_mouse_state();
+				_previous_mouse = _current_mouse;
+				_current_mouse = reading.get_mouse_state();
 			}
 			if (GameInput::v2::GameInputKindKeyboard & kind) {
-				auto key_state = reading.get_key_state();
 				auto count = reading.get_key_count();
+				auto key_state = reading.get_key_state();
 
-				_previous_key_state = _current_key_state;
-				_current_key_state.reset();
-				for (auto index = 0; index < count; ++index) 
-					_current_key_state |= static_cast<key>(key_state[index].virtualKey);
+				_previous_keyboard = _current_keyboard;
+				_current_keyboard.reset();
+				for (auto& iter : key_state)
+					_current_keyboard |= static_cast<key>(iter.virtualKey);
 			}
-
-			if (_current_key_state & key::a)
 		}
 	}
 	auto input::get_mouse_button(void) const noexcept -> mouse {
-		return static_cast<mouse>(_current_mouse_state.buttons);
+		return static_cast<mouse>(_current_mouse.buttons);
 	}
 	auto input::get_mouse_button_down(void) const noexcept -> mouse {
-		return static_cast<mouse>(~_previous_mouse_state.buttons & _current_mouse_state.buttons);
+		return static_cast<mouse>(~_previous_mouse.buttons & _current_mouse.buttons);
 	}
 	auto input::get_mouse_button_up(void) const noexcept -> mouse {
-		return static_cast<mouse>(_previous_mouse_state.buttons & ~_current_mouse_state.buttons);
+		return static_cast<mouse>(_previous_mouse.buttons & ~_current_mouse.buttons);
 	}
 	auto input::get_mouse_wheel(void) const noexcept -> int {
-		return static_cast<int>(_current_mouse_state.wheelY - _previous_mouse_state.wheelY);
+		return static_cast<int>(_current_mouse.wheelY - _previous_mouse.wheelY);
 	}
 	auto input::get_mouse_move(void) noexcept -> library::pair<int, int> {
 		return library::pair<int, int>(
-			static_cast<int>(_current_mouse_state.positionX - _previous_mouse_state.positionX),
-			static_cast<int>(_current_mouse_state.positionY - _previous_mouse_state.positionY)
+			static_cast<int>(_current_mouse.positionX - _previous_mouse.positionX),
+			static_cast<int>(_current_mouse.positionY - _previous_mouse.positionY)
 		);
 	}
 	auto input::get_mouse_position(void) noexcept -> library::pair<int, int> {
 		return library::pair<int, int>(
-			static_cast<int>(_current_mouse_state.absolutePositionX),
-			static_cast<int>(_current_mouse_state.absolutePositionY)
+			static_cast<int>(_current_mouse.absolutePositionX),
+			static_cast<int>(_current_mouse.absolutePositionY)
 		);
+	}
+	auto input::get_keyboard_button(void) noexcept -> keyboard const& {
+		return _current_keyboard;
+	}
+	auto input::get_keyboard_button_down(void) noexcept -> keyboard {
+		return ~_previous_keyboard & _current_keyboard;
+	}
+	auto input::get_keyboard_button_up(void) noexcept -> keyboard {
+		return _previous_keyboard & ~_current_keyboard;
 	}
 }

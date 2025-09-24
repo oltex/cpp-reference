@@ -18,10 +18,10 @@ namespace framework {
 		d3d11::depth_stencil_view _depth_stencil_view;
 	public:
 		explicit graphic(::winapi::handle& handle) noexcept;
-		inline explicit graphic(graphic const&) noexcept = delete;
-		inline explicit graphic(graphic&&) noexcept = delete;
-		inline auto operator=(graphic const&) noexcept -> graphic & = delete;
-		inline auto operator=(graphic&&) noexcept -> graphic & = delete;
+		explicit graphic(graphic const&) noexcept = delete;
+		explicit graphic(graphic&&) noexcept = delete;
+		auto operator=(graphic const&) noexcept -> graphic & = delete;
+		auto operator=(graphic&&) noexcept -> graphic & = delete;
 		~graphic(void) noexcept;
 
 		void render_ready(void) noexcept;

@@ -75,6 +75,7 @@ namespace library {
 		return reinterpret_cast<type*>(::memmove(destine, source, sizeof(type) * count));
 	}
 	inline auto memory_compare(void const* const buffer_1, void const* const buffer_2, size_t const size) noexcept -> int {
+		//if (std::is_constant_evaluated())
 		return ::memcmp(buffer_1, buffer_2, size);
 	}
 	template<typename type>
@@ -82,7 +83,7 @@ namespace library {
 	inline auto memory_compare(type const* const buffer_1, type const* const buffer_2, size_t count) noexcept -> int {
 		return ::memcmp(buffer_1, buffer_2, sizeof(type) * count);
 	}
-	inline auto memory_set(void* const destine, int value, size_t size) noexcept -> void* {
+	inline auto memory_set(void* const destine, int const value, size_t const size) noexcept -> void* {
 		return ::memset(destine, value, size);
 	}
 

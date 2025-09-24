@@ -7,10 +7,10 @@ namespace framework {
 		library::thread _thread;
 	public:
 		explicit window(void) noexcept;
-		inline explicit window(window const&) noexcept = delete;
-		inline explicit window(window&&) noexcept = delete;
-		inline auto operator=(window const&) noexcept -> window & = delete;
-		inline auto operator=(window&&) noexcept -> window & = delete;
+		explicit window(window const&) noexcept = delete;
+		explicit window(window&&) noexcept = delete;
+		auto operator=(window const&) noexcept -> window & = delete;
+		auto operator=(window&&) noexcept -> window & = delete;
 		inline ~window(void) noexcept = default;
 
 		bool is_exit(void) noexcept;

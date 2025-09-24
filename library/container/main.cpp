@@ -1,6 +1,6 @@
 #include "../debug.h"
 
-#include "example/list.h"
+//#include "example/list.h"
 //#include "example/pool.h"
 //#include "example/pair.h"
 //#include "example/tuple.h"
@@ -26,6 +26,7 @@
 //#include "example/lockfree/queue.h"
 //#include "example/thread-local/pool.h"
 //#include "example/hash_table.h"
+#include "example/bit_set.h"
 
 int main(void) noexcept {
 	library::crt_set_debug_flag();
@@ -55,5 +56,6 @@ int main(void) noexcept {
 	//example::lockfree::queue();
 	//example::_thread_local::pool();
 	//example::hash_table();
+	example::bit_set();
 	return 0;
 }

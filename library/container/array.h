@@ -21,10 +21,10 @@ namespace library {
 		inline auto back(void) const noexcept ->type& {
 			return _array[_capacity - 1];
 		}
-		inline auto begin(void) const noexcept -> iterator {
+		inline auto begin(void) noexcept -> iterator {
 			return _array;
 		}
-		inline auto end(void) const noexcept -> iterator {
+		inline auto end(void) noexcept -> iterator {
 			return _array + _capacity;
 		}
 		inline void fill(type const& value) noexcept {

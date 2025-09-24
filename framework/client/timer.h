@@ -9,10 +9,10 @@ namespace framework {
 		double _delta;
 	public:
 		explicit timer(void) noexcept;
-		inline explicit timer(timer const&) noexcept = delete;
-		inline explicit timer(timer&&) noexcept = delete;
-		inline auto operator=(timer const&) noexcept -> timer & = delete;
-		inline auto operator=(timer&&) noexcept -> timer & = delete;
+		explicit timer(timer const&) noexcept = delete;
+		explicit timer(timer&&) noexcept = delete;
+		auto operator=(timer const&) noexcept -> timer & = delete;
+		auto operator=(timer&&) noexcept -> timer & = delete;
 		~timer(void) noexcept;
 
 		void update_frame(void) noexcept;
