@@ -36,7 +36,10 @@
       <Filter>resource</Filter>
     </ClInclude>
     <ClInclude Include="input.h" />
-    <ClInclude Include="sound.h" />
+    <ClInclude Include="audio.h" />
+    <ClInclude Include="sound.h">
+      <Filter>resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -57,7 +60,10 @@
     <ClCompile Include="graphic.cpp" />
     <ClCompile Include="window.cpp" />
     <ClCompile Include="input.cpp" />
-    <ClCompile Include="sound.cpp" />
+    <ClCompile Include="audio.cpp" />
+    <ClCompile Include="sound.cpp">
+      <Filter>resource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="component">

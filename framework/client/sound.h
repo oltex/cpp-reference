@@ -1,20 +1,22 @@
 #pragma once
+#include "library/container/share_pointer.h"
 #ifdef _DEBUG
 #pragma comment(lib, "library/fmod/fmodL_vc.lib")
 #else
 #pragma comment(lib, "library/fmod/fmod_vc.lib")
 #endif
 #include "library/fmod/fmod.hpp"
+#include "resource.h"
 
 namespace framework {
-	class sound {
-		FMOD::System* _system;
+	class sound : public resource {
+		library::share_pointer<FMOD::Sound> _sound;
 	public:
-		explicit sound(void) noexcept;
-		explicit sound(sound const&) noexcept = delete;
+		explicit sound(char const* const path, FMOD_MODE const mode) noexcept;
+		explicit sound(sound const& rhs) noexcept;
 		explicit sound(sound&&) noexcept = delete;
 		auto operator=(sound const&) noexcept -> sound & = delete;
 		auto operator=(sound&&) noexcept -> sound & = delete;
-		~sound(void) noexcept;
+		virtual ~sound(void) noexcept override;
 	};
 }

@@ -1,4 +1,5 @@
 #pragma once
+#include "library/pattern/singleton.h"
 #pragma comment(lib, "module/directx/binary/directx.lib")
 #include "module/directx/directx.h"
 #include "library/system/thread.h"
@@ -8,11 +9,14 @@ namespace winapi {
 }
 
 namespace framework {
-	class graphic {
-		d3d11::device& _device;
+	class texture;
+	class graphic : public library::singleton<graphic> {
+		friend class library::singleton<graphic>;
+		friend class texture;
+
+		d3d11::device _device;
 		d3d11::device_context _device_context;
 		dxgi::swap_chain _swap_chain;
-
 		d3d11::view_port _view_port;
 		d3d11::render_target_view _render_target_view;
 		d3d11::depth_stencil_view _depth_stencil_view;

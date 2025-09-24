@@ -4,7 +4,7 @@
 #include <cassert>
 
 namespace dxgi {
-	inline auto factory::create_swap_chain(winapi::handle& handle, unsigned int numerator, bool window) noexcept -> dxgi::swap_chain {
+	inline auto factory::create_swap_chain(d3d11::device& device, winapi::handle& handle, unsigned int numerator, bool window) noexcept -> dxgi::swap_chain {
 		auto rect = handle.get_client_rect();
 		DXGI_SWAP_CHAIN_DESC desc{
 			.BufferDesc{
@@ -29,7 +29,7 @@ namespace dxgi {
 			.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD //DXGI_SWAP_EFFECT_DISCARD 
 		};
 		IDXGISwapChain* component;
-		auto result = _component->CreateSwapChain(d3d11::device::instance().data(), &desc, &component);
+		auto result = _component->CreateSwapChain(device.data(), &desc, &component);
 		assert(SUCCEEDED(result));
 		return dxgi::swap_chain(component);
 	}

@@ -1,13 +1,15 @@
 #include "sound.h"
+#include "audio.h"
 
 namespace framework {
-	sound::sound(void) noexcept {
-		FMOD::System_Create(&_system);
-		_system->init(FMOD_MAX_CHANNEL_WIDTH, FMOD_INIT_NORMAL, nullptr);
-
+	sound::sound(char const* const path, FMOD_MODE const mode) noexcept {
+		//audio::instance()._system->createSound(path, mode, nullptr, &*_sound);
 	}
+
+	sound::sound(sound const& rhs) noexcept
+		: _sound(rhs._sound) {
+	}
+
 	sound::~sound(void) noexcept {
-		_system->close();
-		_system->release();
 	}
 }
