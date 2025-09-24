@@ -20,5 +20,7 @@ namespace framework {
 		auto operator=(audio const&) noexcept -> audio & = delete;
 		auto operator=(audio&&) noexcept -> audio & = delete;
 		~audio(void) noexcept;
+
+		void update_sound(void) noexcept;
 	};
 }

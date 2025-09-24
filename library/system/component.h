@@ -3,6 +3,14 @@
 #include "../function.h"
 
 namespace library {
+
+	inline void component_initialize(COINIT const coinit) noexcept {
+		auto result = ::CoInitializeEx(nullptr, coinit);
+	}
+	inline void component_uninitialize(void) noexcept {
+		::CoUninitialize();
+	}
+
 	template<typename type = void>
 	class component {
 	protected:

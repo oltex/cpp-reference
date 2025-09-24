@@ -13,10 +13,14 @@ namespace library {
 		size_type _use;
 		size_type _weak;
 	};
-
+	template<typename type>
+	inline void share_pointer_deleter(type* pointer) noexcept {
+		library::destruct<type>(*pointer);
+		library::deallocate<type>(pointer);
+	}
 	template<typename type>
 	class weak_pointer;
-	template<typename type>
+	template<typename type, auto deleter = share_pointer_deleter<type>>
 	class share_pointer final {
 		using size_type = unsigned int;
 		friend class weak_pointer<type>;
@@ -63,8 +67,7 @@ namespace library {
 		};
 		inline ~share_pointer(void) noexcept {
 			if (nullptr != _reference && 0 == --_reference->_use) {
-				library::destruct<type>(*_pointer);
-				library::deallocate<type>(_pointer);
+				deleter(_pointer);
 				if (0 == _reference->_weak)
 					library::deallocate<reference>(_reference);
 			}

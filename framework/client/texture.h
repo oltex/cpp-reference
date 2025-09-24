@@ -12,6 +12,6 @@ namespace framework {
 		inline explicit texture(texture&&) noexcept = delete;
 		inline auto operator=(texture const&) noexcept -> texture & = delete;
 		inline auto operator=(texture&&) noexcept -> texture & = delete;
-		inline virtual ~texture(void) noexcept override;
+		inline virtual ~texture(void) noexcept override = default;
 	};
 }

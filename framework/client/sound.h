@@ -10,7 +10,10 @@
 
 namespace framework {
 	class sound : public resource {
-		library::share_pointer<FMOD::Sound> _sound;
+		inline static void sound_deleter(FMOD::Sound* sound) noexcept {
+			sound->release();
+		}
+		library::share_pointer<FMOD::Sound, sound_deleter> _sound;
 	public:
 		explicit sound(char const* const path, FMOD_MODE const mode) noexcept;
 		explicit sound(sound const& rhs) noexcept;
