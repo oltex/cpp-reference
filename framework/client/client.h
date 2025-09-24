@@ -3,6 +3,7 @@
 #include "graphic.h"
 #include "timer.h"
 #include "input.h"
+#include "sound.h"
 
 namespace framework {
 	class client : public library::singleton<client> {
@@ -11,6 +12,7 @@ namespace framework {
 		graphic _graphic;
 		timer _timer;
 		input _input;
+		sound _sound;
 	public:
 		explicit client(void) noexcept;
 		explicit client(client const&) noexcept = delete;
