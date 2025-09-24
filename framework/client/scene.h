@@ -9,9 +9,9 @@
 namespace framework {
 	class scene {
 		using size_type = unsigned int;
-		object_list _object_list;
-		library::unorder_map<library::string, object_weak_ptr> _object_tag;
-		library::unorder_map<size_type, library::vector<framework::system_interface*>> _system;
+		//object_list _object_list;
+		//library::unorder_map<library::string, object_weak_ptr> _object_tag;
+		//library::unorder_map<size_type, library::vector<framework::system_interface*>> _system;
 	public:
 		explicit scene(void) noexcept;
 		inline explicit scene(scene const&) noexcept = delete;
@@ -36,19 +36,16 @@ namespace framework {
 			return result->_second;
 		}
 	};
-}
-
-namespace implement {
-	class scene_manager {
+	class scenes {
 		scene* _current_scene;
 		scene* _previous_scene;
 	public:
-		inline explicit scene_manager(void) noexcept = default;
-		inline explicit scene_manager(scene_manager const&) noexcept = delete;
-		inline explicit scene_manager(scene_manager&&) noexcept = delete;
-		inline auto operator=(scene_manager const&) noexcept -> scene_manager & = delete;
-		inline auto operator=(scene_manager&&) noexcept -> scene_manager & = delete;
-		inline virtual ~scene_manager(void) noexcept = default;
+		inline explicit scenes(void) noexcept = default;
+		inline explicit scenes(scenes const&) noexcept = delete;
+		inline explicit scenes(scenes&&) noexcept = delete;
+		inline auto operator=(scenes const&) noexcept -> scenes & = delete;
+		inline auto operator=(scenes&&) noexcept -> scenes & = delete;
+		inline virtual ~scenes(void) noexcept = default;
 
 		inline void update(void) noexcept {
 			if (nullptr != _previous_scene)

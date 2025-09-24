@@ -60,9 +60,15 @@
     <ClCompile Include="graphic.cpp" />
     <ClCompile Include="window.cpp" />
     <ClCompile Include="input.cpp" />
-    <ClCompile Include="audio.cpp" />
     <ClCompile Include="sound.cpp">
       <Filter>resource</Filter>
+    </ClCompile>
+    <ClCompile Include="resource.cpp">
+      <Filter>resource</Filter>
+    </ClCompile>
+    <ClCompile Include="audio.cpp" />
+    <ClCompile Include="behave.cpp">
+      <Filter>system</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
