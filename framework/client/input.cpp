@@ -12,20 +12,26 @@ namespace framework {
 				_current_mouse_state = reading.get_mouse_state();
 			}
 			if (GameInput::v2::GameInputKindKeyboard & kind) {
-				reading.get_key_state();
+				auto key_state = reading.get_key_state();
+				auto count = reading.get_key_count();
+
+				_previous_key_state = _current_key_state;
+				_current_key_state.reset();
+				for (auto index = 0; index < count; ++index) 
+					_current_key_state |= static_cast<key>(key_state[index].virtualKey);
 			}
 
-			int a = 10;
+			if (_current_key_state & key::a)
 		}
 	}
-	auto input::get_mouse_button(void) const noexcept -> mouse_button {
-		return static_cast<mouse_button>(_current_mouse_state.buttons);
+	auto input::get_mouse_button(void) const noexcept -> mouse {
+		return static_cast<mouse>(_current_mouse_state.buttons);
 	}
-	auto input::get_mouse_button_down(void) const noexcept -> mouse_button {
-		return static_cast<mouse_button>(~_previous_mouse_state.buttons & _current_mouse_state.buttons);
+	auto input::get_mouse_button_down(void) const noexcept -> mouse {
+		return static_cast<mouse>(~_previous_mouse_state.buttons & _current_mouse_state.buttons);
 	}
-	auto input::get_mouse_button_up(void) const noexcept -> mouse_button {
-		return static_cast<mouse_button>(_previous_mouse_state.buttons & ~_current_mouse_state.buttons);
+	auto input::get_mouse_button_up(void) const noexcept -> mouse {
+		return static_cast<mouse>(_previous_mouse_state.buttons & ~_current_mouse_state.buttons);
 	}
 	auto input::get_mouse_wheel(void) const noexcept -> int {
 		return static_cast<int>(_current_mouse_state.wheelY - _previous_mouse_state.wheelY);

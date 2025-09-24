@@ -15,8 +15,6 @@ namespace game_input {
 	inline auto reading::get_mouse_state(void) noexcept -> mouse_state {
 		mouse_state state;
 		bool result = _component->GetMouseState(&state);
-		if (false == result)
-			int a = 10;
 		return state;
 	}
 	inline auto reading::get_key_count(void) noexcept -> unsigned int {
@@ -24,9 +22,7 @@ namespace game_input {
 	}
 	inline auto reading::get_key_state(void) noexcept -> library::array<key_state, 16> {
 		library::array<key_state, 16> key_state;
-		int result = _component->GetKeyState(_component->GetKeyCount(), key_state.data());
-		if (0 == result)
-			int a = 10;
+		_component->GetKeyState(_component->GetKeyCount(), key_state.data());
 		return key_state;
 	}
 	bool declspec_dll operator==(reading& lhs, nullptr_t) noexcept {
