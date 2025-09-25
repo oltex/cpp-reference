@@ -164,7 +164,8 @@
     <ClInclude Include="example\compress_pair.h" />
     <ClInclude Include="example\hash_table.h" />
     <ClInclude Include="example\intrusive\list.h" />
-    <ClInclude Include="example\intrusive\share_pointer.h" />
+    <ClInclude Include="example\intrusive\pointer.h" />
+    <ClInclude Include="example\intrusive\pointer_list.h" />
     <ClInclude Include="example\lockfree\pool.h" />
     <ClInclude Include="example\lockfree\queue.h" />
     <ClInclude Include="example\lockfree\stack.h" />
@@ -185,7 +186,8 @@
     <ClInclude Include="example\ring_buffer.h" />
     <ClInclude Include="hash_table.h" />
     <ClInclude Include="intrusive\list.h" />
-    <ClInclude Include="intrusive\share_pointer.h" />
+    <ClInclude Include="intrusive\pointer_list.h" />
+    <ClInclude Include="intrusive\pointer.h" />
     <ClInclude Include="list.h" />
     <ClInclude Include="lockfree\free_list.h" />
     <ClInclude Include="lockfree\pool.h" />

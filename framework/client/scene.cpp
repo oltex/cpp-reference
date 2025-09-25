@@ -2,26 +2,35 @@
 #include "client.h"
 
 namespace framework {
-	scene::scene(void) noexcept {
-		auto& client = framework::client::instance();
+	void scenes::update_scene(void) noexcept {
+		if (nullptr != _next_scene)
+			_current_scene = std::move(_next_scene);
+		if (nullptr != _current_scene) {
+			for (auto& iter : _current_scene->_system) {
+				iter.update();
+			}
+		}
 	}
-	void scene::update(void) noexcept {
-		for (auto& vector : _system)
-			for (auto& system : vector._second)
-				system->update();
+	void scenes::create_scene(library::string const& path) noexcept {
+		_next_scene.set(new scene);
 	}
-	auto scene::create_object(object_share_ptr& parent) noexcept -> object_share_ptr {
-		auto& object_mgr = 
-		auto object = _object_manager.create_object();
-		return object;
+	auto scenes::create_object(void) noexcept -> library::intrusive::share_pointer<object, 0> {
+		library::intrusive::share_pointer<object,0> pointer(library::singleton<library::pool<object>>::instance().allocate());
+		_current_scene->_object.push_back(pointer);
+		return pointer;
 	}
-	template<typename... argument>
-	inline auto create_object(argument&&... arg) noexcept -> object_share_ptr {
-		auto object = library::allocate<framework::object>();
-		library::construct(*object, std::forward<argument>(arg)...);
-		return object_share_ptr(object);
-	}
-	auto scene::clone_object(library::string const& name, object_share_ptr& parent) noexcept -> object_share_ptr {
-	
-	}
+	//auto scene::create_object(object_share_ptr& parent) noexcept -> object_share_ptr {
+	//	auto& object_mgr = 
+	//	auto object = _object_manager.create_object();
+	//	return object;
+	//}
+	//template<typename... argument>
+	//inline auto create_object(argument&&... arg) noexcept -> object_share_ptr {
+	//	auto object = library::allocate<framework::object>();
+	//	library::construct(*object, std::forward<argument>(arg)...);
+	//	return object_share_ptr(object);
+	//}
+	//auto scene::clone_object(library::string const& name, object_share_ptr& parent) noexcept -> object_share_ptr {
+	//
+	//}
 }

@@ -9,9 +9,10 @@
 //
 //library::vector<library::tuple<argument*...>> _component;
 //template <typename... argument>
+#include "library/container/intrusive/list.h"
 
 namespace framework {
-	class system {
+	class system : public library::intrusive::list_hook<0> {
 	protected:
 		using size_type = unsigned int;
 		inline static size_type _type_id = 0;

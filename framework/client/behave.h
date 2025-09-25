@@ -2,7 +2,7 @@
 #include "system.h"
 
 namespace framework {
-	class behave : system {
+	class behave : public system {
 	public:
 		explicit behave(void) noexcept = default;
 		explicit behave(behave const&) noexcept = delete;

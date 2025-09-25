@@ -4,15 +4,17 @@
 #include "timer.h"
 #include "input.h"
 #include "audio.h"
+#include "scene.h"
 
 namespace framework {
 	class client : public library::singleton<client> {
 		friend class library::singleton<client>;
 		window _window;
 		graphic& _graphic;
-		timer _timer;
-		input _input;
+		input& _input;
 		audio& _audio;
+		scenes& _scenes;
+		timer _timer;
 	public:
 		explicit client(void) noexcept;
 		explicit client(client const&) noexcept = delete;
@@ -22,6 +24,5 @@ namespace framework {
 		~client(void) noexcept;
 
 		void execute(void) noexcept;
-		//auto create_scene(library::string const& path) noexcept;
 	};
 }

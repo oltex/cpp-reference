@@ -2,7 +2,7 @@
 #include "library/container/list.h"
 #include "library/container/pool.h"
 #include "library/pattern/singleton.h"
-#include "library/container/intrusive/share_pointer.h"
+#include "library/container/intrusive/pointer.h"
 #include "library/container/hash_table.h"
 
 namespace framework {

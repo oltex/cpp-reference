@@ -1,5 +1,5 @@
 #pragma once
-#include "../../intrusive/share_pointer.h"
+#include "../../intrusive/pointer.h"
 #include "../my_class.h"
 #include <iostream>
 #include <memory>
@@ -24,7 +24,7 @@ namespace example::intrusive {
 			delete ptr;
 		}
 	};
-	inline void share_pointer(void) noexcept {
+	inline void pointer(void) noexcept {
 		std::shared_ptr<int> b(new int(10));
 		std::weak_ptr<int> a(b);
 		a.lock();

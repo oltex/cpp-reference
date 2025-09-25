@@ -62,10 +62,8 @@ namespace library::intrusive {
 		}
 		inline share_pointer(share_pointer const& rhs) noexcept
 			: _pointer(rhs._pointer) {
-			if (nullptr != _pointer) {
+			if (nullptr != _pointer)
 				library::interlock_increment(_pointer->_use);
-				library::interlock_increment(_pointer->_weak);
-			}
 		};
 		inline explicit share_pointer(share_pointer&& rhs) noexcept
 			: _pointer(library::exchange(rhs._pointer, nullptr)) {

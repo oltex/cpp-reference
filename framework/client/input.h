@@ -1,4 +1,5 @@
 #pragma once
+#include "library/pattern/singleton.h"
 #include "library/system/component.h"
 #include "library/container/pair.h"
 #include "library/container/bit_set.h"
@@ -12,7 +13,8 @@ namespace framework {
 	enum key {
 		a = 0x41, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z
 	};
-	class input {
+	class input : public library::singleton<input> {
+		friend class library::singleton<input>;
 		using mouse = GameInput::v2::GameInputMouseState;
 		using keyboard = library::bit_set<255>;
 
@@ -21,14 +23,14 @@ namespace framework {
 		mouse _previous_mouse;
 		keyboard _current_keyboard;
 		keyboard _previous_keyboard;
-	public:
+
 		explicit input(void) noexcept;
 		explicit input(input const&) noexcept = delete;
 		explicit input(input&&) noexcept = delete;
 		auto operator=(input const&) noexcept -> input & = delete;
 		auto operator=(input&&) noexcept -> input & = delete;
 		~input(void) noexcept;
-
+	public:
 		void update_state(void) noexcept;
 		auto get_mouse_button(void) const noexcept -> framework::mouse;
 		auto get_mouse_button_down(void) const noexcept -> framework::mouse;

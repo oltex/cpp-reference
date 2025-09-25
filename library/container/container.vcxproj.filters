@@ -64,13 +64,13 @@
     <ClInclude Include="intrusive\list.h">
       <Filter>intrusive</Filter>
     </ClInclude>
-    <ClInclude Include="intrusive\share_pointer.h">
+    <ClInclude Include="intrusive\pointer.h">
       <Filter>intrusive</Filter>
     </ClInclude>
     <ClInclude Include="example\intrusive\list.h">
       <Filter>example\intrusive</Filter>
     </ClInclude>
-    <ClInclude Include="example\intrusive\share_pointer.h">
+    <ClInclude Include="example\intrusive\pointer.h">
       <Filter>example\intrusive</Filter>
     </ClInclude>
     <ClInclude Include="thread-local\pool.h">
@@ -127,6 +127,12 @@
     <ClInclude Include="bit_set.h" />
     <ClInclude Include="example\bit_set.h">
       <Filter>example</Filter>
+    </ClInclude>
+    <ClInclude Include="intrusive\pointer_list.h">
+      <Filter>intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="example\intrusive\pointer_list.h">
+      <Filter>example\intrusive</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
