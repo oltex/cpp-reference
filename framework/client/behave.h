@@ -9,7 +9,7 @@ namespace framework {
 		explicit behave(behave&&) noexcept = delete;
 		auto operator=(behave const&) noexcept -> behave & = delete;
 		auto operator=(behave&&) noexcept -> behave & = delete;
-		behave(void) noexcept = default;
+		virtual ~behave(void) noexcept override = default;
 
 		virtual void update(void) noexcept override;
 	};
