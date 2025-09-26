@@ -37,15 +37,8 @@
     <ClInclude Include="example\storage.h">
       <Filter>example</Filter>
     </ClInclude>
-    <ClInclude Include="unique_pointer.h" />
-    <ClInclude Include="example\unique_pointer.h">
-      <Filter>example</Filter>
-    </ClInclude>
     <ClInclude Include="pointer.h" />
-    <ClInclude Include="example\share_pointer.h">
-      <Filter>example</Filter>
-    </ClInclude>
-    <ClInclude Include="example\weak_pointer.h">
+    <ClInclude Include="example\pointer.h">
       <Filter>example</Filter>
     </ClInclude>
     <ClInclude Include="circle_queue.h" />

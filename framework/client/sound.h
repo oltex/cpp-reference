@@ -1,5 +1,5 @@
 #pragma once
-#include "library/container/share_pointer.h"
+#include "library/container/pointer.h"
 #ifdef _DEBUG
 #pragma comment(lib, "library/fmod/fmodL_vc.lib")
 #else

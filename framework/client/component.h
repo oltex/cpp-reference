@@ -3,10 +3,11 @@
 #include "library/container/list.h"
 #include "library/container/pool.h"
 #include "library/container/intrusive/pointer.h"
+#include "library/container/intrusive/pointer_list.h"
 #include "library/container/hash_table.h"
 
 namespace framework {
-	class component : public library::intrusive::pointer_hook<0> {
+	class component : public library::intrusive::pointer_hook<0>, public library::intrusive::list_hook<0> {
 		using size_type = unsigned int;
 		inline static size_type _static_type_id = 0;
 	protected:
@@ -58,12 +59,12 @@ namespace framework {
 		using size_type = unsigned int;
 		library::unorder_map<size_type, pool_interface*> _component;
 
-		inline explicit components(void) noexcept = default;
-		inline explicit components(components const&) noexcept = delete;
-		inline explicit components(components&&) noexcept = delete;
-		inline auto operator=(components const&) noexcept -> components & = delete;
-		inline auto operator=(components&&) noexcept -> components & = delete;
-		inline ~components(void) noexcept = default;
+		explicit components(void) noexcept = default;
+		explicit components(components const&) noexcept = delete;
+		explicit components(components&&) noexcept = delete;
+		auto operator=(components const&) noexcept -> components & = delete;
+		auto operator=(components&&) noexcept -> components & = delete;
+		~components(void) noexcept;
 
 		template<typename type, typename... argument>
 		inline auto allocate_component(argument&&... arg) noexcept -> library::intrusive::share_pointer<component, 0> {

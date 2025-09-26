@@ -33,7 +33,9 @@ namespace library::intrusive {
 
 	template<typename type, size_t index>
 	class share_pointer {
-		template<typename type, size_t>
+		template<typename other, size_t>
+		friend class share_pointer;
+		template<typename other, size_t>
 		friend class weak_pointer;
 		using size_type = unsigned int;
 		using hook = pointer_hook<index>;
@@ -46,12 +48,16 @@ namespace library::intrusive {
 		inline constexpr share_pointer(nullptr_t) noexcept
 			: _pointer(nullptr) {
 		};
-		inline explicit share_pointer(type* value) noexcept
+		template<typename other>
+			requires std::is_convertible_v<other*, type*>
+		inline explicit share_pointer(other* value) noexcept
 			: _pointer(static_cast<hook*>(value)) {
 			library::interlock_exchange(_pointer->_use, 1);
 			library::interlock_exchange(_pointer->_weak, 1);
 		}
-		inline share_pointer(weak_pointer<type, index> const& weak_ptr) noexcept
+		template<typename other>
+			requires std::is_convertible_v<other*, type*>
+		inline share_pointer(weak_pointer<other, index> const& weak_ptr) noexcept
 			: _pointer(weak_ptr._pointer) {
 			if (nullptr != _pointer) {
 				for (size_type use = _pointer->_use, prev; 0 != use; use = prev)
@@ -60,19 +66,27 @@ namespace library::intrusive {
 				_pointer = nullptr;
 			}
 		}
-		inline share_pointer(share_pointer const& rhs) noexcept
+		template<typename other>
+			requires std::is_convertible_v<other*, type*>
+		inline share_pointer(share_pointer<other, index> const& rhs) noexcept
 			: _pointer(rhs._pointer) {
 			if (nullptr != _pointer)
 				library::interlock_increment(_pointer->_use);
 		};
-		inline explicit share_pointer(share_pointer&& rhs) noexcept
+		template<typename other>
+			requires std::is_convertible_v<other*, type*>
+		inline explicit share_pointer(share_pointer<other, index>&& rhs) noexcept
 			: _pointer(library::exchange(rhs._pointer, nullptr)) {
 		};
-		inline auto operator=(share_pointer const& rhs) noexcept -> share_pointer& {
+		template<typename other>
+			requires std::is_convertible_v<other*, type*>
+		inline auto operator=(share_pointer<other, index> const& rhs) noexcept -> share_pointer& {
 			share_pointer(rhs).swap(*this);
 			return *this;
 		}
-		inline auto operator=(share_pointer&& rhs) noexcept -> share_pointer& {
+		template<typename other>
+			requires std::is_convertible_v<other*, type*>
+		inline auto operator=(share_pointer<other, index>&& rhs) noexcept -> share_pointer& {
 			share_pointer(std::move(rhs)).swap(*this);
 			return *this;
 		};
@@ -127,24 +141,34 @@ namespace library::intrusive {
 		inline constexpr explicit weak_pointer(nullptr_t) noexcept
 			: _pointer(nullptr) {
 		}
-		inline weak_pointer(share_pointer<type, index> const& shared_ptr) noexcept
-			: _pointer(shared_ptr._pointer) {
+		template<typename other>
+			requires std::is_convertible_v<other*, type*>
+		inline weak_pointer(share_pointer<other, index> const& share_ptr) noexcept
+			: _pointer(share_ptr._pointer) {
 			if (nullptr != _pointer)
 				library::interlock_increment(_pointer->_weak);
 		}
-		inline explicit weak_pointer(weak_pointer const& rhs) noexcept
+		template<typename other>
+			requires std::is_convertible_v<other*, type*>
+		inline explicit weak_pointer(weak_pointer<other, index> const& rhs) noexcept
 			: _pointer(rhs._pointer) {
 			if (nullptr != _pointer)
 				library::interlock_increment(_pointer._weak);
 		};
-		inline explicit weak_pointer(weak_pointer&& rhs) noexcept
+		template<typename other>
+			requires std::is_convertible_v<other*, type*>
+		inline explicit weak_pointer(weak_pointer<other, index>&& rhs) noexcept
 			: _pointer(library::exchange(rhs._pointer, nullptr)) {
 		};
-		inline auto operator=(weak_pointer const& rhs) noexcept -> weak_pointer& {
+		template<typename other>
+			requires std::is_convertible_v<other*, type*>
+		inline auto operator=(weak_pointer<other, index> const& rhs) noexcept -> weak_pointer& {
 			weak_pointer(rhs).swap(*this);
 			return *this;
 		}
-		inline auto operator=(weak_pointer&& rhs) noexcept -> weak_pointer& {
+		template<typename other>
+			requires std::is_convertible_v<other*, type*>
+		inline auto operator=(weak_pointer<other, index>&& rhs) noexcept -> weak_pointer& {
 			weak_pointer(std::move(rhs)).swap(*this);
 			return *this;
 		};

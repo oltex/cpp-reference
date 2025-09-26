@@ -10,27 +10,6 @@ namespace framework {
 	class object : public library::intrusive::pointer_hook<0>, public library::intrusive::list_hook<0> {
 		friend class library::intrusive::share_pointer<object, 0>;
 		friend class library::intrusive::weak_pointer<object, 0>;
-
-		library::intrusive::pointer_list<component, 0, 0> _component;
-
-			library::unorder_map<library::string, framework::component*> _component;
-			//library::unorder_map<library::string, library::vector<library::string>> _system;
-	public:
-		explicit object(void) noexcept;
-		explicit object(object const& rhs) noexcept;
-		explicit object(object&&) noexcept = delete;
-		auto operator=(object const&) noexcept -> object & = delete;
-		auto operator=(object&&) noexcept -> object & = delete;
-		~object(void) noexcept {
-			//while (!_child.empty()) {
-			//	object& child = _child.front();
-			//	_child.erase(child);
-
-			//	library::intrusive::share_pointer<object, 0> child_pointer;
-			//	child_pointer.set(&child);
-			//}
-		};
-	private:
 		template<size_t index>
 		inline void destruct(void) noexcept {};
 		template<>
@@ -41,10 +20,21 @@ namespace framework {
 		inline static void deallocate(object* pointer) noexcept {};
 		template<>
 		inline static void deallocate<0>(object* pointer) noexcept;
+
+		library::intrusive::pointer_list<component, 0, 0> _component;
 	public:
+		explicit object(void) noexcept;
+		explicit object(object const& rhs) noexcept;
+		explicit object(object&&) noexcept = delete;
+		auto operator=(object const&) noexcept -> object & = delete;
+		auto operator=(object&&) noexcept -> object & = delete;
+		~object(void) noexcept = default;
+
 		template<typename type, typename... argument>
-		inline void add_component(library::string const& name, argument&&... arg) noexcept {
+		inline auto add_component(library::string const& name, argument&&... arg) noexcept -> library::intrusive::share_pointer<component, 0> {
 			auto component = components::instance().allocate_component<type>(std::forward<argument>(arg)...);
+			_component.push_back(component);
+			return component;
 		}
 	};
 
