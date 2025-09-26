@@ -4,7 +4,7 @@
 
 namespace library {
 	template<typename type, bool placement = true, bool compress = true>
-	class pool final {
+	class pool {
 		union union_node final {
 			inline explicit union_node(void) noexcept = delete;
 			inline explicit union_node(union_node const&) noexcept = delete;

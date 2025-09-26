@@ -203,7 +203,7 @@
     <ClInclude Include="serialize_buffer.h" />
     <ClInclude Include="serialize_view.h" />
     <ClInclude Include="set.h" />
-    <ClInclude Include="share_pointer.h" />
+    <ClInclude Include="pointer.h" />
     <ClInclude Include="stack.h" />
     <ClInclude Include="storage.h" />
     <ClInclude Include="string.h" />
@@ -211,7 +211,6 @@
     <ClInclude Include="tuple.h" />
     <ClInclude Include="unique_pointer.h" />
     <ClInclude Include="vector.h" />
-    <ClInclude Include="weak_pointer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="example\list.h" />

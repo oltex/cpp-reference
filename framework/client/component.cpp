@@ -1,7 +1,7 @@
 #include "component.h"
 
 namespace framework {
-	component::component(size_type const type_id/*, library::intrusive::share_pointer<object, 0>& object*/) noexcept
+	component::component(size_type const type_id) noexcept
 		: _type_id(type_id) {
 	};
 

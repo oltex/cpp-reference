@@ -2,6 +2,7 @@
 #include "sound.h"
 
 #include "behave.h"
+#include "transform.h"
 
 namespace framework {
 	client::client(void) noexcept
@@ -19,10 +20,9 @@ namespace framework {
 
 		_scenes.create_scene("");
 		_scenes.update_scene();
-		//_scenes.create_system<behave>();
-		auto ptr = _scenes.create_object();
 
-		_objects.regist_prototype("test", ptr);
+		auto ptr = _scenes.create_object();
+		ptr->add_component<transform>("transform");
 	}
 
 	client::~client(void) noexcept {

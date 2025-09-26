@@ -24,6 +24,9 @@ namespace framework {
 		_current_scene->_object.push_back(pointer);
 		return pointer;
 	}
+	void scenes::destory_object(library::intrusive::share_pointer<object, 0>& pointer) noexcept {
+		library::intrusive::pointer_list<object, 0, 0>::erase(pointer);
+	}
 
 
 	//auto scene::create_object(object_share_ptr& parent) noexcept -> object_share_ptr {

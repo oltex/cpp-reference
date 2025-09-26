@@ -41,11 +41,10 @@
     <ClInclude Include="example\unique_pointer.h">
       <Filter>example</Filter>
     </ClInclude>
-    <ClInclude Include="share_pointer.h" />
+    <ClInclude Include="pointer.h" />
     <ClInclude Include="example\share_pointer.h">
       <Filter>example</Filter>
     </ClInclude>
-    <ClInclude Include="weak_pointer.h" />
     <ClInclude Include="example\weak_pointer.h">
       <Filter>example</Filter>
     </ClInclude>

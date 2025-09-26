@@ -8,10 +8,13 @@
 
 namespace framework {
 	class object : public library::intrusive::pointer_hook<0>, public library::intrusive::list_hook<0> {
-		//object_weak_ptr _parent;
-		//object_list _child;
-		//library::unorder_map<library::string, framework::component*> _component;
-		//library::unorder_map<library::string, library::vector<library::string>> _system;
+		friend class library::intrusive::share_pointer<object, 0>;
+		friend class library::intrusive::weak_pointer<object, 0>;
+
+		library::intrusive::pointer_list<component, 0, 0> _component;
+
+			library::unorder_map<library::string, framework::component*> _component;
+			//library::unorder_map<library::string, library::vector<library::string>> _system;
 	public:
 		explicit object(void) noexcept;
 		explicit object(object const& rhs) noexcept;
@@ -27,13 +30,7 @@ namespace framework {
 			//	child_pointer.set(&child);
 			//}
 		};
-
-		//template<typename type>
-		//inline void add_component(library::string const& name) noexcept {
-		//	auto component = implement::component_manager::create_component<type>();
-		//	_component.emplace(name, component);
-		//}
-
+	private:
 		template<size_t index>
 		inline void destruct(void) noexcept {};
 		template<>
@@ -44,6 +41,11 @@ namespace framework {
 		inline static void deallocate(object* pointer) noexcept {};
 		template<>
 		inline static void deallocate<0>(object* pointer) noexcept;
+	public:
+		template<typename type, typename... argument>
+		inline void add_component(library::string const& name, argument&&... arg) noexcept {
+			auto component = components::instance().allocate_component<type>(std::forward<argument>(arg)...);
+		}
 	};
 
 	class objects final : public library::singleton<objects> {
@@ -66,21 +68,10 @@ namespace framework {
 			library::construct<object>(*pointer, std::forward<argument>(arg)...);
 			return library::intrusive::share_pointer<object, 0>(pointer);
 		}
-		inline auto deallocate_object(object* value) noexcept {
-			_pool.deallocate(value);
-		}
+		void deallocate_object(object* value) noexcept;
 	public:
-		inline void regist_prototype(library::string const& name, library::intrusive::share_pointer<object, 0>& object) noexcept {
-			auto clone = allocate_object(*object);
-			_prototype.emplace(name, clone);
-		}
-		inline void find_prototype() noexcept {
-
-		}
-		//inline auto clone_prototype(library::string const& name, framework::object_share_ptr& parent) noexcept -> library::intrusive::share_pointer<framework::object, 0> {
-		//	auto result = _object_prototype.find(name);
-		//	return create_object(*result->_second);
-		//}
+		void regist_prototype(library::string const& name, library::intrusive::share_pointer<object, 0>& object) noexcept;
+		auto find_prototype(library::string const& name) noexcept -> library::intrusive::share_pointer<object, 0>;
 	};
 
 	template<>
