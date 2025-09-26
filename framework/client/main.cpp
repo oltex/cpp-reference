@@ -3,9 +3,13 @@
 #include <Windows.h>
 #include <bitset>
 
+#include "object.h"
 int __stdcall wWinMain(_In_ HINSTANCE hinstance, _In_opt_ HINSTANCE prev_hinstance, _In_ LPWSTR command_line, _In_ int command_show) {
 	library::crt_set_debug_flag();
 	library::component_initialize(COINIT_MULTITHREADED);
+
+	library::singleton<library::pool<framework::object, false>>::instance();
+
 	{
 		framework::client _client;
 		_client.execute();

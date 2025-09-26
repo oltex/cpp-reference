@@ -33,7 +33,7 @@ namespace framework {
 		explicit scenes(scenes&&) noexcept = delete;
 		auto operator=(scenes const&) noexcept -> scenes & = delete;
 		auto operator=(scenes&&) noexcept -> scenes & = delete;
-		virtual ~scenes(void) noexcept = default;
+		~scenes(void) noexcept = default;
 
 		void update_scene(void) noexcept;
 	public:
@@ -43,5 +43,6 @@ namespace framework {
 			_current_scene->_system.push_back(*new type);
 		}
 		auto create_object(void) noexcept -> library::intrusive::share_pointer<object, 0>;
+		auto clone_object(library::intrusive::share_pointer<object, 0>& origin) noexcept -> library::intrusive::share_pointer<object, 0>;
 	};
 }

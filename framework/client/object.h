@@ -14,11 +14,7 @@ namespace framework {
 		//library::unorder_map<library::string, library::vector<library::string>> _system;
 	public:
 		explicit object(void) noexcept;
-		explicit object(object const& rhs) noexcept {
-			//for (auto& component : rhs._component) {
-			//	 component._second->get_type_id();
-			//}
-		};
+		explicit object(object const& rhs) noexcept;
 		explicit object(object&&) noexcept = delete;
 		auto operator=(object const&) noexcept -> object & = delete;
 		auto operator=(object&&) noexcept -> object & = delete;
@@ -47,17 +43,16 @@ namespace framework {
 		template<size_t index>
 		inline static void deallocate(object* pointer) noexcept {};
 		template<>
-		inline static void deallocate<0>(object* pointer) noexcept {
-			library::singleton<library::pool<object>>::instance().deallocate(pointer);
-		};
+		inline static void deallocate<0>(object* pointer) noexcept;
 	};
 
-	class scenes;
 	class objects final : public library::singleton<objects> {
 		friend class library::singleton<objects>;
 		friend class scenes;
+		friend class object;
+		library::pool<framework::object, false> _pool;
+		library::unorder_map<library::string, library::intrusive::share_pointer<object, 0>> _prototype;
 
-		library::pool<framework::object> _pool;
 		explicit objects(void) noexcept = default;
 		explicit objects(objects const&) noexcept = delete;
 		explicit objects(objects&&) noexcept = delete;
@@ -66,18 +61,30 @@ namespace framework {
 		~objects(void) noexcept = default;
 
 		template<typename... argument>
-		inline auto create_object(argument&&... arg) noexcept {
-			auto obj = _pool.allocate(std::forward<argument>(arg)...);
-			return library::intrusive::share_pointer<object, 0>(obj);
+		inline auto allocate_object(argument&&... arg) noexcept -> library::intrusive::share_pointer<object, 0> {
+			auto pointer = _pool.allocate();
+			library::construct<object>(*pointer, std::forward<argument>(arg)...);
+			return library::intrusive::share_pointer<object, 0>(pointer);
+		}
+		inline auto deallocate_object(object* value) noexcept {
+			_pool.deallocate(value);
 		}
 	public:
-		//inline void regist_prototype(library::string const& name, framework::object_share_ptr& object) noexcept {
-		//	auto clone = create_object(*object);
-		//	_object_prototype.emplace(name, clone);
-		//}
+		inline void regist_prototype(library::string const& name, library::intrusive::share_pointer<object, 0>& object) noexcept {
+			auto clone = allocate_object(*object);
+			_prototype.emplace(name, clone);
+		}
+		inline void find_prototype() noexcept {
+
+		}
 		//inline auto clone_prototype(library::string const& name, framework::object_share_ptr& parent) noexcept -> library::intrusive::share_pointer<framework::object, 0> {
 		//	auto result = _object_prototype.find(name);
 		//	return create_object(*result->_second);
 		//}
+	};
+
+	template<>
+	inline static void object::deallocate<0>(object* pointer) noexcept {
+		objects::instance().deallocate_object(pointer);
 	};
 }

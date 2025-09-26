@@ -6,7 +6,7 @@
 namespace framework {
 	client::client(void) noexcept
 		: _window(), _graphic(graphic::construct(_window)), _audio(audio::instance()), _input(input::instance())
-		, _scenes(scenes::instance()) {
+		, _scenes(scenes::instance()), _objects(objects::instance()) {
 		//auto camera = create_object();
 		//camera->add_component("transform", &create_component<framework::transform>());
 		//camera->add_component("camera", &create_component<framework::camera>());
@@ -20,7 +20,9 @@ namespace framework {
 		_scenes.create_scene("");
 		_scenes.update_scene();
 		//_scenes.create_system<behave>();
-		_scenes.create_object();
+		auto ptr = _scenes.create_object();
+
+		_objects.regist_prototype("test", ptr);
 	}
 
 	client::~client(void) noexcept {

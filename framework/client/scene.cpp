@@ -15,10 +15,17 @@ namespace framework {
 		_next_scene.set(new scene);
 	}
 	auto scenes::create_object(void) noexcept -> library::intrusive::share_pointer<object, 0> {
-		library::intrusive::share_pointer<object,0> pointer(library::singleton<library::pool<object>>::instance().allocate());
+		auto pointer = objects::instance().allocate_object();
 		_current_scene->_object.push_back(pointer);
 		return pointer;
 	}
+	auto scenes::clone_object(library::intrusive::share_pointer<object, 0>& origin) noexcept -> library::intrusive::share_pointer<object, 0> {
+		auto pointer = objects::instance().allocate_object(*origin);
+		_current_scene->_object.push_back(pointer);
+		return pointer;
+	}
+
+
 	//auto scene::create_object(object_share_ptr& parent) noexcept -> object_share_ptr {
 	//	auto& object_mgr = 
 	//	auto object = _object_manager.create_object();

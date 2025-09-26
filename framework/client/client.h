@@ -5,6 +5,7 @@
 #include "input.h"
 #include "audio.h"
 #include "scene.h"
+#include "object.h"
 
 namespace framework {
 	class client : public library::singleton<client> {
@@ -13,8 +14,9 @@ namespace framework {
 		graphic& _graphic;
 		input& _input;
 		audio& _audio;
-		scenes& _scenes;
 		timer _timer;
+		objects& _objects;
+		scenes& _scenes;
 	public:
 		explicit client(void) noexcept;
 		explicit client(client const&) noexcept = delete;
