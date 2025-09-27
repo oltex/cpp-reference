@@ -4,15 +4,14 @@
 namespace framework {
 	class behaviour : public component {
 	public:
-		inline explicit behaviour(void) noexcept 
-			: component(component::type_id<behaviour>()) {
-		};
-		inline explicit behaviour(behaviour const&) noexcept = delete;
-		inline explicit behaviour(behaviour&&) noexcept = delete;
-		inline auto operator=(behaviour const&) noexcept -> behaviour & = delete;
-		inline auto operator=(behaviour&&) noexcept -> behaviour & = delete;
-		inline virtual ~behaviour(void) noexcept override = default;
+		explicit behaviour(size_type const type_id) noexcept;
+		explicit behaviour(behaviour const&) noexcept = delete;
+		explicit behaviour(behaviour&&) noexcept = delete;
+		auto operator=(behaviour const&) noexcept -> behaviour & = delete;
+		auto operator=(behaviour&&) noexcept -> behaviour & = delete;
+		virtual ~behaviour(void) noexcept override = default;
 
-		inline virtual void update(void) noexcept = 0;
+		virtual void start(void) noexcept {};
+		virtual void update(void) noexcept = 0;
 	};
 }

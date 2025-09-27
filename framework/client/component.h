@@ -10,21 +10,9 @@
 namespace framework {
 	class component : public library::intrusive::pointer_hook<0>, public library::intrusive::list_hook<0> {
 	protected:
-		friend class library::intrusive::share_pointer<component, 0>;
-		friend class library::intrusive::weak_pointer<component, 0>;
 		using size_type = unsigned int;
+	private:
 		inline static size_type _static_type_id = 0;
-
-		template<size_t index>
-		inline void destruct(void) noexcept {};
-		template<>
-		inline void destruct<0>(void) noexcept {
-			library::destruct(*this);
-		};
-		template<size_t index>
-		inline static void deallocate(component* pointer) noexcept {};
-		template<>
-		inline static void deallocate<0>(component* pointer) noexcept;
 	protected:
 		size_type _type_id;
 	public:
@@ -41,6 +29,17 @@ namespace framework {
 			return type_id;
 		}
 		inline auto type_id(void) const noexcept -> size_type;
+
+		template<size_t index>
+		inline void destruct(void) noexcept {};
+		template<>
+		inline void destruct<0>(void) noexcept {
+			library::destruct(*this);
+		};
+		template<size_t index>
+		inline static void deallocate(component* pointer) noexcept {};
+		template<>
+		inline static void deallocate<0>(component* pointer) noexcept;
 	};
 
 	class components final : public library::singleton<components> {

@@ -40,6 +40,9 @@
     <ClInclude Include="sound.h">
       <Filter>resource</Filter>
     </ClInclude>
+    <ClInclude Include="camera_move.h">
+      <Filter>component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -74,6 +77,12 @@
       <Filter>component</Filter>
     </ClCompile>
     <ClCompile Include="camera.cpp">
+      <Filter>component</Filter>
+    </ClCompile>
+    <ClCompile Include="behaviour.cpp">
+      <Filter>component</Filter>
+    </ClCompile>
+    <ClCompile Include="camera_move.cpp">
       <Filter>component</Filter>
     </ClCompile>
   </ItemGroup>

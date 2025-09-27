@@ -5,6 +5,7 @@
 #include "library/container/intrusive/list.h"
 #include "library/container/intrusive/pointer.h"
 #include "component.h"
+#include "behaviour.h"
 
 namespace framework {
 	class object : public library::intrusive::pointer_hook<0>, public library::intrusive::list_hook<0> {
@@ -34,6 +35,8 @@ namespace framework {
 		inline auto add_component(library::string const& name, argument&&... arg) noexcept -> library::intrusive::share_pointer<type, 0> {
 			auto component = components::instance().allocate_component<type>(std::forward<argument>(arg)...);
 			_component.push_back(component);
+			if constexpr (std::is_base_of_v<behaviour, type>)
+				static_cast<behaviour*>(&*component)->start();
 			return component;
 		}
 	};

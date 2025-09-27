@@ -3,6 +3,7 @@
 
 #include "behave.h"
 #include "transform.h"
+#include "camera.h"
 
 namespace framework {
 	client::client(void) noexcept
@@ -21,8 +22,10 @@ namespace framework {
 		_scenes.create_scene("");
 		_scenes.update_scene();
 
-		auto ptr = _scenes.create_object();
-		ptr->add_component<transform>("transform");
+		auto object = _scenes.create_object();
+		auto camera = object->add_component<framework::camera>("camera");
+		auto transform = object->add_component<framework::transform>("transform");
+		//object->
 	}
 
 	client::~client(void) noexcept {

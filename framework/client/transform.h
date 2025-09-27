@@ -5,8 +5,6 @@
 
 namespace framework {
 	class transform : public component {
-		friend class library::intrusive::share_pointer<transform, 0>;
-		friend class library::intrusive::weak_pointer<transform, 0>;
 		dmath::float4x4 _float4x4;
 	public:
 		explicit transform(void) noexcept;
