@@ -5,7 +5,7 @@
 #include "library/container/vector.h"
 #include "library/container/intrusive/list.h"
 #include "library/container/intrusive/pointer_list.h"
-#include "library/container/unique_pointer.h"
+#include "library/container/pointer.h"
 #include "object.h"
 #include "system.h"
 

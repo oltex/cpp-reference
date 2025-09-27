@@ -64,7 +64,7 @@ namespace framework {
 		explicit components(components&&) noexcept = delete;
 		auto operator=(components const&) noexcept -> components & = delete;
 		auto operator=(components&&) noexcept -> components & = delete;
-		~components(void) noexcept;
+		~components(void) noexcept = default;
 
 		template<typename type, typename... argument>
 		inline auto allocate_component(argument&&... arg) noexcept -> library::intrusive::share_pointer<component, 0> {
