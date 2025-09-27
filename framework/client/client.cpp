@@ -7,7 +7,7 @@
 namespace framework {
 	client::client(void) noexcept
 		: _window(), _graphic(graphic::construct(_window)), _audio(audio::instance()), _input(input::instance())
-		, _scenes(scenes::instance()), _objects(objects::instance()) {
+		, _scenes(scenes::instance()), _objects(objects::instance()), _components(components::instance()) {
 		//auto camera = create_object();
 		//camera->add_component("transform", &create_component<framework::transform>());
 		//camera->add_component("camera", &create_component<framework::camera>());

@@ -70,6 +70,12 @@
     <ClCompile Include="behave.cpp">
       <Filter>system</Filter>
     </ClCompile>
+    <ClCompile Include="transform.cpp">
+      <Filter>component</Filter>
+    </ClCompile>
+    <ClCompile Include="camera.cpp">
+      <Filter>component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="component">

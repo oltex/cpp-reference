@@ -46,16 +46,18 @@ namespace example {
 	}
 
 	inline void pointer(void) noexcept {
-		//{
+		{
 			//std::shared_ptr<derive> std_pointer(new derive(10, 20));
-		//	std::shared_ptr<base> std_pointer2 = std_pointer;
-		//	int a = 10;
-		//}
+			//std::shared_ptr<base> std_pointer2 = std_pointer;
+
+			//std::static_pointer_cast<derive>(std_pointer2);
+			//int a = 10;
+		}
 		{
 			//library::unique_pointer<derive> pointer(new derive(10, 20));
 			//library::unique_pointer<base> pointer2 = pointer;
-			library::share_pointer<derive, my_deleter> pointer(new derive(10, 20));
-			library::share_pointer<base> pointer2 = pointer;
+			library::share_pointer<derive> pointer(new derive(10, 20));
+			//library::share_pointer<base> pointer2 = pointer;
 
 			library::weak_pointer<base> pointer3(pointer);
 			library::weak_pointer<derive> pointer4(pointer);

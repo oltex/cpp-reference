@@ -13,12 +13,12 @@
 //#include "example/serialize_buffer.h"
 //#include "example/string.h"
 //#include "example/storage.h"
-//#include "example/pointer.h"
+#include "example/pointer.h"
 //#include "example/circle_queue.h"
 //#include "example/bit_grid.h"
 //#include "example/ring_buffer.h"
 //#include "example/intrusive/list.h"
-#include "example/intrusive/pointer.h"
+//#include "example/intrusive/pointer.h"
 //#include "example/lockfree/stack.h"
 //#include "example/lockfree/pool.h"
 //#include "example/lockfree/queue.h"
@@ -26,6 +26,7 @@
 //#include "example/hash_table.h"
 //#include "example/bit_set.h"
 //#include "example/intrusive/pointer_list.h"
+
 
 int main(void) noexcept {
 	library::crt_set_debug_flag();
@@ -43,13 +44,11 @@ int main(void) noexcept {
 	//example::string();
 	//example::stroage();
 	//example::unique_pointer();
-	//example::share_pointer();
-	//example::weak_pointer();
 	//example::circle_queue();
 	//example::bit_grid();
 	//example::ring_buffer();
 	//example::intrusive::list();
-	example::intrusive::pointer();
+	//example::intrusive::pointer();
 	//example::lockfree::stack();
 	//example::lockfree::pool();
 	//example::lockfree::queue();
@@ -57,9 +56,6 @@ int main(void) noexcept {
 	//example::hash_table();
 	//example::bit_set();
 	//example::intrusive::pointer_list();
-	//example::pointer();
-	//example::unique_pointer();
-	//example::share_pointer();
-	//example::weak_pointer();
+	example::pointer();
 	return 0;
 }

@@ -6,6 +6,7 @@
 #include "audio.h"
 #include "scene.h"
 #include "object.h"
+#include "component.h"
 
 namespace framework {
 	class client : public library::singleton<client> {
@@ -15,6 +16,7 @@ namespace framework {
 		input& _input;
 		audio& _audio;
 		timer _timer;
+		components& _components;
 		objects& _objects;
 		scenes& _scenes;
 	public:

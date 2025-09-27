@@ -1,19 +1,19 @@
 #pragma once
 #include "component.h"
-#pragma comment(lib, "directx.lib")
+#pragma comment(lib, "module/directx/binary/directx.lib")
 #include "module/directx/directx.h"
 
 namespace framework {
 	class transform : public component {
+		friend class library::intrusive::share_pointer<transform, 0>;
+		friend class library::intrusive::weak_pointer<transform, 0>;
 		dmath::float4x4 _float4x4;
 	public:
-		inline explicit transform(void) noexcept
-			: component(component::type_id<transform>()) {
-		};
-		inline explicit transform(transform const&) noexcept = delete;
-		inline explicit transform(transform&&) noexcept = delete;
-		inline auto operator=(transform const&) noexcept -> transform & = delete;
-		inline auto operator=(transform&&) noexcept -> transform & = delete;
-		inline virtual ~transform(void) noexcept override = default;
+		explicit transform(void) noexcept;
+		explicit transform(transform const&) noexcept = delete;
+		explicit transform(transform&&) noexcept = delete;
+		auto operator=(transform const&) noexcept -> transform & = delete;
+		auto operator=(transform&&) noexcept -> transform & = delete;
+		virtual ~transform(void) noexcept override = default;
 	};
 }

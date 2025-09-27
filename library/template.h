@@ -72,6 +72,8 @@ namespace library {
 	using remove_cp = typename detail::remove_const<typename detail::remove_pointer<type>::type>::type;
 	template <typename type>
 	using remove_cv = typename detail::remove_const<typename detail::remove_volatile<type>::type>::type;
+	template <typename type>
+	using remove_rp = typename detail::remove_reference<typename detail::remove_pointer<type>::type>::type;
 
 	template <class type>
 	using type_identity = detail::type_identity<type>::type;
@@ -85,6 +87,10 @@ namespace library {
 	template <typename type>
 	inline constexpr bool void_type = same_type<remove_cv<type>, void>;
 	template <typename>
+	inline constexpr bool const_type = false;
+	template <typename type>
+	inline  constexpr bool const_type<type const> = true;
+	template <typename>
 	inline constexpr bool pointer_type = false;
 	template <typename type>
 	inline constexpr bool pointer_type<type*> = true;
@@ -94,6 +100,16 @@ namespace library {
 	inline constexpr bool pointer_type<type* volatile> = true;
 	template <typename type>
 	inline constexpr bool pointer_type<type* const volatile> = true;
+	template <typename>
+	inline constexpr bool reference_type = false;
+	template <typename type>
+	inline constexpr bool reference_type<type&> = true;
+	template <typename type>
+	inline constexpr bool reference_type<type&&> = true;
+	template <typename>
+	inline constexpr bool rvalue_reference_type = false;
+	template <typename type>
+	inline constexpr bool rvalue_reference_type<type&&> = true;
 	template <typename type>
 	inline constexpr bool integral_type = any_of_type<remove_cv<type>, bool, char, signed char, unsigned char, wchar_t, char8_t, char16_t, char32_t, short, unsigned short, int, unsigned int, long, unsigned long, long long, unsigned long long>;
 	template <typename type>

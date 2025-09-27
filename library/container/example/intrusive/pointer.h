@@ -82,6 +82,7 @@ namespace example::intrusive {
 		//auto pointer = new derive(10, 20);
 		//library::intrusive::share_pointer<derive, 1> pointer2(pointer);
 		//library::intrusive::weak_pointer<base, 1> pointer3(std::move(pointer2));
+		std::static_pointer_cast<>
 
 		library::intrusive::share_pointer<derive, 1> pointer(new derive(10, 20));
 		library::intrusive::share_pointer<base, 1> pointer2 = pointer;

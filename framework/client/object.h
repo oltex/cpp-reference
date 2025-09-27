@@ -31,7 +31,7 @@ namespace framework {
 		~object(void) noexcept = default;
 
 		template<typename type, typename... argument>
-		inline auto add_component(library::string const& name, argument&&... arg) noexcept -> library::intrusive::share_pointer<component, 0> {
+		inline auto add_component(library::string const& name, argument&&... arg) noexcept -> library::intrusive::share_pointer<type, 0> {
 			auto component = components::instance().allocate_component<type>(std::forward<argument>(arg)...);
 			_component.push_back(component);
 			return component;

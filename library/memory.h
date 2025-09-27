@@ -58,6 +58,22 @@ namespace library {
 			::_aligned_free(pointer);
 	}
 
+	//template<typename type_1, typename type_2>
+	//inline auto cast(type_2&& value) noexcept -> type_1 {
+	//	if constexpr (library::same_type<type_1, type_2>) {
+	//		return std::forward<type_2>(value);
+	//	}
+	//	else if ((library::pointer_type<type_1> && library::pointer_type<type_2>) ||
+	//		(library::reference_type<type_1> && library::reference_type<type_2>)) {
+	//		if constexpr (library::const_type<library::remove_rp<type_1>> && !library::const_type<library::remove_rp<type_2>>)
+	//			return const_cast<type_1>(std::forward<type_2>(value));
+	//		else
+	//			return static_cast<type_1>(std::forward<type_2>(value));
+	//	}
+	//	else
+	//		return static_cast<type_1>(std::forward<type_2>(value));
+	//}
+
 	inline auto memory_copy(void* const destine, void const* const source, size_t const size) noexcept -> void* {
 		return ::memcpy(destine, source, size);
 	}

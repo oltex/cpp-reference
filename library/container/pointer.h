@@ -29,12 +29,19 @@ namespace library {
 			library::construct<type>(*_pointer, std::forward<argument>(arg)...);
 		}
 		inline explicit unique_pointer(unique_pointer&) noexcept = delete;
+		inline unique_pointer(unique_pointer&& rhs) noexcept
+			: _pointer(library::exchange(rhs._pointer, nullptr)) {
+		};
 		template<typename other>
 			requires std::is_convertible_v<other*, type*>
 		inline unique_pointer(unique_pointer<other>&& rhs) noexcept
-			: _pointer(library::exchange(rhs._pointer, nullptr)) {
+			: _pointer(static_cast<type*>(library::exchange(rhs._pointer, nullptr))) {
 		};
 		inline auto operator=(unique_pointer const&) noexcept -> unique_pointer & = delete;
+		inline auto operator=(unique_pointer&& rhs) noexcept -> unique_pointer& {
+			unique_pointer(std::move(rhs)).swap(*this);
+			return *this;
+		};
 		template<typename other>
 			requires std::is_convertible_v<other*, type*>
 		inline auto operator=(unique_pointer<other>&& rhs) noexcept -> unique_pointer& {
@@ -150,11 +157,37 @@ namespace library {
 		inline constexpr explicit share_pointer(void) noexcept
 			: _pointer(nullptr), _reference(nullptr) {
 		}
+		inline share_pointer(share_pointer& rhs) noexcept
+			: share_pointer(static_cast<share_pointer const&>(rhs)) {
+		};
+		inline share_pointer(share_pointer const& rhs) noexcept
+			: _pointer(rhs._pointer), _reference(rhs._reference) {
+			if (nullptr != _reference)
+				++_reference->_use;
+		};
+		inline share_pointer(share_pointer&& rhs) noexcept
+			: _pointer(library::exchange(rhs._pointer, nullptr)), _reference(library::exchange(rhs._reference, nullptr)) {
+		};
+		inline auto operator=(share_pointer const& rhs) noexcept -> share_pointer& {
+			share_pointer(rhs).swap(*this);
+			return *this;
+		}
+		inline auto operator=(share_pointer&& rhs) noexcept -> share_pointer& {
+			share_pointer(std::move(rhs)).swap(*this);
+			return *this;
+		};
+		inline ~share_pointer(void) noexcept {
+			if (nullptr != _reference && 0 == --_reference->_use) {
+				deleter(_pointer);
+				if (0 == _reference->_weak)
+					library::deallocate<reference>(_reference);
+			}
+		}
 		inline constexpr share_pointer(nullptr_t) noexcept
 			: _pointer(nullptr), _reference(nullptr) {
 		};
 		template<typename other>
-			requires std::is_convertible_v<other*, type*>
+			//requires std::is_convertible_v<other*, type*>
 		inline explicit share_pointer(other* const pointer) noexcept
 			: _pointer(static_cast<type*>(pointer)), _reference(library::allocate<reference>()) {
 #pragma warning(suppress: 6011)
@@ -169,41 +202,34 @@ namespace library {
 			_reference->_weak = 0;
 		}
 		template<typename other, auto other_deleter>
-			requires std::is_convertible_v<other*, type*>
+			//requires std::is_convertible_v<other*, type*>
 		inline share_pointer(share_pointer<other, other_deleter>& rhs) noexcept
 			: share_pointer(static_cast<share_pointer<other, other_deleter> const&>(rhs)) {
 		};
 		template<typename other, auto other_deleter>
-			requires std::is_convertible_v<other*, type*>
+			//requires std::is_convertible_v<other*, type*>
 		inline share_pointer(share_pointer<other, other_deleter> const& rhs) noexcept
 			: _pointer(static_cast<type*>(rhs._pointer)), _reference(rhs._reference) {
 			if (nullptr != _reference)
 				++_reference->_use;
 		};
 		template<typename other, auto other_deleter>
-			requires std::is_convertible_v<other*, type*>
+			//requires std::is_convertible_v<other*, type*>
 		inline share_pointer(share_pointer<other, other_deleter>&& rhs) noexcept
 			: _pointer(static_cast<type*>(library::exchange(rhs._pointer, nullptr))), _reference(library::exchange(rhs._reference, nullptr)) {
 		};
 		template<typename other, auto other_deleter>
-			requires std::is_convertible_v<other*, type*>
+			//requires std::is_convertible_v<other*, type*>
 		inline auto operator=(share_pointer<other, other_deleter> const& rhs) noexcept -> share_pointer& {
 			share_pointer(rhs).swap(*this);
 			return *this;
 		}
 		template<typename other, auto other_deleter>
-			requires std::is_convertible_v<other*, type*>
+			//requires std::is_convertible_v<other*, type*>
 		inline auto operator=(share_pointer<other, other_deleter>&& rhs) noexcept -> share_pointer& {
 			share_pointer(std::move(rhs)).swap(*this);
 			return *this;
 		};
-		inline ~share_pointer(void) noexcept {
-			if (nullptr != _reference && 0 == --_reference->_use) {
-				deleter(_pointer);
-				if (0 == _reference->_weak)
-					library::deallocate<reference>(_reference);
-			}
-		}
 
 		inline auto operator*(void) const noexcept -> type& {
 			return *_pointer;
@@ -237,30 +263,50 @@ namespace library {
 		inline constexpr explicit weak_pointer(void) noexcept
 			: _pointer(nullptr), _reference(nullptr) {
 		}
+		inline weak_pointer(weak_pointer const& rhs) noexcept
+			: _pointer(rhs._pointer), _reference(rhs._reference) {
+			if (nullptr != _reference)
+				++_reference->_weak;
+		};
+		inline weak_pointer(weak_pointer&& rhs) noexcept
+			: _pointer(library::exchange(rhs._pointer, nullptr)), _reference(library::exchange(rhs._reference, nullptr)) {
+		};
+		inline auto operator=(weak_pointer const& rhs) noexcept -> weak_pointer& {
+			weak_pointer(rhs).swap(*this);
+			return *this;
+		}
+		inline auto operator=(weak_pointer&& rhs) noexcept -> weak_pointer& {
+			weak_pointer(std::move(rhs)).swap(*this);
+			return *this;
+		};
+		inline ~weak_pointer(void) noexcept {
+			if (nullptr != _reference && 0 == --_reference->_weak && 0 == _reference->_use)
+				library::deallocate<reference>(_reference);
+		}
 		inline constexpr explicit weak_pointer(nullptr_t) noexcept
 			: _pointer(nullptr), _reference(nullptr) {
 		}
 		template<typename other, auto other_deleter>
-			requires std::is_convertible_v<other*, type*>
+			//requires std::is_convertible_v<other*, type*>
 		inline weak_pointer(share_pointer<other, other_deleter> const& shared_ptr) noexcept
 			: _pointer(shared_ptr._pointer), _reference(shared_ptr._reference) {
 			if (nullptr != _reference)
 				++_reference->_weak;
 		}
 		template<typename other>
-			requires std::is_convertible_v<other*, type*>
-		inline explicit weak_pointer(weak_pointer<other> const& rhs) noexcept
-			: _pointer(rhs._pointer), _reference(rhs._reference) {
+			//requires std::is_convertible_v<other*, type*>
+		inline weak_pointer(weak_pointer<other> const& rhs) noexcept
+			: _pointer(static_cast<type*>(rhs._pointer)), _reference(rhs._reference) {
 			if (nullptr != _reference)
 				++_reference->_weak;
 		};
 		template<typename other>
-			requires std::is_convertible_v<other*, type*>
-		inline explicit weak_pointer(weak_pointer<other>&& rhs) noexcept
-			: _pointer(library::exchange(rhs._pointer, nullptr)), _reference(library::exchange(rhs._reference, nullptr)) {
+			//requires std::is_convertible_v<other*, type*>
+		inline weak_pointer(weak_pointer<other>&& rhs) noexcept
+			: _pointer(static_cast<type*>(library::exchange(rhs._pointer, nullptr))), _reference(library::exchange(rhs._reference, nullptr)) {
 		};
 		template<typename other>
-			requires std::is_convertible_v<other*, type*>
+			//requires std::is_convertible_v<other*, type*>
 		inline auto operator=(weak_pointer<other> const& rhs) noexcept -> weak_pointer& {
 			weak_pointer(rhs).swap(*this);
 			return *this;
@@ -271,10 +317,6 @@ namespace library {
 			weak_pointer(std::move(rhs)).swap(*this);
 			return *this;
 		};
-		inline ~weak_pointer(void) noexcept {
-			if (nullptr != _reference && 0 == --_reference->_weak && 0 == _reference->_use)
-				library::deallocate<reference>(_reference);
-		}
 
 		inline auto operator*(void) const noexcept -> type& {
 			return *_pointer;
