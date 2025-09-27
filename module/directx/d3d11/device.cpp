@@ -84,9 +84,10 @@ namespace d3d11 {
 		return depth_stencil_view(view);
 	}
 
-	inline auto device::create_buffer(D3D11_BUFFER_DESC const& desc, D3D11_SUBRESOURCE_DATA const& data) const noexcept {
-		ID3D11Buffer* buffer;
-		_component->CreateBuffer(&desc, &data, &buffer);
+	inline auto device::create_buffer(buffer_descript const& desc, D3D11_SUBRESOURCE_DATA const& data) const noexcept -> buffer {
+		ID3D11Buffer* buffer_;
+		_component->CreateBuffer(&desc, &data, &buffer_);
+		return buffer(buffer_);
 	}
 
 }

@@ -173,14 +173,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="d3d11\buffer.h" />
-    <ClInclude Include="d3d11\buffer_descript.h" />
     <ClInclude Include="d3d11\device_context.h" />
     <ClInclude Include="d3d11\depth_stencil_view.h" />
     <ClInclude Include="d3d11\device.h" />
     <ClInclude Include="d3d11\render_target_view.h" />
     <ClInclude Include="d3d11\shader_resource_view.h" />
     <ClInclude Include="d3d11\texture_2d.h" />
-    <ClInclude Include="d3d11\texture_2d_descript.h" />
     <ClInclude Include="d3d11\unorder_access_view.h" />
     <ClInclude Include="d3d11\view_port.h" />
     <ClInclude Include="directx.h" />

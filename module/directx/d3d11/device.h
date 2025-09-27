@@ -4,11 +4,14 @@
 //#include "library/pattern/singleton.h"
 #include "../dxgi/device.h"
 #include "texture_2d.h"
+#include "buffer.h"
 #include "device_context.h"
 #pragma comment(lib, "d3d11.lib")
 #include <d3d11.h>
 
 namespace d3d11 {
+	struct sub_resource_data : D3D11_SUBRESOURCE_DATA {
+	};
 	class declspec_dll device : public library::component<ID3D11Device>/*, public library::singleton<device, true, true>*/ {
 		//friend class library::singleton<device, true, true>;
 		using base = library::component<ID3D11Device>;
@@ -32,6 +35,6 @@ namespace d3d11 {
 		inline auto create_unorder_access_view(texture_2d& texture, D3D11_UNORDERED_ACCESS_VIEW_DESC* desc = nullptr) const noexcept -> unorder_access_view;
 		inline auto create_depth_stencil_view(texture_2d& texture, D3D11_DEPTH_STENCIL_VIEW_DESC* desc = nullptr) const noexcept -> depth_stencil_view;
 
-		inline auto create_buffer(D3D11_BUFFER_DESC const& desc, D3D11_SUBRESOURCE_DATA const& data) const noexcept;
+		inline auto create_buffer(buffer_descript const& desc, D3D11_SUBRESOURCE_DATA const& data) const noexcept -> buffer;
 	};
 }

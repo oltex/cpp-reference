@@ -9,10 +9,10 @@ namespace winapi {
 }
 
 namespace framework {
-	class texture;
 	class graphic : public library::singleton<graphic, true> {
 		friend class library::singleton<graphic, true>;
 		friend class texture;
+		friend class mesh;
 
 		d3d11::device _device;
 		d3d11::device_context _device_context;
