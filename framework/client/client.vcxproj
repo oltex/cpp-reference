@@ -162,6 +162,7 @@
     <ClInclude Include="client.h" />
     <ClInclude Include="component.h" />
     <ClInclude Include="audio.h" />
+    <ClInclude Include="mesh.h" />
     <ClInclude Include="sound.h" />
     <ClInclude Include="timer.h" />
     <ClInclude Include="graphic.h" />
@@ -184,6 +185,7 @@
     <ClCompile Include="graphic.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="object.cpp" />
+    <ClCompile Include="mesh.cpp" />
     <ClCompile Include="resource.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="audio.cpp" />

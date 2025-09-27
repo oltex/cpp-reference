@@ -8,6 +8,7 @@
 #include <d3d11.h>
 
 namespace d3d11 {
+	class buffer;
 	class declspec_dll device_context : library::component<ID3D11DeviceContext> {
 		using base = library::component<ID3D11DeviceContext>;
 	public:
@@ -24,6 +25,10 @@ namespace d3d11 {
 		inline void set_render_target(render_target_view& rtv, depth_stencil_view& dsv) noexcept;
 		inline void clear_render_target_view(render_target_view& rtv, float color[4]) noexcept;
 		inline void clear_depth_stencil_view(depth_stencil_view& dsv, unsigned int clear_flag, float depth, unsigned char stencil) noexcept;
-		//m_pContext->RSSetViewports(1, &Viewport);
+
+		inline void set_vertex_buffer(unsigned int start_slot, unsigned int number_buffer, ID3D11Buffer** vertex_buffer, unsigned int* stride, unsigned int* offset) noexcept;
+		inline void set_index_buffer(ID3D11Buffer* index_buffer, DXGI_FORMAT format, unsigned int offset) noexcept;
+		inline void set_primitive_topology(D3D11_PRIMITIVE_TOPOLOGY topology) noexcept;
+		inline void draw_index(unsigned int index_count, unsigned int start_index, unsigned int base_vertex) noexcept;
 	};
 }

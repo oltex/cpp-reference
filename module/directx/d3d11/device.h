@@ -31,5 +31,7 @@ namespace d3d11 {
 		inline auto create_shader_resource_view(texture_2d& texture, D3D11_SHADER_RESOURCE_VIEW_DESC* desc = nullptr) const noexcept -> shader_resource_view;
 		inline auto create_unorder_access_view(texture_2d& texture, D3D11_UNORDERED_ACCESS_VIEW_DESC* desc = nullptr) const noexcept -> unorder_access_view;
 		inline auto create_depth_stencil_view(texture_2d& texture, D3D11_DEPTH_STENCIL_VIEW_DESC* desc = nullptr) const noexcept -> depth_stencil_view;
+
+		inline auto create_buffer(D3D11_BUFFER_DESC const& desc, D3D11_SUBRESOURCE_DATA const& data) const noexcept;
 	};
 }

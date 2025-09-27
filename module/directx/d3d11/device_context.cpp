@@ -23,5 +23,16 @@ namespace d3d11 {
 	inline void device_context::clear_depth_stencil_view(depth_stencil_view& dsv, unsigned int clear_flag, float depth, unsigned char stencil) noexcept {
 		_component->ClearDepthStencilView(dsv.data(), clear_flag, depth, stencil);
 	}
-	//m_pContext->RSSetViewports(1, &Viewport);
+	inline void device_context::set_vertex_buffer(unsigned int start_slot, unsigned int number_buffer, ID3D11Buffer** vertex_buffer, unsigned int* stride, unsigned int* offset) noexcept {
+		_component->IASetVertexBuffers(start_slot, number_buffer, vertex_buffer, stride, offset);
+	}
+	inline void device_context::set_index_buffer(ID3D11Buffer* index_buffer, DXGI_FORMAT format, unsigned int offset) noexcept {
+		_component->IASetIndexBuffer(index_buffer, format, offset);
+	}
+	inline void d3d11::device_context::set_primitive_topology(D3D11_PRIMITIVE_TOPOLOGY topology) noexcept {
+		_component->IASetPrimitiveTopology(topology);
+	}
+	inline void device_context::draw_index(unsigned int index_count, unsigned int start_index, unsigned int base_vertex) noexcept {
+		_component->DrawIndexed(index_count, start_index, base_vertex);
+	}
 };

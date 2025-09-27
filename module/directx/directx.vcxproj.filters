@@ -23,6 +23,9 @@
     <ClCompile Include="dxgi\swap_chain.cpp">
       <Filter>dxgi</Filter>
     </ClCompile>
+    <ClCompile Include="d3d11\buffer.cpp">
+      <Filter>d3d11</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="dxgi">
@@ -80,6 +83,9 @@
       <Filter>d3d11</Filter>
     </ClInclude>
     <ClInclude Include="d3d11\texture_2d_descript.h">
+      <Filter>d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="d3d11\buffer_descript.h">
       <Filter>d3d11</Filter>
     </ClInclude>
   </ItemGroup>

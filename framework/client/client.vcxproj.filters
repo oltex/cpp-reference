@@ -43,6 +43,9 @@
     <ClInclude Include="camera_move.h">
       <Filter>component</Filter>
     </ClInclude>
+    <ClInclude Include="mesh.h">
+      <Filter>resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -84,6 +87,9 @@
     </ClCompile>
     <ClCompile Include="camera_move.cpp">
       <Filter>component</Filter>
+    </ClCompile>
+    <ClCompile Include="mesh.cpp">
+      <Filter>resource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

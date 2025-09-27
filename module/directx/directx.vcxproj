@@ -151,6 +151,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="d3d11\buffer.cpp" />
     <ClCompile Include="d3d11\device.cpp" />
     <ClCompile Include="d3d11\device_context.cpp" />
     <ClCompile Include="d3d11\texture_2d.cpp" />
@@ -172,6 +173,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="d3d11\buffer.h" />
+    <ClInclude Include="d3d11\buffer_descript.h" />
     <ClInclude Include="d3d11\device_context.h" />
     <ClInclude Include="d3d11\depth_stencil_view.h" />
     <ClInclude Include="d3d11\device.h" />
