@@ -26,10 +26,10 @@ namespace library {
 			type _value;
 		};
 		using node = typename std::conditional<compress, union union_node, struct strcut_node>::type;
-		template <typename other>
-		using rebind = pool<other>;
 		node* _head;
 	public:
+		template <typename other>
+		using rebind = pool<other>;
 		inline explicit pool(void) noexcept 
 			: _head(nullptr) {
 		};

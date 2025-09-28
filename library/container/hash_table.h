@@ -9,8 +9,9 @@
 namespace detail {
 	template<typename type>
 	class unorder_set {
-	protected:
+	public:
 		using key_type = type;
+	protected:
 		using value_type = type;
 		using element = type;
 		using iterator = typename library::list<element>::iterator;
@@ -26,8 +27,9 @@ namespace detail {
 	};
 	template<typename _key_type, typename _value_type>
 	class unorder_map {
-	protected:
+	public:
 		using key_type = _key_type;
+	protected:
 		using value_type = _value_type;
 		using element = library::pair<key_type, value_type>;
 		using iterator = typename library::list<element>::iterator;

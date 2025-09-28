@@ -2,33 +2,39 @@
 #include "graphic.h"
 
 namespace framework {
-	mesh::mesh(void) noexcept {
-		graphic::instance()._device.create_buffer();
+	template<typename vertex_type, typename index_type>
+	mesh::mesh(library::vector<vertex_type>& vertex, library::vector<index_type>& index) noexcept {
+		auto& graphic = graphic::instance()._device;
+		{
+			d3d11::buffer_descript desc{};
+			desc.ByteWidth = sizeof(vertex_type) * vertex.size();
+			desc.Usage = D3D11_USAGE_IMMUTABLE;
+			desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+			desc.CPUAccessFlags = 0;
+			desc.MiscFlags = 0;
+			desc.StructureByteStride = 0;
+
+			d3d11::sub_resource_data data{};
+			data.pSysMem = vertex.data();
+			_vertex_buffer = graphic.create_buffer(desc, data);
+			_stride = sizeof(vertex_type);
+		}
+		{
+			d3d11::buffer_descript desc{};
+			desc.ByteWidth = sizeof(index_type) * index.size();
+			desc.Usage = D3D11_USAGE_IMMUTABLE;
+			desc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+			desc.CPUAccessFlags = 0;
+			desc.MiscFlags = 0;
+			desc.StructureByteStride = 0;
+
+			d3d11::sub_resource_data data{};
+			data.pSysMem = index.data();
+			_index_buffer = graphic.create_buffer(desc, data);
+			//m_iFace = 2;
+			//m_eFormat = DXGI_FORMAT_R16_UINT;
+			//m_eTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+			//m_iIndexCount = 3 * m_iFace;
+		}
 	}
 }
-
-
-
-m_iNumBuffer = 1;
-m_iStride = sizeof(VTXTEX);
-D3D11_BUFFER_DESC Buffer_Desc;
-ZeroMemory(&Buffer_Desc, sizeof(D3D11_BUFFER_DESC));
-Buffer_Desc.ByteWidth = m_iStride * 4;
-Buffer_Desc.Usage = D3D11_USAGE_IMMUTABLE;
-Buffer_Desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-Buffer_Desc.StructureByteStride = m_iStride;
-Buffer_Desc.CPUAccessFlags = 0;
-Buffer_Desc.MiscFlags = 0;
-
-VTXTEX* pVertex = new VTXTEX[4];
-ZeroMemory(pVertex, sizeof(VTXTEX) * 4);
-m_pVertexPos = new _float3[4];
-ZeroMemory(m_pVertexPos, sizeof(_float3) * 4);
-m_pVertexPos[0] = pVertex[0].vPos = _float3{ -0.5f, 0.5f, 0.f };
-pVertex[0].vTexCoord = _float2{ 0.f, 0.f };
-m_pVertexPos[1] = pVertex[1].vPos = _float3{ 0.5f, 0.5f, 0.f };
-pVertex[1].vTexCoord = _float2{ 1.f, 0.f };
-m_pVertexPos[2] = pVertex[2].vPos = _float3{ 0.5f, -0.5f, 0.f };
-pVertex[2].vTexCoord = _float2{ 1.f, 1.f };
-m_pVertexPos[3] = pVertex[3].vPos = _float3{ -0.5f, -0.5f, 0.f };
-pVertex[3].vTexCoord = _float2{ 0.f, 1.f };

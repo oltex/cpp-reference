@@ -4,9 +4,11 @@
 #include "timer.h"
 #include "input.h"
 #include "audio.h"
-#include "scene.h"
-#include "object.h"
+
+#include "resource.h"
 #include "component.h"
+#include "object.h"
+#include "scene.h"
 
 namespace framework {
 	class client : public library::singleton<client> {
@@ -16,6 +18,8 @@ namespace framework {
 		input& _input;
 		audio& _audio;
 		timer _timer;
+
+		resources& _resources;
 		components& _components;
 		objects& _objects;
 		scenes& _scenes;

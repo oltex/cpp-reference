@@ -1,8 +1,11 @@
 #pragma once
-#include "library/container/hash_table.h"
 #include "library/pattern/singleton.h"
+#include "library/container/hash_table.h"
+#include "library/container/string.h"
+#include "library/container/pointer.h"
 
 namespace framework {
+	class mesh;
 	class resource {
 	public:
 		explicit resource(void) noexcept = default;
@@ -13,8 +16,9 @@ namespace framework {
 		virtual ~resource(void) noexcept = default;
 	};
 
-	class resources : library::singleton<resources> {
+	class resources : public library::singleton<resources> {
 		friend class library::singleton<resources>;
+		library::unorder_map<library::string, library::unique_pointer<resource>> _resource;
 
 		explicit resources(void) noexcept = default;
 		explicit resources(resources const&) noexcept = delete;
@@ -24,5 +28,9 @@ namespace framework {
 		~resources(void) noexcept = default;
 	public:
 		void load_sound(char const* const name, char const* const path) noexcept;
+		template<typename vertex_type, typename index_type>
+		void create_mesh(char const* const name, library::vector<vertex_type>& vertex, library::vector<index_type>& index) noexcept {
+			new mesh(vertex, index);
+		};
 	};
 }

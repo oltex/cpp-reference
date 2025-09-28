@@ -6,6 +6,7 @@
 
 namespace d3d11 {
 	struct buffer_descript : public D3D11_BUFFER_DESC {
+		inline explicit buffer_descript(void) noexcept = default;
 		inline explicit buffer_descript(unsigned int byte_width, D3D11_USAGE usage, unsigned int bind_flag, unsigned int cpu_access_flag, unsigned int misc_falg, unsigned int struct_byte_stride) noexcept {
 			ByteWidth = byte_width;
 			Usage = usage;

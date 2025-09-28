@@ -1,7 +1,6 @@
 #pragma once
 
 #include "module/directx/d3d11/device.h"
-#include "module/directx/d3d11/texture_2d_descript.h"
 #include "module/directx/d3d11/buffer.h"
 #include "module/directx/dxgi/device.h"
 #include "module/directx/dxgi/adapter.h"

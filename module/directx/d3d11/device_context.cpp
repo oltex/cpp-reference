@@ -34,5 +34,6 @@ namespace d3d11 {
 	}
 	inline void device_context::draw_index(unsigned int index_count, unsigned int start_index, unsigned int base_vertex) noexcept {
 		_component->DrawIndexed(index_count, start_index, base_vertex);
+		//_component->DrawIndexedInstanced()
 	}
 };
