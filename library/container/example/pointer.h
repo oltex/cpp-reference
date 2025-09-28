@@ -46,7 +46,11 @@ namespace example {
 	}
 
 	inline void pointer(void) noexcept {
+
 		{
+			std::shared_ptr<int> std_pointer2(new int(10));
+
+			std::shared_ptr<int> std_pointer = std::make_shared<int>(10);
 			//std::shared_ptr<derive> std_pointer(new derive(10, 20));
 			//std::shared_ptr<base> std_pointer2 = std_pointer;
 

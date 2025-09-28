@@ -28,9 +28,10 @@ namespace framework {
 		~resources(void) noexcept = default;
 	public:
 		void load_sound(char const* const name, char const* const path) noexcept;
-		template<typename vertex_type, typename index_type>
-		void create_mesh(char const* const name, library::vector<vertex_type>& vertex, library::vector<index_type>& index) noexcept {
-			new mesh(vertex, index);
+		template<typename type, typename... argument>
+		inline void create_resource(char const* const name, argument&&... arg) noexcept {
+			library::unique_pointer
+			_resource.emplace(library::_piecewise_construct, library::forward_as_tuple(name),);
 		};
 	};
 }

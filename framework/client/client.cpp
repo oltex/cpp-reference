@@ -4,6 +4,7 @@
 #include "behave.h"
 #include "transform.h"
 #include "camera.h"
+#include "mesh.h"
 
 typedef struct SVertex {
 	dmath::float3 _position;
@@ -34,7 +35,7 @@ namespace framework {
 		index.resize(2);
 		index[0] = IDXFACE16(0, 1, 2);
 		index[1] = IDXFACE16(0, 2, 3);
-		_resources.create_mesh("triangle", vertex, index);
+		_resources.create_resource<mesh>("triangle", vertex, index);
 	}
 	client::~client(void) noexcept {
 		_graphic.destruct();
