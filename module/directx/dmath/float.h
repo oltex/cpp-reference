@@ -116,4 +116,8 @@ namespace dmath {
 	inline auto matrix_perspective_field_of_view_left_hand(float field_of_view, float aspect_ratio, float _near, float _far) noexcept -> matrix {
 		return DirectX::XMMatrixPerspectiveFovLH(field_of_view, aspect_ratio, _near, _far);
 	}
+
+	inline auto matrix_identity(void) noexcept -> matrix {
+		return DirectX::XMMatrixIdentity();
+	}
 }

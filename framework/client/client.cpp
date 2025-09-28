@@ -21,7 +21,7 @@ namespace framework {
 		_scenes.create_scene("");
 		_scenes.update_scene();
 		auto object = _scenes.create_object();
-		auto camera = object->add_component<framework::camera>("camera");
+		auto camera = object->add_component<framework::camera>("camera", 60.f, 1280.f, 720.f, 0.2f, 500.f);
 		auto transform = object->add_component<framework::transform>("transform");
 
 		library::vector<SVertex> vertex;
@@ -30,7 +30,6 @@ namespace framework {
 		vertex[1]._position = dmath::float3(0.5f, 0.5f, 0.f);
 		vertex[2]._position = dmath::float3(0.5f, -0.5f, 0.f);
 		vertex[3]._position = dmath::float3( -0.5f, -0.5f, 0.f);
-
 		library::vector<IDXFACE16> index;
 		index.resize(2);
 		index[0] = IDXFACE16(0, 1, 2);

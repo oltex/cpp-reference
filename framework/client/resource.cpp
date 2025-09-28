@@ -2,7 +2,8 @@
 #include "sound.h"
 
 namespace framework {
-	void resources::load_sound(char const* const name, char const* const path) noexcept {
-		auto resource = sound(path, FMOD_DEFAULT);
+	auto resources::find_resource(char const* const name) noexcept -> library::share_pointer<resource> {
+		auto result = _resource.find(name);
+		return result->_second;
 	}
 }

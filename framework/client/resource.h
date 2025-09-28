@@ -18,7 +18,7 @@ namespace framework {
 
 	class resources : public library::singleton<resources> {
 		friend class library::singleton<resources>;
-		library::unorder_map<library::string, library::unique_pointer<resource>> _resource;
+		library::unorder_map<library::string, library::share_pointer<resource>> _resource;
 
 		explicit resources(void) noexcept = default;
 		explicit resources(resources const&) noexcept = delete;
@@ -27,11 +27,11 @@ namespace framework {
 		auto operator=(resources&&) noexcept -> resources & = delete;
 		~resources(void) noexcept = default;
 	public:
-		void load_sound(char const* const name, char const* const path) noexcept;
 		template<typename type, typename... argument>
 		inline void create_resource(char const* const name, argument&&... arg) noexcept {
-			library::unique_pointer
-			_resource.emplace(library::_piecewise_construct, library::forward_as_tuple(name),);
+			auto pointer = library::share_pointer<type>(std::forward<argument>(arg)...);
+			_resource.emplace(name, std::move(pointer));
 		};
+		auto find_resource(char const* const name) noexcept -> library::share_pointer<resource>;
 	};
 }

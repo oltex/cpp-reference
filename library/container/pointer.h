@@ -99,19 +99,16 @@ namespace detail {
 		size_type _use;
 		size_type _weak;
 
-		inline void destroy(void) noexcept = 0;
-		//void _Delete_this() noexcept override { // destroy self
-		//	delete this;
-		//}
+		//inline void destroy(void) noexcept = 0;
 	};
-	template <typename type, auto dest>
-	struct refernce_impl final {
-		type* _value;
-	public:
-		inline void destroy(void) noexcept override {
-			dest(_value);
-		}
-	};
+	//template <typename type, auto dest>
+	//struct refernce_impl final {
+	//	type* _value;
+	//public:
+	//	inline void destroy(void) noexcept override {
+	//		dest(_value);
+	//	}
+	//};
 }
 
 namespace library {
@@ -246,8 +243,7 @@ namespace library {
 			return nullptr == lhs._pointer;
 		}
 	};
-
-	template<typename type, auto deleter = pointer_deleter<type>, >
+	template<typename type, auto deleter = pointer_deleter<type>>
 	class share_pointer final {
 		template <typename other, auto>
 		friend class share_pointer;
@@ -292,14 +288,14 @@ namespace library {
 		template<typename other>
 		//requires std::is_convertible_v<other*, type*>
 		inline explicit share_pointer(other* const pointer) noexcept
-			: _pointer(static_cast<type*>(pointer)), _reference(library::allocate<reference>()) {
+			: _pointer(static_cast<type*>(pointer)), _reference(library::allocate<detail::reference>()) {
 #pragma warning(suppress: 6011)
 			_reference->_use = 1;
 			_reference->_weak = 0;
 		}
 		template<typename... argument>
 		inline explicit share_pointer(argument&&... arg) noexcept
-			: _pointer(library::allocate<type>()), _reference(library::allocate<reference>()) {
+			: _pointer(library::allocate<type>()), _reference(library::allocate<detail::reference>()) {
 			library::construct(*_pointer, std::forward<argument>(arg)...);
 			_reference->_use = 1;
 			_reference->_weak = 0;
