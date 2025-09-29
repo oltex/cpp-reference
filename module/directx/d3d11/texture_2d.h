@@ -41,8 +41,6 @@ namespace d3d11 {
 		inline auto operator=(texture_2d const&) noexcept -> texture_2d & = default;
 		inline auto operator=(texture_2d&&) noexcept -> texture_2d & = default;
 		inline ~texture_2d(void) noexcept = default;
-
-
 	};
 }
 

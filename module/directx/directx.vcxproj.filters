@@ -26,6 +26,30 @@
     <ClCompile Include="d3d11\buffer.cpp">
       <Filter>d3d11</Filter>
     </ClCompile>
+    <ClCompile Include="d3d\blob.cpp">
+      <Filter>d3d</Filter>
+    </ClCompile>
+    <ClCompile Include="d3d11\input_layout.cpp">
+      <Filter>d3d11</Filter>
+    </ClCompile>
+    <ClCompile Include="d3d11\vertex_shader.cpp">
+      <Filter>d3d11</Filter>
+    </ClCompile>
+    <ClCompile Include="d3d11\render_target_view.cpp">
+      <Filter>d3d11</Filter>
+    </ClCompile>
+    <ClCompile Include="d3d11\pixel_shader.cpp">
+      <Filter>d3d11</Filter>
+    </ClCompile>
+    <ClCompile Include="d3d11\rasterize_state.cpp">
+      <Filter>d3d11</Filter>
+    </ClCompile>
+    <ClCompile Include="d3d11\blend_state.cpp">
+      <Filter>d3d11</Filter>
+    </ClCompile>
+    <ClCompile Include="d3d11\depth_stencil_state.cpp">
+      <Filter>d3d11</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="dxgi">
@@ -36,6 +60,9 @@
     </Filter>
     <Filter Include="dmath">
       <UniqueIdentifier>{64cb965d-f149-47a4-92a0-daa95e4aa2e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="d3d">
+      <UniqueIdentifier>{6a3f84fe-9d89-41b9-9a3f-fa0e4de1283f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -80,6 +107,27 @@
     </ClInclude>
     <ClInclude Include="directx.h" />
     <ClInclude Include="d3d11\view_port.h">
+      <Filter>d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="d3d\blob.h">
+      <Filter>d3d</Filter>
+    </ClInclude>
+    <ClInclude Include="d3d11\input_layout.h">
+      <Filter>d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="d3d11\vertex_shader.h">
+      <Filter>d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="d3d11\pixel_shader.h">
+      <Filter>d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="d3d11\rasterize_state.h">
+      <Filter>d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="d3d11\blend_state.h">
+      <Filter>d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="d3d11\depth_stencil_state.h">
       <Filter>d3d11</Filter>
     </ClInclude>
   </ItemGroup>

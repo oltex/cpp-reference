@@ -49,6 +49,9 @@
     <ClInclude Include="shader.h">
       <Filter>resource</Filter>
     </ClInclude>
+    <ClInclude Include="pipeline.h">
+      <Filter>pipeline</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -114,8 +117,19 @@
     <Filter Include="resource">
       <UniqueIdentifier>{465a10f0-daac-4a71-b933-d1638d9289a4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="pipeline">
+      <UniqueIdentifier>{135e0c4c-2017-4940-ad55-5cc2878a2c41}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="VertexShader.hlsl">
+      <Filter>resource</Filter>
+    </FxCompile>
+    <FxCompile Include="PixelShader.hlsl">
+      <Filter>resource</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

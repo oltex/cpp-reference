@@ -5,7 +5,6 @@
 #include "library/container/pointer.h"
 
 namespace framework {
-	class mesh;
 	class resource {
 	public:
 		explicit resource(void) noexcept = default;

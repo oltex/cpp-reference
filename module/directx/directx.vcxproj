@@ -151,10 +151,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="d3d11\blend_state.cpp" />
     <ClCompile Include="d3d11\buffer.cpp" />
+    <ClCompile Include="d3d11\depth_stencil_state.cpp" />
     <ClCompile Include="d3d11\device.cpp" />
     <ClCompile Include="d3d11\device_context.cpp" />
+    <ClCompile Include="d3d11\input_layout.cpp" />
+    <ClCompile Include="d3d11\pixel_shader.cpp" />
+    <ClCompile Include="d3d11\rasterize_state.cpp" />
+    <ClCompile Include="d3d11\render_target_view.cpp" />
     <ClCompile Include="d3d11\texture_2d.cpp" />
+    <ClCompile Include="d3d11\vertex_shader.cpp" />
+    <ClCompile Include="d3d\blob.cpp" />
     <ClCompile Include="dxgi\adapter.cpp" />
     <ClCompile Include="dxgi\device.cpp">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)\dxgi_device</ObjectFileName>
@@ -172,15 +180,22 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="d3d11\blend_state.h" />
     <ClInclude Include="d3d11\buffer.h" />
+    <ClInclude Include="d3d11\depth_stencil_state.h" />
     <ClInclude Include="d3d11\device_context.h" />
     <ClInclude Include="d3d11\depth_stencil_view.h" />
     <ClInclude Include="d3d11\device.h" />
+    <ClInclude Include="d3d11\input_layout.h" />
+    <ClInclude Include="d3d11\pixel_shader.h" />
     <ClInclude Include="d3d11\render_target_view.h" />
     <ClInclude Include="d3d11\shader_resource_view.h" />
     <ClInclude Include="d3d11\texture_2d.h" />
     <ClInclude Include="d3d11\unorder_access_view.h" />
+    <ClInclude Include="d3d11\vertex_shader.h" />
     <ClInclude Include="d3d11\view_port.h" />
+    <ClInclude Include="d3d11\rasterize_state.h" />
+    <ClInclude Include="d3d\blob.h" />
     <ClInclude Include="directx.h" />
     <ClInclude Include="dmath\float.h" />
     <ClInclude Include="dxgi\adapter.h" />

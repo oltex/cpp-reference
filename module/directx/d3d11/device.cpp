@@ -51,10 +51,37 @@ namespace d3d11 {
 		IDXGIDevice* device = reinterpret_cast<IDXGIDevice*>(base::query_interface(__uuidof(IDXGIDevice)));
 		return dxgi::device(device);
 	}
-	inline auto device::create_texture_2d(texture_2d_descript descript, D3D11_SUBRESOURCE_DATA* data) noexcept -> texture_2d {
-		ID3D11Texture2D* texture;
-		_component->CreateTexture2D(&descript, data, &texture);
-		return texture_2d(texture);
+	inline auto device::create_input_layout(library::vector<input_element_descript>& desc, d3d::blob& blob) const noexcept -> input_layout {
+		ID3D11InputLayout* component;
+		auto result = _component->CreateInputLayout(desc.data(), desc.size(), blob.get_buffer_pointer(), blob.get_buffer_size(), &component);
+		assert(SUCCEEDED(result));
+		return input_layout(component);
+	}
+	inline auto device::create_rasterize_state(rasterize_descript& desc) const noexcept -> rasterize_state {
+		ID3D11RasterizerState* component;
+		auto result = _component->CreateRasterizerState(&desc, &component);
+		assert(SUCCEEDED(result));
+		return rasterize_state(component);
+	}
+	inline auto device::create_blend_state(blend_descript& desc) const noexcept -> blend_state {
+		ID3D11BlendState* component;
+		_component->CreateBlendState(&desc, &component);
+		return blend_state(component);
+	}
+	inline auto device::create_depth_stencil_state(depth_stencil_descript& desc) const noexcept -> depth_stencil_state {
+		ID3D11DepthStencilState* component;
+		_component->CreateDepthStencilState(&desc, &component);
+		return depth_stencil_state(component);
+	}
+	inline auto device::create_buffer(buffer_descript const& desc, sub_resource_data const& data) const noexcept -> buffer {
+		ID3D11Buffer* component;
+		_component->CreateBuffer(&desc, &data, &component);
+		return buffer(component);
+	}
+	inline auto device::create_texture_2d(texture_2d_descript& descript, sub_resource_data* data) noexcept -> texture_2d {
+		ID3D11Texture2D* component;
+		_component->CreateTexture2D(&descript, data, &component);
+		return texture_2d(component);
 	}
 	inline void device::create_texture_from_file(wchar_t const* const path, shader_resource_view* srv) noexcept {
 		if (nullptr != library::string_string(path, L".dds"))
@@ -62,7 +89,6 @@ namespace d3d11 {
 		else
 			DirectX::CreateWICTextureFromFile(_component, path, nullptr, nullptr == srv ? nullptr : &srv->data());
 	}
-
 	inline auto device::create_render_target_view(texture_2d& texture, D3D11_RENDER_TARGET_VIEW_DESC* desc) const noexcept -> render_target_view {
 		ID3D11RenderTargetView* view;
 		_component->CreateRenderTargetView(texture.data(), desc, &view);
@@ -83,11 +109,4 @@ namespace d3d11 {
 		_component->CreateDepthStencilView(texture.data(), desc, &view);
 		return depth_stencil_view(view);
 	}
-
-	inline auto device::create_buffer(buffer_descript const& desc, D3D11_SUBRESOURCE_DATA const& data) const noexcept -> buffer {
-		ID3D11Buffer* buffer_;
-		_component->CreateBuffer(&desc, &data, &buffer_);
-		return buffer(buffer_);
-	}
-
 }
