@@ -50,6 +50,18 @@
     <ClCompile Include="d3d11\depth_stencil_state.cpp">
       <Filter>d3d11</Filter>
     </ClCompile>
+    <ClCompile Include="d3d11\sampler_state.cpp">
+      <Filter>d3d11</Filter>
+    </ClCompile>
+    <ClCompile Include="d3d11\shader_resource_view.cpp">
+      <Filter>d3d11</Filter>
+    </ClCompile>
+    <ClCompile Include="d3d11\unorder_access_view.cpp">
+      <Filter>d3d11</Filter>
+    </ClCompile>
+    <ClCompile Include="d3d11\depth_stencil_view.cpp">
+      <Filter>d3d11</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="dxgi">
@@ -128,6 +140,9 @@
       <Filter>d3d11</Filter>
     </ClInclude>
     <ClInclude Include="d3d11\depth_stencil_state.h">
+      <Filter>d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="d3d11\sampler_state.h">
       <Filter>d3d11</Filter>
     </ClInclude>
   </ItemGroup>

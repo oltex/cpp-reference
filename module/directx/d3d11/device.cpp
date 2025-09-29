@@ -44,41 +44,48 @@ namespace d3d11 {
 	}
 	inline auto device::create_deferred_context(void) const noexcept -> device_context {
 		ID3D11DeviceContext* context;
-		_component->CreateDeferredContext(0, &context);
+		auto result = _component->CreateDeferredContext(0, &context);
+		assert(SUCCEEDED(result));
 		return device_context(context);
 	}
 	inline auto device::query_interface_dxgi_device(void) noexcept -> dxgi::device {
 		IDXGIDevice* device = reinterpret_cast<IDXGIDevice*>(base::query_interface(__uuidof(IDXGIDevice)));
 		return dxgi::device(device);
 	}
-	inline auto device::create_input_layout(library::vector<input_element_descript>& desc, d3d::blob& blob) const noexcept -> input_layout {
+	inline auto device::create_input_layout(library::vector<input_element_descript>& descript, d3d::blob& blob) const noexcept -> input_layout {
 		ID3D11InputLayout* component;
-		auto result = _component->CreateInputLayout(desc.data(), desc.size(), blob.get_buffer_pointer(), blob.get_buffer_size(), &component);
+		auto result = _component->CreateInputLayout(descript.data(), descript.size(), blob.get_buffer_pointer(), blob.get_buffer_size(), &component);
 		assert(SUCCEEDED(result));
 		return input_layout(component);
 	}
-	inline auto device::create_rasterize_state(rasterize_descript& desc) const noexcept -> rasterize_state {
+	inline auto device::create_rasterize_state(rasterize_descript const& descript) const noexcept -> rasterize_state {
 		ID3D11RasterizerState* component;
-		auto result = _component->CreateRasterizerState(&desc, &component);
+		auto result = _component->CreateRasterizerState(&descript, &component);
 		assert(SUCCEEDED(result));
 		return rasterize_state(component);
 	}
-	inline auto device::create_blend_state(blend_descript& desc) const noexcept -> blend_state {
+	inline auto device::create_blend_state(blend_descript const& descript) const noexcept -> blend_state {
 		ID3D11BlendState* component;
-		_component->CreateBlendState(&desc, &component);
+		_component->CreateBlendState(&descript, &component);
 		return blend_state(component);
 	}
-	inline auto device::create_depth_stencil_state(depth_stencil_descript& desc) const noexcept -> depth_stencil_state {
+	inline auto device::create_depth_stencil_state(depth_stencil_descript const& descript) const noexcept -> depth_stencil_state {
 		ID3D11DepthStencilState* component;
-		_component->CreateDepthStencilState(&desc, &component);
+		_component->CreateDepthStencilState(&descript, &component);
 		return depth_stencil_state(component);
 	}
-	inline auto device::create_buffer(buffer_descript const& desc, sub_resource_data const& data) const noexcept -> buffer {
+	inline auto device::create_sampler_state(sampler_descript const& descript) const noexcept -> depth_stencil_state {
+		ID3D11SamplerState* component;
+		auto result = _component->CreateSamplerState(&descript, &component);
+		assert(SUCCEEDED(result));
+		return depth_stencil_state();
+	}
+	inline auto device::create_buffer(buffer_descript const& descript, sub_resource_data const& data) const noexcept -> buffer {
 		ID3D11Buffer* component;
-		_component->CreateBuffer(&desc, &data, &component);
+		_component->CreateBuffer(&descript, &data, &component);
 		return buffer(component);
 	}
-	inline auto device::create_texture_2d(texture_2d_descript& descript, sub_resource_data* data) noexcept -> texture_2d {
+	inline auto device::create_texture_2d(texture_2d_descript const& descript, sub_resource_data* data) noexcept -> texture_2d {
 		ID3D11Texture2D* component;
 		_component->CreateTexture2D(&descript, data, &component);
 		return texture_2d(component);
@@ -89,7 +96,7 @@ namespace d3d11 {
 		else
 			DirectX::CreateWICTextureFromFile(_component, path, nullptr, nullptr == srv ? nullptr : &srv->data());
 	}
-	inline auto device::create_render_target_view(texture_2d& texture, D3D11_RENDER_TARGET_VIEW_DESC* desc) const noexcept -> render_target_view {
+	inline auto device::create_render_target_view(texture_2d& texture, render_target_view_descript* desc) const noexcept -> render_target_view {
 		ID3D11RenderTargetView* view;
 		_component->CreateRenderTargetView(texture.data(), desc, &view);
 		return render_target_view(view);

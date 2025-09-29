@@ -1,8 +1,8 @@
 #include "device_context.h"
 
 namespace d3d11 {
-	inline device_context::device_context(ID3D11DeviceContext* device_context) noexcept
-		: base(device_context) {
+	inline device_context::device_context(ID3D11DeviceContext* component) noexcept
+		: base(component) {
 	}
 	inline void device_context::set_view_port(unsigned int number, view_port* view_port) noexcept {
 		_component->RSSetViewports(number, view_port);

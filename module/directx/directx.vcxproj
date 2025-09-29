@@ -154,13 +154,17 @@
     <ClCompile Include="d3d11\blend_state.cpp" />
     <ClCompile Include="d3d11\buffer.cpp" />
     <ClCompile Include="d3d11\depth_stencil_state.cpp" />
+    <ClCompile Include="d3d11\depth_stencil_view.cpp" />
     <ClCompile Include="d3d11\device.cpp" />
     <ClCompile Include="d3d11\device_context.cpp" />
     <ClCompile Include="d3d11\input_layout.cpp" />
     <ClCompile Include="d3d11\pixel_shader.cpp" />
     <ClCompile Include="d3d11\rasterize_state.cpp" />
     <ClCompile Include="d3d11\render_target_view.cpp" />
+    <ClCompile Include="d3d11\sampler_state.cpp" />
+    <ClCompile Include="d3d11\shader_resource_view.cpp" />
     <ClCompile Include="d3d11\texture_2d.cpp" />
+    <ClCompile Include="d3d11\unorder_access_view.cpp" />
     <ClCompile Include="d3d11\vertex_shader.cpp" />
     <ClCompile Include="d3d\blob.cpp" />
     <ClCompile Include="dxgi\adapter.cpp" />
@@ -189,6 +193,7 @@
     <ClInclude Include="d3d11\input_layout.h" />
     <ClInclude Include="d3d11\pixel_shader.h" />
     <ClInclude Include="d3d11\render_target_view.h" />
+    <ClInclude Include="d3d11\sampler_state.h" />
     <ClInclude Include="d3d11\shader_resource_view.h" />
     <ClInclude Include="d3d11\texture_2d.h" />
     <ClInclude Include="d3d11\unorder_access_view.h" />

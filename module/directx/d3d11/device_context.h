@@ -12,7 +12,7 @@ namespace d3d11 {
 	class declspec_dll device_context : library::component<ID3D11DeviceContext> {
 		using base = library::component<ID3D11DeviceContext>;
 	public:
-		inline explicit device_context(ID3D11DeviceContext* device_context = nullptr) noexcept;
+		inline explicit device_context(ID3D11DeviceContext* component = nullptr) noexcept;
 		inline explicit device_context(device_context const&) noexcept = default;
 		inline explicit device_context(device_context&&) noexcept = default;
 		inline auto operator=(device_context const&) noexcept -> device_context & = default;
