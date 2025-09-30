@@ -3,11 +3,14 @@
 #include "library/define.h"
 #include "library/system/component.h"
 #include "library/container/vector.h"
+#include "library/container/pair.h"
 #include "../dxgi/device.h"
 #include "../d3d/blob.h"
 #include "device_context.h"
 
 #include "input_layout.h"
+#include "vertex_shader.h"
+#include "pixel_shader.h"
 #include "rasterize_state.h"
 #include "blend_state.h"
 #include "depth_stencil_state.h"
@@ -26,11 +29,11 @@ namespace d3d11 {
 		//friend class library::singleton<device, true, true>;
 		using base = library::component<ID3D11Device>;
 	public:
-		inline explicit device(D3D_DRIVER_TYPE driver_type, unsigned int flag) noexcept;
-		inline explicit device(device const&) noexcept = delete;
-		inline explicit device(device&&) noexcept = delete;
-		inline auto operator=(device const&) noexcept -> device & = delete;
-		inline auto operator=(device&&) noexcept -> device & = delete;
+		inline device(D3D_DRIVER_TYPE driver_type, unsigned int flag) noexcept;
+		inline device(device const&) noexcept = default;
+		inline device(device&&) noexcept = default;
+		inline auto operator=(device const&) noexcept -> device & = default;
+		inline auto operator=(device&&) noexcept -> device & = default;
 		inline ~device(void) noexcept = default;
 
 		inline auto get_immediate_context(void) const noexcept -> device_context;
@@ -38,18 +41,20 @@ namespace d3d11 {
 		inline auto query_interface_dxgi_device(void) noexcept -> dxgi::device;
 
 		inline auto create_input_layout(library::vector<input_element_descript>& descript, d3d::blob& blob) const noexcept -> input_layout;
+		inline auto create_vertex_shader(d3d::blob& blob) noexcept -> vertex_shader;
+		inline auto create_pixel_shader(d3d::blob& blob) noexcept -> pixel_shader;
 		inline auto create_rasterize_state(rasterize_descript const& descript) const noexcept -> rasterize_state;
 		inline auto create_blend_state(blend_descript const& descript) const noexcept -> blend_state;
 		inline auto create_depth_stencil_state(depth_stencil_descript const& descript) const noexcept -> depth_stencil_state;
 		inline auto create_sampler_state(sampler_descript const& descript) const noexcept -> depth_stencil_state;
 
 		inline auto create_buffer(buffer_descript const& descript, sub_resource_data const& data) const noexcept -> buffer;
-		inline auto create_texture_2d(texture_2d_descript const& dedescriptsc, sub_resource_data* data = nullptr) noexcept -> texture_2d;
-		inline void create_texture_from_file(wchar_t const* const path, shader_resource_view* srv) noexcept;
+		inline auto create_texture_2d(texture_2d_descript const& descript, sub_resource_data* data = nullptr) noexcept -> texture_2d;
+		inline auto create_texture_from_file(wchar_t const* const path) noexcept -> library::pair<texture_2d, shader_resource_view>;
 		inline auto create_render_target_view(texture_2d& texture, render_target_view_descript* desc = nullptr) const noexcept -> render_target_view;
-		inline auto create_shader_resource_view(texture_2d& texture, D3D11_SHADER_RESOURCE_VIEW_DESC* desc = nullptr) const noexcept -> shader_resource_view;
-		inline auto create_unorder_access_view(texture_2d& texture, D3D11_UNORDERED_ACCESS_VIEW_DESC* desc = nullptr) const noexcept -> unorder_access_view;
-		inline auto create_depth_stencil_view(texture_2d& texture, D3D11_DEPTH_STENCIL_VIEW_DESC* desc = nullptr) const noexcept -> depth_stencil_view;
+		inline auto create_shader_resource_view(texture_2d& texture, shader_resource_view_descript* desc = nullptr) const noexcept -> shader_resource_view;
+		inline auto create_unorder_access_view(texture_2d& texture, unorder_access_view_descript* desc = nullptr) const noexcept -> unorder_access_view;
+		inline auto create_depth_stencil_view(texture_2d& texture, depth_stencil_view_descript* desc = nullptr) const noexcept -> depth_stencil_view;
 	};
 }
 //RT / DSV + Viewport ->

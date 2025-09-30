@@ -2,11 +2,16 @@
 #include "client.h"
 
 namespace framework {
-	void scenes::update_scene(void) noexcept {
+	void scenes::update_system(void) noexcept {
 		if (nullptr != _next_scene)
 			_current_scene = std::move(_next_scene);
+		if (nullptr != _current_scene)
+			for (auto& iter : _current_scene->_system)
+				iter.update();
+	}
+	void scenes::render_system(void) noexcept {
 		if (nullptr != _current_scene) {
-			for (auto& iter : _current_scene->_system) {
+			for (auto& iter : _current_scene->_render_system) {
 				iter.update();
 			}
 		}

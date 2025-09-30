@@ -77,7 +77,7 @@ namespace library::intrusive {
 		};
 		template<typename other>
 		//requires std::is_convertible_v<other*, type*>
-		inline explicit share_pointer(other* value) noexcept
+		inline share_pointer(other* value) noexcept
 			: _pointer(static_cast<hook*>(value)) {
 			library::interlock_exchange(_pointer->_use, 1);
 			library::interlock_exchange(_pointer->_weak, 1);

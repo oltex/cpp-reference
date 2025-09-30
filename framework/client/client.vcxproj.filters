@@ -50,7 +50,7 @@
       <Filter>resource</Filter>
     </ClInclude>
     <ClInclude Include="pipeline.h">
-      <Filter>pipeline</Filter>
+      <Filter>system</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -100,6 +100,9 @@
     <ClCompile Include="shader.cpp">
       <Filter>resource</Filter>
     </ClCompile>
+    <ClCompile Include="pipeline.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="component">
@@ -116,9 +119,6 @@
     </Filter>
     <Filter Include="resource">
       <UniqueIdentifier>{465a10f0-daac-4a71-b933-d1638d9289a4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="pipeline">
-      <UniqueIdentifier>{135e0c4c-2017-4940-ad55-5cc2878a2c41}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -5,6 +5,8 @@
 #include <d3d11.h>
 
 namespace d3d11 {
+	struct depth_stencil_view_descript : public D3D11_DEPTH_STENCIL_VIEW_DESC {
+	};
 	class declspec_dll depth_stencil_view : public library::component<ID3D11DepthStencilView> {
 		using base = library::component<ID3D11DepthStencilView>;
 	public:

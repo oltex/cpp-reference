@@ -5,6 +5,8 @@
 #include <d3d11.h>
 
 namespace d3d11 {
+	struct unorder_access_view_descript : public D3D11_UNORDERED_ACCESS_VIEW_DESC {
+	};
 	class declspec_dll unorder_access_view : public library::component<ID3D11UnorderedAccessView> {
 		using base = library::component<ID3D11UnorderedAccessView>;
 	public:

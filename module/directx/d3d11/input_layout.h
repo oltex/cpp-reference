@@ -6,12 +6,12 @@
 
 namespace d3d11 {
 	struct input_element_descript : public D3D11_INPUT_ELEMENT_DESC {
-		inline explicit input_element_descript(void) noexcept = default;
-		inline explicit input_element_descript(input_element_descript const&) noexcept = default;
-		inline explicit input_element_descript(input_element_descript&&) noexcept = default;
-		inline auto operator=(input_element_descript const&) noexcept -> input_element_descript & = default;
-		inline auto operator=(input_element_descript&&) noexcept -> input_element_descript & = default;
-		inline ~input_element_descript(void) noexcept = default;
+		//inline explicit input_element_descript(void) noexcept = default;
+		//inline explicit input_element_descript(input_element_descript const&) noexcept = default;
+		//inline explicit input_element_descript(input_element_descript&&) noexcept = default;
+		//inline auto operator=(input_element_descript const&) noexcept -> input_element_descript & = default;
+		//inline auto operator=(input_element_descript&&) noexcept -> input_element_descript & = default;
+		//inline ~input_element_descript(void) noexcept = default;
 	};
 
 	class declspec_dll input_layout : public library::component<ID3D11InputLayout> {

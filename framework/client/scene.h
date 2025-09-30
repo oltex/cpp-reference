@@ -14,7 +14,8 @@ namespace framework {
 		struct scene {
 			using size_type = unsigned int;
 			library::intrusive::pointer_list<object, 0, 0> _object;
-			library::intrusive::list<system, 0> _system;
+			library::intrusive::pointer_list<system, 0, 0> _system;
+			library::intrusive::pointer_list<system, 0, 0> _render_system;
 
 			explicit scene(void) noexcept = default;
 			explicit scene(scene const&) noexcept = delete;
@@ -35,12 +36,19 @@ namespace framework {
 		auto operator=(scenes&&) noexcept -> scenes & = delete;
 		~scenes(void) noexcept = default;
 
-		void update_scene(void) noexcept;
+		void update_system(void) noexcept;
+		void render_system(void) noexcept;
 	public:
 		void create_scene(library::string const& path) noexcept;
 		template<typename type>
-		inline void create_system(void) noexcept {
-			_current_scene->_system.push_back(*new type);
+		inline void create_update_system(void) noexcept {
+			library::intrusive::share_pointer<system, 0> pointer(new type);
+			_current_scene->_system.push_back(pointer);
+		}
+		template<typename type>
+		inline void create_render_system(void) noexcept {
+			library::intrusive::share_pointer<system, 0> pointer(new type);
+			_current_scene->_render_system.push_back(pointer);
 		}
 		auto create_object(void) noexcept -> library::intrusive::share_pointer<object, 0>;
 		auto clone_object(library::intrusive::share_pointer<object, 0>& origin) noexcept -> library::intrusive::share_pointer<object, 0>;

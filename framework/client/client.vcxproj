@@ -188,6 +188,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="object.cpp" />
     <ClCompile Include="mesh.cpp" />
+    <ClCompile Include="pipeline.cpp" />
     <ClCompile Include="resource.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="audio.cpp" />

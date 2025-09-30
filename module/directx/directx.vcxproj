@@ -161,6 +161,7 @@
     <ClCompile Include="d3d11\pixel_shader.cpp" />
     <ClCompile Include="d3d11\rasterize_state.cpp" />
     <ClCompile Include="d3d11\render_target_view.cpp" />
+    <ClCompile Include="d3d11\resource.cpp" />
     <ClCompile Include="d3d11\sampler_state.cpp" />
     <ClCompile Include="d3d11\shader_resource_view.cpp" />
     <ClCompile Include="d3d11\texture_2d.cpp" />
@@ -193,6 +194,7 @@
     <ClInclude Include="d3d11\input_layout.h" />
     <ClInclude Include="d3d11\pixel_shader.h" />
     <ClInclude Include="d3d11\render_target_view.h" />
+    <ClInclude Include="d3d11\resource.h" />
     <ClInclude Include="d3d11\sampler_state.h" />
     <ClInclude Include="d3d11\shader_resource_view.h" />
     <ClInclude Include="d3d11\texture_2d.h" />

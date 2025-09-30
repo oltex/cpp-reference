@@ -26,7 +26,7 @@ namespace d3d {
 #else
 		unsigned int flag = D3DCOMPILE_ENABLE_STRICTNESS | D3DCOMPILE_OPTIMIZATION_LEVEL3;
 #endif
-		D3DCompileFromFile(path, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, entry, target, flag, 0, &code, nullptr);
+		auto result = D3DCompileFromFile(path, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, entry, target, flag, 0, &code, nullptr);
 
 		return blob(code);
 	}

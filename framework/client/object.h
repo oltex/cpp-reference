@@ -2,8 +2,7 @@
 #include "library/pattern/singleton.h"
 #include "library/container/hash_table.h"
 #include "library/container/string.h"
-#include "library/container/intrusive/list.h"
-#include "library/container/intrusive/pointer.h"
+#include "library/container/intrusive/pointer_list.h"
 #include "component.h"
 
 namespace framework {
