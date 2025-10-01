@@ -31,6 +31,10 @@ namespace framework {
 			auto pointer = library::share_pointer<type>(std::forward<argument>(arg)...);
 			_resource.emplace(name, std::move(pointer));
 		};
-		auto find_resource(char const* const name) noexcept -> library::share_pointer<resource>;
+		template<typename type>
+		auto find_resource(char const* const name) noexcept -> library::share_pointer<type> {
+			auto result = _resource.find(name);
+			return result->_second;
+		}
 	};
 }

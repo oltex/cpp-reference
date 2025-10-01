@@ -52,6 +52,12 @@
     <ClInclude Include="pipeline.h">
       <Filter>system</Filter>
     </ClInclude>
+    <ClInclude Include="material.h">
+      <Filter>resource</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer.h">
+      <Filter>component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -102,6 +108,9 @@
     </ClCompile>
     <ClCompile Include="pipeline.cpp">
       <Filter>system</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer.cpp">
+      <Filter>component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

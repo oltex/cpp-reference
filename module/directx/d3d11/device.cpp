@@ -78,12 +78,14 @@ namespace d3d11 {
 	}
 	inline auto device::create_blend_state(blend_descript const& descript) const noexcept -> blend_state {
 		ID3D11BlendState* component;
-		_component->CreateBlendState(&descript, &component);
+		auto result = _component->CreateBlendState(&descript, &component);
+		assert(SUCCEEDED(result));
 		return blend_state(component);
 	}
 	inline auto device::create_depth_stencil_state(depth_stencil_descript const& descript) const noexcept -> depth_stencil_state {
 		ID3D11DepthStencilState* component;
-		_component->CreateDepthStencilState(&descript, &component);
+		auto result = _component->CreateDepthStencilState(&descript, &component);
+		assert(SUCCEEDED(result));
 		return depth_stencil_state(component);
 	}
 	inline auto device::create_sampler_state(sampler_descript const& descript) const noexcept -> depth_stencil_state {
@@ -92,23 +94,29 @@ namespace d3d11 {
 		assert(SUCCEEDED(result));
 		return depth_stencil_state();
 	}
-	inline auto device::create_buffer(buffer_descript const& descript, sub_resource_data const& data) const noexcept -> buffer {
+	inline auto device::create_buffer(buffer_descript const& descript, sub_resource_data const* data) const noexcept -> buffer {
+		assert(0 == (descript.BindFlags & D3D11_BIND_CONSTANT_BUFFER) || 0 == descript.ByteWidth % 16u);
+		assert(0 == (descript.BindFlags & D3D11_BIND_CONSTANT_BUFFER) || D3D11_REQ_CONSTANT_BUFFER_ELEMENT_COUNT * 16u >= descript.ByteWidth);
 		ID3D11Buffer* component;
-		_component->CreateBuffer(&descript, &data, &component);
+		auto result = _component->CreateBuffer(&descript, data, &component);
+		assert(SUCCEEDED(result));
 		return buffer(component);
 	}
 	inline auto device::create_texture_2d(texture_2d_descript const& descript, sub_resource_data* data) noexcept -> texture_2d {
 		ID3D11Texture2D* component;
-		_component->CreateTexture2D(&descript, data, &component);
+		auto result = _component->CreateTexture2D(&descript, data, &component);
+		assert(SUCCEEDED(result));
 		return texture_2d(component);
 	}
 	inline auto device::create_texture_from_file(wchar_t const* const path) noexcept -> library::pair<texture_2d, shader_resource_view> {
 		ID3D11Resource* resource_component;
 		ID3D11ShaderResourceView* shader_component;
+		HRESULT result;
 		if (nullptr != library::string_string(path, L".dds"))
-			DirectX::CreateDDSTextureFromFile(_component, path, &resource_component, &shader_component);
+			result = DirectX::CreateDDSTextureFromFile(_component, path, &resource_component, &shader_component);
 		else
-			DirectX::CreateWICTextureFromFile(_component, path, &resource_component, &shader_component);
+			result = DirectX::CreateWICTextureFromFile(_component, path, &resource_component, &shader_component);
+		assert(SUCCEEDED(result));
 		ID3D11Texture2D* texture_component;
 		resource_component->QueryInterface<ID3D11Texture2D>(&texture_component);
 		resource_component->Release();
@@ -116,22 +124,26 @@ namespace d3d11 {
 	}
 	inline auto device::create_render_target_view(texture_2d& texture, render_target_view_descript* desc) const noexcept -> render_target_view {
 		ID3D11RenderTargetView* view;
-		_component->CreateRenderTargetView(texture.data(), desc, &view);
+		auto result = _component->CreateRenderTargetView(texture.data(), desc, &view);
+		assert(SUCCEEDED(result));
 		return render_target_view(view);
 	}
 	inline auto device::create_shader_resource_view(texture_2d& texture, shader_resource_view_descript* desc) const noexcept -> shader_resource_view {
 		ID3D11ShaderResourceView* view;
-		_component->CreateShaderResourceView(texture.data(), desc, &view);
+		auto result = _component->CreateShaderResourceView(texture.data(), desc, &view);
+		assert(SUCCEEDED(result));
 		return shader_resource_view(view);
 	}
 	inline auto device::create_unorder_access_view(texture_2d& texture, unorder_access_view_descript* desc) const noexcept -> unorder_access_view {
 		ID3D11UnorderedAccessView* view;
-		_component->CreateUnorderedAccessView(texture.data(), desc, &view);
+		auto result = _component->CreateUnorderedAccessView(texture.data(), desc, &view);
+		assert(SUCCEEDED(result));
 		return unorder_access_view(view);
 	}
 	inline auto device::create_depth_stencil_view(texture_2d& texture, depth_stencil_view_descript* desc) const noexcept -> depth_stencil_view {
 		ID3D11DepthStencilView* view;
-		_component->CreateDepthStencilView(texture.data(), desc, &view);
+		auto result = _component->CreateDepthStencilView(texture.data(), desc, &view);
+		assert(SUCCEEDED(result));
 		return depth_stencil_view(view);
 	}
 }

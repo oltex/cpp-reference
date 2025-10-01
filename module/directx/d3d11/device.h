@@ -23,8 +23,20 @@
 #include <d3d11.h>
 
 namespace d3d11 {
-	struct sub_resource_data : D3D11_SUBRESOURCE_DATA {
+	struct sub_resource_data : public D3D11_SUBRESOURCE_DATA {
+		inline explicit sub_resource_data(void) noexcept = default;
+		inline explicit sub_resource_data(void* system_memory, unsigned int system_memory_pitch, unsigned int system_memory_slice_pitch) noexcept {
+			pSysMem = system_memory;
+			SysMemPitch = system_memory_pitch;
+			SysMemSlicePitch = system_memory_slice_pitch;
+		};
+		inline explicit sub_resource_data(sub_resource_data const&) noexcept = default;
+		inline explicit sub_resource_data(sub_resource_data&&) noexcept = default;
+		inline auto operator=(sub_resource_data const&) noexcept -> sub_resource_data & = default;
+		inline auto operator=(sub_resource_data&&) noexcept -> sub_resource_data & = default;
+		inline ~sub_resource_data(void) noexcept = default;
 	};
+
 	class declspec_dll device : public library::component<ID3D11Device>/*, public library::singleton<device, true, true>*/ {
 		//friend class library::singleton<device, true, true>;
 		using base = library::component<ID3D11Device>;
@@ -48,7 +60,7 @@ namespace d3d11 {
 		inline auto create_depth_stencil_state(depth_stencil_descript const& descript) const noexcept -> depth_stencil_state;
 		inline auto create_sampler_state(sampler_descript const& descript) const noexcept -> depth_stencil_state;
 
-		inline auto create_buffer(buffer_descript const& descript, sub_resource_data const& data) const noexcept -> buffer;
+		inline auto create_buffer(buffer_descript const& descript, sub_resource_data const* data) const noexcept -> buffer;
 		inline auto create_texture_2d(texture_2d_descript const& descript, sub_resource_data* data = nullptr) noexcept -> texture_2d;
 		inline auto create_texture_from_file(wchar_t const* const path) noexcept -> library::pair<texture_2d, shader_resource_view>;
 		inline auto create_render_target_view(texture_2d& texture, render_target_view_descript* desc = nullptr) const noexcept -> render_target_view;

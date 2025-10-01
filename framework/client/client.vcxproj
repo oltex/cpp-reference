@@ -162,8 +162,10 @@
     <ClInclude Include="client.h" />
     <ClInclude Include="component.h" />
     <ClInclude Include="audio.h" />
+    <ClInclude Include="material.h" />
     <ClInclude Include="mesh.h" />
     <ClInclude Include="pipeline.h" />
+    <ClInclude Include="renderer.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="sound.h" />
     <ClInclude Include="timer.h" />
@@ -189,6 +191,7 @@
     <ClCompile Include="object.cpp" />
     <ClCompile Include="mesh.cpp" />
     <ClCompile Include="pipeline.cpp" />
+    <ClCompile Include="renderer.cpp" />
     <ClCompile Include="resource.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="audio.cpp" />

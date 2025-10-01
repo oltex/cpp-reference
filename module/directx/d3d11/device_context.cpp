@@ -1,4 +1,5 @@
 #include "device_context.h"
+#include <cassert>
 
 namespace d3d11 {
 	inline device_context::device_context(ID3D11DeviceContext* component) noexcept
@@ -23,11 +24,32 @@ namespace d3d11 {
 	inline void device_context::clear_depth_stencil_view(depth_stencil_view& dsv, unsigned int clear_flag, float depth, unsigned char stencil) noexcept {
 		_component->ClearDepthStencilView(dsv.data(), clear_flag, depth, stencil);
 	}
-	inline void device_context::set_vertex_buffer(unsigned int start_slot, unsigned int number_buffer, ID3D11Buffer** vertex_buffer, unsigned int* stride, unsigned int* offset) noexcept {
+	inline void device_context::set_input_layout(input_layout& input_layout) noexcept {
+		_component->IASetInputLayout(input_layout.data());
+	}
+	inline void device_context::set_vertex_shader(vertex_shader& vertex_shader) noexcept {
+		_component->VSSetShader(vertex_shader.data(), nullptr, 0);
+	}
+	inline void device_context::set_pixel_shader(pixel_shader& pixel_shader) noexcept {
+		_component->PSSetShader(pixel_shader.data(), nullptr, 0);
+	}
+	inline void device_context::set_vertex_buffer(unsigned int start_slot, unsigned int number_buffer, ID3D11Buffer* vertex_buffer[], unsigned int stride[], unsigned int offset[]) noexcept {
 		_component->IASetVertexBuffers(start_slot, number_buffer, vertex_buffer, stride, offset);
 	}
-	inline void device_context::set_index_buffer(ID3D11Buffer* index_buffer, DXGI_FORMAT format, unsigned int offset) noexcept {
-		_component->IASetIndexBuffer(index_buffer, format, offset);
+	inline void device_context::set_index_buffer(buffer& index_buffer, DXGI_FORMAT format, unsigned int offset) noexcept {
+		_component->IASetIndexBuffer(index_buffer.data(), format, offset);
+	}
+	inline void device_context::set_vs_constant_buffer(unsigned int start_slot, unsigned int number_buffer, ID3D11Buffer* constant_buffer[]) noexcept {
+		_component->VSSetConstantBuffers(start_slot, number_buffer, constant_buffer);
+	}
+	inline auto device_context::map(ID3D11Resource* resource, unsigned int sub_resource, D3D11_MAP type, unsigned int flag) noexcept -> map_sub_resource {
+		map_sub_resource map_resource;
+		auto result = _component->Map(resource, sub_resource, type, flag, &map_resource);
+		assert(SUCCEEDED(result));
+		return map_resource;
+	}
+	inline void device_context::unmap(ID3D11Resource* resource, unsigned int sub_resource) noexcept {
+		_component->Unmap(resource, sub_resource);
 	}
 	inline void d3d11::device_context::set_primitive_topology(D3D11_PRIMITIVE_TOPOLOGY topology) noexcept {
 		_component->IASetPrimitiveTopology(topology);

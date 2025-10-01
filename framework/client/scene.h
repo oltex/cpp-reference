@@ -46,9 +46,10 @@ namespace framework {
 			_current_scene->_system.push_back(pointer);
 		}
 		template<typename type>
-		inline void create_render_system(void) noexcept {
+		inline auto create_render_system(void) noexcept -> library::intrusive::share_pointer<type, 0> {
 			library::intrusive::share_pointer<system, 0> pointer(new type);
 			_current_scene->_render_system.push_back(pointer);
+			return pointer;
 		}
 		auto create_object(void) noexcept -> library::intrusive::share_pointer<object, 0>;
 		auto clone_object(library::intrusive::share_pointer<object, 0>& origin) noexcept -> library::intrusive::share_pointer<object, 0>;

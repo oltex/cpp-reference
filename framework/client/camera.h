@@ -5,6 +5,7 @@
 
 namespace framework {
 	class camera : public component {
+	public:
 		dmath::float4x4 _project_float4x4;
 	public:
 		explicit camera(float field_of_view, float aspect_width, float aspect_height, float _near, float _far) noexcept;

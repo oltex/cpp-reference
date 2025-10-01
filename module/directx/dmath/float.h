@@ -95,9 +95,9 @@ namespace dmath {
 	class float4x4 {
 		DirectX::XMFLOAT4X4 _float4x4;
 	public:
-		inline explicit float4x4(void) noexcept = default;
-		inline explicit float4x4(float4x4 const&) noexcept = default;
-		inline explicit float4x4(float4x4&&) noexcept = default;
+		inline float4x4(void) noexcept = default;
+		inline float4x4(float4x4 const&) noexcept = default;
+		inline float4x4(float4x4&&) noexcept = default;
 		inline auto operator=(float4x4 const&) noexcept -> float4x4 & = default;
 		inline auto operator=(float4x4&&) noexcept -> float4x4 & = default;
 		inline ~float4x4(void) noexcept = default;
@@ -116,8 +116,17 @@ namespace dmath {
 	inline auto matrix_perspective_field_of_view_left_hand(float field_of_view, float aspect_ratio, float _near, float _far) noexcept -> matrix {
 		return DirectX::XMMatrixPerspectiveFovLH(field_of_view, aspect_ratio, _near, _far);
 	}
+		//XMMatrixOrthographicLH : for 2D
 
 	inline auto matrix_identity(void) noexcept -> matrix {
 		return DirectX::XMMatrixIdentity();
 	}
+	inline auto matrix_inverse(fmatrix _matrix) noexcept -> matrix {
+		return DirectX::XMMatrixInverse(nullptr, _matrix);
+	}
+	inline auto matrix_transpose(fmatrix _matrix) noexcept -> matrix {
+		return DirectX::XMMatrixTranspose(_matrix);
+	}
+	//XMMatrixTranspose
+
 }

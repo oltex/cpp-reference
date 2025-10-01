@@ -1,13 +1,21 @@
-struct VS_IN {
+cbuffer camera : register(b0) {
+    float4x4 _view_matrix;
+    float4x4 _project_matrix;
+};
+cbuffer object : register(b1) {
+    float4x4 _world_matrix;
+}
+
+struct vertex_in {
     float3 position : POSITION;
 };
-struct VS_OUT {
+struct vertex_out {
     float4 position : SV_POSITION;
 };
 
-VS_OUT main(VS_IN In)
+vertex_out main(vertex_in In)
 {
-    VS_OUT Out;
+    vertex_out Out;
     Out.position = float4(In.position, 1.f);
 
     //Out.vPos = mul(float4(In.vPos, 1.f), g_WorldMatrix);

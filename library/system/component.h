@@ -1,6 +1,7 @@
 #pragma once
 #include "unknwn.h"
 #include "../function.h"
+#include <cassert>
 
 namespace library {
 
@@ -47,14 +48,16 @@ namespace library {
 		};
 
 		template<typename type>
-		inline auto query_interface(void) noexcept -> type* {
+		inline auto query_interface(void) noexcept -> component<type> {
 			type* object;
-			_component->QueryInterface<type>(&object);
-			return object;
+			auto result = _component->QueryInterface<type>(&object);
+			assert(SUCCEEDED(result));
+			return component<type>(object);
 		}
 		inline auto query_interface(IID id) noexcept -> void* {
 			void* object;
-			_component->QueryInterface(id, &object);
+			auto result = _component->QueryInterface(id, &object);
+			assert(SUCCEEDED(result));
 			return object;
 		}
 		inline auto data(void) noexcept -> type*& {

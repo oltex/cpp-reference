@@ -17,9 +17,9 @@ namespace d3d11 {
 	class declspec_dll input_layout : public library::component<ID3D11InputLayout> {
 		using base = library::component<ID3D11InputLayout>;
 	public:
-		inline explicit input_layout(ID3D11InputLayout* component = nullptr) noexcept;
-		inline explicit input_layout(input_layout const&) noexcept = default;
-		inline explicit input_layout(input_layout&&) noexcept = default;
+		inline input_layout(ID3D11InputLayout* component = nullptr) noexcept;
+		inline input_layout(input_layout const&) noexcept = default;
+		inline input_layout(input_layout&&) noexcept = default;
 		inline auto operator=(input_layout const&) noexcept -> input_layout & = default;
 		inline auto operator=(input_layout&&) noexcept -> input_layout & = default;
 		inline ~input_layout(void) noexcept = default;

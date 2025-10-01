@@ -5,6 +5,7 @@
 
 namespace framework {
 	class transform : public component {
+	public:
 		dmath::float4x4 _float4x4;
 	public:
 		explicit transform(void) noexcept;

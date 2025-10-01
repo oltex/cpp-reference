@@ -214,10 +214,15 @@ namespace library::intrusive {
 		};
 
 		inline bool expire(void) const noexcept {
-			return nullptr != _pointer || 0 == _pointer->_use;
+			return nullptr != _pointer && 0 != _pointer->_use;
 		}
 		inline auto lock(void) noexcept {
-			return share_pointer(*this);
+			return share_pointer<type, 0>(*this);
+		}
+
+		template<typename other>
+		inline void swap(weak_pointer<other, index>& rhs) noexcept {
+			library::swap(_pointer, rhs._pointer);
 		}
 	};
 }

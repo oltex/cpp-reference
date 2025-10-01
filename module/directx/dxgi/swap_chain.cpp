@@ -11,7 +11,7 @@ namespace dxgi {
 	}
 	inline auto swap_chain::get_buffer(IID id) noexcept -> void* {
 		void* component;
-		_component->GetBuffer(0, id, &component);
+		auto result = _component->GetBuffer(0, id, &component);
 		return component;
 	}
 	inline auto swap_chain::get_buffer_texture_2d(void) noexcept -> d3d11::texture_2d {
