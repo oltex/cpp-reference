@@ -27,6 +27,7 @@ int __stdcall wWinMain(_In_ HINSTANCE hinstance, _In_opt_ HINSTANCE prev_hinstan
 	_struct.create_window(handle);
 
 	handle.show(true);
+	handle.update();
 	while (auto msg = winapi::get_message()) {
 		winapi::translate_message(*msg);
 		winapi::dispatch_message(*msg);

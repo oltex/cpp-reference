@@ -13,12 +13,18 @@
 
 namespace framework {
 	client::client(void) noexcept
-		: _window(), _graphic(graphic::construct(_window)), _audio(audio::instance()), _input(input::instance())
-		, _scenes(scenes::instance()), _objects(objects::instance()), _components(components::instance()), _resources(resources::instance()) {
+		: _window(window::instance()),
+		_graphic(graphic::instance()),
+		_editor(editor::instance()),
+		_audio(audio::instance()),
+		_input(input::instance()),
+		_scenes(scenes::instance()),
+		_objects(objects::instance()),
+		_components(components::instance()),
+		_resources(resources::instance()) {
 
 		_scenes.create_scene("");
 		_scenes.update_system();
-
 		{
 			//resource
 			struct vertex_face {
@@ -58,25 +64,25 @@ namespace framework {
 
 		auto object = _scenes.create_object();
 		auto object_tramsform = object->add_component<framework::transform>("transform");
+		//auto object_renderer = object->add_component<framework::renderer>("renderer");
 		auto object_mesh = _resources.find_resource<framework::mesh>("mesh");
-		auto object_renderer = object->add_component<framework::renderer>("renderer", object_mesh);
 
 	}
 	client::~client(void) noexcept {
-		_graphic.destruct();
 	}
 
 	void client::execute(void) noexcept {
 		for (;;) {
-			if (_window.is_exit())
+			if (_window.check_exit())
 				return;
 			_timer.update_frame();
 			_input.update_state();
 			_audio.update_sound();
 			_scenes.update_system();
-
+			//_editor.update();
 
 			_scenes.render_system();
+			//_editor.render();
 			_graphic.render_start();
 			_timer.sleep_frame();
 		}

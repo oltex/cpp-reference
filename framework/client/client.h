@@ -1,6 +1,7 @@
 #pragma once
 #include "window.h"
 #include "graphic.h"
+#include "editor.h"
 #include "timer.h"
 #include "input.h"
 #include "audio.h"
@@ -13,8 +14,9 @@
 namespace framework {
 	class client : public library::singleton<client> {
 		friend class library::singleton<client>;
-		window _window;
+		window& _window;
 		graphic& _graphic;
+		editor& _editor;
 		input& _input;
 		audio& _audio;
 		timer _timer;

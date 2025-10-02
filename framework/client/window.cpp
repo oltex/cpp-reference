@@ -1,4 +1,7 @@
 #include "window.h"
+#include "editor.h"
+
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 namespace framework {
 	window::window(void) noexcept {
@@ -6,7 +9,7 @@ namespace framework {
 		while (nullptr == _hwnd) {}
 	}
 
-	bool window::is_exit(void) noexcept {
+	bool window::check_exit(void) noexcept {
 		return WAIT_OBJECT_0 == _thread.wait_for_single(0);
 	}
 	void window::execute(void) noexcept {
@@ -27,5 +30,10 @@ namespace framework {
 			winapi::translate_message(*msg);
 			winapi::dispatch_message(*msg);
 		}
+	}
+	bool window::procedure(HWND const hwnd, UINT const message, WPARAM const wparam, LPARAM const lparam) noexcept {
+		//if (ImGui_ImplWin32_WndProcHandler(hwnd, message, wparam, lparam))
+			//return true;
+		return false;
 	}
 }

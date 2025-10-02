@@ -1,133 +1,229 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="client.h" />
     <ClInclude Include="component.h">
-      <Filter>component</Filter>
+      <Filter>content\component</Filter>
     </ClInclude>
     <ClInclude Include="transform.h">
-      <Filter>component</Filter>
+      <Filter>content\component</Filter>
     </ClInclude>
     <ClInclude Include="system.h">
-      <Filter>system</Filter>
+      <Filter>content\system</Filter>
     </ClInclude>
     <ClInclude Include="object.h">
-      <Filter>object</Filter>
+      <Filter>content\object</Filter>
     </ClInclude>
     <ClInclude Include="scene.h">
-      <Filter>scene</Filter>
+      <Filter>content\scene</Filter>
     </ClInclude>
     <ClInclude Include="camera.h">
-      <Filter>component</Filter>
+      <Filter>content\component</Filter>
     </ClInclude>
-    <ClInclude Include="timer.h" />
-    <ClInclude Include="graphic.h" />
-    <ClInclude Include="window.h" />
     <ClInclude Include="behaviour.h">
-      <Filter>component</Filter>
+      <Filter>content\component</Filter>
     </ClInclude>
     <ClInclude Include="behave.h">
-      <Filter>system</Filter>
+      <Filter>content\system</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
-      <Filter>resource</Filter>
+      <Filter>content\resource</Filter>
     </ClInclude>
     <ClInclude Include="texture.h">
-      <Filter>resource</Filter>
+      <Filter>content\resource</Filter>
     </ClInclude>
-    <ClInclude Include="input.h" />
-    <ClInclude Include="audio.h" />
     <ClInclude Include="sound.h">
-      <Filter>resource</Filter>
+      <Filter>content\resource</Filter>
     </ClInclude>
     <ClInclude Include="camera_move.h">
-      <Filter>component</Filter>
+      <Filter>content\component</Filter>
     </ClInclude>
     <ClInclude Include="mesh.h">
-      <Filter>resource</Filter>
+      <Filter>content\resource</Filter>
     </ClInclude>
     <ClInclude Include="shader.h">
-      <Filter>resource</Filter>
+      <Filter>content\resource</Filter>
     </ClInclude>
     <ClInclude Include="pipeline.h">
-      <Filter>system</Filter>
+      <Filter>content\system</Filter>
     </ClInclude>
     <ClInclude Include="material.h">
-      <Filter>resource</Filter>
+      <Filter>content\resource</Filter>
     </ClInclude>
     <ClInclude Include="renderer.h">
-      <Filter>component</Filter>
+      <Filter>content\component</Filter>
+    </ClInclude>
+    <ClInclude Include="library\imgui\imconfig.h">
+      <Filter>library\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="library\imgui\imgui.h">
+      <Filter>library\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="library\imgui\imgui_impl_dx11.h">
+      <Filter>library\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="library\imgui\imgui_impl_win32.h">
+      <Filter>library\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="library\imgui\imgui_internal.h">
+      <Filter>library\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="library\imgui\imstb_rectpack.h">
+      <Filter>library\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="library\imgui\imstb_textedit.h">
+      <Filter>library\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="library\imgui\imstb_truetype.h">
+      <Filter>library\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="window.h">
+      <Filter>content</Filter>
+    </ClInclude>
+    <ClInclude Include="audio.h">
+      <Filter>content</Filter>
+    </ClInclude>
+    <ClInclude Include="client.h">
+      <Filter>content</Filter>
+    </ClInclude>
+    <ClInclude Include="graphic.h">
+      <Filter>content</Filter>
+    </ClInclude>
+    <ClInclude Include="input.h">
+      <Filter>content</Filter>
+    </ClInclude>
+    <ClInclude Include="timer.h">
+      <Filter>content</Filter>
+    </ClInclude>
+    <ClInclude Include="editor.h">
+      <Filter>content\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="menu.h">
+      <Filter>content\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="library\json.hpp">
+      <Filter>library</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="client.cpp" />
     <ClCompile Include="scene.cpp">
-      <Filter>scene</Filter>
+      <Filter>content\scene</Filter>
     </ClCompile>
     <ClCompile Include="object.cpp">
-      <Filter>object</Filter>
+      <Filter>content\object</Filter>
     </ClCompile>
     <ClCompile Include="component.cpp">
-      <Filter>component</Filter>
+      <Filter>content\component</Filter>
     </ClCompile>
     <ClCompile Include="texture.cpp">
-      <Filter>resource</Filter>
+      <Filter>content\resource</Filter>
     </ClCompile>
-    <ClCompile Include="timer.cpp" />
-    <ClCompile Include="graphic.cpp" />
-    <ClCompile Include="window.cpp" />
-    <ClCompile Include="input.cpp" />
     <ClCompile Include="sound.cpp">
-      <Filter>resource</Filter>
+      <Filter>content\resource</Filter>
     </ClCompile>
     <ClCompile Include="resource.cpp">
-      <Filter>resource</Filter>
+      <Filter>content\resource</Filter>
     </ClCompile>
-    <ClCompile Include="audio.cpp" />
     <ClCompile Include="behave.cpp">
-      <Filter>system</Filter>
+      <Filter>content\system</Filter>
     </ClCompile>
     <ClCompile Include="transform.cpp">
-      <Filter>component</Filter>
+      <Filter>content\component</Filter>
     </ClCompile>
     <ClCompile Include="camera.cpp">
-      <Filter>component</Filter>
+      <Filter>content\component</Filter>
     </ClCompile>
     <ClCompile Include="behaviour.cpp">
-      <Filter>component</Filter>
+      <Filter>content\component</Filter>
     </ClCompile>
     <ClCompile Include="camera_move.cpp">
-      <Filter>component</Filter>
+      <Filter>content\component</Filter>
     </ClCompile>
     <ClCompile Include="mesh.cpp">
-      <Filter>resource</Filter>
+      <Filter>content\resource</Filter>
     </ClCompile>
     <ClCompile Include="shader.cpp">
-      <Filter>resource</Filter>
+      <Filter>content\resource</Filter>
     </ClCompile>
     <ClCompile Include="pipeline.cpp">
-      <Filter>system</Filter>
+      <Filter>content\system</Filter>
     </ClCompile>
     <ClCompile Include="renderer.cpp">
-      <Filter>component</Filter>
+      <Filter>content\component</Filter>
+    </ClCompile>
+    <ClCompile Include="library\imgui\imgui.cpp">
+      <Filter>library\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="library\imgui\imgui_demo.cpp">
+      <Filter>library\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="library\imgui\imgui_draw.cpp">
+      <Filter>library\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="library\imgui\imgui_impl_dx11.cpp">
+      <Filter>library\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="library\imgui\imgui_impl_win32.cpp">
+      <Filter>library\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="library\imgui\imgui_tables.cpp">
+      <Filter>library\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="library\imgui\imgui_widgets.cpp">
+      <Filter>library\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="audio.cpp">
+      <Filter>content</Filter>
+    </ClCompile>
+    <ClCompile Include="client.cpp">
+      <Filter>content</Filter>
+    </ClCompile>
+    <ClCompile Include="graphic.cpp">
+      <Filter>content</Filter>
+    </ClCompile>
+    <ClCompile Include="input.cpp">
+      <Filter>content</Filter>
+    </ClCompile>
+    <ClCompile Include="timer.cpp">
+      <Filter>content</Filter>
+    </ClCompile>
+    <ClCompile Include="window.cpp">
+      <Filter>content</Filter>
+    </ClCompile>
+    <ClCompile Include="editor.cpp">
+      <Filter>content\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="menu.cpp">
+      <Filter>content\editor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="component">
-      <UniqueIdentifier>{26fd3a4f-278f-45c1-bfd6-547c8013bd47}</UniqueIdentifier>
+    <Filter Include="library">
+      <UniqueIdentifier>{83158497-88e1-4b19-9835-3ca09611e610}</UniqueIdentifier>
     </Filter>
-    <Filter Include="system">
-      <UniqueIdentifier>{9b6eb6da-e6e7-41ff-b6de-2def6a5c2ff6}</UniqueIdentifier>
+    <Filter Include="library\imgui">
+      <UniqueIdentifier>{b2f75305-c3ac-44c3-94f8-5e6f69f66c10}</UniqueIdentifier>
     </Filter>
-    <Filter Include="object">
+    <Filter Include="content">
+      <UniqueIdentifier>{a9558376-5987-4f3c-9250-60b39e4badcd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="content\object">
       <UniqueIdentifier>{7adcc674-fb12-4430-8d5d-db3fd33ad4ab}</UniqueIdentifier>
     </Filter>
-    <Filter Include="scene">
+    <Filter Include="content\component">
+      <UniqueIdentifier>{26fd3a4f-278f-45c1-bfd6-547c8013bd47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="content\resource">
+      <UniqueIdentifier>{465a10f0-daac-4a71-b933-d1638d9289a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="content\scene">
       <UniqueIdentifier>{4d75da38-b1c1-4942-afc4-c93c56e85de8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="resource">
-      <UniqueIdentifier>{465a10f0-daac-4a71-b933-d1638d9289a4}</UniqueIdentifier>
+    <Filter Include="content\system">
+      <UniqueIdentifier>{9b6eb6da-e6e7-41ff-b6de-2def6a5c2ff6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="content\editor">
+      <UniqueIdentifier>{3caa2f5b-667a-4016-8bf1-80d552c77180}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -135,10 +231,10 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="VertexShader.hlsl">
-      <Filter>resource</Filter>
+      <Filter>content\resource</Filter>
     </FxCompile>
     <FxCompile Include="PixelShader.hlsl">
-      <Filter>resource</Filter>
+      <Filter>content\resource</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

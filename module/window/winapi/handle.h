@@ -84,6 +84,9 @@ namespace winapi {
 			return ::InvalidateRect(_hwnd, rect, erase);
 		}
 
+		inline bool virtual procedure(HWND const hwnd, UINT const message, WPARAM const wparam, LPARAM const lparam) noexcept {
+			return false;
+		};
 		inline void virtual mouse_move(int const x, int const y) noexcept {}
 		inline void virtual left_butten_down(int const x, int const y) noexcept {}
 		inline void virtual left_butten_up(int const x, int const y) noexcept {}
@@ -91,8 +94,7 @@ namespace winapi {
 		inline void virtual right_butten_up(int const x, int const y) noexcept {}
 		inline void virtual middle_butten_down(int const x, int const y) noexcept {}
 		inline void virtual middle_butten_up(int const x, int const y) noexcept {}
-		inline void virtual destory(void) noexcept {
-		}
+		inline void virtual destory(void) noexcept {}
 
 		inline auto data(void) noexcept -> HWND& {
 			return _hwnd;

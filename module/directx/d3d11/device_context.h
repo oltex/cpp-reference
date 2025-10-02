@@ -18,7 +18,7 @@ namespace d3d11 {
 	struct map_sub_resource : public D3D11_MAPPED_SUBRESOURCE {
 	};
 
-	class declspec_dll device_context : library::component<ID3D11DeviceContext> {
+	class declspec_dll device_context : public library::component<ID3D11DeviceContext> {
 		using base = library::component<ID3D11DeviceContext>;
 	public:
 		inline explicit device_context(ID3D11DeviceContext* component = nullptr) noexcept;

@@ -26,6 +26,6 @@ namespace framework {
 
 		virtual void update(void) noexcept;
 		void set_camera(library::intrusive::share_pointer<camera, 0> camera, library::intrusive::share_pointer<transform, 0> transform) noexcept;
-		void set_object(library::intrusive::share_pointer<camera, 0> camera, library::intrusive::share_pointer<transform, 0> transform) noexcept;
+		//void set_object(library::intrusive::share_pointer<camera, 0> camera, library::intrusive::share_pointer<transform, 0> transform) noexcept;
 	};
 }
