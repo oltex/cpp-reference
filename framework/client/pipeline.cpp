@@ -57,21 +57,19 @@ namespace framework {
 		device_context.set_pixel_shader(shader->_pixel_shader);
 		device_context.set_primitive_topology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+		device_context.set_vs_constant_buffer(0, 1, &_camera_buffer.data());
+		device_context.set_vs_constant_buffer(1, 1, &_world_matrix.data());
 
 		//camera
 		if (_camera.expire()) {
 			auto camera = _camera.lock();
 			auto transform = _camera_transform.lock();
-			auto a= camera->_project_float4x4;
-			dmath::matrix_inverse(transform->_float4x4.load());
-
-			//transform->_float4x4.load();
-			//XMMATRIX view = XMMatrixInverse(nullptr, world);
-
-			device_context.set_vs_constant_buffer(0, 1, &_camera_buffer.data());
+			
 			auto resource = device_context.map(_camera_buffer.data(), 0, D3D11_MAP_WRITE_DISCARD, 0);
-			//library::memory_copy(resource.pData, );
-			//library::memory_copy(resource.pData, );
+			auto proj_matrix = camera->_project_float4x4.load().transpose().store();
+			library::memory_copy(resource.pData, &proj_matrix, sizeof(dmath::float4x4));
+			auto view_matrix = transform->_float4x4.load().inverse().transpose().store();
+			library::memory_copy(reinterpret_cast<char*>(resource.pData) + sizeof(dmath::float4x4), &view_matrix, sizeof(dmath::float4x4));
 			device_context.unmap(_camera_buffer.data(), 0);
 		}
 
@@ -83,6 +81,8 @@ namespace framework {
 		device_context.set_vertex_buffer(0, 1, buffer, stride, offset);
 		device_context.set_index_buffer(mesh->_index_buffer, mesh->_format, 0);
 		device_context.draw_index(6, 0, 0);
+
+
 
 	}
 	void pipeline::set_camera(library::intrusive::share_pointer<camera, 0> camera, library::intrusive::share_pointer<transform, 0> transform) noexcept {

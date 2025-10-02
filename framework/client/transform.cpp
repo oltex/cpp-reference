@@ -3,6 +3,6 @@
 namespace framework {
 	transform::transform(void) noexcept
 		: component(component::type_id<transform>())  {
-		_float4x4.store(dmath::matrix_identity());
+		_float4x4 = dmath::matrix::identity().store();
 	};
 }

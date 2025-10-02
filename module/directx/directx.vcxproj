@@ -168,6 +168,8 @@
     <ClCompile Include="d3d11\unorder_access_view.cpp" />
     <ClCompile Include="d3d11\vertex_shader.cpp" />
     <ClCompile Include="d3d\blob.cpp" />
+    <ClCompile Include="dmath\matrix.cpp" />
+    <ClCompile Include="dmath\vector.cpp" />
     <ClCompile Include="dxgi\adapter.cpp" />
     <ClCompile Include="dxgi\device.cpp">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)\dxgi_device</ObjectFileName>
@@ -204,7 +206,8 @@
     <ClInclude Include="d3d11\rasterize_state.h" />
     <ClInclude Include="d3d\blob.h" />
     <ClInclude Include="directx.h" />
-    <ClInclude Include="dmath\float.h" />
+    <ClInclude Include="dmath\matrix.h" />
+    <ClInclude Include="dmath\vector.h" />
     <ClInclude Include="dxgi\adapter.h" />
     <ClInclude Include="dxgi\device.h" />
     <ClInclude Include="dxgi\factory.h" />

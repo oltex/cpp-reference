@@ -1,6 +1,6 @@
 cbuffer camera : register(b0) {
-    float4x4 _view_matrix;
     float4x4 _project_matrix;
+    float4x4 _view_matrix;
 };
 cbuffer object : register(b1) {
     float4x4 _world_matrix;

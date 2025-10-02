@@ -65,6 +65,12 @@
     <ClCompile Include="d3d11\resource.cpp">
       <Filter>d3d11</Filter>
     </ClCompile>
+    <ClCompile Include="dmath\matrix.cpp">
+      <Filter>dmath</Filter>
+    </ClCompile>
+    <ClCompile Include="dmath\vector.cpp">
+      <Filter>dmath</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="dxgi">
@@ -111,7 +117,7 @@
     <ClInclude Include="dxgi\adapter.h">
       <Filter>dxgi</Filter>
     </ClInclude>
-    <ClInclude Include="dmath\float.h">
+    <ClInclude Include="dmath\matrix.h">
       <Filter>dmath</Filter>
     </ClInclude>
     <ClInclude Include="dxgi\factory.h">
@@ -150,6 +156,9 @@
     </ClInclude>
     <ClInclude Include="d3d11\resource.h">
       <Filter>d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="dmath\vector.h">
+      <Filter>dmath</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
