@@ -240,6 +240,19 @@ namespace library {
 	using string = typename detail::string<char>;
 	using wstring = typename detail::string<wchar_t>;
 
+	template <size_t size>
+	struct string_literal {
+		char _pointer[size];
+		inline constexpr string_literal(const char(&str)[size]) noexcept {
+			std::copy_n(str, size, _pointer);
+		}
+		inline explicit string_literal(string_literal const&) noexcept = delete;
+		inline explicit string_literal(string_literal&&) noexcept = delete;
+		inline auto operator=(string_literal const&) noexcept = delete;
+		inline auto operator=(string_literal&&) noexcept = delete;
+		inline ~string_literal(void) noexcept = default;
+	};
+
 	template<typename type, typename size_type>
 		requires (library::any_of_type<type, string, wstring>)
 	struct fnv_hash_string {

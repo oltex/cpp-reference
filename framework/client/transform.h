@@ -4,7 +4,7 @@
 #include "module/directx/directx.h"
 
 namespace framework {
-	class transform : public component {
+	class transform : public component, public componentr<transform, "transform"> {
 	public:
 		dmath::float4x4 _float4x4;
 	public:

@@ -3,6 +3,7 @@
 #include "library/container/list.h"
 #include "library/container/pool.h"
 #include "library/container/pointer.h"
+#include "library/container/string.h"
 #include "library/container/intrusive/pointer.h"
 #include "library/container/intrusive/pointer_list.h"
 #include "library/container/hash_table.h"
@@ -46,6 +47,8 @@ namespace framework {
 		friend class library::singleton<components>;
 		friend class object;
 		friend class component;
+		template<typename type, library::string_literal name>
+		friend class componentr;
 		class pools {
 		protected:
 			using size_type = unsigned int;
@@ -74,6 +77,8 @@ namespace framework {
 		};
 
 		using size_type = unsigned int;
+		library::unorder_map<library::string, size_type> _name_to_id;
+		library::unorder_map<size_type, library::string> _id_to_name;
 		library::unorder_map<size_type, library::unique_pointer<pools>> _component;
 
 		explicit components(void) noexcept = default;
@@ -83,6 +88,12 @@ namespace framework {
 		auto operator=(components&&) noexcept -> components & = delete;
 		~components(void) noexcept = default;
 
+		template<typename type, typename... argument>
+		inline void register_component(char const* const name) noexcept {
+			auto result = _component.find(framework::component::type_id<type>());
+			if (_component.end() == result)
+				result = _component.emplace(framework::component::type_id<type>(), new pool<type>);
+		}
 		template<typename type, typename... argument>
 		inline auto allocate_component(argument&&... arg) noexcept -> library::intrusive::share_pointer<component, 0> {
 			auto result = _component.find(framework::component::type_id<type>());
@@ -97,5 +108,15 @@ namespace framework {
 	template<>
 	inline static void component::deallocate<0>(component* pointer) noexcept {
 		components::instance().deallocate_component(pointer);
+	};
+
+	template<typename type, library::string_literal name>
+	class componentr {
+		struct regist {
+			inline explicit regist(void) noexcept {
+				components::instance().register_component<type>(name._pointer);
+			}
+		};
+		inline static regist _regist{};
 	};
 }
