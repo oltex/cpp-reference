@@ -30,17 +30,25 @@ namespace d3d11 {
 	inline void device_context::set_vertex_shader(vertex_shader& vertex_shader) noexcept {
 		_component->VSSetShader(vertex_shader.data(), nullptr, 0);
 	}
+	inline void device_context::set_vertex_shader_constant_buffer(unsigned int start_slot, unsigned int number_buffer, ID3D11Buffer* constant_buffer[]) noexcept {
+		_component->VSSetConstantBuffers(start_slot, number_buffer, constant_buffer);
+	}
 	inline void device_context::set_pixel_shader(pixel_shader& pixel_shader) noexcept {
 		_component->PSSetShader(pixel_shader.data(), nullptr, 0);
 	}
+	inline void device_context::set_pixel_shader_resource(unsigned int start_slot, unsigned int number_view, ID3D11ShaderResourceView* shader_resource_view[]) noexcept {
+		_component->PSSetShaderResources(start_slot, number_view, shader_resource_view);
+	}
+	inline void device_context::set_pixel_shader_sampler(unsigned int start_slot, unsigned int number_sampler, ID3D11SamplerState* sampler_state[]) noexcept {
+		_component->PSSetSamplers(start_slot, number_sampler, sampler_state);
+	}
+
+
 	inline void device_context::set_vertex_buffer(unsigned int start_slot, unsigned int number_buffer, ID3D11Buffer* vertex_buffer[], unsigned int stride[], unsigned int offset[]) noexcept {
 		_component->IASetVertexBuffers(start_slot, number_buffer, vertex_buffer, stride, offset);
 	}
 	inline void device_context::set_index_buffer(buffer& index_buffer, DXGI_FORMAT format, unsigned int offset) noexcept {
 		_component->IASetIndexBuffer(index_buffer.data(), format, offset);
-	}
-	inline void device_context::set_vs_constant_buffer(unsigned int start_slot, unsigned int number_buffer, ID3D11Buffer* constant_buffer[]) noexcept {
-		_component->VSSetConstantBuffers(start_slot, number_buffer, constant_buffer);
 	}
 	inline auto device_context::map(ID3D11Resource* resource, unsigned int sub_resource, D3D11_MAP type, unsigned int flag) noexcept -> map_sub_resource {
 		map_sub_resource map_resource;

@@ -56,15 +56,16 @@ namespace framework {
 		device_context.set_vertex_shader(shader->_vertex_shader);
 		device_context.set_pixel_shader(shader->_pixel_shader);
 		device_context.set_primitive_topology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		//device_context.set_pixel_shader_sampler()
 
-		device_context.set_vs_constant_buffer(0, 1, &_camera_buffer.data());
-		device_context.set_vs_constant_buffer(1, 1, &_world_matrix.data());
 
 		//camera
 		if (_camera.expire()) {
+			device_context.set_vertex_shader_constant_buffer(0, 1, &_camera_buffer.data());
+			device_context.set_vertex_shader_constant_buffer(1, 1, &_world_matrix.data());
 			auto camera = _camera.lock();
 			auto transform = _camera_transform.lock();
-			
+
 			auto resource = device_context.map(_camera_buffer.data(), 0, D3D11_MAP_WRITE_DISCARD, 0);
 			auto proj_matrix = camera->_project_float4x4.load().transpose().store();
 			library::memory_copy(resource.pData, &proj_matrix, sizeof(dmath::float4x4));
@@ -80,10 +81,7 @@ namespace framework {
 		unsigned int offset[]{ 0 };
 		device_context.set_vertex_buffer(0, 1, buffer, stride, offset);
 		device_context.set_index_buffer(mesh->_index_buffer, mesh->_format, 0);
-		device_context.draw_index(6, 0, 0);
-
-
-
+		device_context.draw_index(mesh->_index_count, 0, 0);
 	}
 	void pipeline::set_camera(library::intrusive::share_pointer<camera, 0> camera, library::intrusive::share_pointer<transform, 0> transform) noexcept {
 		_camera = camera;

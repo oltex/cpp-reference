@@ -71,6 +71,9 @@
     <ClCompile Include="dmath\vector.cpp">
       <Filter>dmath</Filter>
     </ClCompile>
+    <ClCompile Include="d3d11\shader_reflect.cpp">
+      <Filter>d3d11</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="dxgi">
@@ -159,6 +162,9 @@
     </ClInclude>
     <ClInclude Include="dmath\vector.h">
       <Filter>dmath</Filter>
+    </ClInclude>
+    <ClInclude Include="d3d11\shader_reflect.h">
+      <Filter>d3d11</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -6,7 +6,7 @@ namespace framework {
 	class renderer : public component {
 		library::share_pointer<mesh> _mesh;
 	public:
-		explicit renderer(library::share_pointer<mesh>& resource) noexcept;
+		explicit renderer(void) noexcept;
 		explicit renderer(renderer const&) noexcept = delete;
 		explicit renderer(renderer&&) noexcept = delete;
 		auto operator=(renderer const&) noexcept -> renderer & = delete;

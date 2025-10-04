@@ -12,6 +12,7 @@ namespace framework {
 		unsigned int _stride;
 		d3d11::buffer _index_buffer;
 		DXGI_FORMAT _format;
+		unsigned int _index_count;
 	public:
 		template<typename vertex_type, typename index_type>
 		explicit mesh(library::vector<vertex_type>& vertex, library::vector<index_type>& index) noexcept {
@@ -33,12 +34,11 @@ namespace framework {
 				d3d11::sub_resource_data data{};
 				data.pSysMem = index.data();
 				_index_buffer = device.create_buffer(desc, &data);
-
 				_format = DXGI_FORMAT_R16_UINT;
+				_index_count = 3 * index.size();
 
 				//m_iFace = 2;
 				//m_eTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-				//m_iIndexCount = 3 * m_iFace;
 			}
 		}
 		explicit mesh(mesh const&) noexcept = delete;

@@ -19,7 +19,7 @@ namespace framework {
 		friend class library::singleton<resources>;
 		library::unorder_map<library::string, library::share_pointer<resource>> _resource;
 
-		explicit resources(void) noexcept = default;
+		explicit resources(void) noexcept;
 		explicit resources(resources const&) noexcept = delete;
 		explicit resources(resources&&) noexcept = delete;
 		auto operator=(resources const&) noexcept -> resources & = delete;
@@ -27,9 +27,10 @@ namespace framework {
 		~resources(void) noexcept = default;
 	public:
 		template<typename type, typename... argument>
-		inline void create_resource(char const* const name, argument&&... arg) noexcept {
-			auto pointer = library::share_pointer<type>(std::forward<argument>(arg)...);
-			_resource.emplace(name, std::move(pointer));
+		inline auto create_resource(char const* const name, argument&&... arg) noexcept -> library::share_pointer<type> {
+			auto pointer = library::make_share<type>(std::forward<argument>(arg)...);
+			_resource.emplace(name, pointer);
+			return pointer;
 		};
 		template<typename type>
 		auto find_resource(char const* const name) noexcept -> library::share_pointer<type> {

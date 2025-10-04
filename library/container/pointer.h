@@ -6,92 +6,15 @@
 #include <type_traits>
 
 namespace detail {
-	//	template <class _Ty>
-	//	class _Ref_count : public _Ref_count_base { // handle reference counting for pointer without deleter
-	//	public:
-	//		explicit _Ref_count(_Ty* _Px) : _Ref_count_base(), _Ptr(_Px) {}
-	//
-	//	private:
-	//		void _Destroy() noexcept override { // destroy managed resource
-	//			delete _Ptr;
-	//		}
-	//
-	//		void _Delete_this() noexcept override { // destroy self
-	//			delete this;
-	//		}
-	//
-	//		_Ty* _Ptr;
-	//	};
-	//
-	//	template <class _Ty>
-	//	class _Ref_count_obj2 : public _Ref_count_base { // handle reference counting for object in control block, no allocator
-	//	public:
-	//		template <class... _Types>
-	//		explicit _Ref_count_obj2(_Types&&... _Args) : _Ref_count_base() {
-	//#if _HAS_CXX20
-	//			if constexpr (sizeof...(_Types) == 1 && (is_same_v<_For_overwrite_tag, remove_cvref_t<_Types>> && ...)) {
-	//				_STD _Default_construct_in_place(_Storage._Value);
-	//				((void)_Args, ...);
-	//			}
-	//			else
-	//#endif // _HAS_CXX20
-	//			{
-	//				_STD _Construct_in_place(_Storage._Value, _STD forward<_Types>(_Args)...);
-	//			}
-	//		}
-	//
-	//		~_Ref_count_obj2() noexcept override { // TRANSITION, should be non-virtual
-	//			// nothing to do, _Storage._Value was already destroyed in _Destroy
-	//
-	//			// N4950 [class.dtor]/7:
-	//			// "A defaulted destructor for a class X is defined as deleted if:
-	//			// X is a union-like class that has a variant member with a non-trivial destructor"
-	//		}
-	//
-	//		union {
-	//			_Wrap<remove_cv_t<_Ty>> _Storage;
-	//		};
-	//
-	//	private:
-	//		void _Destroy() noexcept override { // destroy managed resource
-	//			_Destroy_in_place(_Storage._Value);
-	//		}
-	//
-	//		void _Delete_this() noexcept override { // destroy self
-	//			delete this;
-	//		}
-	//	};
-	//	template <class _Resource, class _Dx>
-	//	class _Ref_count_resource : public _Ref_count_base { // handle reference counting for object with deleter
-	//	public:
-	//		_Ref_count_resource(_Resource _Px, _Dx _Dt)
-	//			: _Ref_count_base(), _Mypair(_One_then_variadic_args_t{}, _STD move(_Dt), _Px) {}
-	//
-	//		~_Ref_count_resource() noexcept override = default; // TRANSITION, should be non-virtual
-	//
-	//		void* _Get_deleter(const type_info& _Typeid) const noexcept override {
-	//#if _HAS_STATIC_RTTI
-	//			if (_Typeid == typeid(_Dx)) {
-	//				return const_cast<_Dx*>(_STD addressof(_Mypair._Get_first()));
-	//			}
-	//#else // ^^^ _HAS_STATIC_RTTI / !_HAS_STATIC_RTTI vvv
-	//			(void)_Typeid;
-	//#endif // ^^^ !_HAS_STATIC_RTTI ^^^
-	//
-	//			return nullptr;
-	//		}
-	//
-	//	private:
-	//		void _Destroy() noexcept override { // destroy managed resource
-	//			_Mypair._Get_first()(_Mypair._Myval2);
-	//		}
-	//
-	//		void _Delete_this() noexcept override { // destroy self
-	//			delete this;
-	//		}
-	//
-	//		_Compressed_pair<_Dx, _Resource> _Mypair;
-	//	};
+	template<typename type>
+	inline void pointer_deleter(type* pointer) noexcept {
+		library::destruct<type>(*pointer);
+		library::deallocate<type>(pointer);
+	}
+	template <typename type>
+	struct wrap {
+		type _value;
+	};
 	struct reference {
 	private:
 		using size_type = unsigned int;
@@ -99,24 +22,61 @@ namespace detail {
 		size_type _use;
 		size_type _weak;
 
-		//inline void destroy(void) noexcept = 0;
+		inline explicit reference(void) noexcept
+			: _use(1), _weak(0) {
+		};
+		inline explicit reference(reference const&) noexcept = default;
+		inline explicit reference(reference&&) noexcept = default;
+		inline auto operator=(reference const&) noexcept -> reference & = default;
+		inline auto operator=(reference&&) noexcept -> reference & = default;
+		inline virtual ~reference(void) noexcept = default;
+
+		inline virtual void destroy_object(void) noexcept = 0;
 	};
-	//template <typename type, auto dest>
-	//struct refernce_impl final {
-	//	type* _value;
-	//public:
-	//	inline void destroy(void) noexcept override {
-	//		dest(_value);
-	//	}
-	//};
+	template <typename type>
+	struct reference_external final : public reference {
+		type* _pointer;
+	public:
+		template<typename other, auto deleter = pointer_deleter>
+			requires std::is_convertible_v<other*, type*> || std::is_convertible_v<type*, other*>
+		inline explicit reference_external(other* const pointer) noexcept
+			: _pointer(static_cast<type*>(pointer)) {
+		};
+		inline explicit reference_external(reference_external const&) noexcept = default;
+		inline explicit reference_external(reference_external&&) noexcept = default;
+		inline auto operator=(reference_external const&) noexcept -> reference_external & = default;
+		inline auto operator=(reference_external&&) noexcept -> reference_external & = default;
+		inline virtual ~reference_external(void) noexcept override  = default;
+
+		inline virtual void destroy_object(void) noexcept override {
+			pointer_deleter(_pointer);
+		}
+	};
+	template <typename type>
+	struct reference_inplace final : public reference {
+		union {
+			wrap<type> _wrap;
+		};
+
+		template<typename... argument>
+		inline explicit reference_inplace(argument&&... arg) noexcept {
+			library::construct(_wrap._value, std::forward<argument>(arg)...);
+		};
+		inline explicit reference_inplace(reference_inplace const&) noexcept = default;
+		inline explicit reference_inplace(reference_inplace&&) noexcept = default;
+		inline auto operator=(reference_inplace const&) noexcept -> reference_inplace & = default;
+		inline auto operator=(reference_inplace&&) noexcept -> reference_inplace & = default;
+		inline virtual ~reference_inplace(void) noexcept override {
+		};
+
+	public:
+		inline virtual void destroy_object(void) noexcept override {
+			library::destruct<type>(_wrap._value);
+		}
+	};
 }
 
 namespace library {
-	template<typename type>
-	inline void pointer_deleter(type* pointer) noexcept {
-		library::destruct<type>(*pointer);
-		library::deallocate<type>(pointer);
-	}
 	template<typename type>
 	class unique_pointer final {
 		template <typename other>
@@ -243,12 +203,15 @@ namespace library {
 			return nullptr == lhs._pointer;
 		}
 	};
-	template<typename type, auto deleter = pointer_deleter<type>>
+	template<typename type>
 	class share_pointer final {
-		template <typename other, auto>
+		template <typename other>
 		friend class share_pointer;
 		template<typename type>
 		friend class weak_pointer;
+		template<typename type, typename... argument>
+		inline friend auto make_share(argument&&... arg) noexcept ->share_pointer<type>;
+
 		using size_type = unsigned int;
 		type* _pointer;
 		detail::reference* _reference;
@@ -277,55 +240,50 @@ namespace library {
 		};
 		inline ~share_pointer(void) noexcept {
 			if (nullptr != _reference && 0 == --_reference->_use) {
-				deleter(_pointer);
-				if (0 == _reference->_weak)
+				_reference->destroy_object();
+				if (0 == _reference->_weak) {
+					library::destruct<detail::reference>(*_reference);
 					library::deallocate<detail::reference>(_reference);
+				}
 			}
 		}
 		inline constexpr share_pointer(nullptr_t) noexcept
 			: _pointer(nullptr), _reference(nullptr) {
 		};
+		template<typename other, auto deleter = detail::pointer_deleter>
+			requires std::is_convertible_v<other*, type*> || std::is_convertible_v<type*, other*>
+		inline explicit share_pointer(other* const pointer) noexcept
+			: _pointer(static_cast<type*>(pointer)) {
+			auto reference = library::allocate<detail::reference_external<type, deleter>>();
+			library::construct<detail::reference_external<type, deleter>>(*reference, pointer);
+			_reference = reference;
+		}
 		template<typename other>
 		//requires std::is_convertible_v<other*, type*>
-		inline explicit share_pointer(other* const pointer) noexcept
-			: _pointer(static_cast<type*>(pointer)), _reference(library::allocate<detail::reference>()) {
-#pragma warning(suppress: 6011)
-			_reference->_use = 1;
-			_reference->_weak = 0;
-		}
-		template<typename... argument>
-		inline explicit share_pointer(argument&&... arg) noexcept
-			: _pointer(library::allocate<type>()), _reference(library::allocate<detail::reference>()) {
-			library::construct(*_pointer, std::forward<argument>(arg)...);
-			_reference->_use = 1;
-			_reference->_weak = 0;
-		}
-		template<typename other, auto other_deleter>
-		//requires std::is_convertible_v<other*, type*>
-		inline share_pointer(share_pointer<other, other_deleter>& rhs) noexcept
-			: share_pointer(static_cast<share_pointer<other, other_deleter> const&>(rhs)) {
+		inline share_pointer(share_pointer<other>& rhs) noexcept
+			: share_pointer(static_cast<share_pointer<other> const&>(rhs)) {
 		};
-		template<typename other, auto other_deleter>
+		template<typename other>
 		//requires std::is_convertible_v<other*, type*>
-		inline share_pointer(share_pointer<other, other_deleter> const& rhs) noexcept
+		inline share_pointer(share_pointer<other> const& rhs) noexcept
 			: _pointer(static_cast<type*>(rhs._pointer)), _reference(rhs._reference) {
 			if (nullptr != _reference)
 				++_reference->_use;
 		};
-		template<typename other, auto other_deleter>
+		template<typename other>
 		//requires std::is_convertible_v<other*, type*>
-		inline share_pointer(share_pointer<other, other_deleter>&& rhs) noexcept
+		inline share_pointer(share_pointer<other>&& rhs) noexcept
 			: _pointer(static_cast<type*>(library::exchange(rhs._pointer, nullptr))), _reference(library::exchange(rhs._reference, nullptr)) {
 		};
-		template<typename other, auto other_deleter>
+		template<typename other>
 		//requires std::is_convertible_v<other*, type*>
-		inline auto operator=(share_pointer<other, other_deleter> const& rhs) noexcept -> share_pointer& {
+		inline auto operator=(share_pointer<other> const& rhs) noexcept -> share_pointer& {
 			share_pointer(rhs).swap(*this);
 			return *this;
 		}
-		template<typename other, auto other_deleter>
+		template<typename other>
 		//requires std::is_convertible_v<other*, type*>
-		inline auto operator=(share_pointer<other, other_deleter>&& rhs) noexcept -> share_pointer& {
+		inline auto operator=(share_pointer<other>&& rhs) noexcept -> share_pointer& {
 			share_pointer(std::move(rhs)).swap(*this);
 			return *this;
 		};
@@ -352,6 +310,7 @@ namespace library {
 		inline friend bool operator==(share_pointer const& lhs, nullptr_t) noexcept {
 			return nullptr == lhs._pointer;
 		}
+
 	};
 	template<typename type>
 	class weak_pointer final {
@@ -379,15 +338,17 @@ namespace library {
 			return *this;
 		};
 		inline ~weak_pointer(void) noexcept {
-			if (nullptr != _reference && 0 == --_reference->_weak && 0 == _reference->_use)
+			if (nullptr != _reference && 0 == --_reference->_weak && 0 == _reference->_use) {
+				library::destruct<detail::reference>(*_reference);
 				library::deallocate<detail::reference>(_reference);
+			}
 		}
 		inline constexpr explicit weak_pointer(nullptr_t) noexcept
 			: _pointer(nullptr), _reference(nullptr) {
 		}
-		template<typename other, auto other_deleter>
+		template<typename other>
 		//requires std::is_convertible_v<other*, type*>
-		inline weak_pointer(share_pointer<other, other_deleter> const& shared_ptr) noexcept
+		inline weak_pointer(share_pointer<other> const& shared_ptr) noexcept
 			: _pointer(shared_ptr._pointer), _reference(shared_ptr._reference) {
 			if (nullptr != _reference)
 				++_reference->_weak;
@@ -440,4 +401,14 @@ namespace library {
 			return _pointer;
 		}
 	};
+
+	template <typename type, typename... argument>
+	inline auto make_share(argument&&... arg) noexcept -> share_pointer<type> {
+		share_pointer<type> pointer;
+		auto reference = library::allocate<detail::reference_inplace<type>>();
+		library::construct<detail::reference_inplace<type>>(*reference, std::forward<argument>(arg)...);
+		pointer._pointer = &reference->_wrap._value;
+		pointer._reference = reference;
+		return pointer;
+	}
 }

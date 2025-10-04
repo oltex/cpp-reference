@@ -8,20 +8,22 @@ cbuffer object : register(b1) {
 
 struct vertex_in {
     float3 position : POSITION;
+    float2 texcoord : TEXCOORD0;
 };
 struct vertex_out {
     float4 position : SV_POSITION;
+    float2 texcoord : TEXCOORD0;
 };
 
-vertex_out main(vertex_in In)
+vertex_out main(vertex_in _in)
 {
-    vertex_out Out;
-    Out.position = float4(In.position, 1.f);
-
+    vertex_out _out;
+    _out.position = float4(_in.position, 1.f);
+    _out.texcoord = _in.texcoord;
     //Out.vPos = mul(float4(In.vPos, 1.f), g_WorldMatrix);
     //Out.vPos = mul(Out.vPos, g_ViewMatrix);
     //Out.vPos = mul(Out.vPos, g_ProjMatrix);
 
     //Out.vTexCoord = In.vTexCoord;
-    return Out;
+    return _out;
 }

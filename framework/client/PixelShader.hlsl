@@ -1,7 +1,13 @@
-struct PS_IN {
+Texture2D _texture : register(t0);
+SamplerState _sampler : register(s0);
+
+struct pixel_in {
     float4 position : SV_POSITION;
+	float2 texcoord : TEXCOORD0;
 };
 
-float4 main(PS_IN In) : SV_TARGET {
-	return float4(1.f, 1.f, 1.f, 1.f);
+float4 main(pixel_in _in) : SV_TARGET {
+    float4 _out;
+    _out = _texture.Sample(_sampler, _in.texcoord);
+    return _out;
 }

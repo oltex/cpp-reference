@@ -14,6 +14,14 @@ namespace framework {
 		{
 			auto blob = d3d::complie_from_file(pixel_path, pixel_entry, pixel_target);
 			_pixel_shader = device.create_pixel_shader(blob);
+			auto reflect = blob.reflect();
+			auto desc = reflect.get_desc();
+
+			for (auto index = 0u; index < desc.BoundResources; ++index) {
+				auto r = reflect.get_resource_binding_descript(index);
+				int a = 10;
+			}
+
 		}
 	}
 	auto shader::get_input_layout(void) noexcept -> d3d11::input_layout {

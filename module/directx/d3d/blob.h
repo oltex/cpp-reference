@@ -1,6 +1,7 @@
 #pragma once
 #include "library/define.h"
 #include "library/system/component.h"
+#include "../d3d11/shader_reflect.h"
 #pragma comment(lib, "d3dcompiler.lib")
 #include <d3dcompiler.h>
 
@@ -17,6 +18,7 @@ namespace d3d {
 
 		inline auto get_buffer_pointer(void) noexcept -> void*;
 		inline auto get_buffer_size(void) noexcept -> size_t;
+		inline auto reflect(void) noexcept -> d3d11::shader_reflect;
 	};
 
 	inline auto complie_from_file(wchar_t const* const path, char const* const entry, char const* const target) noexcept -> blob {

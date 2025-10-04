@@ -49,7 +49,6 @@ namespace example {
 
 		{
 			std::shared_ptr<int> std_pointer2(new int(10));
-
 			std::shared_ptr<int> std_pointer = std::make_shared<int>(10);
 			//std::shared_ptr<derive> std_pointer(new derive(10, 20));
 			//std::shared_ptr<base> std_pointer2 = std_pointer;
@@ -60,7 +59,7 @@ namespace example {
 		{
 			//library::unique_pointer<derive> pointer(new derive(10, 20));
 			//library::unique_pointer<base> pointer2 = pointer;
-			library::share_pointer<derive> pointer(new derive(10, 20));
+			library::share_pointer<derive> pointer = library::make_share<derive>(10, 20);// (new derive(10, 20));
 			//library::share_pointer<base> pointer2 = pointer;
 
 			library::weak_pointer<base> pointer3(pointer);

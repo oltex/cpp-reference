@@ -37,11 +37,15 @@ namespace d3d11 {
 
 		inline void set_input_layout(input_layout& input_layout) noexcept;
 		inline void set_vertex_shader(vertex_shader& vertex_shader) noexcept;
+		inline void set_vertex_shader_constant_buffer(unsigned int start_slot, unsigned int number_buffer, ID3D11Buffer* constant_buffer[]) noexcept;
 		inline void set_pixel_shader(pixel_shader& pixel_shader) noexcept;
+		inline void set_pixel_shader_resource(unsigned int start_slot, unsigned int number_view, ID3D11ShaderResourceView* shader_resource_view[]) noexcept;
+		inline void set_pixel_shader_sampler(unsigned int start_slot, unsigned int number_sampler, ID3D11SamplerState* sampler_state[]) noexcept;
 
 		inline void set_vertex_buffer(unsigned int start_slot, unsigned int number_buffer, ID3D11Buffer* vertex_buffer[], unsigned int stride[], unsigned int offset[]) noexcept;
 		inline void set_index_buffer(buffer& index_buffer, DXGI_FORMAT format, unsigned int offset) noexcept;
-		inline void set_vs_constant_buffer(unsigned int start_slot, unsigned int number_buffer, ID3D11Buffer* constant_buffer[]) noexcept;
+
+
 		inline auto map(ID3D11Resource* resource, unsigned int sub_resource, D3D11_MAP type, unsigned int flag) noexcept -> map_sub_resource;
 		inline void unmap(ID3D11Resource* resource, unsigned int sub_resource) noexcept;
 		inline void set_primitive_topology(D3D11_PRIMITIVE_TOPOLOGY topology) noexcept;

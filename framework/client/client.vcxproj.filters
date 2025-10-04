@@ -46,9 +46,6 @@
     <ClInclude Include="pipeline.h">
       <Filter>content\system</Filter>
     </ClInclude>
-    <ClInclude Include="material.h">
-      <Filter>content\resource</Filter>
-    </ClInclude>
     <ClInclude Include="renderer.h">
       <Filter>content\component</Filter>
     </ClInclude>
@@ -102,6 +99,9 @@
     </ClInclude>
     <ClInclude Include="library\json.hpp">
       <Filter>library</Filter>
+    </ClInclude>
+    <ClInclude Include="material.h">
+      <Filter>content\resource</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -195,6 +195,9 @@
     </ClCompile>
     <ClCompile Include="menu.cpp">
       <Filter>content\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="material.cpp">
+      <Filter>content\resource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -222,6 +222,7 @@
     <ClCompile Include="transform.cpp" />
     <ClCompile Include="window.cpp" />
     <ClCompile Include="input.cpp" />
+    <ClCompile Include="material.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

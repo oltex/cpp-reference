@@ -35,32 +35,17 @@ namespace dmath {
 
 	using vector = DirectX::XMVECTOR;
 	using fvector = DirectX::FXMVECTOR;
-	class float2 {
-		DirectX::XMFLOAT2 _float2;
-	public:
-		inline explicit float2(void) noexcept = default;
-		inline explicit float2(float2 const&) noexcept = default;
-		inline explicit float2(float2&&) noexcept = default;
-		inline auto operator=(float2 const&) noexcept -> float2 & = default;
-		inline auto operator=(float2&&) noexcept -> float2 & = default;
-		inline ~float2(void) noexcept = default;
-
+	struct float2 : public DirectX::XMFLOAT2 {
+		using DirectX::XMFLOAT2::XMFLOAT2;
 		inline auto load(void) const noexcept -> vector {
-
-			return DirectX::XMLoadFloat2(&_float2);
+			return DirectX::XMLoadFloat2(this);
 		}
 		inline void store(dmath::fvector vector) noexcept {
-			DirectX::XMStoreFloat2(&_float2, vector);
+			DirectX::XMStoreFloat2(this, vector);
 		}
 	};
 	struct float3 : public DirectX::XMFLOAT3 {
 		using DirectX::XMFLOAT3::XMFLOAT3;
-		//inline explicit float3(void) noexcept = default;
-		//inline explicit float3(float3 const&) noexcept = default;
-		//inline explicit float3(float3&&) noexcept = default;
-		//inline auto operator=(float3 const&) noexcept -> float3 & = default;
-		//inline auto operator=(float3&&) noexcept -> float3 & = default;
-		//inline ~float3(void) noexcept = default;
 
 		inline auto load(void) const noexcept -> vector {
 			return DirectX::XMLoadFloat3(this);
@@ -71,17 +56,6 @@ namespace dmath {
 	};
 	struct float4 : public DirectX::XMFLOAT4 {
 		using DirectX::XMFLOAT4::XMFLOAT4;
-		//inline explicit float4(float x, float y, float z, float w) noexcept {
-		//	this->x = x;
-		//	this->y = y;
-		//	this->z = z;
-		//	this->w = w;
-		//};
-		//inline explicit float4(float4 const&) noexcept = default;
-		//inline explicit float4(float4&&) noexcept = default;
-		//inline auto operator=(float4 const&) noexcept -> float4 & = default;
-		//inline auto operator=(float4&&) noexcept -> float4 & = default;
-		//inline ~float4(void) noexcept = default;
 
 		inline auto load(void) const noexcept -> vector {
 			return DirectX::XMLoadFloat4(this);

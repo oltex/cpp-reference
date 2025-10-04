@@ -9,8 +9,8 @@ namespace library {
 			inline explicit union_node(void) noexcept = delete;
 			inline explicit union_node(union_node const&) noexcept = delete;
 			inline explicit union_node(union_node&&) noexcept = delete;
-			inline auto operator=(union_node const&) noexcept = delete;
-			inline auto operator=(union_node&&) noexcept = delete;
+			inline auto operator=(union_node const&) noexcept -> union_node & = delete;
+			inline auto operator=(union_node&&) noexcept -> union_node & = delete;
 			inline ~union_node(void) noexcept = delete;
 			union_node* _next;
 			type _value;
@@ -19,8 +19,8 @@ namespace library {
 			inline explicit strcut_node(void) noexcept = delete;
 			inline explicit strcut_node(strcut_node const&) noexcept = delete;
 			inline explicit strcut_node(strcut_node&&) noexcept = delete;
-			inline auto operator=(strcut_node const&) noexcept = delete;
-			inline auto operator=(strcut_node&&) noexcept = delete;
+			inline auto operator=(strcut_node const&) noexcept -> strcut_node & = delete;
+			inline auto operator=(strcut_node&&) noexcept -> strcut_node & = delete;
 			inline ~strcut_node(void) noexcept = delete;
 			strcut_node* _next;
 			type _value;
@@ -30,7 +30,7 @@ namespace library {
 	public:
 		template <typename other>
 		using rebind = pool<other>;
-		inline explicit pool(void) noexcept 
+		inline explicit pool(void) noexcept
 			: _head(nullptr) {
 		};
 		inline explicit pool(pool const&) noexcept = delete;
@@ -56,7 +56,7 @@ namespace library {
 			node* current;
 			if (nullptr == _head)
 				current = library::allocate<node>();
-			else 
+			else
 				current = library::exchange(_head, _head->_next);
 			if constexpr (true == placement)
 				library::construct<type, argument...>(current->_value, std::forward<argument>(arg)...);
