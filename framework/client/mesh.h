@@ -8,6 +8,15 @@
 namespace framework {
 	class mesh : public resource {
 	public:
+		struct primitive {
+			d3d11::buffer _vertex_buffer;
+			unsigned int _vertex_stride;
+			d3d11::buffer _index_buffer;
+			unsigned int _index_size;
+			DXGI_FORMAT _index_format;
+		};
+		library::vector<primitive> _primitive;
+
 		d3d11::buffer _vertex_buffer;
 		unsigned int _stride;
 		d3d11::buffer _index_buffer;
@@ -24,23 +33,15 @@ namespace framework {
 				_stride = sizeof(vertex_type);
 			}
 			{
-				d3d11::buffer_descript desc{};
-				desc.ByteWidth = sizeof(index_type) * index.size();
-				desc.Usage = D3D11_USAGE_IMMUTABLE;
-				desc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-				desc.CPUAccessFlags = 0;
-				desc.MiscFlags = 0;
-				desc.StructureByteStride = 0;
-				d3d11::sub_resource_data data{};
-				data.pSysMem = index.data();
+				d3d11::buffer_descript desc(sizeof(index_type) * index.size(), D3D11_USAGE_IMMUTABLE, D3D11_BIND_INDEX_BUFFER, 0, 0, 0);
+				d3d11::sub_resource_data data(index.data(), 0, 0);
 				_index_buffer = device.create_buffer(desc, &data);
 				_format = DXGI_FORMAT_R16_UINT;
-				_index_count = 3 * index.size();
-
-				//m_iFace = 2;
+				_index_count = index.size();
 				//m_eTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 			}
 		}
+		explicit mesh(char const* const path) noexcept;
 		explicit mesh(mesh const&) noexcept = delete;
 		explicit mesh(mesh&&) noexcept = delete;
 		auto operator=(mesh const&) noexcept -> mesh & = delete;

@@ -4,6 +4,7 @@
 #include <malloc.h>
 #include <utility>
 #include <type_traits>
+#include <iostream>
 
 namespace detail {
 	template<typename type>
@@ -314,6 +315,8 @@ namespace library {
 	};
 	template<typename type>
 	class weak_pointer final {
+		template<typename type>
+		friend class weak_pointer;
 		using size_type = unsigned int;
 		type* _pointer;
 		detail::reference* _reference;

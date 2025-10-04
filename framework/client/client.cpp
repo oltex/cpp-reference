@@ -27,41 +27,48 @@ namespace framework {
 
 		_scenes.create_scene("");
 		_scenes.update_system();
-		{
-			//resource
-			_resources.create_resource<texture>("texture", L"images.png");
-			auto mat = _resources.create_resource<material>("material");
-			mat->add_texture("texture");
 
-			struct vertex_face {
-				dmath::float3 _position;
-				dmath::float2 _texcoord;
-			};
-			library::vector<vertex_face> vertex;
-			vertex.resize(4);
-			vertex[0]._position = dmath::float3(-0.5f, 0.5f, 0.f);
-			vertex[0]._texcoord = dmath::float2{ 0.f, 0.f };
-			vertex[1]._position = dmath::float3(0.5f, 0.5f, 0.f);
-			vertex[1]._texcoord = dmath::float2{ 1.f, 0.f };
-			vertex[2]._position = dmath::float3(0.5f, -0.5f, 0.f);
-			vertex[2]._texcoord = dmath::float2{ 1.f, 1.f };
-			vertex[3]._position = dmath::float3(-0.5f, -0.5f, 0.f);
-			vertex[3]._texcoord = dmath::float2{ 0.f, 1.f };
-			struct index_face16 {
-				unsigned short _1, _2, _3;
-			};
-			library::vector<index_face16> index;
-			index.resize(2);
-			index[0] = index_face16(0, 1, 2);
-			index[1] = index_face16(0, 2, 3);
-			_resources.create_resource<mesh>("mesh", vertex, index);
+		//resource
 
-			library::vector<d3d11::input_element_descript> descript;
-			descript.resize(2);
-			descript[0] = d3d11::input_element_descript{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 };
-			descript[1] = d3d11::input_element_descript{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 };
-			_resources.create_resource<shader>("shader", L"VertexShader.hlsl", "main", "vs_5_0", L"PixelShader.hlsl", "main", "ps_5_0", descript);
-		}
+		_resources.create_resource<texture>("texture", L"images.png");
+		auto material = _resources.create_resource<framework::material>("material");
+		material->add_texture("texture");
+		struct vertex_face {
+			dmath::float3 _position;
+			dmath::float2 _texcoord;
+		};
+		library::vector<vertex_face> vertex;
+		vertex.resize(4);
+		vertex[0]._position = dmath::float3(-0.5f, 0.5f, 0.f);
+		vertex[0]._texcoord = dmath::float2{ 0.f, 0.f };
+		vertex[1]._position = dmath::float3(0.5f, 0.5f, 0.f);
+		vertex[1]._texcoord = dmath::float2{ 1.f, 0.f };
+		vertex[2]._position = dmath::float3(0.5f, -0.5f, 0.f);
+		vertex[2]._texcoord = dmath::float2{ 1.f, 1.f };
+		vertex[3]._position = dmath::float3(-0.5f, -0.5f, 0.f);
+		vertex[3]._texcoord = dmath::float2{ 0.f, 1.f };
+		struct index_face16 {
+			unsigned short _1, _2, _3;
+		};
+		library::vector<unsigned int> index;
+		index.resize(6);
+		index[0] = 0;
+		index[1] = 1;
+		index[2] = 2;
+		index[3] = 0;
+		index[4] = 2;
+		index[5] = 3;
+		index[6] = 0;
+		auto mesh = _resources.create_resource<framework::mesh>("mesh", vertex, index);
+		library::vector<d3d11::input_element_descript> descript;
+		descript.resize(2);
+		descript[0] = d3d11::input_element_descript{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+		descript[1] = d3d11::input_element_descript{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+		_resources.create_resource<shader>("shader", L"VertexShader.hlsl", "main", "vs_5_0", L"PixelShader.hlsl", "main", "ps_5_0", descript);
+		auto model = _resources.create_resource<framework::mesh>("model", "HatKid.glb");
+
+
+
 		//system
 		auto pipeline = _scenes.create_render_system<framework::pipeline>();
 
@@ -70,11 +77,9 @@ namespace framework {
 		auto camera_component = camera->add_component<framework::camera>("camera", 60.f, 1280.f, 720.f, 0.2f, 500.f);
 		auto camera_transform = camera->add_component<framework::transform>("transform");
 		pipeline->set_camera(camera_component, camera_transform);
-
 		auto object = _scenes.create_object();
 		auto object_tramsform = object->add_component<framework::transform>("transform");
 		auto object_renderer = object->add_component<framework::renderer>("renderer");
-		auto object_mesh = _resources.find_resource<framework::mesh>("mesh");
 	}
 	client::~client(void) noexcept {
 	}

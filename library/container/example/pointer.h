@@ -59,11 +59,14 @@ namespace example {
 		{
 			//library::unique_pointer<derive> pointer(new derive(10, 20));
 			//library::unique_pointer<base> pointer2 = pointer;
-			library::share_pointer<derive> pointer = library::make_share<derive>(10, 20);// (new derive(10, 20));
-			//library::share_pointer<base> pointer2 = pointer;
+			library::weak_pointer<base> pointer3;
+			{
+				library::share_pointer<base> pointer = library::make_share<derive>(10, 20);// (new derive(10, 20));
+				//library::share_pointer<base> pointer2 = pointer;
 
-			library::weak_pointer<base> pointer3(pointer);
-			library::weak_pointer<derive> pointer4(pointer);
+				pointer3 = pointer;
+			}
+			library::weak_pointer<derive> pointer4(pointer3);
 			library::weak_pointer<derive> pointer5(pointer4);
 			int a = 10;
 		}

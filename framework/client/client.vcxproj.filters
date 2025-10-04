@@ -103,6 +103,15 @@
     <ClInclude Include="material.h">
       <Filter>content\resource</Filter>
     </ClInclude>
+    <ClInclude Include="library\tinygltf\stb_image.h">
+      <Filter>library\tinygltf</Filter>
+    </ClInclude>
+    <ClInclude Include="library\tinygltf\stb_image_write.h">
+      <Filter>library\tinygltf</Filter>
+    </ClInclude>
+    <ClInclude Include="library\tinygltf\tiny_gltf.h">
+      <Filter>library\tinygltf</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -199,6 +208,9 @@
     <ClCompile Include="material.cpp">
       <Filter>content\resource</Filter>
     </ClCompile>
+    <ClCompile Include="library\tinygltf\tiny_gltf.cc">
+      <Filter>library\tinygltf</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="library">
@@ -228,6 +240,9 @@
     <Filter Include="content\editor">
       <UniqueIdentifier>{3caa2f5b-667a-4016-8bf1-80d552c77180}</UniqueIdentifier>
     </Filter>
+    <Filter Include="library\tinygltf">
+      <UniqueIdentifier>{85e2ebf0-2373-499f-bfaf-391e3a80a838}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -237,6 +252,9 @@
       <Filter>content\resource</Filter>
     </FxCompile>
     <FxCompile Include="PixelShader.hlsl">
+      <Filter>content\resource</Filter>
+    </FxCompile>
+    <FxCompile Include="animation_model.hlsl">
       <Filter>content\resource</Filter>
     </FxCompile>
   </ItemGroup>

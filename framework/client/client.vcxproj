@@ -172,6 +172,9 @@
     <ClInclude Include="library\imgui\imstb_textedit.h" />
     <ClInclude Include="library\imgui\imstb_truetype.h" />
     <ClInclude Include="library\json.hpp" />
+    <ClInclude Include="library\tinygltf\stb_image.h" />
+    <ClInclude Include="library\tinygltf\stb_image_write.h" />
+    <ClInclude Include="library\tinygltf\tiny_gltf.h" />
     <ClInclude Include="material.h" />
     <ClInclude Include="menu.h" />
     <ClInclude Include="mesh.h" />
@@ -206,6 +209,7 @@
     <ClCompile Include="library\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="library\imgui\imgui_tables.cpp" />
     <ClCompile Include="library\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="library\tinygltf\tiny_gltf.cc" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="menu.cpp" />
     <ClCompile Include="object.cpp" />
@@ -228,6 +232,16 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="animation_model.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="PixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>

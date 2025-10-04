@@ -1,10 +1,17 @@
 #pragma once
 #include "component.h"
 #include "mesh.h"
+#include "material.h"
+#include "transform.h"
 
 namespace framework {
 	class renderer : public component {
-		library::share_pointer<mesh> _mesh;
+		struct draw_item {
+			library::share_pointer<transform> _transform;
+			library::share_pointer<mesh> _mesh;
+			library::share_pointer<material> _material;
+		};
+		library::vector<draw_item> _draw_item;
 	public:
 		explicit renderer(void) noexcept;
 		explicit renderer(renderer const&) noexcept = delete;
