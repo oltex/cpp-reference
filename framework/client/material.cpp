@@ -1,9 +1,8 @@
 #include "material.h"
 #include "resource.h"
+#include "library/tinygltf/tiny_gltf.h"
 
 namespace framework {
-	void material::add_texture(char const* const name) noexcept {
-		auto texture = resources::instance().find_resource<framework::texture>(name);
-		_texture.emplace_back(texture);
+	material::material(wchar_t const* const path) noexcept {
 	}
 }

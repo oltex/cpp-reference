@@ -62,11 +62,6 @@ namespace framework {
 						vertex[static_cast<unsigned int>(index)]._texcoord = dmath::float2(texcoord[0], texcoord[1]);
 					}
 				}
-
-				d3d11::buffer_descript desc(sizeof(vertex_face)* vertex.size(), D3D11_USAGE_IMMUTABLE, D3D11_BIND_VERTEX_BUFFER, 0, 0, 0);
-				d3d11::sub_resource_data data(vertex.data(), 0, 0);
-				_vertex_buffer = device.create_buffer(desc, &data);
-
 				if (primitive.indices >= 0) {
 					const auto& accessor = model.accessors[primitive.indices];
 					const auto& view = model.bufferViews[accessor.bufferView];
@@ -79,7 +74,7 @@ namespace framework {
 						break;
 					case TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT: {
 						library::vector<unsigned short> index_face;
-						index_face.resize(accessor.count);
+						index_face.resize(static_cast<unsigned int>(accessor.count));
 						library::memory_copy(index_face.data(), data, sizeof(unsigned short) * accessor.count);
 					} break;
 					case TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT:

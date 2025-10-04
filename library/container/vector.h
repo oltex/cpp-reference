@@ -22,7 +22,7 @@ namespace library {
 		};
 		inline explicit vector(std::initializer_list<type> const& list) noexcept
 			: vector() {
-			reserve(list.size());
+			reserve(static_cast<size_type>(list.size()));
 			for (auto& iter : list)
 				emplace_back(iter);
 		}
