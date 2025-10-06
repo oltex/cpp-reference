@@ -1,18 +1,18 @@
 #pragma once
-#include "library/imgui/imgui.h"
-#include "library/imgui/imgui_impl_dx11.h"
-#include "library/imgui/imgui_impl_win32.h"
+#include "editor.h"
 
 namespace framework {
-	class menu {
+	class menu : public editor {
 	public:
 		explicit menu(void) noexcept = default;
 		explicit menu(menu const&) noexcept = delete;
 		explicit menu(menu&&) noexcept = delete;
 		auto operator=(menu const&) noexcept -> menu & = delete;
 		auto operator=(menu&&) noexcept -> menu & = delete;
-		~menu(void) noexcept = default;
+		virtual ~menu(void) noexcept override = default;
 
-		void update(void) noexcept;
+		virtual void update(void) noexcept override;
+
+		void open_gltf(char const* const path) noexcept;
 	};
 }

@@ -1,9 +1,11 @@
 #pragma once
+#include "library/container/list.h"
 #include "system.h"
 #pragma comment(lib, "module/directx/binary/directx.lib")
 #include "module/directx/directx.h"
 #include "camera.h"
 #include "transform.h"
+#include "renderer.h"
 
 namespace framework {
 	class pipeline : public system {
@@ -16,6 +18,9 @@ namespace framework {
 
 		library::intrusive::weak_pointer<camera, 0> _camera;
 		library::intrusive::weak_pointer<transform, 0> _camera_transform;
+
+		library::list<library::intrusive::weak_pointer<renderer, 0>> _renderer;
+
 	public:
 		explicit pipeline(void) noexcept;
 		explicit pipeline(pipeline const&) noexcept = delete;
@@ -25,7 +30,6 @@ namespace framework {
 		virtual ~pipeline(void) noexcept = default;
 
 		virtual void update(void) noexcept;
-		void set_camera(library::intrusive::share_pointer<camera, 0> camera, library::intrusive::share_pointer<transform, 0> transform) noexcept;
-		//void set_object(library::intrusive::share_pointer<camera, 0> camera, library::intrusive::share_pointer<transform, 0> transform) noexcept;
+		virtual void add_component(library::string const& key, library::vector<library::intrusive::share_pointer<component, 0>>  const& component) noexcept override;
 	};
 }

@@ -6,6 +6,50 @@
 
 namespace framework {
 	resources::resources(void) noexcept {
+		{
+			struct vertex_face {
+				dmath::float3 _position;
+				dmath::float2 _texcoord;
+			};
+			library::vector<vertex_face> vertex{
+				{ {-0.5f,  0.5f, 0.f}, {0.f, 0.f} },
+				{ { 0.5f,  0.5f, 0.f}, {1.f, 0.f} },
+				{ {-0.5f, -0.5f, 0.f}, {1.f, 1.f} },
+				{ { 0.5f, -0.5f, 0.f}, {0.f, 1.f} },
+			};
+			library::vector<unsigned short> index{
+				0, 1, 2, 1, 3, 2
+			};
+			create_resource<framework::mesh>("sprite", vertex, index);
+		}
+		{
+			struct vertex_face {
+				dmath::float3 _position;
+				dmath::float3 _texcoord;
+			};
+			library::vector<vertex_face> vertex{
+				{ {-0.5f,  0.5f, -0.5f}, {-0.5f,  0.5f, -0.5f} },
+				{ { 0.5f,  0.5f, -0.5f}, { 0.5f,  0.5f, -0.5f} },
+				{ {-0.5f, -0.5f, -0.5f}, {-0.5f, -0.5f, -0.5f} },
+				{ { 0.5f, -0.5f, -0.5f}, { 0.5f, -0.5f, -0.5f} },
+				{ {-0.5f,  0.5f,  0.5f}, {-0.5f,  0.5f,  0.5f} },
+				{ { 0.5f,  0.5f,  0.5f}, { 0.5f,  0.5f,  0.5f} },
+				{ {-0.5f, -0.5f,  0.5f}, {-0.5f, -0.5f,  0.5f} },
+				{ { 0.5f, -0.5f,  0.5f}, { 0.5f, -0.5f,  0.5f} }
+			};
+			library::vector<unsigned short> index{
+				0, 1, 2,  1, 3, 2,
+				0, 4, 1,  4, 5, 1,
+				1, 5, 3,  5, 7, 3,
+				3, 7, 2,  7, 6, 2,
+				2, 6, 0,  6, 4, 0,
+				5, 4, 7,  4, 6, 7
+			};
+			create_resource<framework::mesh>("cube", vertex, index);
+		}
+
+
+
 		//struct vertex_face {
 		//	dmath::float3 _position;
 		//	dmath::float2 _texcoord;

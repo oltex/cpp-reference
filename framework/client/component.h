@@ -64,8 +64,8 @@ namespace framework {
 			inline virtual void deallocate(framework::component* const value) noexcept = 0;
 		};
 		template <typename type>
-		class pool : public pools, public library::pool<type> {
-			using base = library::pool<type>;
+		class pool : public pools, public library::pool<type, false> {
+			using base = library::pool<type, false>;
 			using size_type = pools::size_type;
 		public:
 			using base::base;
@@ -99,7 +99,8 @@ namespace framework {
 			auto result = _component.find(framework::component::type_id<type>());
 			if (_component.end() == result)
 				result = _component.emplace(framework::component::type_id<type>(), new pool<type>);
-			auto pointer = static_cast<pool<type>*>(&*result->_second)->allocate(std::forward<argument>(arg)...);
+			auto pointer = static_cast<pool<type>*>(&*result->_second)->allocate();
+			library::construct<type>(*pointer, std::forward<argument>(arg)...);
 			return library::intrusive::share_pointer<component, 0>(pointer);
 		}
 		void deallocate_component(framework::component* component) noexcept;

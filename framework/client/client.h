@@ -16,7 +16,7 @@ namespace framework {
 		friend class library::singleton<client>;
 		window& _window;
 		graphic& _graphic;
-		editor& _editor;
+		editors& _editors;
 		input& _input;
 		audio& _audio;
 		timer _timer;

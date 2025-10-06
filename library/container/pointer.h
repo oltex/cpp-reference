@@ -47,7 +47,7 @@ namespace detail {
 		inline explicit reference_external(reference_external&&) noexcept = default;
 		inline auto operator=(reference_external const&) noexcept -> reference_external & = default;
 		inline auto operator=(reference_external&&) noexcept -> reference_external & = default;
-		inline virtual ~reference_external(void) noexcept override  = default;
+		inline virtual ~reference_external(void) noexcept override = default;
 
 		inline virtual void destroy_object(void) noexcept override {
 			pointer_deleter(_pointer);
@@ -82,6 +82,8 @@ namespace library {
 	class unique_pointer final {
 		template <typename other>
 		friend class unique_pointer;
+		template<typename type, typename... argument>
+		inline friend auto make_unique(argument&&... arg) noexcept ->unique_pointer<type>;
 		type* _pointer;
 	public:
 		inline constexpr unique_pointer(void) noexcept
@@ -94,11 +96,6 @@ namespace library {
 			requires std::is_convertible_v<other*, type*>
 		inline explicit unique_pointer(other* const pointer) noexcept
 			: _pointer(pointer) {
-		}
-		template<typename... argument>
-		inline explicit unique_pointer(argument&&... arg) noexcept {
-			_pointer = library::allocate<type>();
-			library::construct<type>(*_pointer, std::forward<argument>(arg)...);
 		}
 		inline explicit unique_pointer(unique_pointer&) noexcept = delete;
 		inline unique_pointer(unique_pointer&& rhs) noexcept
@@ -204,6 +201,15 @@ namespace library {
 			return nullptr == lhs._pointer;
 		}
 	};
+
+	template <typename type, typename... argument>
+	inline auto make_unique(argument&&... arg) noexcept -> unique_pointer<type> {
+		unique_pointer<type> pointer;
+		pointer._pointer = library::allocate<type>();
+		library::construct<type>(*pointer._pointer, std::forward<argument>(arg)...);
+		return pointer;
+	}
+
 	template<typename type>
 	class share_pointer final {
 		template <typename other>

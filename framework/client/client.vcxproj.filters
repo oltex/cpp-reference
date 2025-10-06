@@ -112,6 +112,9 @@
     <ClInclude Include="library\tinygltf\tiny_gltf.h">
       <Filter>library\tinygltf</Filter>
     </ClInclude>
+    <ClInclude Include="asset.h">
+      <Filter>content\editor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -210,6 +213,9 @@
     </ClCompile>
     <ClCompile Include="library\tinygltf\tiny_gltf.cc">
       <Filter>library\tinygltf</Filter>
+    </ClCompile>
+    <ClCompile Include="asset.cpp">
+      <Filter>content\editor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

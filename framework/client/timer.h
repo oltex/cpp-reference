@@ -3,7 +3,7 @@
 
 namespace framework {
 	class timer {
-		double _frame = 1. / 3.;
+		double _frame = 1. / 60.;
 		library::time _time;
 		library::time _current, _prev;
 		double _delta;

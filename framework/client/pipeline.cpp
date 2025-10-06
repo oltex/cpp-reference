@@ -74,18 +74,25 @@ namespace framework {
 			device_context.unmap(_camera_buffer.data(), 0);
 		}
 
-
-		auto mesh = resources::instance().find_resource<framework::mesh>("mesh");
-		for (auto& primitive : mesh->_primitive) {
-			
-			unsigned int offset[]{ 0 };
-			device_context.set_vertex_buffer(0, 1, &primitive._vertex_buffer.data(), &primitive._stride, offset);
-			device_context.set_index_buffer(primitive._index_buffer, primitive._format, 0);
-			device_context.draw_index(primitive._count, 0, 0);
+		for (auto& renderer : _renderer) {
+			auto renderer2 = renderer.lock();
+			for (auto& draw_item : renderer2->get_draw_item()) {
+			}
 		}
+		//auto mesh = resources::instance().find_resource<framework::mesh>("mesh");
+		//unsigned int offset[]{ 0 };
+		//device_context.set_vertex_buffer(0, 1, &mesh->_vertex_buffer.data(), &mesh->_stride, offset);
+		//device_context.set_index_buffer(mesh->_index_buffer, mesh->_format, 0);
+		//device_context.draw_index(mesh->_count, 0, 0);
 	}
-	void pipeline::set_camera(library::intrusive::share_pointer<camera, 0> camera, library::intrusive::share_pointer<transform, 0> transform) noexcept {
-		_camera = camera;
-		_camera_transform = transform;
+
+	void pipeline::add_component(library::string const& key, library::vector<library::intrusive::share_pointer<component, 0>> const& component) noexcept {
+		if ("camera" == key) {
+			_camera = component[0];
+			_camera_transform = component[1];
+		}
+		if ("object" == key) {
+			_renderer.emplace_back(component[0]);
+		}
 	}
 }

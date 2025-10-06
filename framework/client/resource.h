@@ -17,6 +17,7 @@ namespace framework {
 
 	class resources : public library::singleton<resources> {
 		friend class library::singleton<resources>;
+		friend class asset;
 		library::unorder_map<library::string, library::share_pointer<resource>> _resource;
 
 		explicit resources(void) noexcept;

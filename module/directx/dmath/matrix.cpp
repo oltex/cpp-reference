@@ -15,8 +15,15 @@ namespace dmath {
 	inline auto matrix::transpose(void) noexcept -> matrix {
 		return DirectX::XMMatrixTranspose(*this);
 	}
+
 	inline auto matrix::identity(void) noexcept -> matrix {
 		return DirectX::XMMatrixIdentity();
+	}
+	inline auto matrix::translation(float x, float y, float z) noexcept -> matrix {
+		return DirectX::XMMatrixTranslation(x, y, z);
+	}
+	inline auto matrix::scaling(float x, float y, float z) noexcept -> matrix {
+		return DirectX::XMMatrixScaling(x, y, z);
 	}
 
 

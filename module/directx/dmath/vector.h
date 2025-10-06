@@ -1,6 +1,6 @@
 #pragma once
 #include <DirectXMath.h>
-
+#include "matrix.h"
 namespace dmath {
 
 	//typedef XMINT2 _int2;
@@ -32,9 +32,25 @@ namespace dmath {
 	//	}
 	//};
 
-
-	using vector = DirectX::XMVECTOR;
+	//using vector = DirectX::XMVECTOR;
 	using fvector = DirectX::FXMVECTOR;
+	struct vector {
+		DirectX::XMVECTOR _vector;
+		inline vector(fvector vector) noexcept
+			: _vector(vector) {
+		}
+
+		inline static auto set(float x, float y, float z, float w) noexcept -> vector {
+			return DirectX::XMVectorSet(x, y, z, w);
+		}
+		inline auto quaternion_normalize(void) noexcept -> vector {
+			return DirectX::XMQuaternionNormalize(_vector);
+		}
+		inline auto rotate_quaternion(void) noexcept -> matrix {
+			return DirectX::XMMatrixRotationQuaternion(_vector);
+		}
+	};
+
 	struct float2 : public DirectX::XMFLOAT2 {
 		using DirectX::XMFLOAT2::XMFLOAT2;
 		inline auto load(void) const noexcept -> vector {
@@ -65,3 +81,7 @@ namespace dmath {
 		}
 	};
 }
+
+//DirectX::XMVectorSet();
+//DirectX::XMQuaternionNormalize()
+//XMVECTOR q = XMVectorSet(rx, ry, rz, rw);

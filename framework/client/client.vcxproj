@@ -155,6 +155,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="asset.h" />
     <ClInclude Include="behaviour.h" />
     <ClInclude Include="behave.h" />
     <ClInclude Include="camera.h" />
@@ -175,7 +176,12 @@
     <ClInclude Include="library\tinygltf\stb_image.h" />
     <ClInclude Include="library\tinygltf\stb_image_write.h" />
     <ClInclude Include="library\tinygltf\tiny_gltf.h" />
-    <ClInclude Include="material.h" />
+    <ClInclude Include="material.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="menu.h" />
     <ClInclude Include="mesh.h" />
     <ClInclude Include="pipeline.h" />
@@ -194,6 +200,7 @@
     <ClInclude Include="system.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="asset.cpp" />
     <ClCompile Include="behave.cpp" />
     <ClCompile Include="behaviour.cpp" />
     <ClCompile Include="camera.cpp" />
@@ -226,7 +233,12 @@
     <ClCompile Include="transform.cpp" />
     <ClCompile Include="window.cpp" />
     <ClCompile Include="input.cpp" />
-    <ClCompile Include="material.cpp" />
+    <ClCompile Include="material.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

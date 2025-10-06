@@ -126,6 +126,7 @@
     <ClInclude Include="example\intrusive\pointer_list.h">
       <Filter>example\intrusive</Filter>
     </ClInclude>
+    <ClInclude Include="span.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

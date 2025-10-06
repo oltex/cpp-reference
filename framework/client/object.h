@@ -41,6 +41,7 @@ namespace framework {
 		friend class library::singleton<objects>;
 		friend class scenes;
 		friend class object;
+		friend class menu;
 		library::pool<framework::object, false> _pool;
 		library::unorder_map<library::string, library::intrusive::share_pointer<object, 0>> _prototype;
 

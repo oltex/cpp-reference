@@ -8,11 +8,12 @@
 namespace framework {
 	class graphic : public library::singleton<graphic> {
 		friend class library::singleton<graphic>;
-		friend class editor;
+		friend class editors;
 		friend class pipeline;
 		friend class shader;
 		friend class texture;
 		friend class mesh;
+		friend class menu;
 
 		d3d11::device _device;
 		d3d11::device_context _device_context;

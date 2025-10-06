@@ -1,5 +1,8 @@
 #include "window.h"
 #include "editor.h"
+#include "library/imgui/imgui.h"
+#include "library/imgui/imgui_impl_dx11.h"
+#include "library/imgui/imgui_impl_win32.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -32,8 +35,8 @@ namespace framework {
 		}
 	}
 	bool window::procedure(HWND const hwnd, UINT const message, WPARAM const wparam, LPARAM const lparam) noexcept {
-		//if (ImGui_ImplWin32_WndProcHandler(hwnd, message, wparam, lparam))
-			//return true;
+		if (ImGui_ImplWin32_WndProcHandler(hwnd, message, wparam, lparam))
+			return true;
 		return false;
 	}
 }
