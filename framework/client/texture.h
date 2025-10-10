@@ -5,6 +5,7 @@
 
 namespace framework {
 	class texture : public resource {
+	public:
 		d3d11::texture_2d _texture;
 		d3d11::render_target_view _rtv;
 		d3d11::shader_resource_view _srv;

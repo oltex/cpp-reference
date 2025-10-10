@@ -38,4 +38,22 @@ namespace framework {
 	void transform::set_parent(library::intrusive::share_pointer<transform, 0>& parent) noexcept {
 		_parent = parent;
 	}
+	void transform::translate(dmath::float3 move) noexcept {
+		using namespace dmath;
+		auto matrix = _float4x4.load();
+
+		auto position = vector(matrix.r[3]);
+		auto right = vector(matrix.r[0]).set_w(0).normalize_3();
+		auto up = vector(matrix.r[1]).set_w(0).normalize_3();
+		auto forward = vector(matrix.r[2]).set_w(0).normalize_3();
+
+		auto delta = vector::multiple_add(vector::replicate(move.x), right,
+			vector::multiple_add(vector::replicate(move.y), up, forward.scale(move.z)));
+
+		position = position.add(delta);
+		matrix.r[3] = position.set_w(1);
+
+		_float4x4 = matrix.store();
+	}
+
 }

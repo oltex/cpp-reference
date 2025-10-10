@@ -19,5 +19,6 @@ namespace framework {
 		virtual ~transform(void) noexcept override = default;
 
 		void set_parent(library::intrusive::share_pointer<transform, 0>& parent) noexcept;
+		void translate(dmath::float3 move) noexcept;
 	};
 }

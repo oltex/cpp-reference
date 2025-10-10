@@ -11,9 +11,7 @@ namespace framework {
 		d3d11::vertex_shader _vertex_shader;
 		d3d11::pixel_shader _pixel_shader;
 	public:
-		explicit shader(wchar_t const* const path, char const* const entry, char const* const target,
-			wchar_t const* const pixel_path, char const* const pixel_entry, char const* const pixel_target,
-			library::vector<d3d11::input_element_descript>& descript) noexcept;
+		explicit shader(wchar_t const* const path, wchar_t const* const pixel_path, library::vector<d3d11::input_element_descript>& descript) noexcept;
 		explicit shader(shader const&) noexcept = delete;
 		explicit shader(shader&&) noexcept = delete;
 		auto operator=(shader const&) noexcept -> shader & = delete;

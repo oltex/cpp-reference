@@ -1,6 +1,7 @@
 #include "mesh.h"
 #include "library/tinygltf/tiny_gltf.h"
 #include <cassert>
+#include "graphic.h"
 
 namespace framework {
 	mesh::mesh(tinygltf::Model& model, tinygltf::Mesh& mesh) noexcept {
@@ -78,5 +79,12 @@ namespace framework {
 				}
 			}
 		}
+	}
+	void mesh::render_primitive(size_t index) const noexcept {
+		auto& device_context = graphic::instance()._device_context;
+		unsigned int offset[]{ 0 };
+		device_context.set_vertex_buffer(0, 1, &_primitive[index]._vertex_buffer.data(), &_primitive[index]._stride, offset);
+		device_context.set_index_buffer(_primitive[index]._index_buffer, _primitive[index]._format, 0);
+		device_context.draw_index(_primitive[index]._count, 0, 0);
 	}
 }

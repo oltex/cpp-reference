@@ -20,23 +20,7 @@ namespace framework {
 	public:
 		template<typename vertex_type, typename index_type>
 		explicit mesh(library::vector<vertex_type>& vertex, library::vector<index_type>& index) noexcept {
-			auto primitive = _primitive.emplace_back();
-			auto& device = graphic::instance()._device;
-			{
-				d3d11::buffer_descript descript(sizeof(vertex_type) * vertex.size(), D3D11_USAGE_IMMUTABLE, D3D11_BIND_VERTEX_BUFFER, 0, 0, 0);
-				d3d11::sub_resource_data data(vertex.data(), 0, 0);
-				primitive._vertex_buffer = device.create_buffer(descript, &data);
-				primitive._stride = sizeof(vertex_type);
-			}
-			{
-				d3d11::buffer_descript descript(sizeof(index_type) * index.size(), D3D11_USAGE_IMMUTABLE, D3D11_BIND_INDEX_BUFFER, 0, 0, 0);
-				d3d11::sub_resource_data data(index.data(), 0, 0);
-				primitive._index_buffer = device.create_buffer(descript, &data);
-				if constexpr (library::same_type<index_type, unsigned short>)
-					primitive._format = DXGI_FORMAT_R16_UINT;
-				primitive._count = index.size();
-				//m_eTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-			}
+			add_primitive(vertex, index);
 		};
 		explicit mesh(tinygltf::Model& model, tinygltf::Mesh& mesh) noexcept;
 		explicit mesh(mesh const&) noexcept = delete;
@@ -65,5 +49,6 @@ namespace framework {
 				//m_eTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 			}
 		}
+		void render_primitive(size_t index) const noexcept;
 	};
 }

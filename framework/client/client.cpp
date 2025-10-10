@@ -11,6 +11,7 @@
 #include "renderer.h"
 #include "texture.h"
 #include "material.h"
+#include "camera_move.h"
 
 
 namespace framework {
@@ -28,37 +29,43 @@ namespace framework {
 		_scenes.create_scene("");
 		_scenes.update_system();
 
-
-		//auto material = _resources.create_resource<framework::material>("material");
-		//material->add_texture("texture");
-
 		//resource
 		auto texture = _resources.create_resource<framework::texture>("texture", L"images.png");
 		library::vector<d3d11::input_element_descript> descript{
 			d3d11::input_element_descript{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 			d3d11::input_element_descript{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 		};
-		auto shader = _resources.create_resource<framework::shader>("shader", L"VertexShader.hlsl", "main", "vs_5_0", L"PixelShader.hlsl", "main", "ps_5_0", descript);
+		auto shader = _resources.create_resource<framework::shader>("shader", L"sprite_vertex.hlsl", L"sprite_pixel.hlsl", descript);
+		auto material = _resources.create_resource<framework::material>("material");
+		material->add_texture(texture);
+		material->set_shader(shader);
+		auto mesh = _resources.find_resource<framework::mesh>("sprite");
 
 		//object
 		auto camera = _scenes.create_object();
 		auto camera_component = camera->add_component<framework::camera>("camera", 60.f, 1280.f, 720.f, 0.2f, 500.f);
 		auto camera_transform = camera->add_component<framework::transform>("transform");
+		camera_transform->_float4x4._43 = -3;
+		auto camera_move = camera->add_component<framework::camera_move>("camera_move", camera);
 		auto object = _scenes.create_object();
 		auto object_tramsform = object->add_component<framework::transform>("transform");
 		auto object_renderer = object->add_component<framework::renderer>("renderer");
-
-		auto mesh = _resources.find_resource<framework::mesh>("sprite");
-		object_renderer->add_draw_item(object_tramsform, mesh, texture);
+		object_renderer->set_transform(0, object_tramsform);
+		object_renderer->set_mesh(0, mesh);
+		object_renderer->add_material(0, material);
 
 		//system
+		auto behave = _scenes.create_render_system<framework::behave>();
 		auto pipeline = _scenes.create_render_system<framework::pipeline>();
 		library::vector<library::intrusive::share_pointer<component, 0>> com{ camera_component, camera_transform };
 		pipeline->add_component("camera", com);
 		com.clear();
 		com.emplace_back(object_renderer);
 		pipeline->add_component("object", com);
-		//pipeline->set_camera(camera_component, camera_transform);
+		com.clear();
+		com.emplace_back(camera_move);
+		behave->add_component("behaviour", com);
+
 	}
 	client::~client(void) noexcept {
 	}

@@ -39,15 +39,38 @@ namespace dmath {
 		inline vector(fvector vector) noexcept
 			: _vector(vector) {
 		}
+		inline operator DirectX::XMVECTOR(void) const noexcept {
+			return _vector;
+		}
 
-		inline static auto set(float x, float y, float z, float w) noexcept -> vector {
-			return DirectX::XMVectorSet(x, y, z, w);
+		inline auto add(vector value) noexcept -> vector {
+			return DirectX::XMVectorAdd(_vector, value._vector);
+		}
+		inline auto scale(float factor) noexcept -> vector {
+			return DirectX::XMVectorScale(_vector, factor);
+		}
+		inline auto set_w(float w) noexcept -> vector {
+			return DirectX::XMVectorSetW(_vector, w);
+		}
+		inline auto normalize_3(void) noexcept -> vector {
+			return DirectX::XMVector3Normalize(_vector);
 		}
 		inline auto quaternion_normalize(void) noexcept -> vector {
 			return DirectX::XMQuaternionNormalize(_vector);
 		}
 		inline auto rotate_quaternion(void) noexcept -> matrix {
 			return DirectX::XMMatrixRotationQuaternion(_vector);
+		}
+
+		inline static auto set(float x, float y, float z, float w) noexcept -> vector {
+			return DirectX::XMVectorSet(x, y, z, w);
+		}
+
+		inline static auto replicate(float value) noexcept -> vector {
+			return DirectX::XMVectorReplicate(value);
+		}
+		inline static auto multiple_add(vector v1, vector v2, vector v3) noexcept -> vector {
+			return DirectX::XMVectorMultiplyAdd(v1._vector, v2._vector, v3._vector);
 		}
 	};
 

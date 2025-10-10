@@ -240,27 +240,27 @@
     <Filter Include="content\scene">
       <UniqueIdentifier>{4d75da38-b1c1-4942-afc4-c93c56e85de8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="content\system">
-      <UniqueIdentifier>{9b6eb6da-e6e7-41ff-b6de-2def6a5c2ff6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="content\editor">
       <UniqueIdentifier>{3caa2f5b-667a-4016-8bf1-80d552c77180}</UniqueIdentifier>
     </Filter>
     <Filter Include="library\tinygltf">
       <UniqueIdentifier>{85e2ebf0-2373-499f-bfaf-391e3a80a838}</UniqueIdentifier>
     </Filter>
+    <Filter Include="content\system">
+      <UniqueIdentifier>{9b6eb6da-e6e7-41ff-b6de-2def6a5c2ff6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="camera.hlsli">
+      <Filter>content\resource</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="VertexShader.hlsl">
+    <FxCompile Include="sprite_vertex.hlsl">
       <Filter>content\resource</Filter>
     </FxCompile>
-    <FxCompile Include="PixelShader.hlsl">
-      <Filter>content\resource</Filter>
-    </FxCompile>
-    <FxCompile Include="animation_model.hlsl">
+    <FxCompile Include="sprite_pixel.hlsl">
       <Filter>content\resource</Filter>
     </FxCompile>
   </ItemGroup>
