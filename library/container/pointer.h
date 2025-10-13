@@ -201,7 +201,6 @@ namespace library {
 			return nullptr == lhs._pointer;
 		}
 	};
-
 	template <typename type, typename... argument>
 	inline auto make_unique(argument&&... arg) noexcept -> unique_pointer<type> {
 		unique_pointer<type> pointer;
@@ -410,7 +409,6 @@ namespace library {
 			return _pointer;
 		}
 	};
-
 	template <typename type, typename... argument>
 	inline auto make_share(argument&&... arg) noexcept -> share_pointer<type> {
 		share_pointer<type> pointer;

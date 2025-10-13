@@ -8,6 +8,7 @@
 
 namespace framework {
 	class mesh : public resource {
+		using size_type = unsigned int;
 	public:
 		struct primitive {
 			d3d11::buffer _vertex_buffer;
@@ -49,6 +50,6 @@ namespace framework {
 				//m_eTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 			}
 		}
-		void render_primitive(size_t index) const noexcept;
+		void render_primitive(size_type index) const noexcept;
 	};
 }

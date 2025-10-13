@@ -33,6 +33,9 @@ namespace library::intrusive {
 		inline auto operator=(pointer_hook const&) noexcept -> pointer_hook & = default;
 		inline auto operator=(pointer_hook&&) noexcept -> pointer_hook & = default;
 		inline ~pointer_hook(void) noexcept = default;
+
+		template<typename type>
+		inline auto share_pointer_this(void) noexcept -> share_pointer<type, index>;
 	};
 
 	template<typename type, size_t index>
@@ -161,7 +164,7 @@ namespace library::intrusive {
 		inline weak_pointer(weak_pointer const& rhs) noexcept
 			: _pointer(rhs._pointer) {
 			if (nullptr != _pointer)
-				library::interlock_increment(_pointer._weak);
+				library::interlock_increment(_pointer->_weak);
 		};
 		inline weak_pointer(weak_pointer&& rhs) noexcept
 			: _pointer(library::exchange(rhs._pointer, nullptr)) {
@@ -225,4 +228,13 @@ namespace library::intrusive {
 			library::swap(_pointer, rhs._pointer);
 		}
 	};
+
+	template<size_t index>
+	template<typename type>
+	inline auto pointer_hook<index>::share_pointer_this(void) noexcept -> share_pointer<type, index> {
+		share_pointer<type, index> pointer;
+		pointer.set(static_cast<type*>(this));
+		library::interlock_increment(_use);
+		return pointer;
+	}
 }

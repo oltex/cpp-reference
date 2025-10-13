@@ -53,6 +53,7 @@ namespace example::intrusive {
 		inline explicit derive(int base_value, int derive_value) noexcept
 			: base(base_value), _derive_value(derive_value) {
 			std::cout << "derive »ý¼ºÀÚ: " << _derive_value << std::endl;
+
 		}
 		inline derive(derive const& rhs) noexcept
 			: base(rhs), _derive_value(rhs._derive_value) {
@@ -82,9 +83,9 @@ namespace example::intrusive {
 		//auto pointer = new derive(10, 20);
 		//library::intrusive::share_pointer<derive, 1> pointer2(pointer);
 		//library::intrusive::weak_pointer<base, 1> pointer3(std::move(pointer2));
-		std::static_pointer_cast<>
 
 		library::intrusive::share_pointer<derive, 1> pointer(new derive(10, 20));
+		auto p = pointer->share_pointer_this<derive>();
 		library::intrusive::share_pointer<base, 1> pointer2 = pointer;
 
 		library::intrusive::weak_pointer<base, 1> pointer3(pointer);

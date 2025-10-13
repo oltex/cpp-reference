@@ -10,22 +10,19 @@ namespace framework {
 	}
 
 	void input::update_state(void) noexcept {
-		GameInput::v2::IGameInputReading* reading;
-		if (SUCCEEDED(_game_input->GetCurrentReading(GameInput::v2::GameInputKindMouse | GameInput::v2::GameInputKindKeyboard, nullptr, &reading))) {
-			auto kind = reading->GetInputKind();
-			if (GameInput::v2::GameInputKindMouse & kind) {
-				_previous_mouse = _current_mouse;
-				reading->GetMouseState(&_current_mouse);
-			}
-			if (GameInput::v2::GameInputKindKeyboard & kind) {
-				_previous_keyboard = _current_keyboard;
-				_current_keyboard.reset();
+		GameInput::v2::IGameInputReading* reading = nullptr;
+		if (SUCCEEDED(_game_input->GetCurrentReading(GameInput::v2::GameInputKindMouse, nullptr, &reading))) {
+			_previous_mouse = _current_mouse;
+			reading->GetMouseState(&_current_mouse);
+		}
+		if (SUCCEEDED(_game_input->GetCurrentReading(GameInput::v2::GameInputKindKeyboard, nullptr, &reading))) {
+			_previous_keyboard = _current_keyboard;
+			_current_keyboard.reset();
 
-				library::array<GameInput::v2::GameInputKeyState, 16> state;
-				reading->GetKeyState(reading->GetKeyCount(), state.data());
-				for (auto& iter : state)
-					_current_keyboard |= static_cast<key>(iter.virtualKey);
-			}
+			library::array<GameInput::v2::GameInputKeyState, 16> state;
+			reading->GetKeyState(reading->GetKeyCount(), state.data());
+			for (auto index = 0u; index < reading->GetKeyCount(); ++index)
+				_current_keyboard |= static_cast<key>(state[index].virtualKey);
 		}
 	}
 	auto input::get_mouse_button(void) const noexcept -> framework::mouse {

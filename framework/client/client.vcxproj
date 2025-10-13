@@ -161,6 +161,7 @@
     <ClInclude Include="camera.h" />
     <ClInclude Include="camera_move.h" />
     <ClInclude Include="client.h" />
+    <ClInclude Include="collider.h" />
     <ClInclude Include="component.h" />
     <ClInclude Include="audio.h" />
     <ClInclude Include="editor.h" />
@@ -201,6 +202,7 @@
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="camera_move.cpp" />
     <ClCompile Include="client.cpp" />
+    <ClCompile Include="collider.cpp" />
     <ClCompile Include="component.cpp" />
     <ClCompile Include="editor.cpp" />
     <ClCompile Include="graphic.cpp" />

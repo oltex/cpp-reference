@@ -19,6 +19,7 @@ namespace framework {
 		using keyboard = library::bit_set<255>;
 
 		GameInput::v2::IGameInput* _game_input;
+
 		mouse _current_mouse;
 		mouse _previous_mouse;
 		keyboard _current_keyboard;

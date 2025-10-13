@@ -43,10 +43,10 @@ namespace framework {
 
 		//object
 		auto camera = _scenes.create_object();
-		auto camera_component = camera->add_component<framework::camera>("camera", 60.f, 1280.f, 720.f, 0.2f, 500.f);
 		auto camera_transform = camera->add_component<framework::transform>("transform");
-		camera_transform->_float4x4._43 = -3;
-		auto camera_move = camera->add_component<framework::camera_move>("camera_move", camera);
+		auto camera_component = camera->add_component<framework::camera>("camera", 60.f, 1280.f, 720.f, 0.2f, 500.f);
+		auto camera_move = camera->add_component<framework::camera_move>("camera_move");
+
 		auto object = _scenes.create_object();
 		auto object_tramsform = object->add_component<framework::transform>("transform");
 		auto object_renderer = object->add_component<framework::renderer>("renderer");

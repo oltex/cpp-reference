@@ -9,6 +9,8 @@ namespace framework {
 	public:
 		library::intrusive::weak_pointer<transform, 0> _parent;
 		dmath::float4x4 _float4x4;
+		dmath::float4 _quaternion;
+		dmath::float3 _scale;
 	public:
 		explicit transform(void) noexcept;
 		explicit transform(std::vector<double> translation, std::vector<double> rotation, std::vector<double> scale) noexcept;
@@ -19,6 +21,7 @@ namespace framework {
 		virtual ~transform(void) noexcept override = default;
 
 		void set_parent(library::intrusive::share_pointer<transform, 0>& parent) noexcept;
-		void translate(dmath::float3 move) noexcept;
+		void translate(dmath::float3 move, bool local = true) noexcept;
+		void rotate(dmath::float3 move, bool local = true) noexcept;
 	};
 }

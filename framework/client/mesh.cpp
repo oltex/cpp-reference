@@ -80,7 +80,7 @@ namespace framework {
 			}
 		}
 	}
-	void mesh::render_primitive(size_t index) const noexcept {
+	void mesh::render_primitive(size_type index) const noexcept {
 		auto& device_context = graphic::instance()._device_context;
 		unsigned int offset[]{ 0 };
 		device_context.set_vertex_buffer(0, 1, &_primitive[index]._vertex_buffer.data(), &_primitive[index]._stride, offset);

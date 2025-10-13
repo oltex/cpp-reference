@@ -115,6 +115,9 @@
     <ClInclude Include="asset.h">
       <Filter>content\editor</Filter>
     </ClInclude>
+    <ClInclude Include="collider.h">
+      <Filter>content\component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -216,6 +219,9 @@
     </ClCompile>
     <ClCompile Include="asset.cpp">
       <Filter>content\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="collider.cpp">
+      <Filter>content\component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

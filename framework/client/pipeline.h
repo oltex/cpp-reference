@@ -12,13 +12,11 @@ namespace framework {
 		d3d11::view_port _view_port;
 		d3d11::render_target_view _render_target_view;
 		d3d11::depth_stencil_view _depth_stencil_view;
-
 		d3d11::buffer _camera_buffer;
 		d3d11::buffer _world_matrix;
 
 		library::intrusive::weak_pointer<camera, 0> _camera;
 		library::intrusive::weak_pointer<transform, 0> _camera_transform;
-
 		library::list<library::intrusive::weak_pointer<renderer, 0>> _renderer;
 
 	public:

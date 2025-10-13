@@ -2,8 +2,8 @@
 
 namespace framework {
 	transform::transform(void) noexcept
-		: component(component::type_id<transform>()) {
-		_float4x4 = dmath::matrix::identity().store();
+		: component(component::type_id<transform>()),
+		_float4x4(dmath::matrix::identity().store()), _quaternion(0.f, 0.f, 0.f, 1.f), _scale(1.f, 1.f, 1.f) {
 	};
 
 	transform::transform(std::vector<double> translation, std::vector<double> rotation, std::vector<double> scale) noexcept
@@ -31,29 +31,52 @@ namespace framework {
 		}
 
 		auto scale2 = dmath::matrix::scaling(sx, sy, sz);
-		auto rotate2 = dmath::vector::set(rx, ry, rz, rw).quaternion_normalize().rotate_quaternion();
+		auto rotate2 = dmath::vector(rx, ry, rz, rw).quaternion_normalize().matrix_rotate_quaternion();
 		auto translation2 = dmath::matrix::translation(tx, ty, tz);
 		_float4x4 = (scale2 * rotate2 * translation2).store();
 	}
 	void transform::set_parent(library::intrusive::share_pointer<transform, 0>& parent) noexcept {
 		_parent = parent;
 	}
-	void transform::translate(dmath::float3 move) noexcept {
+	void transform::translate(dmath::float3 move, bool local) noexcept {
 		using namespace dmath;
 		auto matrix = _float4x4.load();
-
 		auto position = vector(matrix.r[3]);
-		auto right = vector(matrix.r[0]).set_w(0).normalize_3();
-		auto up = vector(matrix.r[1]).set_w(0).normalize_3();
-		auto forward = vector(matrix.r[2]).set_w(0).normalize_3();
 
-		auto delta = vector::multiple_add(vector::replicate(move.x), right,
-			vector::multiple_add(vector::replicate(move.y), up, forward.scale(move.z)));
+		dmath::vector delta;
+		if (true == local) {
+			auto right = vector(matrix.r[0]).vector_normalize_3();
+			auto up = vector(matrix.r[1]).vector_normalize_3();
+			auto forward = vector(matrix.r[2]).vector_normalize_3();
+			delta = vector::multiple_add(vector::replicate(move.x), right, vector::multiple_add(vector::replicate(move.y), up, forward.vector_scale(move.z)));
+		}
+		else
+			delta = vector(move.x, move.y, move.z, 0);
 
-		position = position.add(delta);
-		matrix.r[3] = position.set_w(1);
-
+		matrix.r[3] = position.vector_add(delta);
 		_float4x4 = matrix.store();
 	}
 
+	void transform::rotate(dmath::float3 move, bool local) noexcept {
+		using namespace dmath;
+		auto quaternion = _quaternion.load();
+		auto qx = vector::quaternion_rotate_axis(vector(1.f, 0.f, 0.f, 0.f), move.x);
+		auto qy = vector::quaternion_rotate_axis(vector(0.f, 1.f, 0.f, 0.f), move.y);
+		auto qz = vector::quaternion_rotate_axis(vector(0.f, 0.f, 1.f, 0.f), move.z);
+		auto delta = qz.quaternion_multiple(qx).quaternion_multiple(qy);
+
+		if (true == local)
+			quaternion = delta.quaternion_multiple(quaternion).quaternion_normalize();
+		else
+			quaternion = quaternion.quaternion_multiple(delta).quaternion_normalize();
+		_quaternion = quaternion;
+
+		auto matrix = _float4x4.load();
+		auto position = vector(matrix.r[3]);
+		auto rotation = quaternion.matrix_rotate_quaternion();
+		auto scale = _scale.load().matrix_scale();
+		matrix = scale * rotation;
+		matrix.r[3] = position;
+		_float4x4 = matrix;
+	}
 }

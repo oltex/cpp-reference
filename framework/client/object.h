@@ -20,8 +20,9 @@ namespace framework {
 		template<>
 		inline static void deallocate<0>(object* pointer) noexcept;
 
-		library::intrusive::pointer_list<component, 0, 0> _component;
 	public:
+		library::intrusive::pointer_list<component, 0, 0> _component;
+
 		explicit object(void) noexcept;
 		explicit object(object const& rhs) noexcept;
 		explicit object(object&&) noexcept = delete;
@@ -30,8 +31,13 @@ namespace framework {
 		~object(void) noexcept = default;
 
 		template<typename type, typename... argument>
-		inline auto add_component(library::string const& name, argument&&... arg) noexcept -> library::intrusive::share_pointer<type, 0> {
-			auto component = components::instance().allocate_component<type>(std::forward<argument>(arg)...);
+		inline auto add_component(char const* const name, argument&&... arg) noexcept -> library::intrusive::share_pointer<type, 0> {
+			library::intrusive::share_pointer<component, 0> component;
+			auto parent = share_pointer_this<object>();
+			if constexpr (std::is_constructible_v<type, library::intrusive::share_pointer<object, 0>&, argument...>)
+				component = components::instance().allocate_component<type>(parent, std::forward<argument>(arg)...);
+			else
+				component = components::instance().allocate_component<type>(std::forward<argument>(arg)...);
 			_component.push_back(component);
 			return component;
 		}
