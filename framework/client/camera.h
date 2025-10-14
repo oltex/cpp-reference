@@ -5,8 +5,7 @@
 
 namespace framework {
 	class camera : public component, public componentr<camera, "camera"> {
-	public:
-		dmath::float4x4 _project_float4x4;
+		dmath::float4x4 _project;
 	public:
 		explicit camera(float field_of_view, float aspect_width, float aspect_height, float _near, float _far) noexcept;
 		explicit camera(camera const&) noexcept = delete;
@@ -14,5 +13,8 @@ namespace framework {
 		auto operator=(camera const&) noexcept -> camera & = delete;
 		auto operator=(camera&&) noexcept -> camera & = delete;
 		virtual ~camera(void) noexcept override = default;
+
+		static auto buffer(void) noexcept -> d3d11::buffer&;
+		auto matrix(void) noexcept -> dmath::matrix;
 	};
 }

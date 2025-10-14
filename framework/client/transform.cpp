@@ -1,4 +1,5 @@
 #include "transform.h"
+#include "graphic.h"
 
 namespace framework {
 	transform::transform(void) noexcept
@@ -35,6 +36,15 @@ namespace framework {
 		auto translation2 = dmath::matrix::translation(tx, ty, tz);
 		_float4x4 = (scale2 * rotate2 * translation2).store();
 	}
+	auto transform::buffer(void) noexcept -> d3d11::buffer& {
+		static d3d11::buffer _buffer = graphic::instance()._device.create_buffer(
+			d3d11::buffer_descript(sizeof(dmath::float4x4), D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, D3D11_CPU_ACCESS_WRITE, 0, 0), nullptr);
+		return _buffer;
+	}
+	auto transform::matrix(void) noexcept -> dmath::matrix {
+		return _float4x4;
+	}
+
 	void transform::set_parent(library::intrusive::share_pointer<transform, 0>& parent) noexcept {
 		_parent = parent;
 	}
@@ -79,4 +89,6 @@ namespace framework {
 		matrix.r[3] = position;
 		_float4x4 = matrix;
 	}
+
+
 }

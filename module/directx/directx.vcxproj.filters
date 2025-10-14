@@ -74,6 +74,9 @@
     <ClCompile Include="d3d11\shader_reflect.cpp">
       <Filter>d3d11</Filter>
     </ClCompile>
+    <ClCompile Include="dcoll\bound.cpp">
+      <Filter>dcoll</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="dxgi">
@@ -87,6 +90,9 @@
     </Filter>
     <Filter Include="d3d">
       <UniqueIdentifier>{6a3f84fe-9d89-41b9-9a3f-fa0e4de1283f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dcoll">
+      <UniqueIdentifier>{8dc3e09c-1143-44d2-9a16-d840275ce2cc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -165,6 +171,9 @@
     </ClInclude>
     <ClInclude Include="d3d11\shader_reflect.h">
       <Filter>d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="dcoll\bound.h">
+      <Filter>dcoll</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,5 +1,6 @@
 #include "matrix.h"
 
+
 namespace dmath {
 	inline matrix::matrix(fmatrix matrix) noexcept
 		: DirectX::XMMATRIX(matrix) {

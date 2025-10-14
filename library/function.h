@@ -7,8 +7,9 @@
 #include "template.h"
 
 namespace library {
-	template<typename type, typename size_type = unsigned long long>
+	template<typename type>
 	struct fnv_hash {
+		using size_type = unsigned int;
 		inline static constexpr size_type _offset_basis = sizeof(size_type) == 4 ? 2166136261U : 14695981039346656037ULL;
 		inline static constexpr size_type _prime = sizeof(size_type) == 4 ? 16777619U : 1099511628211ULL;
 

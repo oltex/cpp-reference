@@ -39,4 +39,6 @@ namespace framework {
 			return result->_second;
 		}
 	};
+
+	class resourcesr 
 }

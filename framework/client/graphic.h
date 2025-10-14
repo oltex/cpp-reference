@@ -14,6 +14,8 @@ namespace framework {
 		friend class texture;
 		friend class mesh;
 		friend class menu;
+		friend class camera;
+		friend class transform;
 
 		d3d11::device _device;
 		d3d11::device_context _device_context;

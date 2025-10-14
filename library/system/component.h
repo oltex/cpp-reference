@@ -47,6 +47,10 @@ namespace library {
 				_component->Release();
 		};
 
+		inline operator type* (void) const noexcept {
+			return _component;
+		}
+
 		template<typename type>
 		inline auto query_interface(void) noexcept -> component<type> {
 			type* object;

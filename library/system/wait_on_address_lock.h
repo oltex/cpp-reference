@@ -3,6 +3,7 @@
 
 namespace library {
 	class wait_on_address_lock final {
+		volatile long _address = 0;
 	public:
 		inline explicit wait_on_address_lock(void) noexcept = default;
 		inline explicit wait_on_address_lock(wait_on_address_lock const& rhs) noexcept = delete;
@@ -20,7 +21,5 @@ namespace library {
 			_address = 0;
 			::WakeByAddressSingle((void*)&_address);
 		}
-	private:
-		volatile long _address = 0;
 	};
 }

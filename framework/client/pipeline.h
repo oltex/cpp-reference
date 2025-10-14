@@ -1,8 +1,8 @@
 #pragma once
 #include "library/container/list.h"
-#include "system.h"
 #pragma comment(lib, "module/directx/binary/directx.lib")
 #include "module/directx/directx.h"
+#include "system.h"
 #include "camera.h"
 #include "transform.h"
 #include "renderer.h"
@@ -12,8 +12,6 @@ namespace framework {
 		d3d11::view_port _view_port;
 		d3d11::render_target_view _render_target_view;
 		d3d11::depth_stencil_view _depth_stencil_view;
-		d3d11::buffer _camera_buffer;
-		d3d11::buffer _world_matrix;
 
 		library::intrusive::weak_pointer<camera, 0> _camera;
 		library::intrusive::weak_pointer<transform, 0> _camera_transform;

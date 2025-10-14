@@ -24,8 +24,7 @@ namespace framework {
 					IFileOpenDialog* file;
 					if (SUCCEEDED(CoCreateInstance(CLSID_FileOpenDialog, nullptr, CLSCTX_INPROC_SERVER, IID_IFileOpenDialog, reinterpret_cast<void**>(&file)))) {
 						COMDLG_FILTERSPEC filter[]{
-							{ L"glTF Files (*.gltf; *.glb)", L"*.gltf;*.glb" },
-							{ L"All Files (*.*)",            L"*.*" }
+							{ L"All Files (*.*)", L"*.*" }
 						};
 						file->SetFileTypes(sizeof(filter) / sizeof(filter[0]), filter);
 						file->SetFileTypeIndex(1);
@@ -72,5 +71,7 @@ namespace framework {
 		}
 		//for (auto& bone : bones) {
 		//}
+	}
+	void menu::open_image(char const* const path) noexcept {
 	}
 }

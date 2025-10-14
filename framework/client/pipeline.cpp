@@ -24,10 +24,6 @@ namespace framework {
 			auto texture = device.create_texture_2d(d3d11::texture_2d_descript(1424, 720, 1, 1, DXGI_FORMAT_D24_UNORM_S8_UINT, 1, 0, D3D11_USAGE_DEFAULT, D3D11_BIND_DEPTH_STENCIL, 0, 0));
 			_depth_stencil_view = device.create_depth_stencil_view(texture);
 		}
-		_camera_buffer = device.create_buffer(
-			d3d11::buffer_descript(sizeof(dmath::float4x4) * 2, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, D3D11_CPU_ACCESS_WRITE, 0, 0), nullptr);
-		_world_matrix = device.create_buffer(
-			d3d11::buffer_descript(sizeof(dmath::float4x4), D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, D3D11_CPU_ACCESS_WRITE, 0, 0), nullptr);
 	}
 	void pipeline::update(void) noexcept {
 		auto& device_context = graphic::instance()._device_context;
@@ -39,17 +35,17 @@ namespace framework {
 
 		//camera
 		if (_camera.expire()) {
-			device_context.set_vertex_shader_constant_buffer(0, 1, &_camera_buffer.data());
-			device_context.set_vertex_shader_constant_buffer(1, 1, &_world_matrix.data());
 			auto camera = _camera.lock();
 			auto transform = _camera_transform.lock();
+			device_context.set_vertex_shader_constant_buffer(0, 1, &camera->buffer().data());
+			device_context.set_vertex_shader_constant_buffer(1, 1, &transform->buffer().data());
 
-			auto resource = device_context.map(_camera_buffer.data(), 0, D3D11_MAP_WRITE_DISCARD, 0);
-			auto view_matrix = transform->_float4x4.load().inverse().transpose().store();
+			auto resource = device_context.map(camera->buffer(), 0, D3D11_MAP_WRITE_DISCARD, 0);
+			auto view_matrix = transform->matrix().inverse().transpose();
 			library::memory_copy(resource.pData, &view_matrix, sizeof(dmath::float4x4));
-			auto proj_matrix = camera->_project_float4x4.load().transpose().store();
+			auto proj_matrix = camera->matrix().transpose();
 			library::memory_copy(reinterpret_cast<char*>(resource.pData) + sizeof(dmath::float4x4), &proj_matrix, sizeof(dmath::float4x4));
-			device_context.unmap(_camera_buffer.data(), 0);
+			device_context.unmap(camera->buffer(), 0);
 		}
 
 		for (auto& renderer : _renderer) {
@@ -62,10 +58,10 @@ namespace framework {
 
 				device_context.set_pixel_shader_resource(0, 1, &draw_item._material[0]->_texture[0]->_srv.data());
 
-				auto resource = device_context.map(_world_matrix.data(), 0, D3D11_MAP_WRITE_DISCARD, 0);
-				auto matrix = draw_item._transform->_float4x4.load().transpose().store();
+				auto resource = device_context.map(draw_item._transform->buffer(), 0, D3D11_MAP_WRITE_DISCARD, 0);
+				auto matrix = draw_item._transform->matrix().transpose().store();
 				library::memory_copy(resource.pData, &matrix, sizeof(dmath::float4x4));
-				device_context.unmap(_world_matrix.data(), 0);
+				device_context.unmap(draw_item._transform->buffer(), 0);
 
 				draw_item._mesh->render_primitive(0);
 			}

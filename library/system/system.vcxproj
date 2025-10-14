@@ -155,7 +155,6 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="barrier.h" />
     <ClInclude Include="component.h" />
     <ClInclude Include="console.h" />
     <ClInclude Include="coroutine.h" />
@@ -169,6 +168,7 @@
     <ClInclude Include="file_descript.h" />
     <ClInclude Include="fence.h" />
     <ClInclude Include="file.h" />
+    <ClInclude Include="guid.h" />
     <ClInclude Include="handle.h" />
     <ClInclude Include="human_interface_device.h" />
     <ClInclude Include="inputoutput_complet_port.h" />

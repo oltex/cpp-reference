@@ -8,3 +8,4 @@
 #include "module/directx/d3d/blob.h"
 #include "module/directx/dmath/matrix.h"
 #include "module/directx/dmath/vector.h"
+#include "module/directx/dcoll/bound.h"

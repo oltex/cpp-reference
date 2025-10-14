@@ -253,9 +253,10 @@ namespace library {
 		inline ~string_literal(void) noexcept = default;
 	};
 
-	template<typename type, typename size_type>
+	template<typename type>
 		requires (library::any_of_type<type, string, wstring>)
 	struct fnv_hash_string {
+		using size_type = unsigned int;
 		inline static constexpr size_type _offset_basis = sizeof(size_type) == 4 ? 2166136261U : 14695981039346656037ULL;
 		inline static constexpr size_type _prime = sizeof(size_type) == 4 ? 16777619U : 1099511628211ULL;
 
@@ -281,10 +282,10 @@ namespace library {
 			return value;
 		}
 	};
-	template<typename size_type>
-	struct fnv_hash<string, size_type> : public fnv_hash_string<string, size_type> {
+	template<>
+	struct fnv_hash<string> : public fnv_hash_string<string> {
 	};
-	template<typename size_type>
-	struct fnv_hash<wstring, size_type> : public fnv_hash_string<wstring, size_type> {
+	template<>
+	struct fnv_hash<wstring> : public fnv_hash_string<wstring> {
 	};
 }
