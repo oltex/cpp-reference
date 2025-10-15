@@ -23,6 +23,22 @@ namespace library {
 			return value;
 		}
 	};
+	template <typename type, std::size_t size>
+	struct fnv_hash<type[size]> {
+		using size_type = unsigned int;
+		inline static constexpr size_type _offset_basis = sizeof(size_type) == 4 ? 2166136261U : 14695981039346656037ULL;
+		inline static constexpr size_type _prime = sizeof(size_type) == 4 ? 16777619U : 1099511628211ULL;
+
+		inline static constexpr size_type execute(type (&key)[size]) {
+			auto value = _offset_basis;
+			auto byte = reinterpret_cast<unsigned char const*>(key);
+			for (size_t index = 0; index < sizeof(type) * size; ++index) {
+				value ^= static_cast<unsigned char>(byte[index]);
+				value *= _prime;
+			}
+			return value;
+		}
+	};
 
 	template<typename type>
 	inline constexpr auto less(type const& left, type const& right) noexcept {

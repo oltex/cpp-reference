@@ -2,7 +2,7 @@
 #include "behaviour.h"
 
 namespace framework {
-	class camera_move : public behaviour {
+	class camera_move : public componentr<camera_move, "camera_move", behaviour> {
 	public:
 		explicit camera_move(library::intrusive::share_pointer<object, 0>& parent) noexcept;
 		explicit camera_move(camera_move const&) noexcept = delete;

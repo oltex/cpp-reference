@@ -6,7 +6,7 @@
 #include "material.h"
 
 namespace framework {
-	class renderer : public component, public componentr<renderer, "renderer"> {
+	class renderer : public componentr<renderer, "renderer"> {
 		using size_type = unsigned int;
 		struct draw_item {
 			library::intrusive::share_pointer<transform, 0> _transform;

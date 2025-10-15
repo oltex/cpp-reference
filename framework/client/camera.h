@@ -4,7 +4,7 @@
 #include "module/directx/directx.h"
 
 namespace framework {
-	class camera : public component, public componentr<camera, "camera"> {
+	class camera : public componentr<camera, "camera"> {
 		dmath::float4x4 _project;
 	public:
 		explicit camera(float field_of_view, float aspect_width, float aspect_height, float _near, float _far) noexcept;

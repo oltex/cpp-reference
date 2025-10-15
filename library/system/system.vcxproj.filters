@@ -49,6 +49,7 @@
     </ClInclude>
     <ClInclude Include="push_lock.h" />
     <ClInclude Include="guid.h" />
+    <ClInclude Include="type_info.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="example">

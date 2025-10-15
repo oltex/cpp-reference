@@ -4,7 +4,7 @@
 #include "module/directx/directx.h"
 
 namespace framework {
-	class collider : public component, public componentr<collider, "collider"> {
+	class collider : public componentr<collider, "collider"> {
 		dcoll::bound _bound;
 	public:
 		explicit collider(void) noexcept;

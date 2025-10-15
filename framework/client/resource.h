@@ -40,5 +40,21 @@ namespace framework {
 		}
 	};
 
-	class resourcesr 
+	template<typename type, library::string_literal type_name, typename base = resource>
+	class resourcer : public base {
+		//struct regist {
+		//	inline explicit regist(void) noexcept {
+		//		resources::instance().register_component<type>();
+		//	}
+		//};
+		//inline static regist _regist{};
+	public:
+		using base::base;
+		inline virtual auto name(void) noexcept -> char const* const override {
+			return type_name._value;
+		}
+		inline static constexpr auto static_name(void) noexcept -> char const* {
+			return type_name._value;
+		}
+	};
 }

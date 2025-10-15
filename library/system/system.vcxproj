@@ -185,6 +185,7 @@
     <ClInclude Include="thread.h" />
     <ClInclude Include="time.h" />
     <ClInclude Include="token.h" />
+    <ClInclude Include="type_info.h" />
     <ClInclude Include="wait_on_address.h" />
     <ClInclude Include="wait_on_address_lock.h" />
   </ItemGroup>

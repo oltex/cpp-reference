@@ -5,7 +5,7 @@
 #include <vector>
 
 namespace framework {
-	class transform : public component, public componentr<transform, "transform"> {
+	class transform : public componentr<transform, "transform"> {
 		library::intrusive::weak_pointer<transform, 0> _parent;
 		dmath::float4x4 _float4x4;
 		dmath::float4 _quaternion;

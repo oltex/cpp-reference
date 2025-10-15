@@ -12,8 +12,8 @@
 #include "texture.h"
 #include "material.h"
 #include "camera_move.h"
-
-
+#include <typeinfo>
+#include <iostream>
 namespace framework {
 	client::client(void) noexcept
 		: _window(window::instance()),
@@ -26,6 +26,7 @@ namespace framework {
 		_components(components::instance()),
 		_resources(resources::instance()) {
 
+		auto& a = typeid(transform);
 		_scenes.create_scene("");
 		_scenes.update_system();
 

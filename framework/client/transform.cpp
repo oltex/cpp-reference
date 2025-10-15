@@ -3,13 +3,9 @@
 
 namespace framework {
 	transform::transform(void) noexcept
-		: component(component::type_id<transform>()),
-		_float4x4(dmath::matrix::identity().store()), _quaternion(0.f, 0.f, 0.f, 1.f), _scale(1.f, 1.f, 1.f) {
+		: _float4x4(dmath::matrix::identity().store()), _quaternion(0.f, 0.f, 0.f, 1.f), _scale(1.f, 1.f, 1.f) {
 	};
-
-	transform::transform(std::vector<double> translation, std::vector<double> rotation, std::vector<double> scale) noexcept
-		: component(component::type_id<transform>()) {
-
+	transform::transform(std::vector<double> translation, std::vector<double> rotation, std::vector<double> scale) noexcept {
 		float tx = 0.0f, ty = 0.0f, tz = 0.0f;
 		if (0 != translation.size()) {
 			tx = static_cast<float>(translation[0]);
@@ -66,7 +62,6 @@ namespace framework {
 		matrix.r[3] = position.vector_add(delta);
 		_float4x4 = matrix.store();
 	}
-
 	void transform::rotate(dmath::float3 move, bool local) noexcept {
 		using namespace dmath;
 		auto quaternion = _quaternion.load();
@@ -89,6 +84,4 @@ namespace framework {
 		matrix.r[3] = position;
 		_float4x4 = matrix;
 	}
-
-
 }

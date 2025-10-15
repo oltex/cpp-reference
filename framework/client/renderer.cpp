@@ -1,8 +1,7 @@
 #include "renderer.h"
 
 namespace framework {
-	renderer::renderer(void) noexcept
-		: component(component::type_id<renderer>()) {
+	renderer::renderer(void) noexcept {
 	}
 	auto renderer::get_draw_item(void) noexcept -> library::vector<draw_item>& {
 		return _draw_item;

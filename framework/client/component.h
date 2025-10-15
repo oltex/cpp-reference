@@ -12,24 +12,15 @@ namespace framework {
 	class component : public library::intrusive::pointer_hook<0>, public library::intrusive::list_hook<0> {
 	protected:
 		using size_type = unsigned int;
-	private:
-		inline static size_type _static_type_id = 0;
-	protected:
-		size_type _type_id;
 	public:
-		explicit component(size_type const type_id) noexcept;
+		explicit component(void) noexcept = default;
 		explicit component(component const&) noexcept = delete;
 		explicit component(component&&) noexcept = delete;
 		auto operator=(component const&) noexcept -> component & = delete;
 		auto operator=(component&&) noexcept -> component & = delete;
 		virtual ~component(void) noexcept = default;
 
-		template<typename type>
-		inline static auto type_id(void) noexcept -> size_type {
-			static size_type type_id = _static_type_id++;
-			return type_id;
-		}
-		inline auto type_id(void) const noexcept -> size_type;
+		inline virtual auto name(void) noexcept -> char const* const = 0;
 
 		template<size_t index>
 		inline void destruct(void) noexcept {};
@@ -47,7 +38,7 @@ namespace framework {
 		friend class library::singleton<components>;
 		friend class object;
 		friend class component;
-		template<typename type, library::string_literal name>
+		template<typename type, library::string_literal name, typename base>
 		friend class componentr;
 		class pools {
 		protected:
@@ -77,9 +68,7 @@ namespace framework {
 		};
 
 		using size_type = unsigned int;
-		library::unorder_map<library::string, size_type> _name_to_id;
-		library::unorder_map<size_type, library::string> _id_to_name;
-		library::unorder_map<size_type, library::unique_pointer<pools>> _component;
+		library::unorder_map<library::string, library::unique_pointer<pools>> _component;
 
 		explicit components(void) noexcept = default;
 		explicit components(components const&) noexcept = delete;
@@ -88,17 +77,13 @@ namespace framework {
 		auto operator=(components&&) noexcept -> components & = delete;
 		~components(void) noexcept = default;
 
-		template<typename type, typename... argument>
-		inline void register_component(char const* const name) noexcept {
-			auto result = _component.find(framework::component::type_id<type>());
-			if (_component.end() == result)
-				result = _component.emplace(framework::component::type_id<type>(), new pool<type>);
+		template<typename type>
+		inline void register_component(void) noexcept {
+			_component.emplace(type::static_name(), new pool<type>);
 		}
 		template<typename type, typename... argument>
 		inline auto allocate_component(argument&&... arg) noexcept -> library::intrusive::share_pointer<component, 0> {
-			auto result = _component.find(framework::component::type_id<type>());
-			if (_component.end() == result)
-				result = _component.emplace(framework::component::type_id<type>(), new pool<type>);
+			auto result = _component.find(type::static_name());
 			auto pointer = static_cast<pool<type>*>(&*result->_second)->allocate();
 			library::construct<type>(*pointer, std::forward<argument>(arg)...);
 			return library::intrusive::share_pointer<component, 0>(pointer);
@@ -111,13 +96,21 @@ namespace framework {
 		components::instance().deallocate_component(pointer);
 	};
 
-	template<typename type, library::string_literal name>
-	class componentr {
+	template<typename type, library::string_literal type_name, typename base = component>
+	class componentr : public base {
 		struct regist {
 			inline explicit regist(void) noexcept {
-				components::instance().register_component<type>(name._pointer);
+				components::instance().register_component<type>();
 			}
 		};
 		inline static regist _regist{};
+	public:
+		using base::base;
+		inline virtual auto name(void) noexcept -> char const* const override {
+			return type_name._value;
+		}
+		inline static constexpr auto static_name(void) noexcept -> char const* {
+			return type_name._value;
+		}
 	};
 }

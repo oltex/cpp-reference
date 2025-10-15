@@ -242,14 +242,14 @@ namespace library {
 
 	template <size_t size>
 	struct string_literal {
-		char _pointer[size];
+		char _value[size];
 		inline constexpr string_literal(const char(&str)[size]) noexcept {
-			std::copy_n(str, size, _pointer);
+			std::copy_n(str, size, _value);
 		}
-		inline explicit string_literal(string_literal const&) noexcept = delete;
-		inline explicit string_literal(string_literal&&) noexcept = delete;
-		inline auto operator=(string_literal const&) noexcept = delete;
-		inline auto operator=(string_literal&&) noexcept = delete;
+		inline explicit string_literal(string_literal const&) noexcept = default;
+		inline explicit string_literal(string_literal&&) noexcept = default;
+		inline auto operator=(string_literal const&) noexcept -> string_literal & = default;
+		inline auto operator=(string_literal&&) noexcept -> string_literal & = default;
 		inline ~string_literal(void) noexcept = default;
 	};
 
