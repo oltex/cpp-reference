@@ -11,6 +11,12 @@ namespace library {
 	inline void component_uninitialize(void) noexcept {
 		::CoUninitialize();
 	}
+	template<typename type>
+	inline auto component_create_instance(IID const& cls_id, unsigned long cls_constext = CLSCTX_INPROC_SERVER) noexcept -> type* {
+		type* component;
+		auto result = CoCreateInstance(cls_id, nullptr, cls_constext, __uuidof(type), reinterpret_cast<void**>(&component));
+		return component;
+	}
 
 	template<typename type = void>
 	class component {
@@ -49,6 +55,9 @@ namespace library {
 
 		inline operator type* (void) const noexcept {
 			return _component;
+		}
+		inline friend bool operator==(component const& lhs, std::nullptr_t) noexcept {
+			return nullptr == lhs._component;
 		}
 
 		template<typename type>

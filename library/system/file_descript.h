@@ -9,9 +9,9 @@ namespace library {
 	public:
 		inline explicit file_descript(void) noexcept = default;
 		inline explicit file_descript(file_descript const&) noexcept = delete;
-		inline explicit file_descript(file_descript&& rhs) noexcept = delete;
+		inline explicit file_descript(file_descript&&) noexcept = delete;
 		inline auto operator=(file_descript const&) noexcept -> file_descript & = delete;
-		inline auto operator=(file_descript&& rhs) noexcept -> file_descript & = delete;
+		inline auto operator=(file_descript&&) noexcept -> file_descript & = delete;
 		inline ~file_descript(void) noexcept = default;
 
 		inline void zero(void) noexcept {

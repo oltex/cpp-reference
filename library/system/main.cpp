@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <crtdbg.h>
 
+#include "file.h"
 //#include "example/interlock.h"
 //#include "example/coroutine.h"
 #include "type_info.h"

@@ -10,6 +10,7 @@
 #include "object.h"
 #include "mesh.h"
 #include "transform.h"
+#include "texture.h"
 
 #include <windows.h>
 #include <shobjidl.h>
@@ -73,5 +74,7 @@ namespace framework {
 		//}
 	}
 	void menu::open_image(char const* const path) noexcept {
+		auto& resources = resources::instance();
+		resources.create_resource<framework::texture>(path);
 	}
 }

@@ -118,6 +118,12 @@
     <ClInclude Include="collider.h">
       <Filter>content\component</Filter>
     </ClInclude>
+    <ClInclude Include="inspector.h">
+      <Filter>content\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="hierarchy.h">
+      <Filter>content\editor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -222,6 +228,12 @@
     </ClCompile>
     <ClCompile Include="collider.cpp">
       <Filter>content\component</Filter>
+    </ClCompile>
+    <ClCompile Include="inspector.cpp">
+      <Filter>content\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="hierarchy.cpp">
+      <Filter>content\editor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

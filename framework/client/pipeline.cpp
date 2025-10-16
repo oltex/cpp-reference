@@ -29,7 +29,7 @@ namespace framework {
 		auto& device_context = graphic::instance()._device_context;
 		device_context.set_view_port(_view_port);
 		device_context.set_render_target(_render_target_view, _depth_stencil_view);
-		float color[4]{ rand() / (float)RAND_MAX, rand() / (float)RAND_MAX, rand() / (float)RAND_MAX, 1.f };
+		float color[4]{ 0.1/*rand() / (float)RAND_MAX*/, 0.1/*rand() / (float)RAND_MAX*/, 0.1/*rand() / (float)RAND_MAX*/, 1.f };
 		device_context.clear_render_target_view(_render_target_view, color);
 		device_context.clear_depth_stencil_view(_depth_stencil_view, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
 
@@ -56,7 +56,7 @@ namespace framework {
 				device_context.set_pixel_shader(draw_item._material[0]->_shader->_pixel_shader);
 				device_context.set_primitive_topology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-				device_context.set_pixel_shader_resource(0, 1, &draw_item._material[0]->_texture[0]->_srv.data());
+				//device_context.set_pixel_shader_resource(0, 1, &draw_item._material[0]->_texture[0]->_srv.data());
 
 				auto resource = device_context.map(draw_item._transform->buffer(), 0, D3D11_MAP_WRITE_DISCARD, 0);
 				auto matrix = draw_item._transform->matrix().transpose().store();

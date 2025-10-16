@@ -1,6 +1,6 @@
 #pragma once
 #include "resource.h"
-#pragma comment(lib, "directx.lib")
+#pragma comment(lib, "module/directx/binary/directx.lib")
 #include "module/directx/directx.h"
 
 namespace framework {

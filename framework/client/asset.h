@@ -12,5 +12,8 @@ namespace framework {
 		virtual ~asset(void) noexcept override = default;
 
 		virtual void update(void) noexcept override;
+
+		void import(void) noexcept;
+		void search(void) noexcept;
 	};
 }

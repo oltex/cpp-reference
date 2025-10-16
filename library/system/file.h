@@ -1,7 +1,9 @@
 #pragma once
 #include "handle.h"
+#include "component.h"
 #include <string_view>
 #include <Windows.h>
+#include <shobjidl.h>
 
 namespace library {
 	class file : public handle {
@@ -56,5 +58,47 @@ namespace library {
 		inline static bool create_directory(std::wstring_view const path) noexcept {
 			return ::CreateDirectoryW(path.data(), nullptr);
 		}
+	};
+
+
+	class file_open_dialog : public component<IFileOpenDialog> {
+		using base = component<IFileOpenDialog>;
+		using size_type = unsigned int;
+	public:
+		inline explicit file_open_dialog(void) noexcept 
+			: base(component_create_instance<IFileOpenDialog>(CLSID_FileOpenDialog)) {
+		};
+		inline explicit file_open_dialog(file_open_dialog const&) noexcept = delete;
+		inline explicit file_open_dialog(file_open_dialog&&) noexcept = delete;
+		inline auto operator=(file_open_dialog const&) noexcept -> file_open_dialog & = delete;
+		inline auto operator=(file_open_dialog&& rhs) noexcept -> file_open_dialog & = delete;
+		inline ~file_open_dialog(void) noexcept = default;
+
+		template <size_type size>
+		inline auto set_file_type(COMDLG_FILTERSPEC(&filter)[size]) noexcept {
+			auto result = _component->SetFileTypes(size, filter);
+		}
+		inline auto set_file_type_index(size_type index) noexcept {
+			auto result = _component->SetFileTypeIndex(1);
+		}
+		inline auto set_default_externsion(wchar_t const * const exten) noexcept {
+			auto result = _component->SetDefaultExtension(exten);
+		}
+		inline bool show(HWND hwnd) noexcept {
+			return SUCCEEDED(_component->Show(hwnd));
+		}
+		//inline auto get_result(void) noexcept {
+		//}
+			//if (SUCCEEDED(file->Show(window::instance().data()))) {
+			//	IShellItem* item;
+			//	if (SUCCEEDED(file->GetResult(&item))) {
+			//		PWSTR path;
+			//		if (SUCCEEDED(item->GetDisplayName(SIGDN_FILESYSPATH, &path))) {
+			//			CoTaskMemFree(path);
+			//		}
+			//		item->Release();
+			//	}
+			//}
+			//file->Release();
 	};
 }

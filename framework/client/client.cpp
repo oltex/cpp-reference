@@ -31,14 +31,12 @@ namespace framework {
 		_scenes.update_system();
 
 		//resource
-		auto texture = _resources.create_resource<framework::texture>("texture", L"images.png");
 		library::vector<d3d11::input_element_descript> descript{
 			d3d11::input_element_descript{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 			d3d11::input_element_descript{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 		};
 		auto shader = _resources.create_resource<framework::shader>("shader", L"sprite_vertex.hlsl", L"sprite_pixel.hlsl", descript);
 		auto material = _resources.create_resource<framework::material>("material");
-		material->add_texture(texture);
 		material->set_shader(shader);
 		auto mesh = _resources.find_resource<framework::mesh>("sprite");
 
