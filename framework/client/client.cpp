@@ -35,10 +35,10 @@ namespace framework {
 			d3d11::input_element_descript{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 			d3d11::input_element_descript{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 		};
-		auto shader = _resources.create_resource<framework::shader>("shader", L"sprite_vertex.hlsl", L"sprite_pixel.hlsl", descript);
-		auto material = _resources.create_resource<framework::material>("material");
+		auto shader = _resources.create_resource<framework::shader>(L"sprite_vertex.hlsl", L"sprite_pixel.hlsl", descript);
+		auto material = _resources.create_resource<framework::material>();
 		material->set_shader(shader);
-		auto mesh = _resources.find_resource<framework::mesh>("sprite");
+		//auto mesh = _resources.find_resource<framework::mesh>();
 
 		//object
 		auto camera = _scenes.create_object();
@@ -46,21 +46,21 @@ namespace framework {
 		auto camera_component = camera->add_component<framework::camera>("camera", 60.f, 1280.f, 720.f, 0.2f, 500.f);
 		auto camera_move = camera->add_component<framework::camera_move>("camera_move");
 
-		auto object = _scenes.create_object();
-		auto object_tramsform = object->add_component<framework::transform>("transform");
-		auto object_renderer = object->add_component<framework::renderer>("renderer");
-		object_renderer->set_transform(0, object_tramsform);
-		object_renderer->set_mesh(0, mesh);
-		object_renderer->add_material(0, material);
+		//auto object = _scenes.create_object();
+		//auto object_tramsform = object->add_component<framework::transform>("transform");
+		//auto object_renderer = object->add_component<framework::renderer>("renderer");
+		//object_renderer->set_transform(0, object_tramsform);
+		//object_renderer->set_mesh(0, mesh);
+		//object_renderer->add_material(0, material);
 
 		//system
 		auto behave = _scenes.create_render_system<framework::behave>();
 		auto pipeline = _scenes.create_render_system<framework::pipeline>();
 		library::vector<library::intrusive::share_pointer<component, 0>> com{ camera_component, camera_transform };
 		pipeline->add_component("camera", com);
-		com.clear();
-		com.emplace_back(object_renderer);
-		pipeline->add_component("object", com);
+		//com.clear();
+		//com.emplace_back(object_renderer);
+		//pipeline->add_component("object", com);
 		com.clear();
 		com.emplace_back(camera_move);
 		behave->add_component("behaviour", com);

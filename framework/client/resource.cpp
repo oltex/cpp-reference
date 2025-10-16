@@ -5,6 +5,12 @@
 #include "module/directx/directx.h"
 
 namespace framework {
+	resource::resource(void) noexcept
+		: _guid(library::create_guid()) {
+	}
+	auto resource::guid(void) noexcept -> library::guid& {
+		return _guid;
+	}
 	resources::resources(void) noexcept {
 		{
 			struct vertex_face {
@@ -20,7 +26,7 @@ namespace framework {
 			library::vector<unsigned short> index{
 				0, 1, 2, 1, 3, 2
 			};
-			create_resource<framework::mesh>("sprite", vertex, index);
+			create_resource<framework::mesh>(vertex, index);
 		}
 		{
 			struct vertex_face {
@@ -45,7 +51,7 @@ namespace framework {
 				2, 6, 0,  6, 4, 0,
 				5, 4, 7,  4, 6, 7
 			};
-			create_resource<framework::mesh>("cube", vertex, index);
+			create_resource<framework::mesh>(vertex, index);
 		}
 	}
 }

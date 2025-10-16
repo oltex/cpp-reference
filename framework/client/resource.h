@@ -3,22 +3,26 @@
 #include "library/container/hash_table.h"
 #include "library/container/string.h"
 #include "library/container/pointer.h"
+#include "library/system/guid.h"
 
 namespace framework {
 	class resource {
+		library::guid _guid;
 	public:
-		explicit resource(void) noexcept = default;
+		explicit resource(void) noexcept;
 		explicit resource(resource const&) noexcept = delete;
 		explicit resource(resource&&) noexcept = delete;
 		auto operator=(resource const&) noexcept -> resource & = delete;
 		auto operator=(resource&&) noexcept -> resource & = delete;
 		virtual ~resource(void) noexcept = default;
+
+		auto guid(void) noexcept -> library::guid&;
 	};
 
 	class resources : public library::singleton<resources> {
 		friend class library::singleton<resources>;
 		friend class asset;
-		library::unorder_map<library::string, library::share_pointer<resource>> _resource;
+		library::unorder_map<library::guid, library::share_pointer<resource>> _resource;
 
 		explicit resources(void) noexcept;
 		explicit resources(resources const&) noexcept = delete;
@@ -28,14 +32,14 @@ namespace framework {
 		~resources(void) noexcept = default;
 	public:
 		template<typename type, typename... argument>
-		inline auto create_resource(char const* const name, argument&&... arg) noexcept -> library::share_pointer<type> {
+		inline auto create_resource(argument&&... arg) noexcept -> library::share_pointer<type> {
 			auto pointer = library::make_share<type>(std::forward<argument>(arg)...);
-			_resource.emplace(name, pointer);
+			_resource.emplace(pointer->guid(), pointer);
 			return pointer;
 		};
 		template<typename type>
-		auto find_resource(char const* const name) noexcept -> library::share_pointer<type> {
-			auto result = _resource.find(name);
+		auto find_resource(library::guid& guid) noexcept -> library::share_pointer<type> {
+			auto result = _resource.find(guid);
 			return result->_second;
 		}
 	};

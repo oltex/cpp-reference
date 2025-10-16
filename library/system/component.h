@@ -4,7 +4,6 @@
 #include <cassert>
 
 namespace library {
-
 	inline void component_initialize(COINIT const coinit) noexcept {
 		auto result = ::CoInitializeEx(nullptr, coinit);
 	}
@@ -14,8 +13,11 @@ namespace library {
 	template<typename type>
 	inline auto component_create_instance(IID const& cls_id, unsigned long cls_constext = CLSCTX_INPROC_SERVER) noexcept -> type* {
 		type* component;
-		auto result = CoCreateInstance(cls_id, nullptr, cls_constext, __uuidof(type), reinterpret_cast<void**>(&component));
+		auto result = ::CoCreateInstance(cls_id, nullptr, cls_constext, __uuidof(type), reinterpret_cast<void**>(&component));
 		return component;
+	}
+	inline auto component_task_memory_free(void* pointer) noexcept {
+		::CoTaskMemFree(pointer);
 	}
 
 	template<typename type = void>

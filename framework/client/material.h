@@ -1,8 +1,6 @@
 #pragma once
 #include "library/container/vector.h"
 #include "resource.h"
-//#pragma comment(lib, "directx.lib")
-//#include "module/directx/directx.h"
 #include "texture.h"
 #include "shader.h"
 

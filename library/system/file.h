@@ -60,12 +60,32 @@ namespace library {
 		}
 	};
 
+	class shell_item : public component<IShellItem> {
+		using base = component<IShellItem>;
+		using size_type = unsigned int;
+	public:
+		inline explicit shell_item(IShellItem* component) noexcept
+			: base(component) {
+		};
+		inline explicit shell_item(shell_item const&) noexcept = delete;
+		inline explicit shell_item(shell_item&&) noexcept = delete;
+		inline auto operator=(shell_item const&) noexcept -> shell_item & = delete;
+		inline auto operator=(shell_item&& rhs) noexcept -> shell_item & = delete;
+		inline ~shell_item(void) noexcept = default;
+
+		inline auto get_display_name(SIGDN sigdn) noexcept -> PWSTR {
+			PWSTR name;
+			auto result = _component->GetDisplayName(sigdn, &name);
+			assert(SUCCEEDED(result));
+			return name;
+		}
+	};
 
 	class file_open_dialog : public component<IFileOpenDialog> {
 		using base = component<IFileOpenDialog>;
 		using size_type = unsigned int;
 	public:
-		inline explicit file_open_dialog(void) noexcept 
+		inline explicit file_open_dialog(void) noexcept
 			: base(component_create_instance<IFileOpenDialog>(CLSID_FileOpenDialog)) {
 		};
 		inline explicit file_open_dialog(file_open_dialog const&) noexcept = delete;
@@ -77,28 +97,23 @@ namespace library {
 		template <size_type size>
 		inline auto set_file_type(COMDLG_FILTERSPEC(&filter)[size]) noexcept {
 			auto result = _component->SetFileTypes(size, filter);
+			assert(SUCCEEDED(result));
 		}
 		inline auto set_file_type_index(size_type index) noexcept {
 			auto result = _component->SetFileTypeIndex(1);
+			assert(SUCCEEDED(result));
 		}
-		inline auto set_default_externsion(wchar_t const * const exten) noexcept {
+		inline auto set_default_externsion(wchar_t const* const exten) noexcept {
 			auto result = _component->SetDefaultExtension(exten);
+			assert(SUCCEEDED(result));
 		}
 		inline bool show(HWND hwnd) noexcept {
 			return SUCCEEDED(_component->Show(hwnd));
 		}
-		//inline auto get_result(void) noexcept {
-		//}
-			//if (SUCCEEDED(file->Show(window::instance().data()))) {
-			//	IShellItem* item;
-			//	if (SUCCEEDED(file->GetResult(&item))) {
-			//		PWSTR path;
-			//		if (SUCCEEDED(item->GetDisplayName(SIGDN_FILESYSPATH, &path))) {
-			//			CoTaskMemFree(path);
-			//		}
-			//		item->Release();
-			//	}
-			//}
-			//file->Release();
+		inline auto get_result(void) noexcept -> shell_item {
+			IShellItem* item;
+			auto result = _component->GetResult(&item);
+			return shell_item(item);
+		}
 	};
 }
