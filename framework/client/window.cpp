@@ -10,6 +10,7 @@ namespace framework {
 	window::window(void) noexcept {
 		_thread.begin(&window::execute, 0, this);
 		while (nullptr == _hwnd) {}
+		Sleep(1000);
 	}
 
 	bool window::check_exit(void) noexcept {

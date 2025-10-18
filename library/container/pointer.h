@@ -34,11 +34,11 @@ namespace detail {
 
 		inline virtual void destroy_object(void) noexcept = 0;
 	};
-	template <typename type>
+	template <typename type, auto deleter = pointer_deleter>
 	struct reference_external final : public reference {
 		type* _pointer;
 	public:
-		template<typename other, auto deleter = pointer_deleter>
+		template<typename other>
 			requires std::is_convertible_v<other*, type*> || std::is_convertible_v<type*, other*>
 		inline explicit reference_external(other* const pointer) noexcept
 			: _pointer(static_cast<type*>(pointer)) {
@@ -50,7 +50,7 @@ namespace detail {
 		inline virtual ~reference_external(void) noexcept override = default;
 
 		inline virtual void destroy_object(void) noexcept override {
-			pointer_deleter(_pointer);
+			deleter(_pointer);
 		}
 	};
 	template <typename type>

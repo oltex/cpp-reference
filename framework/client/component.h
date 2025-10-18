@@ -78,7 +78,7 @@ namespace framework {
 		~components(void) noexcept = default;
 
 		template<typename type>
-		inline void register_component(void) noexcept {
+		inline void regist_component(void) noexcept {
 			_component.emplace(type::static_name(), new pool<type>);
 		}
 		template<typename type, typename... argument>
@@ -100,7 +100,7 @@ namespace framework {
 	class componentr : public base {
 		struct regist {
 			inline explicit regist(void) noexcept {
-				components::instance().register_component<type>();
+				components::instance().regist_component<type>();
 			}
 		};
 		inline static regist _regist{};

@@ -127,6 +127,10 @@
       <Filter>example\intrusive</Filter>
     </ClInclude>
     <ClInclude Include="span.h" />
+    <ClInclude Include="read_copy_update.h" />
+    <ClInclude Include="example\read_copy_update.h">
+      <Filter>example</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

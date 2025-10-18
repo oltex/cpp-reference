@@ -5,7 +5,7 @@
 #include "module/directx/directx.h"
 
 namespace framework {
-	class shader : public resource {
+	class shader : public resourcer<shader, "shader"> {
 	public:
 		d3d11::input_layout _input_layout;
 		d3d11::vertex_shader _vertex_shader;

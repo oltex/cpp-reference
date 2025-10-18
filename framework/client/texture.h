@@ -4,7 +4,7 @@
 #include "module/directx/directx.h"
 
 namespace framework {
-	class texture : public resource {
+	class texture : public resourcer<texture, "texture"> {
 	public:
 		d3d11::texture_2d _texture;
 		d3d11::render_target_view _rtv;

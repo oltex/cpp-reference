@@ -9,7 +9,7 @@
 #include "resource.h"
 
 namespace framework {
-	class sound : public resource {
+	class sound : public resourcer<sound, "sound"> {
 		inline static void sound_deleter(FMOD::Sound* sound) noexcept {
 			sound->release();
 		}

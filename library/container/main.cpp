@@ -18,7 +18,7 @@
 //#include "example/bit_grid.h"
 //#include "example/ring_buffer.h"
 //#include "example/intrusive/list.h"
-#include "example/intrusive/pointer.h"
+//#include "example/intrusive/pointer.h"
 //#include "example/lockfree/stack.h"
 //#include "example/lockfree/pool.h"
 //#include "example/lockfree/queue.h"
@@ -26,7 +26,7 @@
 //#include "example/hash_table.h"
 //#include "example/bit_set.h"
 //#include "example/intrusive/pointer_list.h"
-
+#include "example/read_copy_update.h"
 
 int main(void) noexcept {
 	library::crt_set_debug_flag();
@@ -48,7 +48,7 @@ int main(void) noexcept {
 	//example::bit_grid();
 	//example::ring_buffer();
 	//example::intrusive::list();
-	example::intrusive::pointer();
+	//example::intrusive::pointer();
 	//example::lockfree::stack();
 	//example::lockfree::pool();
 	//example::lockfree::queue();
@@ -57,5 +57,6 @@ int main(void) noexcept {
 	//example::bit_set();
 	//example::intrusive::pointer_list();
 	//example::pointer();
+	example::read_copy_update();
 	return 0;
 }

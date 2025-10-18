@@ -2,7 +2,7 @@
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
 #include <crtdbg.h>
-
+#include <intrin.h>
 //#ifdef _DEBUG
 //	#define new new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
 //#endif
@@ -16,5 +16,9 @@ namespace library {
 	}
 	inline auto crt_set_break_allocate(long new_value) noexcept {
 		_CrtSetBreakAlloc(new_value);
+	}
+
+	inline void debug_break(void) noexcept {
+		::__debugbreak();
 	}
 }

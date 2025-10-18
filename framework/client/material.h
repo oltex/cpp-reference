@@ -5,7 +5,7 @@
 #include "shader.h"
 
 namespace framework {
-	class material : public resource {
+	class material : public resourcer<material, "material"> {
 	public:
 		library::share_pointer<shader> _shader;
 		library::vector<library::share_pointer<texture>> _texture;

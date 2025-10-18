@@ -17,10 +17,10 @@ namespace framework {
 		std::vector<item> _item;
 	public:
 		explicit asset(void) noexcept {
-			_item.emplace_back(library::guid(), "aaa", "test");
-			_item.emplace_back(library::guid(), "bbb", "test");
-			_item.emplace_back(library::guid(), "ccc", "test");
-			_item.emplace_back(library::guid(), "ddd", "test");
+			_item.emplace_back(library::guid(), "aaa", "kkk");
+			_item.emplace_back(library::guid(), "bbb", "ggg");
+			_item.emplace_back(library::guid(), "ccc", "kkk");
+			_item.emplace_back(library::guid(), "ddd", "ggg");
 		}
 		explicit asset(asset const&) noexcept = delete;
 		explicit asset(asset&&) noexcept = delete;
@@ -30,7 +30,7 @@ namespace framework {
 
 		virtual void update(void) noexcept override;
 
-		void import(void) noexcept;
+		void import_file(void) noexcept;
 		void search(void) noexcept;
 	};
 }

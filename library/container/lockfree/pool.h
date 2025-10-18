@@ -13,8 +13,8 @@ namespace library::lockfree {
 			inline explicit union_node(void) noexcept = delete;
 			inline explicit union_node(union_node const&) noexcept = delete;
 			inline explicit union_node(union_node&&) noexcept = delete;
-			inline auto operator=(union_node const&) noexcept = delete;
-			inline auto operator=(union_node&&) noexcept = delete;
+			inline auto operator=(union_node const&) noexcept -> union_node & = delete;
+			inline auto operator=(union_node&&) noexcept -> union_node & = delete;
 			inline ~union_node(void) noexcept = delete;
 		};
 		struct strcut_node final {
@@ -23,8 +23,8 @@ namespace library::lockfree {
 			inline explicit strcut_node(void) noexcept = delete;
 			inline explicit strcut_node(strcut_node const&) noexcept = delete;
 			inline explicit strcut_node(strcut_node&&) noexcept = delete;
-			inline auto operator=(strcut_node const&) noexcept = delete;
-			inline auto operator=(strcut_node&&) noexcept = delete;
+			inline auto operator=(strcut_node const&) noexcept -> strcut_node & = delete;
+			inline auto operator=(strcut_node&&) noexcept -> strcut_node & = delete;
 			inline ~strcut_node(void) noexcept = delete;
 		};
 		using node = typename std::conditional<compress, union union_node, struct strcut_node>::type;

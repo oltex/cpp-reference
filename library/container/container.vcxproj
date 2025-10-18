@@ -109,7 +109,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
-      <Optimization>Full</Optimization>
+      <Optimization>MaxSpeed</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -141,7 +141,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
-      <Optimization>Full</Optimization>
+      <Optimization>MaxSpeed</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -173,6 +173,7 @@
     <ClInclude Include="example\my_class.h" />
     <ClInclude Include="example\priority_queue.h" />
     <ClInclude Include="example\queue.h" />
+    <ClInclude Include="example\read_copy_update.h" />
     <ClInclude Include="example\segment_tree.h" />
     <ClInclude Include="example\stack.h" />
     <ClInclude Include="example\serialize_buffer.h" />
@@ -196,6 +197,7 @@
     <ClInclude Include="pool.h" />
     <ClInclude Include="priority_queue.h" />
     <ClInclude Include="queue.h" />
+    <ClInclude Include="read_copy_update.h" />
     <ClInclude Include="ring_buffer.h" />
     <ClInclude Include="segment_tree.h" />
     <ClInclude Include="serialize_buffer.h" />

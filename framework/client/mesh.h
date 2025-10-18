@@ -7,7 +7,7 @@
 #include "library/tinygltf/tiny_gltf.h"
 
 namespace framework {
-	class mesh : public resource {
+	class mesh : public resourcer<mesh, "mesh"> {
 		using size_type = unsigned int;
 	public:
 		struct primitive {
