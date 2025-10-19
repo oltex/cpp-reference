@@ -1,55 +1,52 @@
 #pragma once
+#include "../pattern/singleton.h"
+#include "../pattern/thread-local/singleton.h"
 #include "../container/lockfree/queue.h"
 #include "../container/lockfree/free_list.h"
 #include "../container/priority_queue.h"
 
-//struct retire {
-//	void* _pointer;
-//	unsigned long long _epoch;
-//	void (*deleter)(void*);
-//};
 namespace library {
-	class read_copy_update {
-		struct context {
-			struct retire {
+	inline auto default_deleter(void* pointer) noexcept {
+		delete pointer;
+	}
+	class read_copy_update : public singleton<read_copy_update> {
+		friend class singleton<read_copy_update>;
+		struct context : public _thread_local::singleton<context> {
+			friend class _thread_local::singleton<context>;
+			struct retire{
 				void* _pointer;
 				unsigned long long _epoch;
+				void (*_deleter)(void*);
 			};
-			library::lockfree::free_list<unsigned long long, true, false>& _list;
 			unsigned long long& _slot;
-			library::priority_queue < retire, [](auto& lhs, auto& rhs) { return lhs._epoch < rhs._epoch; } > _retire;
+			library::priority_queue < retire, [](auto& lhs, auto& rhs) noexcept { return lhs._epoch < rhs._epoch; } > _retire;
 
-			inline context(library::lockfree::free_list<unsigned long long, true, false>& list)
-				: _list(list), _slot(*_list.allocate()) {
+			inline context(void) noexcept
+				: _slot(*read_copy_update::instance()._list.allocate()) {
 			}
 			inline explicit context(context const&) noexcept = delete;
 			inline explicit context(context&&) noexcept = delete;
 			inline auto operator=(context const&) noexcept -> context & = delete;
 			inline auto operator=(context&&) noexcept -> context & = delete;
 			inline ~context(void) {
-				_list.deallocate(&_slot);
+				auto& list = read_copy_update::instance()._list;
+				list.deallocate(&_slot);
 				while (!_retire.empty()) {
-					auto epoch = _retire.top()._epoch;
-
 					unsigned long long minimum = ULLONG_MAX;
-					for (auto& iter : _list)
+					for (auto& iter : list)
 						minimum = library::minimum(iter, minimum);
 
-					if (epoch < minimum) {
-						delete _retire.top()._pointer;
+					if (auto& top = _retire.top(); top._epoch < minimum) {
+						top._deleter(top._pointer);
 						_retire.pop();
 					}
 				}
 			}
-
-			//inline void reclaim(void) noexcept {
-			//	static library::priority_queue<retire> retire_queue;
-			//}
 		};
 
 		unsigned long long _epoch;
-		library::lockfree::free_list<unsigned long long, true, false> _list;
-	public:
+		library::lockfree::free_list<unsigned long long, true, false> _list; // TODO: replace with a lock-free list later.
+
 		inline explicit read_copy_update(void) noexcept
 			: _epoch(0), _list(10) {
 			for (auto& iter : _list)
@@ -60,39 +57,34 @@ namespace library {
 		inline auto operator=(read_copy_update const&) noexcept -> read_copy_update & = delete;
 		inline auto operator=(read_copy_update&&) noexcept -> read_copy_update & = delete;
 		inline ~read_copy_update(void) noexcept = default;
-
-		inline auto instance(void) noexcept -> context& {
-			thread_local context epoch(_list);
-			return epoch;
-		}
 	public:
 		inline void lock(void) noexcept {
-			auto& context = instance();
+			auto& context = context::instance();
 			context._slot = library::interlock_increment(_epoch);
 		}
 		inline void unlock(void) noexcept {
-			auto& context = instance();
+			auto& context = context::instance();
 			context._slot = ULLONG_MAX;
 
+			//reclaim
 			if (!context._retire.empty()) {
 				unsigned long long minimum = ULLONG_MAX;
 				for (auto& iter : _list)
 					minimum = library::minimum(iter, minimum);
 
 				while (!context._retire.empty()) {
-					auto epoch = context._retire.top()._epoch;
-					if (epoch < minimum) {
-						delete context._retire.top()._pointer;
+					if (auto& top = context._retire.top(); top._epoch >= minimum)
+						break;
+					else {
+						top._deleter(top._pointer);
 						context._retire.pop();
 					}
-					else
-						break;
 				}
 			}
 		}
-		inline void retire(void* pointer) noexcept {
-			auto& context = instance();
-			context._retire.emplace(pointer, library::interlock_increment(_epoch));
+		inline void retire(void* pointer, void (*deleter)(void*) = default_deleter) noexcept {
+			auto& context = context::instance();
+			context._retire.emplace(pointer, library::interlock_increment(_epoch), deleter);
 		}
 	};
 }
