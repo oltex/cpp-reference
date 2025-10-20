@@ -111,8 +111,18 @@ namespace library {
 
 		inline void reserve(size_type const capacity) noexcept {
 			if (_capacity < capacity) {
+				if constexpr (std::is_trivially_copyable_v<type>) {
 #pragma warning(suppress: 6308)
-				_array = library::reallocate<type>(_array, capacity);
+					_array = library::reallocate<type>(_array, capacity);
+				}
+				else {
+					auto array = library::allocate<type>(capacity);
+					for (auto index = 0u; index < _size; ++index) {
+						library::construct<type>(array[index], std::move(_array[index]));
+						library::destruct<type>(_array[index]);
+					}
+					library::deallocate(library::exchange(_array, array));
+				}
 				_capacity = capacity;
 			}
 		}
