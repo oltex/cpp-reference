@@ -34,38 +34,38 @@ namespace framework {
 		device_context.clear_depth_stencil_view(_depth_stencil_view, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
 
 		//camera
-		if (_camera.expire()) {
-			auto camera = _camera.lock();
-			auto transform = _camera_transform.lock();
-			device_context.set_vertex_shader_constant_buffer(0, 1, &camera->buffer().data());
-			device_context.set_vertex_shader_constant_buffer(1, 1, &transform->buffer().data());
+		//if (_camera.expire()) {
+		//	auto camera = _camera.lock();
+		//	auto transform = _camera_transform.lock();
+		//	device_context.set_vertex_shader_constant_buffer(0, 1, &camera->buffer().data());
+		//	device_context.set_vertex_shader_constant_buffer(1, 1, &transform->buffer().data());
 
-			auto resource = device_context.map(camera->buffer(), 0, D3D11_MAP_WRITE_DISCARD, 0);
-			auto view_matrix = transform->matrix().inverse().transpose();
-			library::memory_copy(resource.pData, &view_matrix, sizeof(dmath::float4x4));
-			auto proj_matrix = camera->matrix().transpose();
-			library::memory_copy(reinterpret_cast<char*>(resource.pData) + sizeof(dmath::float4x4), &proj_matrix, sizeof(dmath::float4x4));
-			device_context.unmap(camera->buffer(), 0);
-		}
+		//	auto resource = device_context.map(camera->buffer(), 0, D3D11_MAP_WRITE_DISCARD, 0);
+		//	auto view_matrix = transform->matrix().inverse().transpose();
+		//	library::memory_copy(resource.pData, &view_matrix, sizeof(dmath::float4x4));
+		//	auto proj_matrix = camera->matrix().transpose();
+		//	library::memory_copy(reinterpret_cast<char*>(resource.pData) + sizeof(dmath::float4x4), &proj_matrix, sizeof(dmath::float4x4));
+		//	device_context.unmap(camera->buffer(), 0);
+		//}
 
-		for (auto& renderer : _renderer) {
-			auto renderer2 = renderer.lock();
-			for (auto& draw_item : renderer2->get_draw_item()) {
-				device_context.set_input_layout(draw_item._material[0]->_shader->_input_layout);
-				device_context.set_vertex_shader(draw_item._material[0]->_shader->_vertex_shader);
-				device_context.set_pixel_shader(draw_item._material[0]->_shader->_pixel_shader);
-				device_context.set_primitive_topology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		//for (auto& renderer : _renderer) {
+		//	auto renderer2 = renderer.lock();
+		//	for (auto& draw_item : renderer2->get_draw_item()) {
+		//		device_context.set_input_layout(draw_item._material[0]->_shader->_input_layout);
+		//		device_context.set_vertex_shader(draw_item._material[0]->_shader->_vertex_shader);
+		//		device_context.set_pixel_shader(draw_item._material[0]->_shader->_pixel_shader);
+		//		device_context.set_primitive_topology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-				//device_context.set_pixel_shader_resource(0, 1, &draw_item._material[0]->_texture[0]->_srv.data());
+		//		//device_context.set_pixel_shader_resource(0, 1, &draw_item._material[0]->_texture[0]->_srv.data());
 
-				auto resource = device_context.map(draw_item._transform->buffer(), 0, D3D11_MAP_WRITE_DISCARD, 0);
-				auto matrix = draw_item._transform->matrix().transpose().store();
-				library::memory_copy(resource.pData, &matrix, sizeof(dmath::float4x4));
-				device_context.unmap(draw_item._transform->buffer(), 0);
+		//		auto resource = device_context.map(draw_item._transform->buffer(), 0, D3D11_MAP_WRITE_DISCARD, 0);
+		//		auto matrix = draw_item._transform->matrix().transpose().store();
+		//		library::memory_copy(resource.pData, &matrix, sizeof(dmath::float4x4));
+		//		device_context.unmap(draw_item._transform->buffer(), 0);
 
-				draw_item._mesh->render_primitive(0);
-			}
-		}
+		//		draw_item._mesh->render_primitive(0);
+		//	}
+		//}
 
 	}
 

@@ -1,6 +1,7 @@
 #pragma once
-#include "editor.h"
 #include "library/system/guid.h"
+#include "editor.h"
+#include "resource.h"
 #include <vector>
 
 namespace framework {
@@ -10,17 +11,13 @@ namespace framework {
 			type
 		};
 		struct item {
-			library::guid _guid;
+			library::rcu_pointer<resource> _pointer;
 			std::string _name;
 			std::string _type;
 		};
 		std::vector<item> _item;
 	public:
 		explicit asset(void) noexcept {
-			_item.emplace_back(library::guid(), "aaa", "kkk");
-			_item.emplace_back(library::guid(), "bbb", "ggg");
-			_item.emplace_back(library::guid(), "ccc", "kkk");
-			_item.emplace_back(library::guid(), "ddd", "ggg");
 		}
 		explicit asset(asset const&) noexcept = delete;
 		explicit asset(asset&&) noexcept = delete;

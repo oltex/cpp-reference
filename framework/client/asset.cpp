@@ -1,6 +1,5 @@
 #include "asset.h"
 #include "window.h"
-#include "resource.h"
 #include "texture.h"
 #include "library/system/file.h"
 #include "library/imgui/imgui.h"
@@ -71,7 +70,7 @@ namespace framework {
 							ImGui::EndPopup();
 						}
 						if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID)) {
-							ImGui::SetDragDropPayload("ASSET_GUID", &_item[index]._guid, sizeof(_item[index]._guid));
+							//ImGui::SetDragDropPayload("ASSET_GUID", &_item[index]._guid, sizeof(_item[index]._guid));
 							ImGui::TextUnformatted(_item[index]._name.c_str());
 							ImGui::EndDragDropSource();
 						}
@@ -82,8 +81,7 @@ namespace framework {
 				if (-1 != erase) {
 					auto& item = _item[erase];
 					_item.erase(_item.begin() + erase);
-					//auto texture = resources::instance().create_resource<framework::texture>(path.wstring().c_str());
-
+					resources::instance().deallocate_resource(item._pointer);
 				}
 				ImGui::EndTable();
 			}
@@ -109,7 +107,7 @@ namespace framework {
 
 				if (".png" == path.extension().string()) {
 					auto texture = resources::instance().create_resource<framework::texture>(path.stem().string().c_str(), path.wstring().c_str());
-					_item.push_back(asset::item{ texture->guid(), path.stem().string(), "texture" });
+					_item.push_back(asset::item{ texture, path.stem().string(), "texture" });
 				}
 			}
 		}

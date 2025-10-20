@@ -5,10 +5,10 @@
 #include "library/container/pointer.h"
 #include "library/system/guid.h"
 #include "library/container/intrusive/pointer.h"
+#include "library/container/read_copy_update.h"
 
 namespace framework {
-	class resource : public library::intrusive::pointer_hook<0> {
-		unsigned long long _generation;
+	class resource : public library::rcu_base {
 		library::guid _guid;
 	public:
 		explicit resource(void) noexcept;
@@ -20,19 +20,6 @@ namespace framework {
 
 		virtual auto type_name(void) noexcept -> char const* const = 0;
 		auto guid(void) noexcept -> library::guid&;
-
-		template<size_t index>
-		inline void destruct(void) noexcept {};
-		template<>
-		inline void destruct<0>(void) noexcept {
-			_generation++;
-		};
-		template<size_t index>
-		inline static void deallocate(resource* pointer) noexcept {};
-		template<>
-		inline static void deallocate<0>(resource* pointer) noexcept {
-
-		}
 	};
 
 	class resources : public library::singleton<resources> {
@@ -48,31 +35,33 @@ namespace framework {
 			inline auto operator=(segments const&) noexcept -> segments & = delete;
 			inline auto operator=(segments&&) noexcept -> segments & = delete;
 			inline virtual ~segments(void) = default;
+
+			inline virtual void deallocate(framework::resource* const pointer) noexcept = 0;
 		};
 		template <typename type>
 		class segment : public segments {
 			using size_type = segments::size_type;
 			library::pool<type, false> _pool;
-			library::unorder_map<library::guid, library::intrusive::share_pointer<type, 0>> _guid;
-			library::unorder_map<library::string, library::intrusive::share_pointer<type, 0>> _name;
+			//library::unorder_map<library::guid, library::rcu_pointer<type>> _guid;
+			//library::unorder_map<library::string, library::rcu_pointer<type>> _name;
 		public:
 			//using base::base;
 			inline virtual ~segment(void) = default;
 
 			template<typename... argument>
-			inline auto allocate(char const* const name, argument&&... arg) noexcept -> type* {
+			inline auto allocate(char const* const name, argument&&... arg) noexcept -> library::rcu_pointer<type> {
 				auto pointer = _pool.allocate(std::forward<argument>(arg)...);
-				library::intrusive::share_pointer<type, 0> share_pointer(pointer);
-				_guid.emplace(pointer->guid(), share_pointer);
-				_name.emplace(name, share_pointer);
-				return share_pointer.get();
+				library::rcu_pointer<type> rcu_pointer(pointer);
+				//_guid.emplace(pointer->guid(), rcu_pointer);
+				//_name.emplace(name, rcu_pointer);
+				return rcu_pointer;
 			}
-			inline auto deallocate(type* )
-
+			inline virtual void deallocate(framework::resource* const pointer) noexcept override {
+				_pool.deallocate(static_cast<type*>(pointer));
+			}
 		};
 
 		library::unorder_map<library::string, library::unique_pointer<segments>> _segment;
-		library::unorder_map<library::guid, library::share_pointer<resource>> _resource;
 
 		explicit resources(void) noexcept;
 		explicit resources(resources const&) noexcept = delete;
@@ -85,16 +74,18 @@ namespace framework {
 		inline void regist_resource(void) noexcept {
 			_segment.emplace(type::static_name(), library::make_unique<segment<type>>());
 		}
-
 		template<typename type, typename... argument>
-		inline auto create_resource(argument&&... arg) noexcept -> library::share_pointer<type> {
-			{
-				auto result = _segment.find(type::static_name());
-				/*auto pointer =*/ static_cast<segment<type>&>(*result->_second).allocate("test", std::forward<argument>(arg)...);
-			}
-			auto pointer = library::make_share<type>(std::forward<argument>(arg)...);
-			_resource.emplace(pointer->guid(), pointer);
+		inline auto create_resource(char const* const name, argument&&... arg) noexcept -> library::rcu_pointer<type> {
+			auto result = _segment.find(type::static_name());
+			auto pointer = static_cast<segment<type>&>(*result->_second).allocate(name, std::forward<argument>(arg)...);
 			return pointer;
+		};
+		template<typename type>
+		inline void deallocate_resource(library::rcu_pointer<type> pointer) noexcept {
+			pointer.invalid([&](void* pointer) {
+				auto result = _segment.find(reinterpret_cast<resource*>(pointer)->type_name());
+				result->_second->deallocate(reinterpret_cast<resource*>(pointer));
+				});
 		};
 		//template<typename type>
 		//auto find_resource(library::guid& guid) noexcept -> library::share_pointer<type> {

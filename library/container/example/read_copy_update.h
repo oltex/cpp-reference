@@ -23,8 +23,8 @@ namespace example {
 				debug = 0;
 			}
 			rcu.lock();
-			for (auto loop = 0; loop < 100; ++loop) {
-				if (rand() % 2) {
+			for (auto loop = 0; loop < 10; ++loop) {
+				if (rand() % 10) {
 					auto old = value[index];
 					value[index] = new int(index);
 					//delete cur;
@@ -64,31 +64,31 @@ namespace example {
 			}
 			rcu.lock();
 			//for (auto loop = 0; loop < 100; ++loop) {
-				if (0 == (rand() % 3)) {
-					if (value2[index].invalid == false) {
-						value2[index].invalid = true; //제네레이션을 증가시킴 => 이제부터 이포인터를 전 제네레이션으로 참조하고있던애들은 무효다 : 즉 인벨리드가아니다 
-						value2[index].finish = false;
-						rcu.retire(&value2[index], custom_deleter);
-					}
-					else if(value2[index].finish == true){
-						value2[index].value = new int(index);
-						value2[index].invalid = false;
-					}
+			if (0 == (rand() % 3)) {
+				if (value2[index].invalid == false) {
+					value2[index].invalid = true; //제네레이션을 증가시킴 => 이제부터 이포인터를 전 제네레이션으로 참조하고있던애들은 무효다 : 즉 인벨리드가아니다 
+					value2[index].finish = false;
+					rcu.retire(&value2[index], custom_deleter);
 				}
-				else {
-					auto other_index = rand() % count;
-					auto pointer = value2[other_index]; //만약 상대가 바꾸고 나서 봤다면 내가 에폭시는 빠르지만 제네레이션이 다를수있음 -> 그건 문제가아님 
-					if (false == pointer.invalid) {
-						auto result = *pointer.value;
-						if (other_index != result)
-							__debugbreak();
-					}
-					//else {
-					//	auto result = pointer.value;
-					//	if (other_index != result)
-					//		__debugbreak();
-					//}
+				else if (value2[index].finish == true) {
+					value2[index].value = new int(index);
+					value2[index].invalid = false;
 				}
+			}
+			else {
+				auto other_index = rand() % count;
+				auto pointer = value2[other_index]; //만약 상대가 바꾸고 나서 봤다면 내가 에폭시는 빠르지만 제네레이션이 다를수있음 -> 그건 문제가아님 
+				if (false == pointer.invalid) {
+					auto result = *pointer.value;
+					if (other_index != result)
+						__debugbreak();
+				}
+				//else {
+				//	auto result = pointer.value;
+				//	if (other_index != result)
+				//		__debugbreak();
+				//}
+			}
 			//}
 			rcu.unlock();
 		}
@@ -96,40 +96,14 @@ namespace example {
 	}
 
 	inline void read_copy_update(void) noexcept {
-		//scanf_s("%d", &count);
-		//value = new int* [count];
-		//for (auto index = 0; index < count; ++index)
-		//	value[index] = new int(index);
-
-		//HANDLE* thread = new HANDLE[count];
-		//for (auto index = 0; index < count; ++index)
-		//	thread[index] = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, read_copy_update_func, nullptr, 0, 0));
-
-		//system("pause");
-		//stop = true;
-
-		//WaitForMultipleObjects(count, thread, true, INFINITE);
-		//for (auto index = 0; index < count; ++index)
-		//	CloseHandle(thread[index]);
-		//delete[] thread;
-
-		//for (auto index = 0; index < count; ++index)
-		//	delete value[index];
-		//delete[] value;
-
-		//================
-
 		scanf_s("%d", &count);
-		value2 = new my_str[count];
-		for (auto index = 0; index < count; ++index) {
-			value2[index].invalid = false;
-			value2[index].finish = false;
-			value2[index].value = new int(index);
-		}
+		value = new int* [count];
+		for (auto index = 0; index < count; ++index)
+			value[index] = new int(index);
 
 		HANDLE* thread = new HANDLE[count];
 		for (auto index = 0; index < count; ++index)
-			thread[index] = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, read_copy_update_func2, nullptr, 0, 0));
+			thread[index] = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, read_copy_update_func, nullptr, 0, 0));
 
 		system("pause");
 		stop = true;
@@ -139,6 +113,32 @@ namespace example {
 			CloseHandle(thread[index]);
 		delete[] thread;
 
-		delete[] value2;
+		for (auto index = 0; index < count; ++index)
+			delete value[index];
+		delete[] value;
+
+		//================
+
+		//scanf_s("%d", &count);
+		//value2 = new my_str[count];
+		//for (auto index = 0; index < count; ++index) {
+		//	value2[index].invalid = false;
+		//	value2[index].finish = false;
+		//	value2[index].value = new int(index);
+		//}
+
+		//HANDLE* thread = new HANDLE[count];
+		//for (auto index = 0; index < count; ++index)
+		//	thread[index] = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, read_copy_update_func2, nullptr, 0, 0));
+
+		//system("pause");
+		//stop = true;
+
+		//WaitForMultipleObjects(count, thread, true, INFINITE);
+		//for (auto index = 0; index < count; ++index)
+		//	CloseHandle(thread[index]);
+		//delete[] thread;
+
+		//delete[] value2;
 	}
 }
