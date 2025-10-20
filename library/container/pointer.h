@@ -34,7 +34,7 @@ namespace detail {
 
 		inline virtual void destroy_object(void) noexcept = 0;
 	};
-	template <typename type, auto deleter = pointer_deleter>
+	template <typename type, auto deleter = pointer_deleter<type>>
 	struct reference_external final : public reference {
 		type* _pointer;
 	public:
@@ -201,6 +201,58 @@ namespace library {
 			return nullptr == lhs._pointer;
 		}
 	};
+	//template<typename type>
+	//class unique_pointer<type[]> final {
+	//	using size_type = unsigned int;
+	//	type* _pointer;
+	//public:
+	//	inline constexpr unique_pointer(void) noexcept
+	//		: _pointer(nullptr) {
+	//	};
+	//	inline constexpr unique_pointer(nullptr_t) noexcept
+	//		: _pointer(nullptr) {
+	//	};
+	//	inline explicit unique_pointer(type* const pointer) noexcept
+	//		: _pointer(pointer) {
+	//	}
+	//	inline explicit unique_pointer(unique_pointer&) noexcept = delete;
+	//	inline explicit unique_pointer(unique_pointer&& rhs) noexcept
+	//		: _pointer(library::exchange(rhs._pointer, nullptr)) {
+	//	}
+	//	inline auto operator=(unique_pointer const&) noexcept -> unique_pointer & = delete;
+	//	inline auto operator=(unique_pointer&& rhs) noexcept -> unique_pointer& {
+	//		unique_pointer(std::move(rhs)).swap(*this);
+	//		return *this;
+	//	};
+	//	inline ~unique_pointer(void) noexcept {
+	//		if (nullptr != _pointer) {
+	//			library::destruct<type>(*_pointer);
+	//			library::deallocate<type>(_pointer);
+	//		}
+	//	}
+	//
+	//	inline auto operator[](size_type const index) noexcept -> type& {
+	//		return _pointer[index];
+	//	}
+	//	inline explicit operator bool() const noexcept {
+	//		return nullptr != _pointer;
+	//	}
+	//	inline void swap(unique_pointer& rhs) noexcept {
+	//		library::swap(_pointer, rhs._pointer);
+	//	}
+	//	inline auto get(void) const noexcept -> type* {
+	//		return _pointer;
+	//	}
+	//	inline void set(type* value) noexcept {
+	//		_pointer = value;
+	//	}
+	//	inline void reset(void) noexcept {
+	//		_pointer = nullptr;
+	//	}
+	//	friend inline bool operator==(unique_pointer const& lhs, nullptr_t) noexcept {
+	//		return nullptr == lhs._pointer;
+	//	}
+	//};
 	template <typename type, typename... argument>
 	inline auto make_unique(argument&&... arg) noexcept -> unique_pointer<type> {
 		unique_pointer<type> pointer;
@@ -256,12 +308,12 @@ namespace library {
 		inline constexpr share_pointer(nullptr_t) noexcept
 			: _pointer(nullptr), _reference(nullptr) {
 		};
-		template<typename other, auto deleter = detail::pointer_deleter>
+		template<typename other, auto deleter = detail::pointer_deleter<other>>
 			requires std::is_convertible_v<other*, type*> || std::is_convertible_v<type*, other*>
 		inline explicit share_pointer(other* const pointer) noexcept
 			: _pointer(static_cast<type*>(pointer)) {
-			auto reference = library::allocate<detail::reference_external<type, deleter>>();
-			library::construct<detail::reference_external<type, deleter>>(*reference, pointer);
+			auto reference = library::allocate<detail::reference_external<other, deleter>>();
+			library::construct<detail::reference_external<other, deleter>>(*reference, pointer);
 			_reference = reference;
 		}
 		template<typename other>

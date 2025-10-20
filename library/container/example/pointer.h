@@ -46,30 +46,32 @@ namespace example {
 	}
 
 	inline void pointer(void) noexcept {
-
 		{
-			std::shared_ptr<int> std_pointer2(new int(10));
-			std::shared_ptr<int> std_pointer = std::make_shared<int>(10);
+			//std::shared_ptr<int> std_pointer2(new int(10));
+			//std::shared_ptr<int> std_pointer = std::make_shared<int>(10);
 			//std::shared_ptr<derive> std_pointer(new derive(10, 20));
 			//std::shared_ptr<base> std_pointer2 = std_pointer;
 
 			//std::static_pointer_cast<derive>(std_pointer2);
 			//int a = 10;
-		}
-		{
-			//library::unique_pointer<derive> pointer(new derive(10, 20));
-			//library::unique_pointer<base> pointer2 = pointer;
-			library::weak_pointer<base> pointer3;
-			{
-				library::share_pointer<base> pointer = library::make_share<derive>(10, 20);// (new derive(10, 20));
-				//library::share_pointer<base> pointer2 = pointer;
 
-				pointer3 = pointer;
-			}
-			library::weak_pointer<derive> pointer4(pointer3);
-			library::weak_pointer<derive> pointer5(pointer4);
-			int a = 10;
+			//library::unique_pointer<base> pointer(new derive(10, 20));
+			//library::unique_pointer<base> pointer2 = std::move(pointer);
+
 		}
+		//{
+		//	library::weak_pointer<base> pointer3;
+		//	{
+				//library::share_pointer<base> pointer = library::make_share<derive>(10, 20);// (new derive(10, 20));
+				//library::share_pointer<base> pointer3(new derive(10, 20));
+		//		library::share_pointer<base> pointer2 = pointer;
+
+		//		pointer3 = pointer;
+		//	}
+		//	library::weak_pointer<derive> pointer4(pointer3);
+		//	library::weak_pointer<derive> pointer5(pointer4);
+		//	int a = 10;
+		//}
 	}
 
 }

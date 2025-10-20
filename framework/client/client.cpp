@@ -14,6 +14,10 @@
 #include "camera_move.h"
 #include <typeinfo>
 #include <iostream>
+
+#include "library/container/read_copy_update.h"
+
+
 namespace framework {
 	client::client(void) noexcept
 		: _window(window::instance()),
@@ -71,6 +75,8 @@ namespace framework {
 
 	void client::execute(void) noexcept {
 		for (;;) {
+			auto& rcu = library::read_copy_update::instance();
+			rcu.lock();
 			if (_window.check_exit())
 				return;
 			_timer.update_frame();
@@ -83,6 +89,7 @@ namespace framework {
 			_editors.render();
 			_graphic.render_start();
 			_timer.sleep_frame();
+			rcu.unlock();
 		}
 	}
 }

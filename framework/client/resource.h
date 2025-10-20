@@ -8,6 +8,7 @@
 
 namespace framework {
 	class resource : public library::intrusive::pointer_hook<0> {
+		unsigned long long _generation;
 		library::guid _guid;
 	public:
 		explicit resource(void) noexcept;
@@ -19,6 +20,19 @@ namespace framework {
 
 		virtual auto type_name(void) noexcept -> char const* const = 0;
 		auto guid(void) noexcept -> library::guid&;
+
+		template<size_t index>
+		inline void destruct(void) noexcept {};
+		template<>
+		inline void destruct<0>(void) noexcept {
+			_generation++;
+		};
+		template<size_t index>
+		inline static void deallocate(resource* pointer) noexcept {};
+		template<>
+		inline static void deallocate<0>(resource* pointer) noexcept {
+
+		}
 	};
 
 	class resources : public library::singleton<resources> {
@@ -38,18 +52,23 @@ namespace framework {
 		template <typename type>
 		class segment : public segments {
 			using size_type = segments::size_type;
+			library::pool<type, false> _pool;
+			library::unorder_map<library::guid, library::intrusive::share_pointer<type, 0>> _guid;
+			library::unorder_map<library::string, library::intrusive::share_pointer<type, 0>> _name;
 		public:
 			//using base::base;
 			inline virtual ~segment(void) = default;
 
 			template<typename... argument>
-			inline auto allocate(argument&&... arg) noexcept {
-				//_pool.allocate(std::forward(arg));
+			inline auto allocate(char const* const name, argument&&... arg) noexcept -> type* {
+				auto pointer = _pool.allocate(std::forward<argument>(arg)...);
+				library::intrusive::share_pointer<type, 0> share_pointer(pointer);
+				_guid.emplace(pointer->guid(), share_pointer);
+				_name.emplace(name, share_pointer);
+				return share_pointer.get();
 			}
+			inline auto deallocate(type* )
 
-			library::pool<type, false> _pool;
-			library::unorder_map<library::guid, library::share_pointer<type>> _name;
-			library::unorder_map<library::string, library::share_pointer<type>> _guid;
 		};
 
 		library::unorder_map<library::string, library::unique_pointer<segments>> _segment;
@@ -71,7 +90,7 @@ namespace framework {
 		inline auto create_resource(argument&&... arg) noexcept -> library::share_pointer<type> {
 			{
 				auto result = _segment.find(type::static_name());
-				//auto pointer = static_cast<segment<type>*>(&*result->_second)->allocate();
+				/*auto pointer =*/ static_cast<segment<type>&>(*result->_second).allocate("test", std::forward<argument>(arg)...);
 			}
 			auto pointer = library::make_share<type>(std::forward<argument>(arg)...);
 			_resource.emplace(pointer->guid(), pointer);
@@ -82,6 +101,7 @@ namespace framework {
 		//	auto result = _resource.find(guid);
 		//	return result->_second;
 		//}
+
 	};
 
 	template<typename type, library::string_literal name, typename base = resource>

@@ -108,7 +108,7 @@ namespace framework {
 				library::component_task_memory_free(name);
 
 				if (".png" == path.extension().string()) {
-					auto texture = resources::instance().create_resource<framework::texture>(path.wstring().c_str());
+					auto texture = resources::instance().create_resource<framework::texture>(path.stem().string().c_str(), path.wstring().c_str());
 					_item.push_back(asset::item{ texture->guid(), path.stem().string(), "texture" });
 				}
 			}

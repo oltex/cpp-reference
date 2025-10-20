@@ -45,10 +45,12 @@ namespace example {
 
 	struct my_str {
 		bool invalid;
-		int value;
+		bool finish;
+		int* value;
 	};
 	inline auto custom_deleter(void* pointer) noexcept {
-		static_cast<my_str*>(pointer)->value = 0x11223344; //뭘 망가트리든 상관없음 
+		delete static_cast<my_str*>(pointer)->value;
+		static_cast<my_str*>(pointer)->finish = true;
 	}
 	my_str* value2;
 	inline static unsigned int __stdcall read_copy_update_func2(void* arg) noexcept {
@@ -61,15 +63,15 @@ namespace example {
 				debug = 0;
 			}
 			rcu.lock();
-			for (auto loop = 0; loop < 100; ++loop) {
-				if (rand() % 2) {
-					if (value2[index].value != 0x11223344) {
+			//for (auto loop = 0; loop < 100; ++loop) {
+				if (0 == (rand() % 3)) {
+					if (value2[index].invalid == false) {
 						value2[index].invalid = true; //제네레이션을 증가시킴 => 이제부터 이포인터를 전 제네레이션으로 참조하고있던애들은 무효다 : 즉 인벨리드가아니다 
-						//delete cur;
+						value2[index].finish = false;
 						rcu.retire(&value2[index], custom_deleter);
 					}
-					else {
-						value2[index].value = index;
+					else if(value2[index].finish == true){
+						value2[index].value = new int(index);
 						value2[index].invalid = false;
 					}
 				}
@@ -77,7 +79,7 @@ namespace example {
 					auto other_index = rand() % count;
 					auto pointer = value2[other_index]; //만약 상대가 바꾸고 나서 봤다면 내가 에폭시는 빠르지만 제네레이션이 다를수있음 -> 그건 문제가아님 
 					if (false == pointer.invalid) {
-						auto result = pointer.value;
+						auto result = *pointer.value;
 						if (other_index != result)
 							__debugbreak();
 					}
@@ -87,7 +89,7 @@ namespace example {
 					//		__debugbreak();
 					//}
 				}
-			}
+			//}
 			rcu.unlock();
 		}
 		return 0;
@@ -121,7 +123,8 @@ namespace example {
 		value2 = new my_str[count];
 		for (auto index = 0; index < count; ++index) {
 			value2[index].invalid = false;
-			value2[index].value = index;
+			value2[index].finish = false;
+			value2[index].value = new int(index);
 		}
 
 		HANDLE* thread = new HANDLE[count];

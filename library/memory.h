@@ -15,15 +15,7 @@ namespace library {
 	}
 	template<typename type>
 		requires (!library::void_type<type>)
-	inline auto allocate(void) noexcept -> type* {
-		if constexpr (16 >= alignof(type))
-			return reinterpret_cast<type*>(::malloc(sizeof(type)));
-		else
-			return reinterpret_cast<type*>(::_aligned_malloc(sizeof(type), alignof(type)));
-	}
-	template<typename type>
-		requires (!library::void_type<type>)
-	inline auto allocate(size_t const count) noexcept -> type* {
+	inline auto allocate(size_t const count = 1) noexcept -> type* {
 		if constexpr (16 >= alignof(type))
 			return reinterpret_cast<type*>(::malloc(sizeof(type) * count));
 		else
@@ -57,7 +49,35 @@ namespace library {
 		else
 			::_aligned_free(pointer);
 	}
+	template<typename type, typename... argument>
+	inline auto construct(type& instance, argument&&... arg) noexcept {
+		if constexpr (std::is_constructible_v<type, argument...>)
+			if constexpr (std::is_class_v<type>)
+				if constexpr (sizeof...(argument) == 0)
+					::new(reinterpret_cast<void*>(&instance)) type;
+				else
+					::new(reinterpret_cast<void*>(&instance)) type(std::forward<argument>(arg)...);
+			else if constexpr (0 < sizeof...(argument))
+#pragma warning(suppress: 6011)
+				instance = type(std::forward<argument>(arg)...);
+	}
+	template<typename type>
+	inline void destruct(type& instance) noexcept {
+		if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
+			instance.~type();
+	}
 
+	template<typename type, typename... argument>
+	inline auto create(argument&&... arg) noexcept -> type* {
+		if constexpr (sizeof...(argument) == 0)
+			return ::new(std::nothrow) type;
+		else
+			return ::new(std::nothrow) type(std::forward<argument>(arg)...);
+	}
+	template<typename type, typename... argument>
+	inline auto destory(type* pointer) noexcept {
+		delete pointer;
+	}
 	//template<typename type_1, typename type_2>
 	//inline auto cast(type_2&& value) noexcept -> type_1 {
 	//	if constexpr (library::same_type<type_1, type_2>) {
@@ -103,23 +123,7 @@ namespace library {
 		return ::memset(destine, value, size);
 	}
 
-	template<typename type, typename... argument>
-	inline auto construct(type& instance, argument&&... arg) noexcept {
-		if constexpr (std::is_constructible_v<type, argument...>)
-			if constexpr (std::is_class_v<type>)
-				if constexpr (sizeof...(argument) == 0)
-					::new(reinterpret_cast<void*>(&instance)) type;
-				else
-					::new(reinterpret_cast<void*>(&instance)) type(std::forward<argument>(arg)...);
-			else if constexpr (0 < sizeof...(argument))
-#pragma warning(suppress: 6011)
-				instance = type(std::forward<argument>(arg)...);
-	}
-	template<typename type>
-	inline void destruct(type& instance) noexcept {
-		if constexpr (std::is_destructible_v<type> && !std::is_trivially_destructible_v<type>)
-			instance.~type();
-	}
+
 
 	inline auto get_large_page_minimum(void) noexcept -> size_t {
 		return GetLargePageMinimum();
