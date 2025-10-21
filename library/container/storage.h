@@ -17,29 +17,28 @@ namespace library {
 
 		template<typename... argument>
 		inline void construct(argument&&... arg) noexcept {
-			library::construct<type>(get(), std::forward<argument>(arg)...);
+			library::construct<type>(*reinterpret_cast<type*>(_buffer), std::forward<argument>(arg)...);
 		}
 		inline auto operator=(type& rhs) noexcept -> type& {
-			return get() = rhs;
+			return *reinterpret_cast<type*>(_buffer) = rhs;
 		}
 		inline auto operator=(type&& rhs) noexcept -> type& {
-			return get() = std::move(rhs);
+			return *reinterpret_cast<type*>(_buffer) = std::move(rhs);
 		}
 		inline void destruct(void) noexcept {
-			library::destruct<type>(get());
+			library::destruct<type>(*reinterpret_cast<type*>(_buffer));
 		}
 		inline auto get(void) noexcept -> type& {
 			return *reinterpret_cast<type*>(_buffer);
 		}
 		inline auto operator*(void) noexcept -> type& {
-			return get();
+			return *reinterpret_cast<type*>(_buffer);
 		}
 		inline auto operator->(void) noexcept -> type* {
-			return &get();
+			return &reinterpret_cast<type*>(_buffer);
 		}
-
 		inline void relocate(type& rhs) noexcept {
-			library::memory_copy(&get(), &rhs, 1);
+			library::memory_copy(reinterpret_cast<type*>(_buffer), &rhs, 1);
 		}
 	};
 }

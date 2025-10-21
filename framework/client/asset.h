@@ -6,7 +6,7 @@
 
 namespace framework {
 	class asset : public editor {
-		enum column{
+		enum column {
 			name,
 			type
 		};

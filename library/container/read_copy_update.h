@@ -6,18 +6,18 @@
 #include "../container/lockfree/free_list.h"
 #include "../container/priority_queue.h"
 #include <functional>
+#include <iostream>
 
 namespace library {
 	inline auto default_deleter(void* pointer) noexcept {
 		delete pointer;
 	}
-
 	class rcu_base {
 		template<typename type>
 		friend class rcu_pointer;
 		unsigned long long _generation;
 	public:
-#pragma warning(suppress: 4624)
+#pragma warning(suppress: 26495)
 		inline rcu_base(void) noexcept {
 		};
 		inline rcu_base(rcu_base const&) noexcept = default;
@@ -36,7 +36,6 @@ namespace library {
 			return generation == library::interlock_compare_exhange(_generation, generation + 1, generation);
 		}
 	};
-
 	template<typename type>
 	class rcu_pointer {
 		template <typename other>
@@ -85,18 +84,18 @@ namespace library {
 		inline bool valid(void) const noexcept {
 			return _pointer->valid(_generation);
 		}
+
 		template<typename function>
-		inline void invalid(function && func) noexcept;
+		inline void invalid(function&& deleter) noexcept;
 	};
 
 	class read_copy_update : public singleton<read_copy_update> {
 		friend class singleton<read_copy_update>;
 		struct context : public _thread_local::singleton<context> {
 			friend class _thread_local::singleton<context>;
-			struct retire{
-				void* _pointer;
+			struct retire {
 				unsigned long long _epoch;
-				void (*_deleter)(void*);
+				std::function<void(void)> _deleter;
 			};
 			unsigned long long& _slot;
 			library::priority_queue < retire, [](auto& lhs, auto& rhs) noexcept { return lhs._epoch < rhs._epoch; } > _retire;
@@ -117,7 +116,7 @@ namespace library {
 						minimum = library::minimum(iter, minimum);
 
 					if (auto& top = _retire.top(); top._epoch < minimum) {
-						top._deleter(top._pointer);
+						top._deleter();
 						_retire.pop();
 					}
 				}
@@ -151,27 +150,28 @@ namespace library {
 				unsigned long long minimum = ULLONG_MAX;
 				for (auto& iter : _list)
 					minimum = library::minimum(iter, minimum);
-
+			
 				while (!context._retire.empty()) {
 					if (auto& top = context._retire.top(); top._epoch >= minimum)
 						break;
 					else {
-						top._deleter(top._pointer);
+						top._deleter();
 						context._retire.pop();
 					}
 				}
 			}
 		}
-		inline void retire(void* pointer, void (*deleter)(void*) = default_deleter) noexcept {
+		template<typename type, typename function>
+		inline void retire(type* pointer, function&& func) noexcept {
 			auto& context = context::instance();
-			context._retire.emplace(pointer, library::interlock_increment(_epoch), deleter);
+			context._retire.emplace(library::interlock_increment(_epoch), std::bind(std::forward<function>(func), pointer));
 		};
 	};
 
-	//template <typename type>
-	//template <typename function>
-	//inline void rcu_pointer<type>::invalid(function&& func) noexcept {
-	//	if (_pointer->invalid(_generation))
-	//		read_copy_update::instance().retire(_pointer, func);
-	//}
+	template <typename type>
+	template<typename function>
+	inline void rcu_pointer<type>::invalid(function&& deleter) noexcept {
+		if (_pointer->invalid(_generation))
+			read_copy_update::instance().retire(_pointer, deleter);
+	}
 }

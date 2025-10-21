@@ -81,7 +81,7 @@ namespace framework {
 				if (-1 != erase) {
 					auto& item = _item[erase];
 					_item.erase(_item.begin() + erase);
-					resources::instance().deallocate_resource(item._pointer);
+					resources::instance().destory_resource(item._pointer);
 				}
 				ImGui::EndTable();
 			}

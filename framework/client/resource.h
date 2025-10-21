@@ -25,43 +25,40 @@ namespace framework {
 	class resources : public library::singleton<resources> {
 		friend class library::singleton<resources>;
 		friend class asset;
-		class segments {
-		protected:
-			using size_type = unsigned int;
+		class pools {
 		public:
-			inline explicit segments(void) noexcept = default;
-			inline explicit segments(segments const&) noexcept = delete;
-			inline explicit segments(segments&&) noexcept = delete;
-			inline auto operator=(segments const&) noexcept -> segments & = delete;
-			inline auto operator=(segments&&) noexcept -> segments & = delete;
-			inline virtual ~segments(void) = default;
+			explicit pools(void) noexcept = default;
+			explicit pools(pools const&) noexcept = delete;
+			explicit pools(pools&&) noexcept = delete;
+			auto operator=(pools const&) noexcept -> pools & = delete;
+			auto operator=(pools&&) noexcept -> pools & = delete;
+			virtual ~pools(void) = default;
 
-			inline virtual void deallocate(framework::resource* const pointer) noexcept = 0;
+			virtual void deallocate(framework::resource* const pointer) noexcept = 0;
 		};
 		template <typename type>
-		class segment : public segments {
-			using size_type = segments::size_type;
-			library::pool<type, false> _pool;
-			//library::unorder_map<library::guid, library::rcu_pointer<type>> _guid;
-			//library::unorder_map<library::string, library::rcu_pointer<type>> _name;
+		class pool : public pools, public library::pool<type, true, false> {
 		public:
-			//using base::base;
-			inline virtual ~segment(void) = default;
+			explicit pool(void) noexcept = default;
+			explicit pool(pool const&) noexcept = delete;
+			explicit pool(pool&&) noexcept = delete;
+			auto operator=(pool const&) noexcept -> pool & = delete;
+			auto operator=(pool&&) noexcept -> pool & = delete;
+			virtual ~pool(void) = default;
 
 			template<typename... argument>
-			inline auto allocate(char const* const name, argument&&... arg) noexcept -> library::rcu_pointer<type> {
-				auto pointer = _pool.allocate(std::forward<argument>(arg)...);
-				library::rcu_pointer<type> rcu_pointer(pointer);
-				//_guid.emplace(pointer->guid(), rcu_pointer);
-				//_name.emplace(name, rcu_pointer);
-				return rcu_pointer;
+			auto allocate(argument&&... arg) noexcept -> library::rcu_pointer<type> {
+				auto pointer = library::pool<type, true, false>::allocate(std::forward<argument>(arg)...);
+				return library::rcu_pointer<type>(pointer);
 			}
-			inline virtual void deallocate(framework::resource* const pointer) noexcept override {
-				_pool.deallocate(static_cast<type*>(pointer));
+			virtual void deallocate(framework::resource* const pointer) noexcept override {
+				library::pool<type, true, false>::deallocate(static_cast<type*>(pointer));
 			}
 		};
 
-		library::unorder_map<library::string, library::unique_pointer<segments>> _segment;
+		library::unorder_map<library::string, library::unique_pointer<pools>> _pool;
+		library::unorder_map<library::guid, library::rcu_pointer<resource>> _guid;
+		library::unorder_map<library::string, library::rcu_pointer<resource>> _name;
 
 		explicit resources(void) noexcept;
 		explicit resources(resources const&) noexcept = delete;
@@ -71,28 +68,21 @@ namespace framework {
 		~resources(void) noexcept = default;
 	public:
 		template<typename type>
-		inline void regist_resource(void) noexcept {
-			_segment.emplace(type::static_name(), library::make_unique<segment<type>>());
+		void regist_resource(void) noexcept {
+			_pool.emplace(type::static_name(), library::make_unique<pool<type>>());
 		}
 		template<typename type, typename... argument>
-		inline auto create_resource(char const* const name, argument&&... arg) noexcept -> library::rcu_pointer<type> {
-			auto result = _segment.find(type::static_name());
-			auto pointer = static_cast<segment<type>&>(*result->_second).allocate(name, std::forward<argument>(arg)...);
+		auto create_resource(char const* const name, argument&&... arg) noexcept -> library::rcu_pointer<type> {
+			auto result = _pool.find(type::static_name());
+			auto pointer = static_cast<pool<type>&>(*result->_second).allocate(std::forward<argument>(arg)...);
 			return pointer;
 		};
-		template<typename type>
-		inline void deallocate_resource(library::rcu_pointer<type> pointer) noexcept {
-			pointer.invalid([&](void* pointer) {
-				auto result = _segment.find(reinterpret_cast<resource*>(pointer)->type_name());
-				result->_second->deallocate(reinterpret_cast<resource*>(pointer));
-				});
-		};
+		void destory_resource(library::rcu_pointer<resource> pointer) noexcept;
 		//template<typename type>
 		//auto find_resource(library::guid& guid) noexcept -> library::share_pointer<type> {
 		//	auto result = _resource.find(guid);
 		//	return result->_second;
 		//}
-
 	};
 
 	template<typename type, library::string_literal name, typename base = resource>

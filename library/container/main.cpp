@@ -4,7 +4,7 @@
 //#include "example/pool.h"
 //#include "example/pair.h"
 //#include "example/tuple.h"
-#include "example/vector.h"
+//#include "example/vector.h"
 //#include "example/stack.h"
 //#include "example/queue.h"
 //#include "example/compress_pair.h"
@@ -34,7 +34,7 @@ int main(void) noexcept {
 	//example::pair();
 	//example::tuple();
 	//example::pool();
-	example::vector();
+	//example::vector();
 	//example::stack();
 	//example::queue();
 	//example::compress_pair();

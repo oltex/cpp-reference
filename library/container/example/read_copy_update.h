@@ -28,7 +28,7 @@ namespace example {
 					auto old = value[index];
 					value[index] = new int(index);
 					//delete cur;
-					rcu.retire(old);
+					rcu.retire(old, [](int* pointer) {  delete pointer; });
 				}
 				else {
 					auto other_index = rand() % count;
