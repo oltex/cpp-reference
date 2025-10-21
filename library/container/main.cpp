@@ -34,7 +34,7 @@ int main(void) noexcept {
 	//example::pair();
 	//example::tuple();
 	//example::pool();
-	//example::vector();
+	example::vector();
 	//example::stack();
 	//example::queue();
 	//example::compress_pair();

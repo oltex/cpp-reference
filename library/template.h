@@ -1,4 +1,5 @@
 #pragma once
+#include <type_traits>
 
 namespace detail {
 	template <typename _type>
@@ -143,4 +144,8 @@ namespace library {
 			return key;
 		}
 	};
+
+	/* Allow a specific type via explicit specialization */
+	template<typename type>
+	inline constexpr bool relocate_safe = std::is_trivially_copyable_v<type>;
 }

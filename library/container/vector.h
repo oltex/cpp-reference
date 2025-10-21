@@ -1,6 +1,7 @@
 #pragma once
 #include "../memory.h"
 #include "../function.h"
+#include "../template.h"
 #include <initializer_list>
 #include <utility>
 #include <stdlib.h>
@@ -111,10 +112,9 @@ namespace library {
 
 		inline void reserve(size_type const capacity) noexcept {
 			if (_capacity < capacity) {
-				if constexpr (std::is_trivially_copyable_v<type>) {
+				if constexpr (library::relocate_safe<type>)
 #pragma warning(suppress: 6308)
 					_array = library::reallocate<type>(_array, capacity);
-				}
 				else {
 					auto array = library::allocate<type>(capacity);
 					for (auto index = 0u; index < _size; ++index) {

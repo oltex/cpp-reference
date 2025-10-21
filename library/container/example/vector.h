@@ -6,6 +6,9 @@
 #include <algorithm>
 #include <vector>
 
+template<>
+inline constexpr bool library::relocate_safe<example::my_class> = true;
+
 namespace example {
 	inline void vector(void) noexcept {
 		std::vector<int> std_vector;
