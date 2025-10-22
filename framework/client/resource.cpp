@@ -60,7 +60,7 @@ namespace framework {
 	}
 	void resources::destory_resource(library::rcu_pointer<resource> pointer) noexcept {
 		pointer.invalid([&](resource* pointer) {
-			auto& result = _pool.find(reinterpret_cast<resource*>(pointer)->type())->_second;
+			auto& result = _pool.find(reinterpret_cast<resource*>(pointer)->type_name())->_second;
 			result->deallocate(reinterpret_cast<resource*>(pointer));
 			});
 	}

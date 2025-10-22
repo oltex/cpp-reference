@@ -19,7 +19,7 @@ namespace framework {
 		auto operator=(resource&&) noexcept -> resource & = delete;
 		virtual ~resource(void) noexcept = default;
 
-		virtual auto type(void) noexcept -> char const* const = 0;
+		virtual auto type_name(void) noexcept -> char const* const = 0;
 		auto name(void) noexcept -> library::string&;
 		auto guid(void) noexcept -> library::guid&;
 		virtual void save(void) noexcept {};
@@ -53,8 +53,8 @@ namespace framework {
 			virtual ~pool(void) = default;
 
 			template<typename... argument>
-			auto allocate(char const* const name, argument&&... arg) noexcept -> library::rcu_pointer<type> {
-				auto pointer = _pool.allocate(name, std::forward<argument>(arg)...);
+			auto allocate(argument&&... arg) noexcept -> library::rcu_pointer<type> {
+				auto pointer = _pool.allocate(std::forward<argument>(arg)...);
 				_live.emplace_back(pointer);
 				return library::rcu_pointer<type>(pointer);
 			}
@@ -121,7 +121,7 @@ namespace framework {
 		inline static regist _regist{};
 	public:
 		using base::base;
-		virtual auto type(void) noexcept -> char const* const override {
+		virtual auto type_name(void) noexcept -> char const* const override {
 			return name._value;
 		}
 		static constexpr auto static_name(void) noexcept -> char const* {
