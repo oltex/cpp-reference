@@ -10,6 +10,7 @@
 namespace framework {
 	class resource : public library::rcu_base {
 		library::guid _guid;
+		library::string _name;
 	public:
 		explicit resource(void) noexcept;
 		explicit resource(resource const&) noexcept = delete;
@@ -18,8 +19,10 @@ namespace framework {
 		auto operator=(resource&&) noexcept -> resource & = delete;
 		virtual ~resource(void) noexcept = default;
 
-		virtual auto type_name(void) noexcept -> char const* const = 0;
+		virtual auto type(void) noexcept -> char const* const = 0;
+		auto name(void) noexcept -> library::string&;
 		auto guid(void) noexcept -> library::guid&;
+		virtual void save(void) noexcept {};
 	};
 
 	class resources : public library::singleton<resources> {
@@ -35,9 +38,12 @@ namespace framework {
 			virtual ~pools(void) = default;
 
 			virtual void deallocate(framework::resource* const pointer) noexcept = 0;
+			virtual void save(void) noexcept = 0;
 		};
 		template <typename type>
-		class pool : public pools, public library::pool<type, true, false> {
+		class pool : public pools {
+			library::pool<type, true, false> _pool;
+			library::list<type*> _live;
 		public:
 			explicit pool(void) noexcept = default;
 			explicit pool(pool const&) noexcept = delete;
@@ -47,12 +53,25 @@ namespace framework {
 			virtual ~pool(void) = default;
 
 			template<typename... argument>
-			auto allocate(argument&&... arg) noexcept -> library::rcu_pointer<type> {
-				auto pointer = library::pool<type, true, false>::allocate(std::forward<argument>(arg)...);
+			auto allocate(char const* const name, argument&&... arg) noexcept -> library::rcu_pointer<type> {
+				auto pointer = _pool.allocate(name, std::forward<argument>(arg)...);
+				_live.emplace_back(pointer);
 				return library::rcu_pointer<type>(pointer);
 			}
 			virtual void deallocate(framework::resource* const pointer) noexcept override {
-				library::pool<type, true, false>::deallocate(static_cast<type*>(pointer));
+				auto pointer2 = static_cast<type*>(pointer);
+				for (auto iter = _live.begin(); iter != _live.end(); ++iter)
+					if (*iter == pointer2) {
+						_live.erase(iter);
+						break;
+					}
+				_pool.deallocate(pointer2);
+
+			}
+			virtual void save(void) noexcept override {
+				for (auto& iter : _live) {
+					iter->save();
+				}
 			}
 		};
 
@@ -78,11 +97,18 @@ namespace framework {
 			return pointer;
 		};
 		void destory_resource(library::rcu_pointer<resource> pointer) noexcept;
-		//template<typename type>
-		//auto find_resource(library::guid& guid) noexcept -> library::share_pointer<type> {
-		//	auto result = _resource.find(guid);
-		//	return result->_second;
-		//}
+		template<typename type>
+		auto find_resource(library::guid& guid) noexcept -> library::rcu_pointer<type> {
+			auto result = _guid.find(guid);
+			return result->_second;
+		}
+		template<typename type>
+		auto find_resource(char const* const name) noexcept -> library::rcu_pointer<type> {
+			auto result = _name.find(name);
+			return result->_second;
+		}
+		void save_resource(void) noexcept;
+		void load_resource(void) noexcept;
 	};
 
 	template<typename type, library::string_literal name, typename base = resource>
@@ -95,7 +121,7 @@ namespace framework {
 		inline static regist _regist{};
 	public:
 		using base::base;
-		virtual auto type_name(void) noexcept -> char const* const override {
+		virtual auto type(void) noexcept -> char const* const override {
 			return name._value;
 		}
 		static constexpr auto static_name(void) noexcept -> char const* {

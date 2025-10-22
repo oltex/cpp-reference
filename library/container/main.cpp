@@ -1,4 +1,4 @@
-#include "../debug.h"
+//#include "../debug.h"
 
 //#include "example/list.h"
 //#include "example/pool.h"
@@ -26,10 +26,19 @@
 //#include "example/hash_table.h"
 //#include "example/bit_set.h"
 //#include "example/intrusive/pointer_list.h"
-#include "example/read_copy_update.h"
+//#include "example/read_copy_update.h"
+struct sp {
+	bool operator==(std::nullptr_t) const noexcept { return ptr == nullptr; }
+	explicit operator bool() const noexcept { return ptr != nullptr; }
+	void* ptr{};
+};
 
 int main(void) noexcept {
-	library::crt_set_debug_flag();
+	sp p{};
+	(void)(p == nullptr);
+	(void)(nullptr == p);
+
+	//library::crt_set_debug_flag();
 	//example::list();
 	//example::pair();
 	//example::tuple();
@@ -57,6 +66,6 @@ int main(void) noexcept {
 	//example::bit_set();
 	//example::intrusive::pointer_list();
 	//example::pointer();
-	example::read_copy_update();
+	//example::read_copy_update();
 	return 0;
 }

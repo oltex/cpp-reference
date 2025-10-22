@@ -18,10 +18,13 @@ namespace framework {
 			d3d11::shader_resource_view_descript* srv_descript,
 			d3d11::unorder_access_view_descript* uav_descript,
 			d3d11::depth_stencil_view_descript* dsv_descript) noexcept;
-		inline explicit texture(texture const&) noexcept = default;
-		inline explicit texture(texture&&) noexcept = delete;
-		inline auto operator=(texture const&) noexcept -> texture & = delete;
-		inline auto operator=(texture&&) noexcept -> texture & = delete;
-		inline virtual ~texture(void) noexcept override = default;
+		explicit texture(texture const&) noexcept = default;
+		explicit texture(texture&&) noexcept = delete;
+		auto operator=(texture const&) noexcept -> texture & = delete;
+		auto operator=(texture&&) noexcept -> texture & = delete;
+		virtual ~texture(void) noexcept override = default;
+
+		virtual void save(void) noexcept {};
+
 	};
 }

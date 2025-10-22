@@ -8,6 +8,9 @@ namespace framework {
 	resource::resource(void) noexcept
 		: _guid(library::create_guid()) {
 	}
+	auto resource::name(void) noexcept -> library::string& {
+		return _name;
+	}
 	auto resource::guid(void) noexcept -> library::guid& {
 		return _guid;
 	}
@@ -57,8 +60,16 @@ namespace framework {
 	}
 	void resources::destory_resource(library::rcu_pointer<resource> pointer) noexcept {
 		pointer.invalid([&](resource* pointer) {
-			auto& result = _pool.find(reinterpret_cast<resource*>(pointer)->type_name())->_second;
+			auto& result = _pool.find(reinterpret_cast<resource*>(pointer)->type())->_second;
 			result->deallocate(reinterpret_cast<resource*>(pointer));
 			});
-	};
+	}
+	void resources::save_resource(void) noexcept {
+		for (auto& iter : _pool) {
+			iter._first;// //이걸로 이름 저장
+			iter._second->save();
+		}
+	}
+	void resources::load_resource(void) noexcept {
+	}
 }

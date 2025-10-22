@@ -182,6 +182,9 @@ namespace library {
 		inline auto operator[](size_type const index) noexcept -> type& {
 			return _pointer[index];
 		}
+		inline bool operator==(nullptr_t) noexcept {
+			return nullptr == _pointer;
+		}
 		inline explicit operator bool() const noexcept {
 			return nullptr != _pointer;
 		}
@@ -197,9 +200,7 @@ namespace library {
 		inline void reset(void) noexcept {
 			_pointer = nullptr;
 		}
-		friend inline bool operator==(unique_pointer const& lhs, nullptr_t) noexcept {
-			return nullptr == lhs._pointer;
-		}
+
 	};
 	//template<typename type>
 	//class unique_pointer<type[]> final {
@@ -346,14 +347,17 @@ namespace library {
 			return *this;
 		};
 
+		inline bool operator==(nullptr_t) noexcept {
+			return nullptr == _pointer;
+		}
+		inline explicit operator bool(void) const noexcept {
+			return nullptr != _pointer;
+		}
 		inline auto operator*(void) const noexcept -> type& {
 			return *_pointer;
 		}
 		inline auto operator->(void) const noexcept -> type* const {
 			return _pointer;
-		}
-		inline explicit operator bool() const noexcept {
-			return nullptr != _pointer;
 		}
 		inline void swap(share_pointer& rhs) noexcept {
 			library::swap(_pointer, rhs._pointer);
@@ -365,10 +369,6 @@ namespace library {
 		inline auto get(void) const noexcept -> type* {
 			return _pointer;
 		}
-		inline friend bool operator==(share_pointer const& lhs, nullptr_t) noexcept {
-			return nullptr == lhs._pointer;
-		}
-
 	};
 	template<typename type>
 	class weak_pointer final {

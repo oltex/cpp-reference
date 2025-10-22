@@ -9,6 +9,8 @@ namespace detail {
 	template<typename type, size_t sso = 16> //small string optimization
 		requires (library::any_of_type<type, char, wchar_t>)
 	class string final {
+		template<typename type>
+		friend class string_view;
 		using size_type = unsigned int;
 		union buffer {
 			library::array<type, sso> _array;
@@ -25,15 +27,14 @@ namespace detail {
 			: _size(0), _capacity(sso), _buffer() {
 		};
 		template<typename argument>
-			requires (library::same_type<library::remove_cp<argument>, type>)
-		inline string(argument arg) noexcept
+		inline string(argument&& arg) noexcept
 			: string() {
-			insert(end(), arg);
+			insert(end(), std::forward<argument>(arg));
 		}
 		inline string(string const& rhs) noexcept
 			: string(const_cast<string&>(rhs).data()) {
 		};
-		inline explicit string(string&& rhs) noexcept
+		inline string(string&& rhs) noexcept
 			: _size(library::exchange(rhs._size, 0)), _capacity(library::exchange(rhs._capacity, static_cast<size_type>(sso))), _buffer(rhs._buffer) {
 			rhs.null();
 		};
@@ -57,10 +58,12 @@ namespace detail {
 		};
 
 		template<typename argument>
-			requires (library::same_type<library::remove_cp<argument>, type>)
-		inline auto insert(iterator iter, argument arg) noexcept -> iterator {
+		//requires (library::same_type<library::remove_cp<argument>, string_view<type>> || library::same_type<library::remove_cp<argument>, type>)
+		inline auto insert(iterator iter, argument&& arg) noexcept -> iterator {
 			size_type char_size;
-			if constexpr (library::same_type<argument, type>)
+			if constexpr (library::any_of_type<library::remove_cvr<argument>, string<type>, string_view<type>>)
+				char_size = arg.size();
+			else if constexpr (library::same_type<library::remove_reference<argument>, type>)
 				char_size = 1;
 			else
 				char_size = static_cast<size_type>(library::string_length(arg));
@@ -72,7 +75,9 @@ namespace detail {
 			}
 			library::memory_move(iter + char_size, iter, end() - iter);
 
-			if constexpr (library::same_type<argument, type>)
+			if constexpr (library::any_of_type<library::remove_cvr<argument>, string<type>, string_view<type>>)
+				library::memory_copy(iter, arg.data(), char_size);
+			else if constexpr (library::same_type<library::remove_reference<argument>, type>)
 				*iter = arg;
 			else
 				library::memory_copy(iter, arg, char_size);
@@ -93,75 +98,71 @@ namespace detail {
 		inline void pop_back(void) noexcept {
 			erase(end() - 1);
 		}
-		inline auto operator=(type const* const character) noexcept -> string& {
-			assign(character);
+		template<typename argument>
+		inline auto append(argument&& arg) noexcept -> string& {
+			insert(end(), std::forward<argument>(arg));
 			return *this;
 		}
-		inline auto assign(type const* const character) noexcept -> string& {
+		template<typename argument>
+		inline auto operator+=(argument&& arg) noexcept -> string& {
+			return append(std::forward<argument>(arg));
+		}
+		template<typename argument>
+		inline auto assign(argument arg) noexcept -> string& {
 			clear();
-			append(character);
-			return *this;
-		}
-		inline auto operator+=(type const* const character) noexcept -> string& {
-			append(character);
-			return *this;
+			return append(arg);
 		}
 		template<typename argument>
-			requires (library::same_type<library::remove_cp<argument>, type>)
-		inline auto append(argument character) noexcept -> string& {
-			insert(end(), character);
-			return *this;
+		inline auto operator=(argument arg) noexcept -> string& {
+			return assign(arg);
 		}
+		template<typename argument>
+		inline auto operator==(argument&& rhs) noexcept -> bool {
+			size_type char_size;
+			if constexpr (library::any_of_type<library::remove_cvr<argument>, string<type>, string_view<type>>)
+				char_size = rhs.size();
+			else if constexpr (library::same_type<library::remove_reference<argument>, type>)
+				char_size = 1;
+			else
+				char_size = static_cast<size_type>(library::string_length(std::forward<argument>(rhs)));
 
-		inline auto operator==(string const& rhs) const noexcept -> bool {
-			if (_size != rhs._size)
+			if (char_size != size())
 				return false;
-			return 0 == library::memory_compare(const_cast<string&>(*this).data(), const_cast<string&>(rhs).data(), _size);
-		}
-		template<typename argument>
-			requires (library::same_type<library::remove_cp<argument>, type>)
-		inline friend auto operator==(string const& lhs, argument rhs) noexcept -> bool {
-			if constexpr (library::same_type<argument, type>) {
-				if (lhs._size != 1)
-					return false;
-				return *const_cast<string&>(lhs).data() == rhs;
-			}
-			else {
-				if (lhs._size != library::string_length(rhs))
-					return false;
-				return 0 == library::memory_compare(const_cast<string&>(lhs).data(), rhs, lhs._size);
-			}
+			if constexpr (library::any_of_type<library::remove_cvr<argument>, string<type>, string_view<type>>)
+				return 0 == library::memory_compare(data(), rhs.data(), _size);
+			else if constexpr (library::same_type<library::remove_reference<argument>, type>)
+				return data()[0] == rhs;
+			else
+				return 0 == library::memory_compare(data(), std::forward<argument>(rhs), _size);
 		};
-		inline auto operator+(string const& rhs) const noexcept -> string {
+		template<typename argument>
+		inline auto operator+(argument&& rhs) noexcept -> string {
 			string result;
-			result.reserve(_size + rhs._size + 1);
-			result.append(const_cast<string&>(*this).c_str()).append(const_cast<string&>(rhs).c_str());
+			size_type char_size;
+			if constexpr (library::any_of_type<library::remove_cvr<argument>, string<type>, string_view<type>>)
+				char_size = rhs.size();
+			else if constexpr (library::same_type<library::remove_reference<argument>, type>)
+				char_size = 1;
+			else
+				char_size = static_cast<size_type>(library::string_length(std::forward<argument>(rhs)));
+
+			result.reserve(size() + char_size + 1);
+			result.append(*this).append(std::forward<argument>(rhs));
 			return result;
 		}
 		template<typename argument>
-			requires (library::same_type<library::remove_cp<argument>, type>)
-		inline friend auto operator+(string const& lhs, argument rhs) noexcept -> string {
+		inline friend auto operator+(argument&& lhs, string const& rhs) noexcept -> string {
 			string result;
 			size_type char_size;
-			if constexpr (std::is_same_v<argument, type>)
+			if constexpr (library::any_of_type<library::remove_cvr<argument>, string<type>, string_view<type>>)
+				char_size = lhs.size();
+			else if constexpr (library::same_type<library::remove_reference<argument>, type>)
 				char_size = 1;
 			else
-				char_size = static_cast<size_type>(library::string_length(rhs));
-			result.reserve(lhs._size + char_size + 1);
-			result.append(const_cast<string&>(lhs).c_str()).append(rhs);
-			return result;
-		}
-		template<typename argument>
-			requires (library::same_type<library::remove_cp<argument>, type>)
-		inline friend auto operator+(argument lhs, string const& rhs) noexcept -> string {
-			string result;
-			size_type char_size;
-			if constexpr (library::same_type<argument, type>)
-				char_size = 1;
-			else
-				char_size = static_cast<size_type>(library::string_length(lhs));
-			result.reserve(rhs._size + char_size + 1);
-			result.append(lhs).append(const_cast<string&>(rhs).c_str());
+				char_size = static_cast<size_type>(library::string_length(std::forward<argument>(lhs)));
+
+			result.reserve(char_size + rhs.size() + 1);
+			result.append(std::forward<argument>(lhs)).append(rhs);
 			return result;
 		}
 
@@ -183,7 +184,6 @@ namespace detail {
 			assert(index < _size && "index out of range");
 			return data()[index];
 		}
-
 		inline void reserve(size_type capacity) noexcept {
 			if (_capacity < capacity) {
 				if (sso >= _capacity)
@@ -226,32 +226,69 @@ namespace detail {
 		}
 	};
 
-	//template<typename type>
-	//class string_view {
-	//	type* _pointer;
-	//public:
-	//	inline explicit string_view(void) noexcept
-	//		: _pointer(nullptr) {
-	//	};
-	//};
+	template<typename type>
+	class string_view {
+		using size_type = unsigned int;
+		using iterator = type*;
+		type const* _pointer;
+		size_type _size;
+	public:
+		inline explicit string_view(void) noexcept
+			: _pointer(nullptr), _size(0) {
+		};
+		inline explicit string_view(string<type> const& string) noexcept
+			: _pointer(string.data()), _size(string.size()) {
+		};
+		inline explicit string_view(type const* const pointer) noexcept
+			: _pointer(pointer), _size(static_cast<size_type>(library::string_length(pointer))) {
+		}
+		inline string_view(string_view const&) noexcept = default;
+		inline string_view(string_view&&) noexcept = default;
+		inline auto operator=(string_view const&) noexcept -> string_view & = default;
+		inline auto operator=(string_view&&) noexcept -> string_view & = default;
+		inline ~string_view(void) noexcept = default;
+
+		inline auto size(void) const noexcept -> size_type {
+			return _size;
+		}
+		inline auto begin(void) noexcept -> iterator {
+			return _pointer;
+		}
+		inline auto end(void) noexcept -> iterator {
+			return _pointer + _size;
+		}
+		inline auto operator[](size_type const index) const noexcept ->type& {
+			assert(index < _size && "index out of range");
+			return _pointer[index];
+		}
+		inline auto data(void) noexcept -> type const* {
+			return _pointer;
+		}
+	};
+
+	template<typename type, size_t size>
+	struct string_literal {
+		type _value[size];
+		inline constexpr string_literal(const type(&str)[size]) noexcept {
+			std::copy_n(str, size, _value);
+		}
+		inline constexpr explicit string_literal(string_literal const&) noexcept = default;
+		inline constexpr explicit string_literal(string_literal&&) noexcept = default;
+		inline auto operator=(string_literal const&) noexcept -> string_literal & = default;
+		inline auto operator=(string_literal&&) noexcept -> string_literal & = default;
+		inline ~string_literal(void) noexcept = default;
+	};
 }
 
 namespace library {
 	using string = typename detail::string<char>;
 	using wstring = typename detail::string<wchar_t>;
-
-	template <size_t size>
-	struct string_literal {
-		char _value[size];
-		inline constexpr string_literal(const char(&str)[size]) noexcept {
-			std::copy_n(str, size, _value);
-		}
-		inline explicit string_literal(string_literal const&) noexcept = default;
-		inline explicit string_literal(string_literal&&) noexcept = default;
-		inline auto operator=(string_literal const&) noexcept -> string_literal & = default;
-		inline auto operator=(string_literal&&) noexcept -> string_literal & = default;
-		inline ~string_literal(void) noexcept = default;
-	};
+	using string_view = typename detail::string_view<char>;
+	using wstring_view = typename detail::string_view<wchar_t>;
+	template<size_t size>
+	using string_literal = typename detail::string_literal<char, size>;
+	template<size_t size>
+	using wstring_literal = typename detail::string_literal<wchar_t, size>;
 
 	template<typename type>
 		requires (library::any_of_type<type, string, wstring>)

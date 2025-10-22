@@ -220,7 +220,6 @@ namespace library {
 			return ::strlen(character);
 		else
 			return ::wcslen(character);
-
 	}
 	template <typename type>
 		requires (library::any_of_type<type, char, wchar_t>)

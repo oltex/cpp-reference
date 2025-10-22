@@ -72,7 +72,11 @@ namespace library {
 	template <typename type>
 	using remove_cp = typename detail::remove_const<typename detail::remove_pointer<type>::type>::type;
 	template <typename type>
+	using remove_cr = remove_const<remove_reference<type>>;
+	template <typename type>
 	using remove_cv = typename detail::remove_const<typename detail::remove_volatile<type>::type>::type;
+	template <typename type>
+	using remove_cvr = remove_cv<remove_reference<type>>;
 	template <typename type>
 	using remove_rp = typename detail::remove_reference<typename detail::remove_pointer<type>::type>::type;
 
