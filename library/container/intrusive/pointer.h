@@ -127,6 +127,9 @@ namespace library::intrusive {
 		inline auto operator->(void) const noexcept -> type* const {
 			return static_cast<type*>(_pointer);
 		}
+		inline bool operator==(nullptr_t) noexcept {
+			return nullptr == _pointer;
+		}
 		inline explicit operator bool() const noexcept {
 			return nullptr != _pointer;
 		}
@@ -145,9 +148,7 @@ namespace library::intrusive {
 		inline void reset(void) noexcept {
 			_pointer = nullptr;
 		}
-		friend inline bool operator==(share_pointer const& lhs, nullptr_t) noexcept {
-			return nullptr == lhs._pointer;
-		}
+
 	};
 	template<typename type, size_t index>
 	class weak_pointer {
@@ -222,7 +223,6 @@ namespace library::intrusive {
 		inline auto lock(void) noexcept {
 			return share_pointer<type, 0>(*this);
 		}
-
 		template<typename other>
 		inline void swap(weak_pointer<other, index>& rhs) noexcept {
 			library::swap(_pointer, rhs._pointer);

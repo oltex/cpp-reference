@@ -63,7 +63,7 @@ namespace library {
 	}
 	template <typename type = void>
 	struct equal {
-		inline static constexpr bool execute(const type& left, const type& right) noexcept {
+		inline static constexpr bool execute(type const& left, type const& right) noexcept {
 			return left == right;
 		}
 	};

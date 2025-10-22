@@ -6,11 +6,11 @@
 #include <cassert>
 
 namespace detail {
-	template<typename type, size_t sso = 16> //small string optimization
+	template<typename type>
+	class string_view;
+	template<typename type, size_t sso = 16>
 		requires (library::any_of_type<type, char, wchar_t>)
 	class string final {
-		template<typename type>
-		friend class string_view;
 		using size_type = unsigned int;
 		union buffer {
 			library::array<type, sso> _array;
@@ -116,8 +116,13 @@ namespace detail {
 		inline auto operator=(argument arg) noexcept -> string& {
 			return assign(arg);
 		}
+
+		inline bool operator==(string const& rhs) const noexcept {
+			return size() == rhs.size() && 0 == library::memory_compare(data(), rhs.data(), size());
+		}
 		template<typename argument>
-		inline auto operator==(argument&& rhs) noexcept -> bool {
+			requires(!library::same_type<library::remove_cvr<argument>, string<type>>)
+		inline auto operator==(argument&& rhs) const noexcept -> bool {
 			size_type char_size;
 			if constexpr (library::any_of_type<library::remove_cvr<argument>, string<type>, string_view<type>>)
 				char_size = rhs.size();
@@ -136,7 +141,7 @@ namespace detail {
 				return 0 == library::memory_compare(data(), std::forward<argument>(rhs), _size);
 		};
 		template<typename argument>
-		inline auto operator+(argument&& rhs) noexcept -> string {
+		inline friend auto operator+(string const& lhs, argument&& rhs) noexcept -> string {
 			string result;
 			size_type char_size;
 			if constexpr (library::any_of_type<library::remove_cvr<argument>, string<type>, string_view<type>>)
@@ -146,23 +151,8 @@ namespace detail {
 			else
 				char_size = static_cast<size_type>(library::string_length(std::forward<argument>(rhs)));
 
-			result.reserve(size() + char_size + 1);
-			result.append(*this).append(std::forward<argument>(rhs));
-			return result;
-		}
-		template<typename argument>
-		inline friend auto operator+(argument&& lhs, string const& rhs) noexcept -> string {
-			string result;
-			size_type char_size;
-			if constexpr (library::any_of_type<library::remove_cvr<argument>, string<type>, string_view<type>>)
-				char_size = lhs.size();
-			else if constexpr (library::same_type<library::remove_reference<argument>, type>)
-				char_size = 1;
-			else
-				char_size = static_cast<size_type>(library::string_length(std::forward<argument>(lhs)));
-
-			result.reserve(char_size + rhs.size() + 1);
-			result.append(std::forward<argument>(lhs)).append(rhs);
+			result.reserve(lhs.size() + char_size + 1);
+			result.append(lhs).append(std::forward<argument>(rhs));
 			return result;
 		}
 
@@ -261,7 +251,7 @@ namespace detail {
 			assert(index < _size && "index out of range");
 			return _pointer[index];
 		}
-		inline auto data(void) noexcept -> type const* {
+		inline auto data(void) const noexcept -> type const* {
 			return _pointer;
 		}
 	};
@@ -278,6 +268,40 @@ namespace detail {
 		inline auto operator=(string_literal&&) noexcept -> string_literal & = default;
 		inline ~string_literal(void) noexcept = default;
 	};
+
+	template<typename type>
+		requires (library::any_of_type<type, string<char>, string<wchar_t>>)
+	struct string_hash {
+		using size_type = unsigned int;
+		inline static constexpr size_type _offset_basis = sizeof(size_type) == 4 ? 2166136261U : 14695981039346656037ULL;
+		inline static constexpr size_type _prime = sizeof(size_type) == 4 ? 16777619U : 1099511628211ULL;
+
+		template <typename argument>
+		inline static constexpr auto execute(argument&& key) -> size_type {
+			size_type size;
+			if constexpr (library::any_of_type<library::remove_cvr<argument>, string<char>, string<wchar_t>, string_view<char>, string_view<wchar_t>>)
+				size = key.size();
+			else if constexpr (library::any_of_type<library::remove_reference<argument>, char, wchar_t>)
+				size = 1;
+			else
+				size = static_cast<size_type>(library::string_length(key));
+
+			auto value = _offset_basis;
+			unsigned char const* byte;
+			if constexpr (library::any_of_type<library::remove_cvr<argument>, string<char>, string<wchar_t>, string_view<char>, string_view<wchar_t>>)
+				byte = reinterpret_cast<unsigned char const*>(key.data());
+			else if constexpr (library::any_of_type<library::remove_reference<argument>, char, wchar_t>)
+				byte = reinterpret_cast<unsigned char const*>(&key);
+			else
+				byte = reinterpret_cast<unsigned char const*>(key);
+
+			for (size_type index = 0; index < size; ++index) {
+				value ^= static_cast<size_type>(byte[index]);
+				value *= _prime;
+			}
+			return value;
+		}
+	};
 }
 
 namespace library {
@@ -290,39 +314,11 @@ namespace library {
 	template<size_t size>
 	using wstring_literal = typename detail::string_literal<wchar_t, size>;
 
-	template<typename type>
-		requires (library::any_of_type<type, string, wstring>)
-	struct fnv_hash_string {
-		using size_type = unsigned int;
-		inline static constexpr size_type _offset_basis = sizeof(size_type) == 4 ? 2166136261U : 14695981039346656037ULL;
-		inline static constexpr size_type _prime = sizeof(size_type) == 4 ? 16777619U : 1099511628211ULL;
 
-		inline static constexpr auto execute(type const& key) -> size_type {
-			auto value = _offset_basis;
-			auto byte = reinterpret_cast<unsigned char const*>(key.data());
-			for (size_type index = 0; index < key.size(); ++index) {
-				value ^= static_cast<size_type>(byte[index]);
-				value *= _prime;
-			}
-			return value;
-		}
-		template <typename argument>
-			requires (library::same_type<type, string>&& library::same_type<argument, char>) || (library::same_type<type, wstring> && library::same_type<argument, wchar_t>)
-		inline static constexpr auto execute(argument const* key) -> size_type {
-			auto value = _offset_basis;
-			auto byte = reinterpret_cast<unsigned char const*>(key);
-			auto size = library::string_length(key);
-			for (size_type index = 0; index < size; ++index) {
-				value ^= static_cast<size_type>(byte[index]);
-				value *= _prime;
-			}
-			return value;
-		}
+	template<>
+	struct fnv_hash<string> : public detail::string_hash<string> {
 	};
 	template<>
-	struct fnv_hash<string> : public fnv_hash_string<string> {
-	};
-	template<>
-	struct fnv_hash<wstring> : public fnv_hash_string<wstring> {
+	struct fnv_hash<wstring> : public detail::string_hash<wstring> {
 	};
 }

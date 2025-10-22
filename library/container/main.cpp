@@ -1,4 +1,4 @@
-//#include "../debug.h"
+#include "../debug.h"
 
 //#include "example/list.h"
 //#include "example/pool.h"
@@ -11,7 +11,7 @@
 //#include "example/array.h"
 //#include "example/priority_queue.h"
 //#include "example/serialize_buffer.h"
-//#include "example/string.h"
+#include "example/string.h"
 //#include "example/storage.h"
 //#include "example/pointer.h"
 //#include "example/circle_queue.h"
@@ -27,18 +27,9 @@
 //#include "example/bit_set.h"
 //#include "example/intrusive/pointer_list.h"
 //#include "example/read_copy_update.h"
-struct sp {
-	bool operator==(std::nullptr_t) const noexcept { return ptr == nullptr; }
-	explicit operator bool() const noexcept { return ptr != nullptr; }
-	void* ptr{};
-};
 
 int main(void) noexcept {
-	sp p{};
-	(void)(p == nullptr);
-	(void)(nullptr == p);
-
-	//library::crt_set_debug_flag();
+	library::crt_set_debug_flag();
 	//example::list();
 	//example::pair();
 	//example::tuple();
@@ -50,7 +41,7 @@ int main(void) noexcept {
 	//example::array();
 	//example::priority_queue();
 	//example::serialize_buffer();
-	//example::string();
+	example::string();
 	//example::stroage();
 	//example::unique_pointer();
 	//example::circle_queue();
