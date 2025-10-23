@@ -178,7 +178,7 @@ namespace detail {
 			return size() == rhs.size() && 0 == library::memory_compare(data(), rhs.data(), size());
 		}
 		template<typename argument>
-			requires(!library::same_type<library::remove_cvr<argument>, string<type>>)
+			requires(!library::same_type<library::remove_cvr<argument>, string<char>, string<wchar_t>>)
 		inline auto operator==(argument&& rhs) const noexcept -> bool {
 			size_type char_size;
 			if constexpr (library::any_of_type<library::remove_cvr<argument>, string<type>, string_view<type>>)
