@@ -21,18 +21,6 @@ namespace example {
 			}
 		}
 		{
-			char a[] = "hello";
-			auto r = library::multibyte_to_widechar(a, nullptr);
-
-			library::wstring test(L"hello");
-			int k = 10;
-
-			int g = test.size();
-		}
-		{
-
-
-
 			library::wstring string(L"AAA");
 			library::wstring string2(L"BBB");
 			detail::string_view<wchar_t> string_view(L"CCC");
@@ -73,6 +61,30 @@ namespace example {
 			auto b = table.find(library::wstring_view(L"bbb"));
 			int a = 10;
 		}
+		{
+			library::string string("hello");
+			library::wstring wstring(L"æ»≥Á«œººø‰");
+			library::string string_view(L"hello");
+			library::wstring_view wstring_view(L"æ»≥Á«œººø‰");
+			char char_word = 'h';
+			wchar_t wchar_word = L'æ»';
+			char const* char_string = "hello";
+			wchar_t const* wchar_string = L"æ»≥Á«œººø‰";
+
+			auto a = string + wstring;
+			auto b = string + wstring_view;
+			auto c = string + wchar_word;
+			auto d = string + wchar_string;
+
+			auto e = wstring + string;
+			auto f = wstring + string_view;
+			auto g = wstring + char_word;
+			auto h = wstring + char_string;
+
+			int k = 10;
+		}
+
+
 		//string = L"hello";
 		//string += L"guy";
 		//auto iter = string.begin();

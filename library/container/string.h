@@ -5,7 +5,29 @@
 #include "array.h"
 #include <cassert>
 
+namespace library {
+	inline auto multibyte_to_widechar(char const* source, int const source_size, wchar_t* destine, int const destine_size) noexcept {
+		return ::MultiByteToWideChar(CP_ACP, 0, source, source_size, destine, destine_size);
+	}
+	inline auto widechar_to_multibyte(wchar_t const* source, int const source_size, char* destine, int const destine_size = 0) noexcept {
+		return ::WideCharToMultiByte(CP_ACP, 0, source, source_size, destine, destine_size, nullptr, nullptr);
+	}
+}
+
 namespace detail {
+	template<typename word>
+	struct string_extract {
+		using type = word;
+	};
+	template<typename word>
+	struct string_extract<word*> {
+		using type = library::remove_cv<word>;
+	};
+	template<class word, std::size_t size>
+	struct string_extract<word[size]> {
+		using type = library::remove_cv<word>;
+	};
+
 	template<typename type>
 	class string_view;
 	template<typename type, size_t sso = 16>
@@ -60,12 +82,30 @@ namespace detail {
 		template<typename argument>
 		inline auto insert(iterator iter, argument&& arg) noexcept -> iterator {
 			size_type char_size;
-			if constexpr (library::any_of_type<library::remove_cvr<argument>, string<type>, string_view<type>>)
-				char_size = arg.size();
-			else if constexpr (library::same_type<library::remove_reference<argument>, type>)
-				char_size = 1;
-			else
-				char_size = static_cast<size_type>(library::string_length(arg));
+			if constexpr (library::same_type<type, typename string_extract<library::remove_cvr<argument>>::type>) {
+				if constexpr (library::any_of_type<library::remove_cvr<argument>, string<type>, string_view<type>>)
+					char_size = arg.size();
+				else if constexpr (library::same_type<library::remove_cvr<argument>, type>)
+					char_size = 1;
+				else
+					char_size = static_cast<size_type>(library::string_length(arg));
+			}
+			else if constexpr (library::same_type<char, type>) {
+				if constexpr (library::any_of_type<library::remove_cvr<argument>, string<wchar_t>, string_view<wchar_t>>)
+					char_size = library::widechar_to_multibyte(arg.data(), static_cast<int>(arg.size()), nullptr, 0);
+				else if constexpr (library::same_type<library::remove_cvr<argument>, wchar_t>)
+					char_size = library::widechar_to_multibyte(&arg, 1, nullptr, 0);
+				else
+					char_size = library::widechar_to_multibyte(std::forward<argument>(arg), static_cast<int>(library::string_length(arg)), nullptr, 0);
+			}
+			else {
+				if constexpr (library::any_of_type<library::remove_cvr<argument>, string<char>, string_view<char>>)
+					char_size = library::multibyte_to_widechar(arg.data(), static_cast<int>(arg.size()), nullptr, 0);
+				else if constexpr (library::same_type<library::remove_cvr<argument>, char>)
+					char_size = library::multibyte_to_widechar(&arg, 1, nullptr, 0);
+				else
+					char_size = library::multibyte_to_widechar(arg, static_cast<int>(library::string_length(arg)), nullptr, 0);
+			}
 
 			if (_size + char_size >= _capacity) {
 				auto index = iter - begin();
@@ -74,12 +114,30 @@ namespace detail {
 			}
 			library::memory_move(iter + char_size, iter, end() - iter);
 
-			if constexpr (library::any_of_type<library::remove_cvr<argument>, string<type>, string_view<type>>)
-				library::memory_copy(iter, arg.data(), char_size);
-			else if constexpr (library::same_type<library::remove_reference<argument>, type>)
-				*iter = arg;
-			else
-				library::memory_copy(iter, arg, char_size);
+			if constexpr (library::same_type<type, typename string_extract<library::remove_cvr<argument>>::type>) {
+				if constexpr (library::any_of_type<library::remove_cvr<argument>, string<type>, string_view<type>>)
+					library::memory_copy(iter, arg.data(), char_size);
+				else if constexpr (library::same_type<library::remove_cvr<argument>, type>)
+					*iter = arg;
+				else
+					library::memory_copy(iter, arg, char_size);
+			}
+			else if constexpr (library::same_type<char, type>) {
+				if constexpr (library::any_of_type<library::remove_cvr<argument>, string<wchar_t>, string_view<wchar_t>>)
+					library::widechar_to_multibyte(arg.data(), static_cast<int>(arg.size()), iter, char_size);
+				else if constexpr (library::same_type<library::remove_cvr<argument>, wchar_t>)
+					library::widechar_to_multibyte(&arg, 1, iter, char_size);
+				else
+					library::widechar_to_multibyte(arg, static_cast<int>(library::string_length(arg)), iter, char_size);
+			}
+			else {
+				if constexpr (library::any_of_type<library::remove_cvr<argument>, string<char>, string_view<char>>)
+					library::multibyte_to_widechar(arg.data(), static_cast<int>(arg.size()), iter, char_size);
+				else if constexpr (library::same_type<library::remove_cvr<argument>, char>)
+					library::multibyte_to_widechar(&arg, 1, iter, char_size);
+				else
+					library::multibyte_to_widechar(arg, static_cast<int>(library::string_length(arg)), iter, char_size);
+			}
 			_size += char_size;
 			null();
 			return iter;
@@ -143,12 +201,31 @@ namespace detail {
 		inline friend auto operator+(string const& lhs, argument&& rhs) noexcept -> string {
 			string result;
 			size_type char_size;
-			if constexpr (library::any_of_type<library::remove_cvr<argument>, string<type>, string_view<type>>)
-				char_size = rhs.size();
-			else if constexpr (library::same_type<library::remove_reference<argument>, type>)
-				char_size = 1;
-			else
-				char_size = static_cast<size_type>(library::string_length(std::forward<argument>(rhs)));
+
+			if constexpr (library::same_type<type, typename string_extract<library::remove_cvr<argument>>::type>) {
+				if constexpr (library::any_of_type<library::remove_cvr<argument>, string<type>, string_view<type>>)
+					char_size = rhs.size();
+				else if constexpr (library::same_type<library::remove_cvr<argument>, type>)
+					char_size = 1;
+				else
+					char_size = static_cast<size_type>(library::string_length(rhs));
+			}
+			else if constexpr (library::same_type<char, type>) {
+				if constexpr (library::any_of_type<library::remove_cvr<argument>, string<wchar_t>, string_view<wchar_t>>)
+					char_size = library::widechar_to_multibyte(rhs.data(), static_cast<int>(rhs.size()), nullptr, 0);
+				else if constexpr (library::same_type<library::remove_cvr<argument>, wchar_t>)
+					char_size = library::widechar_to_multibyte(&rhs, 1, nullptr, 0);
+				else
+					char_size = library::widechar_to_multibyte(std::forward<argument>(rhs), static_cast<int>(library::string_length(rhs)), nullptr, 0);
+			}
+			else {
+				if constexpr (library::any_of_type<library::remove_cvr<argument>, string<char>, string_view<char>>)
+					char_size = library::multibyte_to_widechar(rhs.data(), static_cast<int>(rhs.size()), nullptr, 0);
+				else if constexpr (library::same_type<library::remove_cvr<argument>, char>)
+					char_size = library::multibyte_to_widechar(&rhs, 1, nullptr, 0);
+				else
+					char_size = library::multibyte_to_widechar(rhs, static_cast<int>(library::string_length(rhs)), nullptr, 0);
+			}
 
 			result.reserve(lhs.size() + char_size + 1);
 			result.append(lhs).append(std::forward<argument>(rhs));
@@ -301,6 +378,16 @@ namespace detail {
 			return value;
 		}
 	};
+
+
+	template<typename word>
+	struct string_extract<string<word>> {
+		using type = word;
+	};
+	template<typename word>
+	struct string_extract<string_view<word>> {
+		using type = word;
+	};
 }
 
 namespace library {
@@ -320,7 +407,5 @@ namespace library {
 	struct fnv_hash<wstring> : public detail::string_hash<wstring> {
 	};
 
-	inline auto multibyte_to_widechar(char* source, wchar_t* destine) noexcept {
-		return MultiByteToWideChar(CP_ACP, MB_ERR_INVALID_CHARS, source, -1, destine, 0);
-	}
+
 }
