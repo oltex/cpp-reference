@@ -58,7 +58,6 @@ namespace detail {
 		};
 
 		template<typename argument>
-		//requires (library::same_type<library::remove_cp<argument>, string_view<type>> || library::same_type<library::remove_cp<argument>, type>)
 		inline auto insert(iterator iter, argument&& arg) noexcept -> iterator {
 			size_type char_size;
 			if constexpr (library::any_of_type<library::remove_cvr<argument>, string<type>, string_view<type>>)
@@ -223,13 +222,13 @@ namespace detail {
 		type const* _pointer;
 		size_type _size;
 	public:
-		inline explicit string_view(void) noexcept
+		inline string_view(void) noexcept
 			: _pointer(nullptr), _size(0) {
 		};
-		inline explicit string_view(string<type> const& string) noexcept
+		inline string_view(string<type> const& string) noexcept
 			: _pointer(string.data()), _size(string.size()) {
 		};
-		inline explicit string_view(type const* const pointer) noexcept
+		inline string_view(type const* const pointer) noexcept
 			: _pointer(pointer), _size(static_cast<size_type>(library::string_length(pointer))) {
 		}
 		inline string_view(string_view const&) noexcept = default;
@@ -314,11 +313,14 @@ namespace library {
 	template<size_t size>
 	using wstring_literal = typename detail::string_literal<wchar_t, size>;
 
-
 	template<>
 	struct fnv_hash<string> : public detail::string_hash<string> {
 	};
 	template<>
 	struct fnv_hash<wstring> : public detail::string_hash<wstring> {
 	};
+
+	inline auto multibyte_to_widechar(char* source, wchar_t* destine) noexcept {
+		return MultiByteToWideChar(CP_ACP, MB_ERR_INVALID_CHARS, source, -1, destine, 0);
+	}
 }

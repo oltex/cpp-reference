@@ -1,8 +1,9 @@
 #include "resource.h"
 #include "sound.h"
 #include "mesh.h"
-#pragma comment(lib, "module/directx/binary/directx.lib")
-#include "module/directx/directx.h"
+
+#include <filesystem>
+#include <fstream>
 
 namespace framework {
 	resource::resource(void) noexcept
@@ -13,6 +14,10 @@ namespace framework {
 	}
 	auto resource::guid(void) noexcept -> library::guid& {
 		return _guid;
+	}
+	void resource::save(nlohmann::json& json) noexcept {
+		json["name"] = _name.data();
+		json["guid"] = _guid.string().data();
 	}
 
 	resources::resources(void) noexcept {
@@ -60,15 +65,23 @@ namespace framework {
 	}
 	void resources::destory_resource(library::rcu_pointer<resource> pointer) noexcept {
 		pointer.invalid([&](resource* pointer) {
-			auto& result = _pool.find(reinterpret_cast<resource*>(pointer)->type_name())->_second;
+			auto& result = _pool.find(reinterpret_cast<resource*>(pointer)->type())->_second;
 			result->deallocate(reinterpret_cast<resource*>(pointer));
 			});
 	}
 	void resources::save_resource(void) noexcept {
+		std::filesystem::create_directories("resource");
+		nlohmann::json json;
+
 		for (auto& iter : _pool) {
-			iter._first;// //이걸로 이름 저장
-			iter._second->save();
+			json[iter._first.data()] = nlohmann::json::array();
+			iter._second->save(json[iter._first.data()]);
 		}
+
+		const std::filesystem::path out = std::filesystem::path("resource") / "textures.json";
+		std::ofstream ofs(out, std::ios::binary | std::ios::trunc);
+		ofs << json.dump(2);
+		ofs.flush();
 	}
 	void resources::load_resource(void) noexcept {
 	}

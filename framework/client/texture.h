@@ -24,7 +24,6 @@ namespace framework {
 		auto operator=(texture&&) noexcept -> texture & = delete;
 		virtual ~texture(void) noexcept override = default;
 
-		virtual void save(void) noexcept {};
-
+		virtual void save(nlohmann::json& json) noexcept;
 	};
 }

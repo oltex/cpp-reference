@@ -25,4 +25,10 @@ namespace framework {
 		if (D3D11_BIND_DEPTH_STENCIL & descript.BindFlags)
 			_dsv = device.create_depth_stencil_view(_texture, dsv_descript);
 	}
+	void texture::save(nlohmann::json& json) noexcept {
+		resource::save(json);
+		library::wstring path(L"resource/");
+		//path += 
+		//graphic::instance()._device_context.save_texture_from_file(_texture, )
+	}
 }

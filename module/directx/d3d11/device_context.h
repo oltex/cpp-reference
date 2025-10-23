@@ -15,6 +15,7 @@
 
 namespace d3d11 {
 	class buffer;
+	class texture_2d;
 	struct map_sub_resource : public D3D11_MAPPED_SUBRESOURCE {
 	};
 
@@ -27,6 +28,8 @@ namespace d3d11 {
 		inline auto operator=(device_context const&) noexcept -> device_context & = default;
 		inline auto operator=(device_context&&) noexcept -> device_context & = default;
 		inline ~device_context(void) noexcept = default;
+
+		inline void save_texture_from_file(texture_2d const& texture, wchar_t const* const path) noexcept;
 
 		inline void set_view_port(unsigned int number, view_port* view_port) noexcept;
 		inline void set_view_port(view_port& view_port) noexcept;
@@ -44,7 +47,6 @@ namespace d3d11 {
 
 		inline void set_vertex_buffer(unsigned int start_slot, unsigned int number_buffer, ID3D11Buffer* vertex_buffer[], unsigned int stride[], unsigned int offset[]) noexcept;
 		inline void set_index_buffer(buffer& index_buffer, DXGI_FORMAT format, unsigned int offset) noexcept;
-
 
 		inline auto map(ID3D11Resource* resource, unsigned int sub_resource, D3D11_MAP type, unsigned int flag) noexcept -> map_sub_resource;
 		inline void unmap(ID3D11Resource* resource, unsigned int sub_resource) noexcept;

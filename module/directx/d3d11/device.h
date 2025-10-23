@@ -63,6 +63,7 @@ namespace d3d11 {
 		inline auto create_buffer(buffer_descript const& descript, sub_resource_data const* data) const noexcept -> buffer;
 		inline auto create_texture_2d(texture_2d_descript const& descript, sub_resource_data* data = nullptr) noexcept -> texture_2d;
 		inline auto create_texture_from_file(wchar_t const* const path) noexcept -> library::pair<texture_2d, shader_resource_view>;
+		inline void save_texture_from_file(texture_2d const& texture, wchar_t const* const path) noexcept;
 		inline auto create_render_target_view(texture_2d& texture, render_target_view_descript* desc = nullptr) const noexcept -> render_target_view;
 		inline auto create_shader_resource_view(texture_2d& texture, shader_resource_view_descript* desc = nullptr) const noexcept -> shader_resource_view;
 		inline auto create_unorder_access_view(texture_2d& texture, unorder_access_view_descript* desc = nullptr) const noexcept -> unorder_access_view;

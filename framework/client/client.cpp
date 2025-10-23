@@ -71,6 +71,7 @@ namespace framework {
 
 	}
 	client::~client(void) noexcept {
+		_resources.save_resource();
 	}
 
 	void client::execute(void) noexcept {

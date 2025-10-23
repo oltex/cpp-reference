@@ -257,6 +257,7 @@ namespace library {
 		va_end(arg);
 	}
 
+
 	//_wsplitpath_s(szFullPath, nullptr, 0, nullptr, 0, nullptr, 0, szExt, MAX_PATH);
 	//swprintf_s(path, size / sizeof(wchar_t), L"\\%s(%s)\\%% %s", object.data(), instance.data(), item.data());
 

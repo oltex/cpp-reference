@@ -97,9 +97,6 @@
     <ClInclude Include="menu.h">
       <Filter>content\editor</Filter>
     </ClInclude>
-    <ClInclude Include="library\json.hpp">
-      <Filter>library</Filter>
-    </ClInclude>
     <ClInclude Include="material.h">
       <Filter>content\resource</Filter>
     </ClInclude>
@@ -123,6 +120,9 @@
     </ClInclude>
     <ClInclude Include="hierarchy.h">
       <Filter>content\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="library\json.hpp">
+      <Filter>library</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,9 +1,20 @@
 #include "device_context.h"
+#include "texture_2d.h"
 #include <cassert>
+#include "../DirectXTK/ScreenGrab.h"
+#ifdef _DEBUG
+#pragma comment(lib, "DirectXTK/DirectXTKd.lib")
+#else
+#pragma comment(lib, "DirectXTK/DirectXTK.lib")
+#endif
 
 namespace d3d11 {
 	inline device_context::device_context(ID3D11DeviceContext* component) noexcept
 		: base(component) {
+	}
+	inline void device_context::save_texture_from_file(texture_2d const& texture, wchar_t const* const path) noexcept {
+		auto result = DirectX::SaveDDSTextureToFile(_component, texture, path);
+		assert(SUCCEEDED(result));
 	}
 	inline void device_context::set_view_port(unsigned int number, view_port* view_port) noexcept {
 		_component->RSSetViewports(number, view_port);

@@ -6,23 +6,37 @@
 
 namespace example {
 	inline void string(void) noexcept {
-		std::string std_string;
-		std::wstring std_string2;
-		std_string.push_back('a');
-		//std_string.at()
-		//std_string.insert()
-		//std_string.push_back()
-		//std_string = "hello";
-		std::string_view std_string_view;
-		//std_string.insert(std_string_view);
-		std_string = std_string_view;
-		if (std_string == std_string_view) {
-		}
-
 		{
+			std::string std_string;
+			std::wstring std_string2;
+			std_string.push_back('a');
+			//std_string.at()
+			//std_string.insert()
+			//std_string.push_back()
+			//std_string = "hello";
+			std::string_view std_string_view;
+			//std_string.insert(std_string_view);
+			std_string = std_string_view;
+			if (std_string == std_string_view) {
+			}
+		}
+		{
+			char a[] = "hello";
+			auto r = library::multibyte_to_widechar(a, nullptr);
+
+			library::wstring test(L"hello");
+			int k = 10;
+
+			int g = test.size();
+		}
+		{
+
+
+
 			library::wstring string(L"AAA");
 			library::wstring string2(L"BBB");
 			detail::string_view<wchar_t> string_view(L"CCC");
+			library::wstring string3;
 
 			if (string == string2) {}
 			if (string == string_view) {}

@@ -1,5 +1,6 @@
 #pragma once
 #include "../memory.h"
+#include "../container/string.h"
 #include <objbase.h>
 #include <cassert>
 
@@ -27,6 +28,17 @@ namespace library {
 		}
 		inline bool operator<(guid const& rhs) const noexcept {
 			return 0 > library::memory_compare(&_guid, &rhs._guid, sizeof(GUID));
+		}
+
+		inline auto string(void) noexcept {
+			char buffer[37];
+			std::snprintf(buffer, sizeof(buffer),
+				"%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x",
+				(unsigned)_guid.Data1, _guid.Data2, _guid.Data3,
+				_guid.Data4[0], _guid.Data4[1], _guid.Data4[2], _guid.Data4[3],
+				_guid.Data4[4], _guid.Data4[5], _guid.Data4[6], _guid.Data4[7]);
+
+			return library::string(buffer);
 		}
 	};
 

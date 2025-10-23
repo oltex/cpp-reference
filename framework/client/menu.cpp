@@ -73,8 +73,4 @@ namespace framework {
 		//for (auto& bone : bones) {
 		//}
 	}
-	void menu::open_image(char const* const path) noexcept {
-		auto& resources = resources::instance();
-		resources.create_resource<framework::texture>(path);
-	}
 }

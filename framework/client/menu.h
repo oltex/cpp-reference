@@ -14,6 +14,5 @@ namespace framework {
 		virtual void update(void) noexcept override;
 
 		void open_gltf(char const* const path) noexcept;
-		void open_image(char const* const path) noexcept;
 	};
 }
