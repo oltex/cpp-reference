@@ -6,12 +6,71 @@
 #include <cassert>
 
 namespace library {
+	template <typename type>
+		requires (library::any_of_type<type, char, wchar_t>)
+	inline auto string_length(type const* const character) noexcept -> size_t {
+		if constexpr (library::same_type<type, char>)
+			return ::strlen(character);
+		else
+			return ::wcslen(character);
+	}
+	template <typename type>
+		requires (library::any_of_type<type, char, wchar_t>)
+	inline auto string_copy(type* const destine, type const* const source) noexcept -> type* {
+		if constexpr (library::same_type<type, char>)
+			return ::strcpy(destine, source);
+		else
+			return ::wcscpy(destine, source);
+	}
+	template <typename type>
+		requires (library::any_of_type<type, char, wchar_t>)
+	inline auto string_compare(type const* const string1, type const* const string2) noexcept -> int {
+		if constexpr (library::same_type<type, char>)
+			return ::strcmp(string1, string2);
+		else
+			return ::wcscmp(string1, string2);
+	}
+	template <typename type>
+		requires (library::any_of_type<type, char, wchar_t>)
+	inline auto string_string(type const* const string, type const* const sub_string) noexcept {
+		if constexpr (library::same_type<type, char>)
+			return ::strstr(string, sub_string);
+		else
+			return ::wcsstr(string, sub_string);
+	}
+	template <typename type>
+		requires (library::any_of_type<type, char, wchar_t>)
+	inline auto string_print(type* buffer, size_t const count, type const* format, ...) noexcept {
+		va_list arg;
+		va_start(arg, format);
+		if constexpr (library::same_type<type, char>)
+			return ::vsprintf_s(buffer, count, format, arg);
+		else
+			return ::vswprintf_s(buffer, count, format, arg);
+		va_end(arg);
+	}
+	template <typename type, size_t size>
+		requires (library::any_of_type<type, char, wchar_t>)
+	inline constexpr auto string_print(type(&buffer)[size], type const* format, ...) noexcept {
+		va_list arg;
+		va_start(arg, format);
+		if constexpr (library::same_type<type, char>)
+			return ::vsprintf_s(buffer, format, arg);
+		else
+			return ::vswprintf_s(buffer, format, arg);
+		va_end(arg);
+	}
+
+	//_wsplitpath_s(szFullPath, nullptr, 0, nullptr, 0, nullptr, 0, szExt, MAX_PATH);
+	//swprintf_s(path, size / sizeof(wchar_t), L"\\%s(%s)\\%% %s", object.data(), instance.data(), item.data());
 	inline auto multibyte_to_widechar(char const* source, int const source_size, wchar_t* destine, int const destine_size) noexcept {
 		return ::MultiByteToWideChar(CP_ACP, 0, source, source_size, destine, destine_size);
 	}
 	inline auto widechar_to_multibyte(wchar_t const* source, int const source_size, char* destine, int const destine_size = 0) noexcept {
 		return ::WideCharToMultiByte(CP_ACP, 0, source, source_size, destine, destine_size, nullptr, nullptr);
 	}
+
+	class guid;
 }
 
 namespace detail {
@@ -79,6 +138,26 @@ namespace detail {
 				library::deallocate(_buffer._pointer);
 		};
 
+		template<typename guid>
+			requires (library::same_type<library::remove_cvr<guid>, library::guid>)
+		inline auto insert(iterator iter, guid& arg) noexcept -> iterator {
+			if constexpr (library::same_type<char, type>) {
+				char buffer[37];
+				library::string_print(buffer, "%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x",
+					arg._guid.Data1, arg._guid.Data2, arg._guid.Data3,
+					arg._guid.Data4[0], arg._guid.Data4[1], arg._guid.Data4[2], arg._guid.Data4[3],
+					arg._guid.Data4[4], arg._guid.Data4[5], arg._guid.Data4[6], arg._guid.Data4[7]);
+				return insert(iter, buffer);
+			}
+			else {
+				wchar_t buffer[37];
+				library::string_print(buffer, L"%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x",
+					arg._guid.Data1, arg._guid.Data2, arg._guid.Data3,
+					arg._guid.Data4[0], arg._guid.Data4[1], arg._guid.Data4[2], arg._guid.Data4[3],
+					arg._guid.Data4[4], arg._guid.Data4[5], arg._guid.Data4[6], arg._guid.Data4[7]);
+				return insert(iter, buffer);
+			}
+		}
 		template<typename argument>
 		inline auto insert(iterator iter, argument&& arg) noexcept -> iterator {
 			size_type char_size;
@@ -250,7 +329,7 @@ namespace detail {
 			assert(index < _size && "index out of range");
 			return data()[index];
 		}
-		inline void reserve(size_type capacity) noexcept {
+		inline void reserve(size_type const capacity) noexcept {
 			if (_capacity < capacity) {
 				if (sso >= _capacity)
 					_buffer._pointer = reinterpret_cast<type*>(library::memory_copy(library::allocate<type>(capacity), _buffer._array.data(), _size + 1));
@@ -406,6 +485,4 @@ namespace library {
 	template<>
 	struct fnv_hash<wstring> : public detail::string_hash<wstring> {
 	};
-
-
 }

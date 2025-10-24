@@ -30,7 +30,7 @@ int main(void) noexcept {
 		t[index].wait_for_single(INFINITE);
 	}
 
-	printf("%d", __rdtsc() - rdtec);
+	printf("%lld", __rdtsc() - rdtec);
 	
 
 	//example::interlock();

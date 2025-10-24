@@ -61,7 +61,6 @@ namespace library {
 		inline friend bool operator==(component const& lhs, std::nullptr_t) noexcept {
 			return nullptr == lhs._component;
 		}
-
 		template<typename type>
 		inline auto query_interface(void) noexcept -> component<type> {
 			type* object;

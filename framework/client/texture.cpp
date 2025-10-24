@@ -27,8 +27,7 @@ namespace framework {
 	}
 	void texture::save(nlohmann::json& json) noexcept {
 		resource::save(json);
-		library::wstring path(L"resource/");
-		//path += 
-		//graphic::instance()._device_context.save_texture_from_file(_texture, )
+		library::wstring path = "resource/" + _name;
+		graphic::instance()._device_context.save_texture_from_file(_texture, path.data());
 	}
 }

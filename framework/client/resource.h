@@ -10,6 +10,7 @@
 
 namespace framework {
 	class resource : public library::rcu_base {
+	protected:
 		library::guid _guid;
 		library::string _name;
 	public:
@@ -24,7 +25,7 @@ namespace framework {
 		auto name(void) noexcept -> library::string&;
 		auto guid(void) noexcept -> library::guid&;
 		virtual void save(nlohmann::json& json) noexcept;
-		virtual void load(void) noexcept {};
+		virtual void load(nlohmann::json& json) noexcept;
 	};
 
 	class resources : public library::singleton<resources> {

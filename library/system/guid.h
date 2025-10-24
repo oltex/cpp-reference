@@ -1,19 +1,38 @@
 #pragma once
 #include "../memory.h"
+#include "../template.h"
 #include "../container/string.h"
 #include <objbase.h>
 #include <cassert>
+#pragma comment(lib, "Rpcrt4.lib")
+#include <rpc.h>
+
+namespace detail {
+	template<typename type, size_t sso>
+		requires (library::any_of_type<type, char, wchar_t>)
+	class string;
+}
 
 namespace library {
+
 	class guid {
-		GUID _guid;
 	public:
+		GUID _guid;
 		inline explicit guid(void) noexcept
 			: _guid() {
 		};
 		inline guid(GUID guid) noexcept
 			: _guid(guid) {
 		};
+		template<typename type>
+		inline guid(detail::string<type> const& string) noexcept {
+			RPC_STATUS result;
+			if constexpr (library::same_type<char, type>)
+				result = ::UuidFromStringA(reinterpret_cast<RPC_CSTR>(const_cast<char*>(string.data())), reinterpret_cast<UUID*>(&_guid));
+			else
+				result = ::UuidFromStringW(reinterpret_cast<RPC_WSTR>(const_cast<wchar_t*>(string.data())), reinterpret_cast<UUID*>(&_guid));
+			assert(RPC_S_OK == result);
+		}
 		inline guid(guid const&) noexcept = default;
 		inline guid(guid&&) noexcept = default;
 		inline auto operator=(guid const&) noexcept -> guid & = default;
@@ -24,10 +43,10 @@ namespace library {
 			return _guid;
 		}
 		inline bool operator==(guid const& rhs) const noexcept {
-			return 0 == library::memory_compare(&_guid, &rhs._guid, sizeof(GUID));
+			return 0 == library::memory_compare<GUID>(&_guid, &rhs._guid, 1);
 		}
 		inline bool operator<(guid const& rhs) const noexcept {
-			return 0 > library::memory_compare(&_guid, &rhs._guid, sizeof(GUID));
+			return 0 > library::memory_compare<GUID>(&_guid, &rhs._guid, 1);
 		}
 
 		inline auto string(void) noexcept {
@@ -44,7 +63,7 @@ namespace library {
 
 	inline auto create_guid(void) noexcept -> guid {
 		GUID _guid;
-		auto result = CoCreateGuid(&_guid);
+		auto result = ::CoCreateGuid(&_guid);
 		assert(SUCCEEDED(result));
 		return _guid;
 	}

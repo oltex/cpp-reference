@@ -20,6 +20,11 @@ namespace framework {
 		json["guid"] = _guid.string().data();
 	}
 
+	void resource::load(nlohmann::json& json) noexcept {
+		_name = json["name"].get_ref<std::string const&>().c_str();
+		_guid = json["name"].get_ref<std::string const&>().c_str();
+	}
+
 	resources::resources(void) noexcept {
 		//{
 		//	struct vertex_face {

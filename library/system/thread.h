@@ -33,11 +33,11 @@ namespace library {
 			else
 				::__debugbreak();
 		}
-		inline explicit thread(thread const& rhs) noexcept = delete;
+		inline explicit thread(thread const&) noexcept = delete;
 		inline explicit thread(thread&& rhs) noexcept
 			: handle(std::move(rhs)) {
 		};
-		inline auto operator=(thread const& rhs) noexcept -> thread & = delete;
+		inline auto operator=(thread const&) noexcept -> thread & = delete;
 		inline auto operator=(thread&& rhs) noexcept -> thread& {
 			handle::operator=(std::move(rhs));
 			return *this;

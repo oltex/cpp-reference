@@ -1,6 +1,7 @@
 #pragma once
 #include "../string.h"
 #include "../hash_table.h"
+#include "../../system/guid.h"
 #include <string>
 #include <iostream>
 
@@ -82,6 +83,26 @@ namespace example {
 			auto h = wstring + char_string;
 
 			int k = 10;
+
+			string = "gggg";
+			library::guid guid = library::create_guid();
+			//string.insert(string.end() - 2, guid);
+			string = guid;
+			//wstring = "gggg";
+			//wstring.insert(wstring.end() - 2, guid);
+			wstring = guid;
+
+			library::guid guid2 = string;
+			if (guid2 == guid)
+				int a = 10;
+			library::guid guid3 = wstring;
+			if (guid3 == guid)
+				int a = 10;
+
+			library::guid guid4 = guid;
+			if (guid4 == guid)
+				int a = 10;
+
 		}
 
 

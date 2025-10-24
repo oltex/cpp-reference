@@ -78,7 +78,7 @@ namespace library {
 
 		}
 		inline auto operator==(bit_set const& rhs) const noexcept -> bool {
-			return library::memory_compare(_array, rhs._array, sizeof(_array));
+			return library::memory_compare(_array, rhs._array, word);
 		}
 		inline auto operator&=(bit_set const& rhs) noexcept -> bit_set& {
 			for (size_type index = 0; index < word; ++index)
