@@ -5,6 +5,7 @@
 
 namespace framework {
 	class texture : public resourcer<texture, "texture"> {
+		using base = resourcer<texture, "texture">;
 	public:
 		d3d11::texture_2d _texture;
 		d3d11::render_target_view _rtv;
@@ -12,18 +13,14 @@ namespace framework {
 		d3d11::unorder_access_view _uav;
 		d3d11::depth_stencil_view _dsv;
 	public:
-		explicit texture(wchar_t const* const path) noexcept;
-		explicit texture(d3d11::texture_2d_descript const& descript,
+		texture(library::string_view name, library::string_view path);
+		texture(const nlohmann::json& json);
+		texture(d3d11::texture_2d_descript const& descript,
 			d3d11::render_target_view_descript* rtv_descript,
 			d3d11::shader_resource_view_descript* srv_descript,
 			d3d11::unorder_access_view_descript* uav_descript,
-			d3d11::depth_stencil_view_descript* dsv_descript) noexcept;
-		explicit texture(texture const&) noexcept = default;
-		explicit texture(texture&&) noexcept = delete;
-		auto operator=(texture const&) noexcept -> texture & = delete;
-		auto operator=(texture&&) noexcept -> texture & = delete;
-		virtual ~texture(void) noexcept override = default;
+			d3d11::depth_stencil_view_descript* dsv_descript);
 
-		virtual void save(nlohmann::json& json) noexcept;
+		void save(nlohmann::json& json) noexcept override;
 	};
 }

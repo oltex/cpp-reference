@@ -36,9 +36,10 @@ namespace framework {
 		auto operator=(scenes&&) noexcept -> scenes & = delete;
 		~scenes(void) noexcept = default;
 
+	public:
 		void update_system(void) noexcept;
 		void render_system(void) noexcept;
-	public:
+
 		void create_scene(library::string const& path) noexcept;
 		template<typename type>
 		inline void create_update_system(void) noexcept {
@@ -54,5 +55,7 @@ namespace framework {
 		auto create_object(void) noexcept -> library::intrusive::share_pointer<object, 0>;
 		auto clone_object(library::intrusive::share_pointer<object, 0>& origin) noexcept -> library::intrusive::share_pointer<object, 0>;
 		void destory_object(library::intrusive::share_pointer<object, 0>& pointer) noexcept;
+
+		void edit(void) noexcept;
 	};
 }

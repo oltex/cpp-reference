@@ -1,6 +1,10 @@
 #include "scene.h"
 #include "client.h"
 
+#include "library/imgui/imgui.h"
+#include "library/imgui/imgui_impl_dx11.h"
+#include "library/imgui/imgui_impl_win32.h"
+
 namespace framework {
 	void scenes::update_system(void) noexcept {
 		if (nullptr != _next_scene)
@@ -32,6 +36,16 @@ namespace framework {
 	void scenes::destory_object(library::intrusive::share_pointer<object, 0>& pointer) noexcept {
 		library::intrusive::pointer_list<object, 0, 0>::erase(pointer);
 	}
+
+	void scenes::edit(void) noexcept {
+		if (ImGui::Begin("Scene", 0, ImGuiWindowFlags_MenuBar)) {
+			if (ImGui::BeginMenuBar()) {
+				ImGui::EndMenuBar();
+			}
+		}
+		ImGui::End();
+	}
+
 
 
 	//auto scene::create_object(object_share_ptr& parent) noexcept -> object_share_ptr {

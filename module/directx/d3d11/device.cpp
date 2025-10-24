@@ -1,5 +1,5 @@
 #include "device.h"
-#include "library/function.h"
+#include "library/container/string.h"
 #include <cassert>
 #include "../DirectXTK/DDSTextureLoader.h"
 #include "../DirectXTK/WICTextureLoader.h"

@@ -144,6 +144,7 @@ namespace library {
 		}
 		inline auto accept(socket& socket_, void* output_buffer, unsigned long address_length, unsigned long remote_address_length, overlap& overlap_) noexcept -> result {
 			overlap_.clear();
+#pragma warning(suppress: 6387)
 			if (FALSE == _accept_ex(_socket, socket_.data(), output_buffer, 0, address_length, remote_address_length, nullptr, &overlap_.data())) {
 				switch (::WSAGetLastError()) {
 				case WSA_IO_PENDING:
@@ -176,6 +177,7 @@ namespace library {
 		}
 		inline auto connect(socket_address& socket_address, overlap& overlap) noexcept -> result {
 			overlap.clear();
+#pragma warning(suppress: 6387)
 			if (FALSE == _connect_ex(_socket, &socket_address.data(), socket_address.size(), nullptr, 0, nullptr, &overlap.data())) {
 				switch (::WSAGetLastError()) {
 				case WSA_IO_PENDING:

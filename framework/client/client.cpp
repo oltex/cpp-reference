@@ -30,6 +30,9 @@ namespace framework {
 		_components(components::instance()),
 		_resources(resources::instance()) {
 
+		_resources.load();
+
+
 		auto& a = typeid(transform);
 		_scenes.create_scene("");
 		_scenes.update_system();
@@ -71,7 +74,7 @@ namespace framework {
 
 	}
 	client::~client(void) noexcept {
-		_resources.save_resource();
+		_resources.save();
 	}
 
 	void client::execute(void) noexcept {

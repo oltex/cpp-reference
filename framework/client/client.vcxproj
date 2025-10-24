@@ -159,7 +159,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="asset.h" />
     <ClInclude Include="behaviour.h" />
     <ClInclude Include="behave.h" />
     <ClInclude Include="camera.h" />
@@ -202,7 +201,6 @@
     <ClInclude Include="system.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="asset.cpp" />
     <ClCompile Include="behave.cpp" />
     <ClCompile Include="behaviour.cpp" />
     <ClCompile Include="camera.cpp" />

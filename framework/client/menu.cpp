@@ -63,7 +63,7 @@ namespace framework {
 		std::string _path(path);
 		loader.LoadBinaryFromFile(&model, nullptr, nullptr, path);
 		for (auto& mesh : model.meshes) {
-			resources.create_resource<framework::mesh>(mesh.name.c_str(), model, mesh);
+			resources.create<framework::mesh>(mesh.name.c_str(), model, mesh);
 		}
 		library::vector<library::intrusive::share_pointer<framework::transform, 0>> bones;
 		for (auto& node : model.nodes) {

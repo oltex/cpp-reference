@@ -6,8 +6,9 @@
 #include "library/imgui/imgui_impl_win32.h"
 
 #include "menu.h"
-#include "asset.h"
 #include "inspector.h"
+#include "resource.h"
+#include "scene.h"
 
 namespace framework {
 	editors::editors(void) noexcept {
@@ -59,7 +60,7 @@ namespace framework {
 
 
 		_editor.emplace_back(std::move(library::make_unique<menu>()));
-		_editor.emplace_back(std::move(library::make_unique<asset>()));
+		//_editor.emplace_back(std::move(library::make_unique<asset>()));
 		_editor.emplace_back(std::move(library::make_unique<inspector>()));
 	}
 	editors::~editors(void) noexcept {
@@ -75,6 +76,9 @@ namespace framework {
 
 		for (auto& editor : _editor)
 			editor->update();
+
+		resources::instance().update();
+		scenes::instance().edit();
 	}
 	void editors::render(void) noexcept {
 		ImGui::Render();

@@ -15,7 +15,7 @@ namespace framework {
 		}
 		library::share_pointer<FMOD::Sound> _sound;
 	public:
-		explicit sound(char const* const path, FMOD_MODE const mode) noexcept;
+		explicit sound(library::string_view path, FMOD_MODE const mode) noexcept;
 		explicit sound(sound const& rhs) noexcept;
 		explicit sound(sound&&) noexcept = delete;
 		auto operator=(sound const&) noexcept -> sound & = delete;

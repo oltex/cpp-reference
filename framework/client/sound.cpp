@@ -2,9 +2,9 @@
 #include "audio.h"
 
 namespace framework {
-	sound::sound(char const* const path, FMOD_MODE const mode) noexcept {
+	sound::sound(library::string_view path, FMOD_MODE const mode) noexcept {
 		FMOD::Sound* sound;
-		audio::instance()._system->createSound(path, mode, nullptr, &sound);
+		audio::instance()._system->createSound(path.data(), mode, nullptr, &sound);
 		//_sound = library::share_pointer<FMOD::Sound>::share_pointer<FMOD::Sound, sound_deleter>(sound);
 	}
 

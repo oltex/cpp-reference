@@ -23,8 +23,8 @@ namespace library {
 			inline explicit node(void) noexcept = delete;
 			inline explicit node(node const&) noexcept = delete;
 			inline explicit node(node&&) noexcept = delete;
-			inline auto operator=(node const&) noexcept = delete;
-			inline auto operator=(node&&) noexcept = delete;
+			inline auto operator=(node const&) noexcept -> node & = delete;
+			inline auto operator=(node&&) noexcept -> node & = delete;
 			inline ~node(void) noexcept = delete;
 		};
 		size_type _size;
