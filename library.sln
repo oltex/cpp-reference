@@ -35,6 +35,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "directx", "module\directx\directx.vcxproj", "{2EB759EB-E820-4D88-8988-DD5091A4429F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "client", "framework\client\client.vcxproj", "{42C34441-8EEC-465A-9F10-913EC7C51391}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2EB759EB-E820-4D88-8988-DD5091A4429F} = {2EB759EB-E820-4D88-8988-DD5091A4429F}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "scheduler", "module\scheduler\scheduler.vcxproj", "{AA5C4512-19AE-4338-8F77-A412D1AC3B08}"
 EndProject

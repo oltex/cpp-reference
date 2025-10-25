@@ -67,6 +67,10 @@ namespace winapi {
 		////case WM_TIMER:
 		////case WM_PAINT:
 		//	break;
+		case WM_SIZE:
+			if (nullptr != handle)
+				handle->message_size(LOWORD(lparam), HIWORD(lparam));
+			break;
 		case WM_DESTROY:
 			handle->destory();
 			post_quit_message(0);

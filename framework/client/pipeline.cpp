@@ -26,12 +26,12 @@ namespace framework {
 		}
 	}
 	void pipeline::update(void) noexcept {
-		auto& device_context = graphic::instance()._device_context;
-		device_context.set_view_port(_view_port);
-		device_context.set_render_target(_render_target_view, _depth_stencil_view);
-		float color[4]{ 0.1f/*rand() / (float)RAND_MAX*/, 0.1f/*rand() / (float)RAND_MAX*/, 0.1f/*rand() / (float)RAND_MAX*/, 1.f };
-		device_context.clear_render_target_view(_render_target_view, color);
-		device_context.clear_depth_stencil_view(_depth_stencil_view, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
+		//auto& device_context = graphic::instance()._device_context;
+		//device_context.set_view_port(_view_port);
+		//device_context.set_render_target(_render_target_view, nullptr);
+		//float color[4]{ 0.1f/*rand() / (float)RAND_MAX*/, 0.1f/*rand() / (float)RAND_MAX*/, 0.1f/*rand() / (float)RAND_MAX*/, 1.f };
+		//device_context.clear_render_target_view(_render_target_view, color);
+		//device_context.clear_depth_stencil_view(_depth_stencil_view, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
 
 		//camera
 		//if (_camera.expire()) {

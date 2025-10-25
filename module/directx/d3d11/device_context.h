@@ -34,7 +34,7 @@ namespace d3d11 {
 		inline void set_view_port(unsigned int number, view_port* view_port) noexcept;
 		inline void set_view_port(view_port& view_port) noexcept;
 		//inline auto get_view_port(void) noexcept -> view_port;
-		inline void set_render_target(render_target_view& rtv, depth_stencil_view& dsv) noexcept;
+		inline void set_render_target(unsigned int number, render_target_view* rtv, depth_stencil_view* dsv) noexcept;
 		inline void clear_render_target_view(render_target_view& rtv, float color[4]) noexcept;
 		inline void clear_depth_stencil_view(depth_stencil_view& dsv, unsigned int clear_flag, float depth, unsigned char stencil) noexcept;
 

@@ -27,6 +27,7 @@ namespace dxgi {
 			.OutputWindow = handle.data(),
 			.Windowed = window,
 			.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD //DXGI_SWAP_EFFECT_DISCARD 
+			
 		};
 		IDXGISwapChain* component;
 		auto result = _component->CreateSwapChain(device.data(), &desc, &component);

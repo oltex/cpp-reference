@@ -9,6 +9,8 @@
 #include "object.h"
 #include "system.h"
 
+#include "texture.h"
+
 namespace framework {
 	class scenes : public library::singleton<scenes> {
 		struct scene {
@@ -29,7 +31,7 @@ namespace framework {
 		library::unique_pointer<scene> _current_scene;
 		library::unique_pointer<scene> _next_scene;
 
-		explicit scenes(void) noexcept = default;
+		explicit scenes(void) noexcept;
 		explicit scenes(scenes const&) noexcept = delete;
 		explicit scenes(scenes&&) noexcept = delete;
 		auto operator=(scenes const&) noexcept -> scenes & = delete;
@@ -56,6 +58,9 @@ namespace framework {
 		auto clone_object(library::intrusive::share_pointer<object, 0>& origin) noexcept -> library::intrusive::share_pointer<object, 0>;
 		void destory_object(library::intrusive::share_pointer<object, 0>& pointer) noexcept;
 
+		texture _screen;
+		texture _depth;
+	public:
 		void edit(void) noexcept;
 	};
 }

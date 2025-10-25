@@ -13,11 +13,11 @@ namespace framework {
 		library::guid _guid;
 		library::string _name;
 	public:
-		resource(void) noexcept = default;
-		resource(library::string_view name) noexcept;
-		resource(nlohmann::json const& json) noexcept;
-		resource(resource const&) noexcept = delete;
-		resource(resource&&) noexcept = delete;
+		explicit resource(void) noexcept = default;
+		explicit resource(library::string_view name) noexcept;
+		explicit resource(nlohmann::json const& json) noexcept;
+		explicit resource(resource const&) noexcept = delete;
+		explicit resource(resource&&) noexcept = delete;
 		auto operator=(resource const&) noexcept -> resource & = delete;
 		auto operator=(resource&&) noexcept -> resource & = delete;
 		virtual ~resource(void) noexcept = default;
@@ -77,9 +77,9 @@ namespace framework {
 		};
 		std::vector<library::rcu_pointer<resource>> _item;
 
-		resources(void) noexcept;
-		resources(resources const&) noexcept = delete;
-		resources(resources&&) noexcept = delete;
+		explicit resources(void) noexcept;
+		explicit resources(resources const&) noexcept = delete;
+		explicit resources(resources&&) noexcept = delete;
 		auto operator=(resources const&) noexcept -> resources & = delete;
 		auto operator=(resources&&) noexcept -> resources & = delete;
 		~resources(void) noexcept;

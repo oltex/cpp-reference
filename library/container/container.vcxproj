@@ -175,6 +175,7 @@
     <ClInclude Include="example\queue.h" />
     <ClInclude Include="example\read_copy_update.h" />
     <ClInclude Include="example\segment_tree.h" />
+    <ClInclude Include="example\span.h" />
     <ClInclude Include="example\stack.h" />
     <ClInclude Include="example\serialize_buffer.h" />
     <ClInclude Include="example\string.h" />

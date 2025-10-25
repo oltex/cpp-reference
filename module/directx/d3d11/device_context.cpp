@@ -26,8 +26,8 @@ namespace d3d11 {
 	//	unsigned int count;
 	//	_component->RSGetViewports(&count, nullptr);
 	//}
-	inline void device_context::set_render_target(render_target_view& rtv, depth_stencil_view& dsv) noexcept {
-		_component->OMSetRenderTargets(1, &rtv.data(), dsv.data());
+	inline void device_context::set_render_target(unsigned int number, render_target_view* rtv, depth_stencil_view* dsv) noexcept {
+		_component->OMSetRenderTargets(1, nullptr != rtv ? &rtv->data() : nullptr, nullptr != dsv ? dsv->data() : nullptr);
 	}
 	inline void device_context::clear_render_target_view(render_target_view& rtv, float color[4]) noexcept {
 		_component->ClearRenderTargetView(rtv.data(), color);

@@ -1,6 +1,7 @@
 #include "swap_chain.h" 
 #pragma comment(lib, "d3d11.lib")
 #include <d3d11.h>
+#include <cassert>
 
 namespace dxgi {
 	inline swap_chain::swap_chain(IDXGISwapChain* component) noexcept
@@ -17,5 +18,9 @@ namespace dxgi {
 	inline auto swap_chain::get_buffer_texture_2d(void) noexcept -> d3d11::texture_2d {
 		ID3D11Texture2D* component = reinterpret_cast<ID3D11Texture2D*>(get_buffer(__uuidof(ID3D11Texture2D)));
 		return d3d11::texture_2d(component);
+	}
+	inline void swap_chain::resize_buffer(unsigned int count, unsigned int width, unsigned int height, DXGI_FORMAT format, unsigned int flag) noexcept {
+		auto result = _component->ResizeBuffers(count, width, height, format, flag);
+		assert(SUCCEEDED(result));
 	}
 }

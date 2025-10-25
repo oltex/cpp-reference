@@ -89,9 +89,10 @@ namespace framework {
 			_scenes.update_system();
 			_editors.update();
 
+			_graphic.render();
 			_scenes.render_system();
 			_editors.render();
-			_graphic.render_start();
+			_graphic.present();
 			_timer.sleep_frame();
 			rcu.unlock();
 		}

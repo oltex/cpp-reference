@@ -20,7 +20,7 @@ namespace library {
 		::CoTaskMemFree(pointer);
 	}
 
-	template<typename type = void>
+	template<typename type>
 	class component {
 	protected:
 		type* _component;
@@ -55,11 +55,17 @@ namespace library {
 				_component->Release();
 		};
 
-		inline operator type* (void) const noexcept {
+		inline bool operator==(std::nullptr_t) noexcept {
+			return nullptr == _component;
+		}
+		inline auto operator*(void) noexcept -> type& {
+			return *_component;
+		}
+		inline auto operator->(void) noexcept -> type* {
 			return _component;
 		}
-		inline friend bool operator==(component const& lhs, std::nullptr_t) noexcept {
-			return nullptr == lhs._component;
+		inline operator type* (void) const noexcept {
+			return _component;
 		}
 		template<typename type>
 		inline auto query_interface(void) noexcept -> component<type> {
@@ -76,34 +82,6 @@ namespace library {
 		}
 		inline auto data(void) noexcept -> type*& {
 			return _component;
-		}
-	};
-	template<>
-	class component<void> {
-		IUnknown* _unknown;
-	public:
-		inline explicit component(IUnknown* unknown) noexcept
-			: _unknown(unknown) {
-		};
-		inline explicit component(component const&) noexcept = delete;
-		inline explicit component(component&&) noexcept = delete;
-		inline auto operator=(component const&) noexcept -> component & = delete;
-		inline auto operator=(component&&) noexcept -> component & = delete;
-		inline ~component(void) noexcept {
-			if (nullptr != _unknown)
-				_unknown->Release();
-		};
-
-		template<typename type>
-		inline auto query_interface(void) noexcept -> type {
-			type* object;
-			_unknown->QueryInterface<type>(&object);
-			return object;
-		}
-		inline auto query_interface(IID id) noexcept -> void* {
-			void* object;
-			_unknown->QueryInterface(id, &object);
-			return object;
 		}
 	};
 }

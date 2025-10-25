@@ -13,9 +13,6 @@ namespace framework {
 		Sleep(1000);
 	}
 
-	bool window::check_exit(void) noexcept {
-		return WAIT_OBJECT_0 == _thread.wait_for_single(0);
-	}
 	void window::execute(void) noexcept {
 		winapi::_class _class;
 		_class.class_name(L"window");
@@ -34,6 +31,9 @@ namespace framework {
 			winapi::translate_message(*msg);
 			winapi::dispatch_message(*msg);
 		}
+	}
+	bool window::check_exit(void) noexcept {
+		return WAIT_OBJECT_0 == _thread.wait_for_single(0);
 	}
 	bool window::procedure(HWND const hwnd, UINT const message, WPARAM const wparam, LPARAM const lparam) noexcept {
 		if (ImGui_ImplWin32_WndProcHandler(hwnd, message, wparam, lparam))

@@ -6,9 +6,9 @@
 namespace framework {
 	class window : public winapi::handle, public library::singleton<window> {
 		friend class library::singleton<window>;
-		friend class graphic;
-		friend class editor;
 		library::thread _thread;
+		unsigned short _width;
+		unsigned short _height;
 
 		explicit window(void) noexcept;
 		explicit window(window const&) noexcept = delete;
@@ -17,8 +17,9 @@ namespace framework {
 		auto operator=(window&&) noexcept -> window & = delete;
 		~window(void) noexcept = default;
 	public:
-		bool check_exit(void) noexcept;
 		void execute(void) noexcept;
+		bool check_exit(void) noexcept;
+
 		virtual bool procedure(HWND const hwnd, UINT const message, WPARAM const wparam, LPARAM const lparam) noexcept override;
 	};
 }

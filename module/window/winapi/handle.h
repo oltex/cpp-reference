@@ -84,17 +84,18 @@ namespace winapi {
 			return ::InvalidateRect(_hwnd, rect, erase);
 		}
 
-		inline bool virtual procedure(HWND const hwnd, UINT const message, WPARAM const wparam, LPARAM const lparam) noexcept {
+		inline virtual bool procedure(HWND const hwnd, UINT const message, WPARAM const wparam, LPARAM const lparam) noexcept {
 			return false;
 		};
-		inline void virtual mouse_move(int const x, int const y) noexcept {}
-		inline void virtual left_butten_down(int const x, int const y) noexcept {}
-		inline void virtual left_butten_up(int const x, int const y) noexcept {}
-		inline void virtual right_butten_down(int const x, int const y) noexcept {}
-		inline void virtual right_butten_up(int const x, int const y) noexcept {}
-		inline void virtual middle_butten_down(int const x, int const y) noexcept {}
-		inline void virtual middle_butten_up(int const x, int const y) noexcept {}
-		inline void virtual destory(void) noexcept {}
+		inline virtual void mouse_move(int const x, int const y) noexcept {}
+		inline virtual void left_butten_down(int const x, int const y) noexcept {}
+		inline virtual void left_butten_up(int const x, int const y) noexcept {}
+		inline virtual void right_butten_down(int const x, int const y) noexcept {}
+		inline virtual void right_butten_up(int const x, int const y) noexcept {}
+		inline virtual void middle_butten_down(int const x, int const y) noexcept {}
+		inline virtual void middle_butten_up(int const x, int const y) noexcept {}
+		inline virtual void message_size(unsigned short const width, unsigned short const height) noexcept {}
+		inline virtual void destory(void) noexcept {}
 
 		inline auto data(void) noexcept -> HWND& {
 			return _hwnd;

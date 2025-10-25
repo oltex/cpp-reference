@@ -27,6 +27,7 @@
 //#include "example/bit_set.h"
 //#include "example/intrusive/pointer_list.h"
 //#include "example/read_copy_update.h"
+#include "example/span.h"
 
 int main(void) noexcept {
 	library::crt_set_debug_flag();
@@ -58,5 +59,6 @@ int main(void) noexcept {
 	//example::intrusive::pointer_list();
 	//example::pointer();
 	//example::read_copy_update();
+	example::span();
 	return 0;
 }

@@ -24,7 +24,7 @@ namespace framework {
 		d3d11::unorder_access_view_descript* uav_descript,
 		d3d11::depth_stencil_view_descript* dsv_descript) {
 
-		auto& device = graphic::instance()._device;
+		auto& device = graphic::instance().device();
 		_texture = device.create_texture_2d(descript, nullptr);
 
 		if (D3D11_BIND_RENDER_TARGET & descript.BindFlags)

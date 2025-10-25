@@ -1,9 +1,8 @@
 #pragma once
 #include "library/pattern/singleton.h"
 #include "library/system/thread.h"
-#pragma comment(lib, "module/directx/binary/directx.lib")
+#pragma comment(lib, "directx.lib")
 #include "module/directx/directx.h"
-
 
 namespace framework {
 	class graphic : public library::singleton<graphic> {
@@ -17,9 +16,12 @@ namespace framework {
 		friend class camera;
 		friend class transform;
 
+		library::component<ID3D11Device> _device2;
 		d3d11::device _device;
 		d3d11::device_context _device_context;
 		dxgi::swap_chain _swap_chain;
+		d3d11::view_port _view_port;
+		d3d11::render_target_view _render_target_view;
 	public:
 		explicit graphic(void) noexcept;
 		explicit graphic(graphic const&) noexcept = delete;
@@ -28,7 +30,9 @@ namespace framework {
 		auto operator=(graphic&&) noexcept -> graphic & = delete;
 		~graphic(void) noexcept;
 
-		void render_ready(void) noexcept;
-		void render_start(void) noexcept;
+		void render(void) noexcept;
+		void present(void) noexcept;
+		auto device(void) noexcept -> d3d11::device&;
+		auto device_context(void) noexcept -> d3d11::device_context&;
 	};
 }

@@ -5,7 +5,13 @@
 #include "library/imgui/imgui_impl_dx11.h"
 #include "library/imgui/imgui_impl_win32.h"
 
+#include "graphic.h"
+
 namespace framework {
+	scenes::scenes(void) noexcept
+		: _screen(d3d11::texture_2d_descript(1424, 720, 1, 1, DXGI_FORMAT_B8G8R8A8_UNORM, 1, 0, D3D11_USAGE_DEFAULT, D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE, 0, 0), nullptr, nullptr, nullptr, nullptr),
+		_depth(d3d11::texture_2d_descript(1424, 720, 1, 1, DXGI_FORMAT_D24_UNORM_S8_UINT, 1, 0, D3D11_USAGE_DEFAULT, D3D11_BIND_DEPTH_STENCIL, 0, 0), nullptr, nullptr, nullptr, nullptr) {
+	}
 	void scenes::update_system(void) noexcept {
 		if (nullptr != _next_scene)
 			_current_scene = std::move(_next_scene);
@@ -42,6 +48,8 @@ namespace framework {
 			if (ImGui::BeginMenuBar()) {
 				ImGui::EndMenuBar();
 			}
+
+			ImGui::Image((ImTextureID)(_screen._srv.data()), ImVec2(1424, 720), ImVec2(0, 0), ImVec2(1, 1));
 		}
 		ImGui::End();
 	}
