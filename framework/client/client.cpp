@@ -35,7 +35,6 @@ namespace framework {
 
 		auto& a = typeid(transform);
 		_scenes.create_scene("");
-		_scenes.update_system();
 
 		//resource
 		//library::vector<d3d11::input_element_descript> descript{
@@ -83,11 +82,11 @@ namespace framework {
 			rcu.lock();
 			if (_window.check_exit())
 				return;
+			_editors.update();
 			_timer.update_frame();
 			_input.update_state();
 			_audio.update_sound();
-			_scenes.update_system();
-			_editors.update();
+			_scenes.update();
 
 			_graphic.render();
 			_scenes.render_system();

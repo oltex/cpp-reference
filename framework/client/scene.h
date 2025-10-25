@@ -12,20 +12,21 @@
 #include "texture.h"
 
 namespace framework {
-	class scenes : public library::singleton<scenes> {
-		struct scene {
-			using size_type = unsigned int;
-			library::intrusive::pointer_list<object, 0, 0> _object;
-			library::intrusive::pointer_list<system, 0, 0> _system;
-			library::intrusive::pointer_list<system, 0, 0> _render_system;
+	struct scene {
+		using size_type = unsigned int;
+		library::intrusive::pointer_list<object, 0, 0> _object;
+		library::intrusive::pointer_list<system, 0, 0> _system;
+		library::intrusive::pointer_list<system, 0, 0> _render_system;
 
-			explicit scene(void) noexcept = default;
-			explicit scene(scene const&) noexcept = delete;
-			explicit scene(scene&&) noexcept = delete;
-			auto operator=(scene const&) noexcept -> scene & = delete;
-			auto operator=(scene&&) noexcept -> scene & = delete;
-			~scene(void) noexcept = default;
-		};
+		explicit scene(void) noexcept = default;
+		explicit scene(scene const&) noexcept = delete;
+		explicit scene(scene&&) noexcept = delete;
+		auto operator=(scene const&) noexcept -> scene & = delete;
+		auto operator=(scene&&) noexcept -> scene & = delete;
+		~scene(void) noexcept = default;
+	};
+
+	class scenes : public library::singleton<scenes> {
 		friend class client;
 		friend class library::singleton<scenes>;
 		library::unique_pointer<scene> _current_scene;
@@ -37,9 +38,8 @@ namespace framework {
 		auto operator=(scenes const&) noexcept -> scenes & = delete;
 		auto operator=(scenes&&) noexcept -> scenes & = delete;
 		~scenes(void) noexcept = default;
-
 	public:
-		void update_system(void) noexcept;
+		void update(void) noexcept;
 		void render_system(void) noexcept;
 
 		void create_scene(library::string const& path) noexcept;
@@ -60,7 +60,5 @@ namespace framework {
 
 		texture _screen;
 		texture _depth;
-	public:
-		void edit(void) noexcept;
 	};
 }

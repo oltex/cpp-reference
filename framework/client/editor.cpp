@@ -78,7 +78,6 @@ namespace framework {
 			editor->update();
 
 		resources::instance().update();
-		scenes::instance().edit();
 	}
 	void editors::render(void) noexcept {
 		ImGui::Render();
