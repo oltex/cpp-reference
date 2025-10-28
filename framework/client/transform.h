@@ -6,7 +6,7 @@
 
 namespace framework {
 	class transform : public componentr<transform, "transform"> {
-		library::intrusive::weak_pointer<transform, 0> _parent;
+		//library::intrusive::weak_pointer<transform, 0> _parent;
 		dmath::float4x4 _float4x4;
 		dmath::float4 _quaternion;
 		dmath::float3 _scale;
@@ -22,7 +22,7 @@ namespace framework {
 		static auto buffer(void) noexcept -> d3d11::buffer&;
 		auto matrix(void) noexcept -> dmath::matrix;
 
-		void set_parent(library::intrusive::share_pointer<transform, 0>& parent) noexcept;
+		//void set_parent(library::intrusive::share_pointer<transform, 0>& parent) noexcept;
 		void translate(dmath::float3 move, bool local = true) noexcept;
 		void rotate(dmath::float3 move, bool local = true) noexcept;
 

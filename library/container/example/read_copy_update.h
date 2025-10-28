@@ -1,14 +1,24 @@
 #pragma once
 #include "../read_copy_update.h"
+#include "../pool.h"
+#include "../list.h"
+#include "../lockfree/queue.h"
 #include "../../debug.h"
 #include <thread>
 
-
-
-
+struct mystr : public library::rcu_base {
+	mystr(void) noexcept
+		: value(new int(10)) {
+	}
+	~mystr(void) noexcept {
+		delete value;
+	}
+	int* value;
+};
+template<>
+inline constexpr bool library::relocate_safe<library::rcu_pointer<mystr>> = true;
 
 namespace example {
-
 	bool stop = false;
 	int static_index = 0;
 	int count;
@@ -95,27 +105,80 @@ namespace example {
 		return 0;
 	}
 
+
+
+	library::pool<mystr, true, false> _pool;
+	library::lockfree::queue<library::rcu_pointer<mystr>> _queue;
+	inline static unsigned int __stdcall read_copy_update_make(void* arg) noexcept {
+		library::read_copy_update& rcu = library::read_copy_update::instance();
+
+		while (true) {
+			rcu.lock();
+			if (rand() % 2) {
+				auto pointer = _pool.allocate();
+				library::rcu_pointer<mystr> rcu_pointer(pointer);
+				_queue.emplace(rcu_pointer);
+
+				Sleep(1);
+				//_pool.deallocate(pointer);
+				rcu_pointer.invalid([&](mystr* pointer) { _pool.deallocate(pointer); });
+			}
+			rcu.unlock();
+		}
+		return 0;
+	}
+	inline static unsigned int __stdcall read_copy_update_read(void* arg) noexcept {
+		library::read_copy_update& rcu = library::read_copy_update::instance();
+		library::list<library::rcu_pointer<mystr>> list;
+		while (true) {
+			rcu.lock();
+			while (true)
+				if (auto result = _queue.pop(); result)
+					list.emplace_back(*result);
+				else
+					break;
+
+			for (auto iter = list.begin(); iter != list.end();) {
+				if (iter->valid()) {
+					printf("a\n");
+					auto result = *(*iter)->value;
+					if (result != 10)
+						__debugbreak();
+				}
+				else {
+					printf("b\n");
+					iter = list.erase(iter);
+				}
+			}
+
+			rcu.unlock();
+		}
+
+		return 0;
+	}
+
+
 	inline void read_copy_update(void) noexcept {
-		scanf_s("%d", &count);
-		value = new int* [count];
-		for (auto index = 0; index < count; ++index)
-			value[index] = new int(index);
+		//scanf_s("%d", &count);
+		//value = new int* [count];
+		//for (auto index = 0; index < count; ++index)
+		//	value[index] = new int(index);
 
-		HANDLE* thread = new HANDLE[count];
-		for (auto index = 0; index < count; ++index)
-			thread[index] = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, read_copy_update_func, nullptr, 0, 0));
+		//HANDLE* thread = new HANDLE[count];
+		//for (auto index = 0; index < count; ++index)
+		//	thread[index] = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, read_copy_update_func, nullptr, 0, 0));
 
-		system("pause");
-		stop = true;
+		//system("pause");
+		//stop = true;
 
-		WaitForMultipleObjects(count, thread, true, INFINITE);
-		for (auto index = 0; index < count; ++index)
-			CloseHandle(thread[index]);
-		delete[] thread;
+		//WaitForMultipleObjects(count, thread, true, INFINITE);
+		//for (auto index = 0; index < count; ++index)
+		//	CloseHandle(thread[index]);
+		//delete[] thread;
 
-		for (auto index = 0; index < count; ++index)
-			delete value[index];
-		delete[] value;
+		//for (auto index = 0; index < count; ++index)
+		//	delete value[index];
+		//delete[] value;
 
 		//================
 
@@ -140,5 +203,15 @@ namespace example {
 		//delete[] thread;
 
 		//delete[] value2;
+
+		//================
+
+		//scanf_s("%d", &count);
+		//HANDLE* thread = new HANDLE[count];
+		//for (auto index = 0; index < count; ++index)
+		reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, read_copy_update_make, nullptr, 0, 0));
+		reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, read_copy_update_read, nullptr, 0, 0));
+		system("pause");
+
 	}
 }

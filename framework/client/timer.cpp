@@ -14,7 +14,7 @@ namespace framework {
 		_delta = _current - _prev;
 		_prev = _current;
 	}
-	void timer::sleep_frame(void) noexcept {
+	void timer::sleep(void) noexcept {
 		_time += _frame;
 		if (_time > _current)
 			library::sleep(static_cast<unsigned long>((_time - _current) * 1000.));

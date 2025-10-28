@@ -8,13 +8,12 @@
 #include "library/container/pointer.h"
 #include "object.h"
 #include "system.h"
-
-#include "texture.h"
+#include "level.h"
 
 namespace framework {
 	struct scene {
 		using size_type = unsigned int;
-		library::intrusive::pointer_list<object, 0, 0> _object;
+		library::vector<library::rcu_pointer<object>> _object;
 		library::intrusive::pointer_list<system, 0, 0> _system;
 		library::intrusive::pointer_list<system, 0, 0> _render_system;
 
@@ -23,7 +22,7 @@ namespace framework {
 		explicit scene(scene&&) noexcept = delete;
 		auto operator=(scene const&) noexcept -> scene & = delete;
 		auto operator=(scene&&) noexcept -> scene & = delete;
-		~scene(void) noexcept = default;
+		~scene(void) noexcept;
 	};
 
 	class scenes : public library::singleton<scenes> {
@@ -32,15 +31,18 @@ namespace framework {
 		library::unique_pointer<scene> _current_scene;
 		library::unique_pointer<scene> _next_scene;
 
+		library::vector<level> _level;
+
 		explicit scenes(void) noexcept;
 		explicit scenes(scenes const&) noexcept = delete;
 		explicit scenes(scenes&&) noexcept = delete;
 		auto operator=(scenes const&) noexcept -> scenes & = delete;
 		auto operator=(scenes&&) noexcept -> scenes & = delete;
-		~scenes(void) noexcept = default;
+		~scenes(void) noexcept;
 	public:
 		void update(void) noexcept;
-		void render_system(void) noexcept;
+		void render(void) noexcept;
+		void edit(void) noexcept;
 
 		void create_scene(library::string const& path) noexcept;
 		template<typename type>
@@ -54,11 +56,8 @@ namespace framework {
 			_current_scene->_render_system.push_back(pointer);
 			return pointer;
 		}
-		auto create_object(void) noexcept -> library::intrusive::share_pointer<object, 0>;
-		auto clone_object(library::intrusive::share_pointer<object, 0>& origin) noexcept -> library::intrusive::share_pointer<object, 0>;
-		void destory_object(library::intrusive::share_pointer<object, 0>& pointer) noexcept;
-
-		texture _screen;
-		texture _depth;
+		auto create_object(void) noexcept -> library::rcu_pointer<object>;
+		//auto clone_object(library::intrusive::share_pointer<object, 0>& origin) noexcept -> library::intrusive::share_pointer<object, 0>;
+		void destory_object(library::rcu_pointer<object> pointer) noexcept;
 	};
 }

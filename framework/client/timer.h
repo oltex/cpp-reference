@@ -16,6 +16,6 @@ namespace framework {
 		~timer(void) noexcept;
 
 		void update_frame(void) noexcept;
-		void sleep_frame(void) noexcept;
+		void sleep(void) noexcept;
 	};
 }

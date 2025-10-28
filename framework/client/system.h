@@ -16,7 +16,7 @@ namespace framework {
 		virtual ~system(void) noexcept = default;
 
 		virtual void update(void) noexcept = 0;
-		virtual void add_component(library::string const& key, library::vector<library::intrusive::share_pointer<component, 0>> const& component) noexcept {};
+		//virtual void add_component(library::string const& key, library::vector<library::intrusive::share_pointer<component, 0>> const& component) noexcept {};
 
 		template<size_t index>
 		inline static void deallocate(system* pointer) noexcept {};

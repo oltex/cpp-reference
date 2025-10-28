@@ -12,8 +12,9 @@ namespace library {
 	inline auto default_deleter(void* pointer) noexcept {
 		delete pointer;
 	}
+	/* generation must not be modified or destroyed */
 	class rcu_base {
-		template<typename type>
+		template<typename type, auto>
 		friend class rcu_pointer;
 		unsigned long long _generation;
 	public:
@@ -36,13 +37,16 @@ namespace library {
 			return generation == library::interlock_compare_exhange(_generation, generation + 1, generation);
 		}
 	};
-	template<typename type>
+	template<typename type, auto deleter = nullptr>
 	class rcu_pointer {
-		template <typename other>
+		template <typename other, auto>
 		friend class rcu_pointer;
 		type* _pointer;
 		unsigned long long _generation;
 	public:
+		inline rcu_pointer(void) noexcept
+			: _pointer(nullptr) {
+		};
 		inline rcu_pointer(type* pointer) noexcept
 			: _pointer(pointer), _generation(pointer->generation()) {
 		};
@@ -50,7 +54,10 @@ namespace library {
 		inline rcu_pointer(rcu_pointer&&) noexcept = default;
 		inline auto operator=(rcu_pointer const&) noexcept -> rcu_pointer & = default;
 		inline auto operator=(rcu_pointer&&) noexcept -> rcu_pointer & = default;
-		inline ~rcu_pointer(void) noexcept = default;
+		inline ~rcu_pointer(void) noexcept {
+			if (nullptr != deleter)
+				invalid(deleter);
+		};
 		template<typename other>
 		inline rcu_pointer(rcu_pointer<other> const& rhs) noexcept
 			: _pointer(static_cast<type*>(rhs._pointer)), _generation(rhs._generation) {
@@ -73,7 +80,10 @@ namespace library {
 		};
 
 		inline operator bool(void) noexcept {
-			return _pointer->valid(_generation);
+			return nullptr != _pointer && _pointer->valid(_generation);
+		}
+		inline bool operator==(nullptr_t) noexcept {
+			return nullptr == _pointer;
 		}
 		inline auto operator*(void) const noexcept -> type& {
 			return *_pointer;
@@ -84,9 +94,14 @@ namespace library {
 		inline bool valid(void) const noexcept {
 			return _pointer->valid(_generation);
 		}
-
 		template<typename function>
-		inline void invalid(function&& deleter) noexcept;
+		inline void invalid(function&& func) noexcept;
+	};
+
+	class rcu_pool {
+		struct node : public rcu_base {
+
+		};
 	};
 
 	class read_copy_update : public singleton<read_copy_update> {
@@ -168,10 +183,10 @@ namespace library {
 		};
 	};
 
-	template <typename type>
+	template <typename type, auto deleter>
 	template<typename function>
-	inline void rcu_pointer<type>::invalid(function&& deleter) noexcept {
+	inline void rcu_pointer<type, deleter>::invalid(function&& func) noexcept {
 		if (_pointer->invalid(_generation))
-			read_copy_update::instance().retire(_pointer, deleter);
+			read_copy_update::instance().retire(_pointer, func);
 	}
 }

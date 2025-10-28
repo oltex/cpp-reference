@@ -69,13 +69,13 @@ namespace framework {
 
 	}
 
-	void pipeline::add_component(library::string const& key, library::vector<library::intrusive::share_pointer<component, 0>> const& component) noexcept {
-		if ("camera" == key) {
-			_camera = component[0];
-			_camera_transform = component[1];
-		}
-		if ("object" == key) {
-			_renderer.emplace_back(component[0]);
-		}
-	}
+	//void pipeline::add_component(library::string const& key, library::vector<library::intrusive::share_pointer<component, 0>> const& component) noexcept {
+	//	if ("camera" == key) {
+	//		_camera = component[0];
+	//		_camera_transform = component[1];
+	//	}
+	//	if ("object" == key) {
+	//		_renderer.emplace_back(component[0]);
+	//	}
+	//}
 }

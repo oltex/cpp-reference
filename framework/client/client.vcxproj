@@ -188,8 +188,8 @@ xcopy /y /d /i "$(SolutionDir)module\directx\binary\directx.lib" "$(ProjectDir)\
     <ClInclude Include="component.h" />
     <ClInclude Include="audio.h" />
     <ClInclude Include="editor.h" />
-    <ClInclude Include="hierarchy.h" />
     <ClInclude Include="inspector.h" />
+    <ClInclude Include="level.h" />
     <ClInclude Include="library\imgui\imconfig.h" />
     <ClInclude Include="library\imgui\imgui.h" />
     <ClInclude Include="library\imgui\imgui_impl_dx11.h" />
@@ -230,8 +230,8 @@ xcopy /y /d /i "$(SolutionDir)module\directx\binary\directx.lib" "$(ProjectDir)\
     <ClCompile Include="component.cpp" />
     <ClCompile Include="editor.cpp" />
     <ClCompile Include="graphic.cpp" />
-    <ClCompile Include="hierarchy.cpp" />
     <ClCompile Include="inspector.cpp" />
+    <ClCompile Include="level.cpp" />
     <ClCompile Include="library\imgui\imgui.cpp" />
     <ClCompile Include="library\imgui\imgui_demo.cpp" />
     <ClCompile Include="library\imgui\imgui_draw.cpp" />

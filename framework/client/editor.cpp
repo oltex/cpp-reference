@@ -4,11 +4,7 @@
 #include "library/imgui/imgui.h"
 #include "library/imgui/imgui_impl_dx11.h"
 #include "library/imgui/imgui_impl_win32.h"
-
 #include "menu.h"
-#include "inspector.h"
-#include "resource.h"
-#include "scene.h"
 
 namespace framework {
 	editors::editors(void) noexcept {
@@ -34,34 +30,46 @@ namespace framework {
 		style.WindowRounding = 5.f;
 		style.WindowPadding = ImVec2(0.f, 0.f);
 		style.ItemSpacing = ImVec2(0.f, 0.f);
-		style.FrameRounding = 9.f;
+		//style.FramePadding = ImVec2(0.f, 0.f);
+
+
+
+		//style.FrameRounding = 9.f;
 		//style.ScrollbarRounding = 9.f;
+
+
 
 		auto& color = style.Colors;
 		color[ImGuiCol_TitleBg] = ImVec4(0.1f, 0.1f, 0.1f, 1.f); //타이틀
 		color[ImGuiCol_TitleBgActive] = ImVec4(0.1f, 0.1f, 0.1f, 1.f);
 		color[ImGuiCol_TitleBgCollapsed] = ImVec4(0.1f, 0.1f, 0.1f, 1.f);
 		color[ImGuiCol_ResizeGrip] = ImVec4(0.f, 0.f, 0.f, 0.f); //리사이즈 그립
-		color[ImGuiCol_ResizeGripHovered] = ImVec4(0.f, 0.f, 0.f, 0.f);
-		color[ImGuiCol_ResizeGripActive] = ImVec4(0.f, 0.f, 0.f, 0.f);
-		color[ImGuiCol_Tab] = ImVec4(0.15f, 0.15f, 0.15f, 1.f);//탭
-		color[ImGuiCol_TabActive] = ImVec4(0.15f, 0.15f, 0.15f, 1.f);
+		//color[ImGuiCol_ResizeGripHovered] = ImVec4(0.f, 0.f, 0.f, 0.f);
+		//color[ImGuiCol_ResizeGripActive] = ImVec4(0.f, 0.f, 0.f, 0.f);
+		color[ImGuiCol_TabActive] = ImVec4(0.15f, 0.15f, 0.15f, 1.f); //탭
 		color[ImGuiCol_TabUnfocusedActive] = ImVec4(0.15f, 0.15f, 0.15f, 1.f);
+		color[ImGuiCol_Tab] = ImVec4(0.12f, 0.12f, 0.12f, 1.f);
+		color[ImGuiCol_TabUnfocused] = ImVec4(0.12f, 0.12f, 0.12f, 1.f);
 		color[ImGuiCol_Border] = ImVec4(0.1f, 0.1f, 0.1f, 1.f);// 테두리
 		color[ImGuiCol_MenuBarBg] = ImVec4(0.15f, 0.15f, 0.15f, 1.f); //메뉴
 		color[ImGuiCol_WindowBg] = ImVec4(0.15f, 0.15f, 0.15f, 1.f); //본문
 		color[ImGuiCol_Separator] = ImVec4(0.1f, 0.1f, 0.1f, 1.f);// 본문 줄긋기
 
-		color[ImGuiCol_FrameBg] = ImVec4(0.12f, 0.12f, 0.12f, 1);
+		color[ImGuiCol_FrameBg] = ImVec4(0.12f, 0.12f, 0.12f, 1.f);
 
-		color[ImGuiCol_TableHeaderBg] = ImVec4(0.15f, 0.15f, 0.15f, 1);
-		color[ImGuiCol_TableBorderStrong] = ImVec4(0.1f, 0.1f, 0.1f, 1);
-		color[ImGuiCol_TableBorderLight] = ImVec4(0.1f, 0.1f, 0.1f, 1);
+		color[ImGuiCol_TableHeaderBg] = ImVec4(0.15f, 0.15f, 0.15f, 1.f);
+		color[ImGuiCol_TableBorderStrong] = ImVec4(0.1f, 0.1f, 0.1f, 1.f);
+		color[ImGuiCol_TableBorderLight] = ImVec4(0.1f, 0.1f, 0.1f, 1.f);
 
+		color[ImGuiCol_Header] = ImVec4(1.f, 1.f, 1.f, 0.03f); // 기본
+		color[ImGuiCol_HeaderHovered] = ImVec4(1, 1, 1, 0.06f); // 호버
+		color[ImGuiCol_HeaderActive] = ImVec4(1, 1, 1, 0.12f); // 눌림(펼침)
+
+		color[ImGuiCol_Button] = ImVec4(0.f, 0.f, 0.f, 0.f);
+		color[ImGuiCol_ButtonHovered] = ImVec4(1, 1, 1, 0.06f);
+		color[ImGuiCol_ButtonActive] = ImVec4(1, 1, 1, 0.12f);
 
 		_editor.emplace_back(std::move(library::make_unique<menu>()));
-		//_editor.emplace_back(std::move(library::make_unique<asset>()));
-		_editor.emplace_back(std::move(library::make_unique<inspector>()));
 	}
 	editors::~editors(void) noexcept {
 		ImGui_ImplDX11_Shutdown();
@@ -76,8 +84,6 @@ namespace framework {
 
 		for (auto& editor : _editor)
 			editor->update();
-
-		resources::instance().update();
 	}
 	void editors::render(void) noexcept {
 		ImGui::Render();

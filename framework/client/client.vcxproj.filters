@@ -2,28 +2,25 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="component.h">
-      <Filter>content\component</Filter>
+      <Filter>content\scene\component</Filter>
     </ClInclude>
     <ClInclude Include="transform.h">
-      <Filter>content\component</Filter>
+      <Filter>content\scene\component</Filter>
     </ClInclude>
     <ClInclude Include="system.h">
-      <Filter>content\system</Filter>
-    </ClInclude>
-    <ClInclude Include="object.h">
-      <Filter>content\object</Filter>
+      <Filter>content\scene\system</Filter>
     </ClInclude>
     <ClInclude Include="scene.h">
       <Filter>content\scene</Filter>
     </ClInclude>
     <ClInclude Include="camera.h">
-      <Filter>content\component</Filter>
+      <Filter>content\scene\component</Filter>
     </ClInclude>
     <ClInclude Include="behaviour.h">
-      <Filter>content\component</Filter>
+      <Filter>content\scene\component</Filter>
     </ClInclude>
     <ClInclude Include="behave.h">
-      <Filter>content\system</Filter>
+      <Filter>content\scene\system</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>content\resource</Filter>
@@ -35,7 +32,7 @@
       <Filter>content\resource</Filter>
     </ClInclude>
     <ClInclude Include="camera_move.h">
-      <Filter>content\component</Filter>
+      <Filter>content\scene\component</Filter>
     </ClInclude>
     <ClInclude Include="mesh.h">
       <Filter>content\resource</Filter>
@@ -44,10 +41,10 @@
       <Filter>content\resource</Filter>
     </ClInclude>
     <ClInclude Include="pipeline.h">
-      <Filter>content\system</Filter>
+      <Filter>content\scene\system</Filter>
     </ClInclude>
     <ClInclude Include="renderer.h">
-      <Filter>content\component</Filter>
+      <Filter>content\scene\component</Filter>
     </ClInclude>
     <ClInclude Include="library\imgui\imconfig.h">
       <Filter>library\imgui</Filter>
@@ -110,16 +107,19 @@
       <Filter>library\tinygltf</Filter>
     </ClInclude>
     <ClInclude Include="collider.h">
-      <Filter>content\component</Filter>
+      <Filter>content\scene\component</Filter>
+    </ClInclude>
+    <ClInclude Include="library\json.hpp">
+      <Filter>library</Filter>
     </ClInclude>
     <ClInclude Include="inspector.h">
       <Filter>content\editor</Filter>
     </ClInclude>
-    <ClInclude Include="hierarchy.h">
-      <Filter>content\editor</Filter>
+    <ClInclude Include="object.h">
+      <Filter>content\scene\object</Filter>
     </ClInclude>
-    <ClInclude Include="library\json.hpp">
-      <Filter>library</Filter>
+    <ClInclude Include="level.h">
+      <Filter>content\scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -127,11 +127,8 @@
     <ClCompile Include="scene.cpp">
       <Filter>content\scene</Filter>
     </ClCompile>
-    <ClCompile Include="object.cpp">
-      <Filter>content\object</Filter>
-    </ClCompile>
     <ClCompile Include="component.cpp">
-      <Filter>content\component</Filter>
+      <Filter>content\scene\component</Filter>
     </ClCompile>
     <ClCompile Include="texture.cpp">
       <Filter>content\resource</Filter>
@@ -143,19 +140,19 @@
       <Filter>content\resource</Filter>
     </ClCompile>
     <ClCompile Include="behave.cpp">
-      <Filter>content\system</Filter>
+      <Filter>content\scene\system</Filter>
     </ClCompile>
     <ClCompile Include="transform.cpp">
-      <Filter>content\component</Filter>
+      <Filter>content\scene\component</Filter>
     </ClCompile>
     <ClCompile Include="camera.cpp">
-      <Filter>content\component</Filter>
+      <Filter>content\scene\component</Filter>
     </ClCompile>
     <ClCompile Include="behaviour.cpp">
-      <Filter>content\component</Filter>
+      <Filter>content\scene\component</Filter>
     </ClCompile>
     <ClCompile Include="camera_move.cpp">
-      <Filter>content\component</Filter>
+      <Filter>content\scene\component</Filter>
     </ClCompile>
     <ClCompile Include="mesh.cpp">
       <Filter>content\resource</Filter>
@@ -164,10 +161,10 @@
       <Filter>content\resource</Filter>
     </ClCompile>
     <ClCompile Include="pipeline.cpp">
-      <Filter>content\system</Filter>
+      <Filter>content\scene\system</Filter>
     </ClCompile>
     <ClCompile Include="renderer.cpp">
-      <Filter>content\component</Filter>
+      <Filter>content\scene\component</Filter>
     </ClCompile>
     <ClCompile Include="library\imgui\imgui.cpp">
       <Filter>library\imgui</Filter>
@@ -221,13 +218,16 @@
       <Filter>library\tinygltf</Filter>
     </ClCompile>
     <ClCompile Include="collider.cpp">
-      <Filter>content\component</Filter>
+      <Filter>content\scene\component</Filter>
     </ClCompile>
     <ClCompile Include="inspector.cpp">
       <Filter>content\editor</Filter>
     </ClCompile>
-    <ClCompile Include="hierarchy.cpp">
-      <Filter>content\editor</Filter>
+    <ClCompile Include="object.cpp">
+      <Filter>content\scene\object</Filter>
+    </ClCompile>
+    <ClCompile Include="level.cpp">
+      <Filter>content\scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -239,12 +239,6 @@
     </Filter>
     <Filter Include="content">
       <UniqueIdentifier>{a9558376-5987-4f3c-9250-60b39e4badcd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="content\object">
-      <UniqueIdentifier>{7adcc674-fb12-4430-8d5d-db3fd33ad4ab}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="content\component">
-      <UniqueIdentifier>{26fd3a4f-278f-45c1-bfd6-547c8013bd47}</UniqueIdentifier>
     </Filter>
     <Filter Include="content\resource">
       <UniqueIdentifier>{465a10f0-daac-4a71-b933-d1638d9289a4}</UniqueIdentifier>
@@ -258,8 +252,14 @@
     <Filter Include="library\tinygltf">
       <UniqueIdentifier>{85e2ebf0-2373-499f-bfaf-391e3a80a838}</UniqueIdentifier>
     </Filter>
-    <Filter Include="content\system">
+    <Filter Include="content\scene\system">
       <UniqueIdentifier>{9b6eb6da-e6e7-41ff-b6de-2def6a5c2ff6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="content\scene\component">
+      <UniqueIdentifier>{26fd3a4f-278f-45c1-bfd6-547c8013bd47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="content\scene\object">
+      <UniqueIdentifier>{b895bb90-f978-4b7b-9200-f4efdb0d3ef3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

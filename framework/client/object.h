@@ -2,26 +2,17 @@
 #include "library/pattern/singleton.h"
 #include "library/container/hash_table.h"
 #include "library/container/string.h"
-#include "library/container/intrusive/pointer_list.h"
+#include "library/container/read_copy_update.h"
+#include "library/system/guid.h"
 #include "component.h"
 
 namespace framework {
-	class object : public library::intrusive::pointer_hook<0>, public library::intrusive::list_hook<0> {
-		friend class library::intrusive::share_pointer<object, 0>;
-		friend class library::intrusive::weak_pointer<object, 0>;
-		template<size_t index>
-		inline void destruct(void) noexcept {};
-		template<>
-		inline void destruct<0>(void) noexcept {
-			library::destruct(*this);
-		};
-		template<size_t index>
-		inline static void deallocate(object* pointer) noexcept {};
-		template<>
-		inline static void deallocate<0>(object* pointer) noexcept;
-
+	class object : public library::rcu_base {
+	protected:
+		library::guid _guid;
+		library::string _name;
 	public:
-		library::intrusive::pointer_list<component, 0, 0> _component;
+		 library::rcu_pointer<component> _component;
 
 		explicit object(void) noexcept;
 		explicit object(object const& rhs) noexcept;
@@ -31,25 +22,39 @@ namespace framework {
 		~object(void) noexcept = default;
 
 		template<typename type, typename... argument>
-		inline auto add_component(char const* const name, argument&&... arg) noexcept -> library::intrusive::share_pointer<type, 0> {
-			library::intrusive::share_pointer<component, 0> component;
-			auto parent = share_pointer_this<object>();
-			if constexpr (std::is_constructible_v<type, library::intrusive::share_pointer<object, 0>&, argument...>)
-				component = components::instance().allocate_component<type>(parent, std::forward<argument>(arg)...);
-			else
-				component = components::instance().allocate_component<type>(std::forward<argument>(arg)...);
-			_component.push_back(component);
-			return component;
+		inline auto add_component(char const* const name, argument&&... arg) noexcept /*-> library::intrusive::share_pointer<type, 0>*/ {
+			//library::intrusive::share_pointer<component, 0> component;
+			//auto parent = share_pointer_this<object>();
+			//if constexpr (std::is_constructible_v<type, library::intrusive::share_pointer<object, 0>&, argument...>)
+			//	component = components::instance().allocate_component<type>(std::forward<argument>(arg)...);
+			//else
+			//	component = components::instance().allocate_component<type>(std::forward<argument>(arg)...);
+			//_component.push_back(component);
+			//return component;
 		}
+
+		auto name(void) noexcept -> library::string&;
+		void edit(void) noexcept;
 	};
+
+	//class objectp {
+	//	std::variant<library::guid, library::rcu_pointer<object>> _pointer;
+	//public:
+	//	explicit objectp(void) noexcept = default;
+	//	explicit objectp(objectp const&) noexcept = delete;
+	//	explicit objectp(objectp&&) noexcept = delete;
+	//	auto operator=(objectp const&) noexcept -> objectp & = delete;
+	//	auto operator=(objectp&&) noexcept -> objectp & = delete;
+	//	~objectp(void) noexcept = default;
+	//};
 
 	class objects final : public library::singleton<objects> {
 		friend class library::singleton<objects>;
 		friend class scenes;
 		friend class object;
 		friend class menu;
-		library::pool<framework::object, false> _pool;
-		library::unorder_map<library::string, library::intrusive::share_pointer<object, 0>> _prototype;
+		library::pool<framework::object> _pool;
+		//library::unorder_map<library::string, library::intrusive::share_pointer<object, 0>> _prototype;
 
 		explicit objects(void) noexcept = default;
 		explicit objects(objects const&) noexcept = delete;
@@ -59,19 +64,13 @@ namespace framework {
 		~objects(void) noexcept = default;
 
 		template<typename... argument>
-		inline auto allocate_object(argument&&... arg) noexcept -> library::intrusive::share_pointer<object, 0> {
-			auto pointer = _pool.allocate();
-			library::construct<object>(*pointer, std::forward<argument>(arg)...);
-			return library::intrusive::share_pointer<object, 0>(pointer);
+		auto allocate(argument&&... arg) noexcept -> library::rcu_pointer<object> {
+			auto pointer = _pool.allocate(std::forward<argument>(arg)...);
+			return library::rcu_pointer<object>(pointer);
 		}
-		void deallocate_object(object* value) noexcept;
+		void deallocate(library::rcu_pointer<object> pointer) noexcept;
 	public:
-		void regist_prototype(library::string const& name, library::intrusive::share_pointer<object, 0>& object) noexcept;
-		auto find_prototype(library::string const& name) noexcept -> library::intrusive::share_pointer<object, 0>;
-	};
-
-	template<>
-	inline static void object::deallocate<0>(object* pointer) noexcept {
-		objects::instance().deallocate_object(pointer);
+		//void regist_prototype(library::string const& name, library::intrusive::share_pointer<object, 0>& object) noexcept;
+		//auto find_prototype(library::string const& name) noexcept -> library::intrusive::share_pointer<object, 0>;
 	};
 }

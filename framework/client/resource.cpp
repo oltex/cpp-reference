@@ -82,8 +82,8 @@ namespace framework {
 	}
 	void resources::destory(library::rcu_pointer<resource> pointer) noexcept {
 		pointer.invalid([&](resource* pointer) {
-			auto& result = _pool.find(reinterpret_cast<resource*>(pointer)->type())->_second;
-			result->deallocate(reinterpret_cast<resource*>(pointer));
+			auto& result = _pool.find(pointer->type())->_second;
+			result->deallocate(pointer);
 			});
 	}
 	void resources::save(void) noexcept {
@@ -132,11 +132,7 @@ namespace framework {
 				ImGui::EndMenuBar();
 			}
 			ImGui::Separator();
-
-			ImGui::Columns(2);
-			ImGui::SameLine();
-
-			if (ImGui::BeginTable("File", 2, ImGuiTableFlags_Sortable | ImGuiTableFlags_SortMulti | ImGuiTableFlags_Resizable | ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY | ImGuiTableFlags_BordersOuterH | ImGuiTableFlags_NoBordersInBody, ImVec2(0.f, 0.f))) {
+			if (ImGui::BeginTable("File", 2, ImGuiTableFlags_Sortable | ImGuiTableFlags_SortMulti | ImGuiTableFlags_Resizable | ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY | ImGuiTableFlags_BordersOuterH  | ImGuiTableFlags_BordersOuterV | ImGuiTableFlags_NoBordersInBody, ImVec2(0.f, 0.f))) {
 				ImGui::TableSetupScrollFreeze(0, 1);
 				ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_DefaultSort | ImGuiTableColumnFlags_WidthFixed, 0, column::name);
 				ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed, 0, column::type);
@@ -196,14 +192,10 @@ namespace framework {
 				}
 				ImGui::EndTable();
 			}
-
 		}
 		ImGui::End();
 	}
 	void resources::import_file(void) noexcept {
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1, 1, 1, 0.06f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(1, 1, 1, 0.12f));
 		if (ImGui::Button("Import")) {
 			library::file_open_dialog dialog;
 			COMDLG_FILTERSPEC filter[]{ { L"All Files (*.*)", L"*.*" } };
@@ -225,7 +217,6 @@ namespace framework {
 				}
 			}
 		}
-		ImGui::PopStyleColor(3);
 	}
 	void resources::search(void) noexcept {
 		constexpr float width = 220.f;

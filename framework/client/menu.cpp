@@ -54,22 +54,22 @@ namespace framework {
 		}
 	}
 	void menu::open_gltf(char const* const path) noexcept {
-		auto& resources = resources::instance();
-		auto& objects = objects::instance();
-		auto object = objects.allocate_object();
-		tinygltf::Model model;
-		tinygltf::TinyGLTF loader;
+		//auto& resources = resources::instance();
+		//auto& objects = objects::instance();
+		//auto object = objects.allocate();
+		//tinygltf::Model model;
+		//tinygltf::TinyGLTF loader;
 
-		std::string _path(path);
-		loader.LoadBinaryFromFile(&model, nullptr, nullptr, path);
-		for (auto& mesh : model.meshes) {
-			resources.create<framework::mesh>(mesh.name.c_str(), model, mesh);
-		}
-		library::vector<library::intrusive::share_pointer<framework::transform, 0>> bones;
-		for (auto& node : model.nodes) {
-			auto bone = object->add_component<framework::transform>(node.name.c_str(), node.translation, node.rotation, node.scale);
-			bones.emplace_back(bone);
-		}
+		//std::string _path(path);
+		//loader.LoadBinaryFromFile(&model, nullptr, nullptr, path);
+		//for (auto& mesh : model.meshes) {
+		//	resources.create<framework::mesh>(mesh.name.c_str(), model, mesh);
+		//}
+		//library::vector<library::intrusive::share_pointer<framework::transform, 0>> bones;
+		//for (auto& node : model.nodes) {
+		//	auto bone = object->add_component<framework::transform>(node.name.c_str(), node.translation, node.rotation, node.scale);
+		//	bones.emplace_back(bone);
+		//}
 		//for (auto& bone : bones) {
 		//}
 	}

@@ -11,7 +11,7 @@
 //#include "example/array.h"
 //#include "example/priority_queue.h"
 //#include "example/serialize_buffer.h"
-#include "example/string.h"
+//#include "example/string.h"
 //#include "example/storage.h"
 //#include "example/pointer.h"
 //#include "example/circle_queue.h"
@@ -26,8 +26,8 @@
 //#include "example/hash_table.h"
 //#include "example/bit_set.h"
 //#include "example/intrusive/pointer_list.h"
-//#include "example/read_copy_update.h"
-#include "example/span.h"
+#include "example/read_copy_update.h"
+//#include "example/span.h"
 
 int main(void) noexcept {
 	library::crt_set_debug_flag();
@@ -42,7 +42,7 @@ int main(void) noexcept {
 	//example::array();
 	//example::priority_queue();
 	//example::serialize_buffer();
-	example::string();
+	//example::string();
 	//example::stroage();
 	//example::unique_pointer();
 	//example::circle_queue();
@@ -58,7 +58,7 @@ int main(void) noexcept {
 	//example::bit_set();
 	//example::intrusive::pointer_list();
 	//example::pointer();
-	//example::read_copy_update();
-	example::span();
+	example::read_copy_update();
+	//example::span();
 	return 0;
 }

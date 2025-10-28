@@ -1,8 +1,10 @@
 #include "component.h"
 
 namespace framework {
-	void components::deallocate_component(framework::component* component) noexcept {
-		auto result = _component.find(component->name());
-		result->_second->deallocate(component);
+	void components::destory(library::rcu_pointer<component> pointer) noexcept {
+		pointer.invalid([&](component* pointer) {
+			auto& result = _pool.find(pointer->type())->_second;
+			result->deallocate(pointer);
+			});
 	}
 }

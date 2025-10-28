@@ -39,7 +39,7 @@ namespace framework {
 			auto operator=(pools&&) noexcept -> pools & = delete;
 			virtual ~pools(void) noexcept = default;
 
-			virtual auto allocate(nlohmann::json& json) noexcept -> library::rcu_pointer<resource> = 0;
+			virtual auto allocate(nlohmann::json& json) noexcept -> framework::resource* = 0;
 			virtual void deallocate(framework::resource* const pointer) noexcept = 0;
 		};
 		template <typename type>
@@ -54,13 +54,11 @@ namespace framework {
 			virtual ~pool(void) noexcept override = default;
 
 			template<typename... argument>
-			auto allocate(library::string_view name, argument&&... arg) noexcept -> library::rcu_pointer<type> {
-				auto pointer = _pool.allocate(name, std::forward<argument>(arg)...);
-				return library::rcu_pointer<type>(pointer);
+			auto allocate(library::string_view name, argument&&... arg) noexcept -> type* {
+				return _pool.allocate(name, std::forward<argument>(arg)...);
 			}
-			virtual auto allocate(nlohmann::json& json) noexcept -> library::rcu_pointer<resource> override {
-				auto pointer = _pool.allocate(json);
-				return library::rcu_pointer<type>(pointer);
+			virtual auto allocate(nlohmann::json& json) noexcept ->  framework::resource* override {
+				return _pool.allocate(json);
 			}
 			virtual void deallocate(framework::resource* const pointer) noexcept override {
 				_pool.deallocate(static_cast<type*>(pointer));
@@ -92,7 +90,7 @@ namespace framework {
 		auto create(library::string_view name, argument&&... arg) noexcept -> library::rcu_pointer<type> {
 			auto result = _pool.find(type::static_type());
 			auto pointer = static_cast<pool<type>&>(*result->_second).allocate(name, std::forward<argument>(arg)...);
-			return pointer;
+			return library::rcu_pointer<type>(pointer);
 		};
 		void destory(library::rcu_pointer<resource> pointer) noexcept;
 		template<typename type>

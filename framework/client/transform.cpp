@@ -41,9 +41,9 @@ namespace framework {
 		return _float4x4;
 	}
 
-	void transform::set_parent(library::intrusive::share_pointer<transform, 0>& parent) noexcept {
-		_parent = parent;
-	}
+	//void transform::set_parent(library::intrusive::share_pointer<transform, 0>& parent) noexcept {
+	//	_parent = parent;
+	//}
 	void transform::translate(dmath::float3 move, bool local) noexcept {
 		using namespace dmath;
 		auto matrix = _float4x4.load();

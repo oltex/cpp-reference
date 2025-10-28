@@ -1,4 +1,6 @@
 #include "client.h"
+#include "library/container/read_copy_update.h"
+
 #include "sound.h"
 
 #include "pipeline.h"
@@ -15,8 +17,7 @@
 #include <typeinfo>
 #include <iostream>
 
-#include "library/container/read_copy_update.h"
-
+#include "inspector.h"
 
 namespace framework {
 	client::client(void) noexcept
@@ -82,17 +83,21 @@ namespace framework {
 			rcu.lock();
 			if (_window.check_exit())
 				return;
-			_editors.update();
 			_timer.update_frame();
 			_input.update_state();
 			_audio.update_sound();
+
+			_editors.update();
 			_scenes.update();
+			_graphic.update();
+			_resources.update();
+			inspector::instance().update();
 
 			_graphic.render();
-			_scenes.render_system();
+			_scenes.render();
 			_editors.render();
 			_graphic.present();
-			_timer.sleep_frame();
+			_timer.sleep();
 			rcu.unlock();
 		}
 	}

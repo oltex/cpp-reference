@@ -22,6 +22,10 @@ namespace framework {
 		dxgi::swap_chain _swap_chain;
 		d3d11::view_port _view_port;
 		d3d11::render_target_view _render_target_view;
+
+		//d3d11::view_port _view_port2;
+		d3d11::render_target_view _render_target_view2;
+		d3d11::shader_resource_view _shader_resource_view;
 	public:
 		explicit graphic(void) noexcept;
 		explicit graphic(graphic const&) noexcept = delete;
@@ -30,6 +34,7 @@ namespace framework {
 		auto operator=(graphic&&) noexcept -> graphic & = delete;
 		~graphic(void) noexcept;
 
+		void update(void) noexcept;
 		void render(void) noexcept;
 		void present(void) noexcept;
 		auto device(void) noexcept -> d3d11::device&;
