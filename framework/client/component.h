@@ -20,6 +20,7 @@ namespace framework {
 		virtual ~component(void) noexcept = default;
 
 		virtual auto type(void) noexcept -> char const* const = 0;
+		virtual void edit(void) noexcept {};
 	};
 
 	class components final : public library::singleton<components> {

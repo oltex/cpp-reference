@@ -27,14 +27,15 @@ namespace framework {
 		style.TabBarBorderSize = 0.f;
 		style.DockingSeparatorSize = 1.f;
 		style.TabBarOverlineSize = 1.f;
-		style.WindowRounding = 5.f;
+		style.WindowRounding = 4.f;
+		style.ChildBorderSize = 1.f;
 		style.WindowPadding = ImVec2(0.f, 0.f);
 		style.ItemSpacing = ImVec2(0.f, 0.f);
 		//style.FramePadding = ImVec2(0.f, 0.f);
 
 
-
-		//style.FrameRounding = 9.f;
+		style.TabRounding = 4.f;
+		style.FrameRounding = 1.f;
 		//style.ScrollbarRounding = 9.f;
 
 

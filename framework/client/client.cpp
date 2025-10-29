@@ -33,10 +33,6 @@ namespace framework {
 
 		_resources.load();
 
-
-		auto& a = typeid(transform);
-		_scenes.create_scene("");
-
 		//resource
 		//library::vector<d3d11::input_element_descript> descript{
 		//	d3d11::input_element_descript{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -90,7 +86,8 @@ namespace framework {
 			_editors.update();
 			_scenes.update();
 			_graphic.update();
-			_resources.update();
+			_resources.edit();
+			_scenes.edit();
 			inspector::instance().update();
 
 			_graphic.render();

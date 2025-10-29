@@ -4,7 +4,8 @@
 #include "library/imgui/imgui_impl_win32.h"
 
 namespace framework {
-	object::object(void) noexcept {
+	object::object(library::string_view name) noexcept
+		: _guid(library::create_guid()), _name(name) {
 	}
 	object::object(object const& rhs) noexcept {
 	}
@@ -14,7 +15,15 @@ namespace framework {
 	}
 
 	void object::edit(void) noexcept {
-		if (ImGui::Button("Add Component")) {
+		if (ImGui::TreeNodeEx("Object",
+			ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_Leaf)) {
+
+			if (ImGui::TreeNodeEx("Transform", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_NoTreePushOnOpen)) {
+
+			}
+			if (ImGui::Button("Add Component")) {
+				ImGui::TreePop();
+			}
 		}
 	}
 

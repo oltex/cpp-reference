@@ -119,7 +119,7 @@
       <Filter>content\scene\object</Filter>
     </ClInclude>
     <ClInclude Include="level.h">
-      <Filter>content\scene</Filter>
+      <Filter>content\resource</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -227,7 +227,7 @@
       <Filter>content\scene\object</Filter>
     </ClCompile>
     <ClCompile Include="level.cpp">
-      <Filter>content\scene</Filter>
+      <Filter>content\resource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -44,7 +44,7 @@ namespace detail {
 		}
 	};
 
-	template <typename trait, typename hash = library::fnv_hash<typename trait::key_type>, typename predicate = library::equal<typename trait::key_type>>
+	template <typename trait, typename hash, typename predicate, bool duplicate>
 	class hash_table final : public trait {
 		using size_type = unsigned int;
 		using key_type = trait::key_type;
@@ -81,19 +81,27 @@ namespace detail {
 			auto index = bucket(*key);
 			auto& first = _vector[index << 1];
 			auto& last = _vector[(index << 1) + 1];
+
+			auto insert = _vector[index << 1];
 			if (auto result = find(*key, first, last); end() != result) {
-				if constexpr (false == exist::able)
-					_list.deallocate(current._node);
-				return result;
+				if constexpr (false == duplicate) {
+					if constexpr (false == exist::able)
+						_list.deallocate(current._node);
+					return result;
+				}
+				else 
+					insert = result;
 			}
 
 			if constexpr (true == exist::able)
-				current = _list.emplace(first, std::forward<argument>(arg)...);
+				current = _list.emplace(insert, std::forward<argument>(arg)...);
 			else
-				_list.link(first._node, current._node);
-			if (first == _list.end())
+				_list.link(insert._node, current._node);
+
+			if (insert == _list.end())
 				last = current;
-			first = current;
+			if (first == insert)
+				first = current;
 
 			if (1.f <= load_factor())
 				rehash((_vector.size() >> 1) < 512 ? (_vector.size() >> 1) * 8 : (_vector.size() >> 1) + 1);
@@ -113,7 +121,8 @@ namespace detail {
 			auto& last = _vector[(index << 1) + 1];
 			erase(iter, first, last);
 		}
-		inline auto operator[](key_type const& key) noexcept -> value_type& {
+
+		inline auto operator[](key_type const& key) noexcept -> value_type& requires (false == duplicate) {
 			return trait::value_extract(*emplace(key));
 		}
 		inline auto begin(void) const noexcept -> typename iterator {
@@ -171,6 +180,13 @@ namespace detail {
 			auto last = _vector[(index << 1) + 1];
 			return find(key, first, last);
 		}
+
+		inline auto equal_range(auto const& key) const noexcept {
+			auto index = bucket(key);
+			auto first = _vector[index << 1];
+			auto last = _vector[(index << 1) + 1];
+			return find(key, first, last);
+		}
 		inline void clear(void) noexcept {
 			_vector.assign(_vector.size(), _list.end());
 			_list.clear();
@@ -206,7 +222,12 @@ namespace detail {
 
 namespace library {
 	template <typename type, typename hash = library::fnv_hash<type>, typename predicate = library::equal<type>>
-	using unorder_set = detail::hash_table<detail::unorder_set<type>, hash>;
+	using unorder_set = detail::hash_table<detail::unorder_set<type>, hash, predicate, false>;
+	template <typename type, typename hash = library::fnv_hash<type>, typename predicate = library::equal<type>>
+	using unorder_multiset = detail::hash_table<detail::unorder_set<type>, hash, predicate, false>;
+
 	template <typename key_type, typename value_type, typename hash = library::fnv_hash<key_type>, typename predicate = library::equal<key_type>>
-	using unorder_map = detail::hash_table<detail::unorder_map<key_type, value_type>, hash>;
+	using unorder_map = detail::hash_table<detail::unorder_map<key_type, value_type>, hash, predicate, false>;
+	template <typename key_type, typename value_type, typename hash = library::fnv_hash<key_type>, typename predicate = library::equal<key_type>>
+	using unorder_multimap = detail::hash_table<detail::unorder_map<key_type, value_type>, hash, predicate, true>;
 }

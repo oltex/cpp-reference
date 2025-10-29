@@ -1,13 +1,13 @@
 #include "resource.h"
-#include "sound.h"
-#include "mesh.h"
+#include "library/system/file.h"
 #include <filesystem>
 #include <fstream>
 
 #include "window.h"
 #include "texture.h"
 #include "sound.h"
-#include "library/system/file.h"
+#include "level.h"
+#include "mesh.h"
 #include "library/imgui/imgui.h"
 #include "library/imgui/imgui_impl_dx11.h"
 #include "library/imgui/imgui_impl_win32.h"
@@ -96,7 +96,7 @@ namespace framework {
 			if (!array.is_array())
 				array = nlohmann::json::array();
 			nlohmann::json segment;
-			iter->save(segment); 
+			iter->save(segment);
 			array.push_back(std::move(segment));
 		}
 
@@ -124,7 +124,7 @@ namespace framework {
 		}
 	}
 
-	void resources::update(void) noexcept {
+	void resources::edit(void) noexcept {
 		if (ImGui::Begin("Resource", 0, ImGuiWindowFlags_MenuBar)) {
 			if (ImGui::BeginMenuBar()) {
 				import_file();
@@ -132,7 +132,8 @@ namespace framework {
 				ImGui::EndMenuBar();
 			}
 			ImGui::Separator();
-			if (ImGui::BeginTable("File", 2, ImGuiTableFlags_Sortable | ImGuiTableFlags_SortMulti | ImGuiTableFlags_Resizable | ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY | ImGuiTableFlags_BordersOuterH  | ImGuiTableFlags_BordersOuterV | ImGuiTableFlags_NoBordersInBody, ImVec2(0.f, 0.f))) {
+
+			if (ImGui::BeginTable("File", 2, ImGuiTableFlags_Sortable | ImGuiTableFlags_SortMulti | ImGuiTableFlags_Resizable | ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY | ImGuiTableFlags_BordersOuterH | ImGuiTableFlags_BordersOuterV | ImGuiTableFlags_NoBordersInBody)) {
 				ImGui::TableSetupScrollFreeze(0, 1);
 				ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_DefaultSort | ImGuiTableColumnFlags_WidthFixed, 0, column::name);
 				ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed, 0, column::type);
@@ -161,16 +162,26 @@ namespace framework {
 				//		});
 				//	sort_specs->SpecsDirty = false;
 				//}
+				ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 4));
+				static ImGuiSelectionBasicStorage selection;
+				auto ms_io = ImGui::BeginMultiSelect(ImGuiMultiSelectFlags_BoxSelect1d, selection.Size, _item.size());
+				selection.ApplyRequests(ms_io);
 
 				ImGuiListClipper clipper;
 				int erase = -1;
 				clipper.Begin(static_cast<int>(_item.size()));
+				if (ms_io->RangeSrcItem != -1)
+					clipper.IncludeItemByIndex(static_cast<int>(ms_io->RangeSrcItem));
 				while (clipper.Step())
 					for (auto index = clipper.DisplayStart; index < clipper.DisplayEnd; index++) {
 						ImGui::TableNextRow();
 						ImGui::TableNextColumn();
-						ImGui::Selectable(_item[index]->name().data(), false, ImGuiSelectableFlags_SpanAllColumns);
 
+						ImGui::SetNextItemSelectionUserData(index);
+						ImGui::Selectable(_item[index]->name().data(), selection.Contains(index), ImGuiSelectableFlags_SpanAllColumns);
+						if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+							_item[index]->open();
+						}
 						if (ImGui::BeginPopupContextItem()) {
 							if (ImGui::MenuItem("Delete"))
 								erase = index;
@@ -185,8 +196,11 @@ namespace framework {
 						ImGui::TableNextColumn();
 						ImGui::Text("%s", _item[index]->type());
 					}
+				selection.ApplyRequests(ImGui::EndMultiSelect());
+				ImGui::PopStyleVar();
+
 				if (-1 != erase) {
-					auto& item = _item[erase];
+					auto item = _item[erase];
 					_item.erase(_item.begin() + erase);
 					destory(item);
 				}
@@ -194,6 +208,10 @@ namespace framework {
 			}
 		}
 		ImGui::End();
+	}
+	void resources::create_level(void) noexcept {
+		auto pointer = create<framework::level>("New Level");
+		_item.emplace_back(pointer);
 	}
 	void resources::import_file(void) noexcept {
 		if (ImGui::Button("Import")) {

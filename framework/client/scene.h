@@ -8,15 +8,12 @@
 #include "library/container/pointer.h"
 #include "object.h"
 #include "system.h"
+
 #include "level.h"
 
 namespace framework {
 	struct scene {
 		using size_type = unsigned int;
-		library::vector<library::rcu_pointer<object>> _object;
-		library::intrusive::pointer_list<system, 0, 0> _system;
-		library::intrusive::pointer_list<system, 0, 0> _render_system;
-
 		explicit scene(void) noexcept = default;
 		explicit scene(scene const&) noexcept = delete;
 		explicit scene(scene&&) noexcept = delete;
@@ -28,10 +25,10 @@ namespace framework {
 	class scenes : public library::singleton<scenes> {
 		friend class client;
 		friend class library::singleton<scenes>;
-		library::unique_pointer<scene> _current_scene;
-		library::unique_pointer<scene> _next_scene;
 
-		library::vector<level> _level;
+		library::vector<library::rcu_pointer<object>> _object;
+		library::intrusive::pointer_list<system, 0, 0> _system;
+		library::intrusive::pointer_list<system, 0, 0> _render_system;
 
 		explicit scenes(void) noexcept;
 		explicit scenes(scenes const&) noexcept = delete;
@@ -44,16 +41,16 @@ namespace framework {
 		void render(void) noexcept;
 		void edit(void) noexcept;
 
-		void create_scene(library::string const& path) noexcept;
+		void open(framework::level& level) noexcept;
 		template<typename type>
 		inline void create_update_system(void) noexcept {
 			library::intrusive::share_pointer<system, 0> pointer(new type);
-			_current_scene->_system.push_back(pointer);
+			_system.push_back(pointer);
 		}
 		template<typename type>
 		inline auto create_render_system(void) noexcept -> library::intrusive::share_pointer<type, 0> {
 			library::intrusive::share_pointer<system, 0> pointer(new type);
-			_current_scene->_render_system.push_back(pointer);
+			_render_system.push_back(pointer);
 			return pointer;
 		}
 		auto create_object(void) noexcept -> library::rcu_pointer<object>;

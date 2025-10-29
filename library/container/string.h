@@ -338,6 +338,12 @@ namespace detail {
 				_capacity = capacity;
 			}
 		}
+		inline void resize(size_type const size) noexcept {
+			if (size >= _capacity) 
+				reserve(library::maximum(static_cast<size_type>(_capacity * 1.5f), size + 1));
+			_size = size;
+			null();
+		}
 		inline void clear(void) noexcept {
 			_size = 0;
 			null();
@@ -352,6 +358,13 @@ namespace detail {
 		}
 		inline auto size(void) const noexcept -> size_type {
 			return _size;
+		}
+		inline auto capacity(void) const noexcept -> size_type {
+			if (sso < _capacity)
+				return _capacity - 1;
+			else
+				return sso - 1;
+
 		}
 		inline auto data(void) noexcept -> type* {
 			return const_cast<type*>(static_cast<string const&>(*this).data());

@@ -12,9 +12,9 @@ namespace framework {
 		library::guid _guid;
 		library::string _name;
 	public:
-		 library::rcu_pointer<component> _component;
+		library::rcu_pointer<component> _component;
 
-		explicit object(void) noexcept;
+		explicit object(library::string_view name) noexcept;
 		explicit object(object const& rhs) noexcept;
 		explicit object(object&&) noexcept = delete;
 		auto operator=(object const&) noexcept -> object & = delete;

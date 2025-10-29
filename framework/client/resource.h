@@ -26,6 +26,7 @@ namespace framework {
 		auto name(void) noexcept -> library::string&;
 		auto guid(void) noexcept -> library::guid&;
 		virtual void save(nlohmann::json& json) noexcept;
+		virtual void open(void) noexcept {};
 	};
 
 	class resources : public library::singleton<resources> {
@@ -106,7 +107,8 @@ namespace framework {
 		void save(void) noexcept;
 		void load(void) noexcept;
 
-		void update(void) noexcept;
+		void edit(void) noexcept;
+		void create_level(void) noexcept;
 		void import_file(void) noexcept;
 		void search(void) noexcept;
 	};
