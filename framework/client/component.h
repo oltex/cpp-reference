@@ -6,13 +6,15 @@
 #include "library/container/string.h"
 #include "library/container/hash_table.h"
 #include "library/container/read_copy_update.h"
+#include "library/system/guid.h"
 
 namespace framework {
-	class component : public library::rcu_base {
+	class component : public library::rcu_base<> {
 	protected:
+		library::guid _guid;
 		using size_type = unsigned int;
 	public:
-		explicit component(void) noexcept = default;
+		explicit component(void) noexcept;
 		explicit component(component const&) noexcept = delete;
 		explicit component(component&&) noexcept = delete;
 		auto operator=(component const&) noexcept -> component & = delete;
@@ -20,6 +22,7 @@ namespace framework {
 		virtual ~component(void) noexcept = default;
 
 		virtual auto type(void) noexcept -> char const* const = 0;
+		auto guid(void) noexcept -> library::guid&;
 		virtual void edit(void) noexcept {};
 	};
 
@@ -48,8 +51,8 @@ namespace framework {
 			virtual ~pool(void) = default;
 
 			template<typename... argument>
-			auto allocate(library::string_view name, argument&&... arg) noexcept -> type {
-				return base::allocate(name, std::forward<argument>(arg)...);
+			auto allocate(argument&&... arg) noexcept -> type* {
+				return base::allocate(std::forward<argument>(arg)...);
 			}
 			//virtual auto allocate(nlohmann::json& json) noexcept -> library::rcu_pointer<resource> override {
 			//	auto pointer = _pool.allocate(json);
@@ -62,6 +65,8 @@ namespace framework {
 
 		using size_type = unsigned int;
 		library::unorder_map<library::string, library::unique_pointer<pools>> _pool;
+		library::unorder_map<library::guid, library::rcu_pointer<component>> _guid;
+
 
 		explicit components(void) noexcept = default;
 		explicit components(components const&) noexcept = delete;
@@ -75,10 +80,12 @@ namespace framework {
 			_pool.emplace(type::static_type(), library::make_unique<pool<type>>());
 		}
 		template<typename type, typename... argument>
-		auto create(library::string_view name, argument&&... arg) noexcept -> library::rcu_pointer<type> {
+		auto create(argument&&... arg) noexcept -> library::rcu_pointer<type> {
 			auto result = _pool.find(type::static_type());
-			auto pointer = static_cast<pool<type>&>(&*result->_second).allocate(name, std::forward<argument>(arg)...);
-			return library::rcu_pointer<type>(pointer);
+			auto pointer = static_cast<pool<type>&>(*result->_second).allocate(std::forward<argument>(arg)...);
+			library::rcu_pointer<type> rcu_pointer(pointer);
+			_guid.emplace(pointer->guid(), pointer);
+			return rcu_pointer;
 		}
 		void destory(library::rcu_pointer<component> pointer) noexcept;
 	};

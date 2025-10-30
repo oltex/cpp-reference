@@ -66,7 +66,7 @@ namespace framework {
 		color[ImGuiCol_HeaderHovered] = ImVec4(1, 1, 1, 0.06f); // 호버
 		color[ImGuiCol_HeaderActive] = ImVec4(1, 1, 1, 0.12f); // 눌림(펼침)
 
-		color[ImGuiCol_Button] = ImVec4(0.f, 0.f, 0.f, 0.f);
+		color[ImGuiCol_Button] = ImVec4(1.f, 1.f, 1.f, 0.03f);
 		color[ImGuiCol_ButtonHovered] = ImVec4(1, 1, 1, 0.06f);
 		color[ImGuiCol_ButtonActive] = ImVec4(1, 1, 1, 0.12f);
 

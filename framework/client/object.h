@@ -7,12 +7,12 @@
 #include "component.h"
 
 namespace framework {
-	class object : public library::rcu_base {
+	class object : public library::rcu_base<object> {
 	protected:
 		library::guid _guid;
 		library::string _name;
 	public:
-		library::rcu_pointer<component> _component;
+		library::unorder_multimap<library::string, library::rcu_pointer<component>> _component;
 
 		explicit object(library::string_view name) noexcept;
 		explicit object(object const& rhs) noexcept;
@@ -21,20 +21,18 @@ namespace framework {
 		auto operator=(object&&) noexcept -> object & = delete;
 		~object(void) noexcept = default;
 
-		template<typename type, typename... argument>
-		inline auto add_component(char const* const name, argument&&... arg) noexcept /*-> library::intrusive::share_pointer<type, 0>*/ {
-			//library::intrusive::share_pointer<component, 0> component;
-			//auto parent = share_pointer_this<object>();
-			//if constexpr (std::is_constructible_v<type, library::intrusive::share_pointer<object, 0>&, argument...>)
-			//	component = components::instance().allocate_component<type>(std::forward<argument>(arg)...);
-			//else
-			//	component = components::instance().allocate_component<type>(std::forward<argument>(arg)...);
-			//_component.push_back(component);
-			//return component;
-		}
-
 		auto name(void) noexcept -> library::string&;
 		void edit(void) noexcept;
+		template<typename type, typename... argument>
+		inline auto add_component(library::string_view name, argument&&... arg) noexcept -> library::rcu_pointer<type> {
+			library::rcu_pointer<type> component;
+			if constexpr (std::is_constructible_v<type, library::rcu_pointer<object>, argument...>)
+				component = components::instance().create<type>(pointer(), std::forward<argument>(arg)...);
+			else
+				component = components::instance().create<type>(std::forward<argument>(arg)...);
+			_component.emplace(name, component);
+			return component;
+		}
 	};
 
 	//class objectp {
@@ -66,7 +64,8 @@ namespace framework {
 		template<typename... argument>
 		auto allocate(argument&&... arg) noexcept -> library::rcu_pointer<object> {
 			auto pointer = _pool.allocate(std::forward<argument>(arg)...);
-			return library::rcu_pointer<object>(pointer);
+			auto rcu_pointer = library::rcu_pointer<object>(pointer);
+			return rcu_pointer;
 		}
 		void deallocate(library::rcu_pointer<object> pointer) noexcept;
 	public:

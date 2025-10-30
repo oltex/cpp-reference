@@ -2,10 +2,10 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="component.h">
-      <Filter>content\scene\component</Filter>
+      <Filter>content\component</Filter>
     </ClInclude>
     <ClInclude Include="transform.h">
-      <Filter>content\scene\component</Filter>
+      <Filter>content\component</Filter>
     </ClInclude>
     <ClInclude Include="system.h">
       <Filter>content\scene\system</Filter>
@@ -14,10 +14,10 @@
       <Filter>content\scene</Filter>
     </ClInclude>
     <ClInclude Include="camera.h">
-      <Filter>content\scene\component</Filter>
+      <Filter>content\component</Filter>
     </ClInclude>
     <ClInclude Include="behaviour.h">
-      <Filter>content\scene\component</Filter>
+      <Filter>content\component</Filter>
     </ClInclude>
     <ClInclude Include="behave.h">
       <Filter>content\scene\system</Filter>
@@ -32,7 +32,7 @@
       <Filter>content\resource</Filter>
     </ClInclude>
     <ClInclude Include="camera_move.h">
-      <Filter>content\scene\component</Filter>
+      <Filter>content\component</Filter>
     </ClInclude>
     <ClInclude Include="mesh.h">
       <Filter>content\resource</Filter>
@@ -44,7 +44,7 @@
       <Filter>content\scene\system</Filter>
     </ClInclude>
     <ClInclude Include="renderer.h">
-      <Filter>content\scene\component</Filter>
+      <Filter>content\component</Filter>
     </ClInclude>
     <ClInclude Include="library\imgui\imconfig.h">
       <Filter>library\imgui</Filter>
@@ -107,7 +107,7 @@
       <Filter>library\tinygltf</Filter>
     </ClInclude>
     <ClInclude Include="collider.h">
-      <Filter>content\scene\component</Filter>
+      <Filter>content\component</Filter>
     </ClInclude>
     <ClInclude Include="library\json.hpp">
       <Filter>library</Filter>
@@ -128,7 +128,7 @@
       <Filter>content\scene</Filter>
     </ClCompile>
     <ClCompile Include="component.cpp">
-      <Filter>content\scene\component</Filter>
+      <Filter>content\component</Filter>
     </ClCompile>
     <ClCompile Include="texture.cpp">
       <Filter>content\resource</Filter>
@@ -143,16 +143,16 @@
       <Filter>content\scene\system</Filter>
     </ClCompile>
     <ClCompile Include="transform.cpp">
-      <Filter>content\scene\component</Filter>
+      <Filter>content\component</Filter>
     </ClCompile>
     <ClCompile Include="camera.cpp">
-      <Filter>content\scene\component</Filter>
+      <Filter>content\component</Filter>
     </ClCompile>
     <ClCompile Include="behaviour.cpp">
-      <Filter>content\scene\component</Filter>
+      <Filter>content\component</Filter>
     </ClCompile>
     <ClCompile Include="camera_move.cpp">
-      <Filter>content\scene\component</Filter>
+      <Filter>content\component</Filter>
     </ClCompile>
     <ClCompile Include="mesh.cpp">
       <Filter>content\resource</Filter>
@@ -164,7 +164,7 @@
       <Filter>content\scene\system</Filter>
     </ClCompile>
     <ClCompile Include="renderer.cpp">
-      <Filter>content\scene\component</Filter>
+      <Filter>content\component</Filter>
     </ClCompile>
     <ClCompile Include="library\imgui\imgui.cpp">
       <Filter>library\imgui</Filter>
@@ -218,7 +218,7 @@
       <Filter>library\tinygltf</Filter>
     </ClCompile>
     <ClCompile Include="collider.cpp">
-      <Filter>content\scene\component</Filter>
+      <Filter>content\component</Filter>
     </ClCompile>
     <ClCompile Include="inspector.cpp">
       <Filter>content\editor</Filter>
@@ -255,11 +255,11 @@
     <Filter Include="content\scene\system">
       <UniqueIdentifier>{9b6eb6da-e6e7-41ff-b6de-2def6a5c2ff6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="content\scene\component">
-      <UniqueIdentifier>{26fd3a4f-278f-45c1-bfd6-547c8013bd47}</UniqueIdentifier>
-    </Filter>
     <Filter Include="content\scene\object">
       <UniqueIdentifier>{b895bb90-f978-4b7b-9200-f4efdb0d3ef3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="content\component">
+      <UniqueIdentifier>{26fd3a4f-278f-45c1-bfd6-547c8013bd47}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

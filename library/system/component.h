@@ -2,6 +2,7 @@
 #include "unknwn.h"
 #include "../function.h"
 #include <cassert>
+#include "component.h"
 
 namespace library {
 	inline void component_initialize(COINIT const coinit) noexcept {

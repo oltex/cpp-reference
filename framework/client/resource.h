@@ -8,7 +8,7 @@
 #include "library/json.hpp"
 
 namespace framework {
-	class resource : public library::rcu_base {
+	class resource : public library::rcu_base<> {
 	protected:
 		library::guid _guid;
 		library::string _name;

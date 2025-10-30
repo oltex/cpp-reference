@@ -164,7 +164,7 @@ namespace framework {
 				//}
 				ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 4));
 				static ImGuiSelectionBasicStorage selection;
-				auto ms_io = ImGui::BeginMultiSelect(ImGuiMultiSelectFlags_BoxSelect1d, selection.Size, _item.size());
+				auto ms_io = ImGui::BeginMultiSelect(ImGuiMultiSelectFlags_BoxSelect1d, selection.Size, static_cast<int>(_item.size()));
 				selection.ApplyRequests(ms_io);
 
 				ImGuiListClipper clipper;
@@ -241,6 +241,6 @@ namespace framework {
 		ImGui::Dummy(ImVec2(library::maximum(0.0f, ImGui::GetContentRegionAvail().x - width), 0));
 		ImGui::SetNextItemWidth(width);
 		static char query[128] = {};
-		ImGui::InputTextWithHint("", "Search", query, sizeof(query));
+		ImGui::InputTextWithHint("##", "Search", query, sizeof(query));
 	}
 }

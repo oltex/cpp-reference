@@ -19,6 +19,9 @@ namespace framework {
 		auto operator=(transform&&) noexcept -> transform & = delete;
 		virtual ~transform(void) noexcept override = default;
 
+		virtual void edit(void) noexcept override;
+
+
 		static auto buffer(void) noexcept -> d3d11::buffer&;
 		auto matrix(void) noexcept -> dmath::matrix;
 

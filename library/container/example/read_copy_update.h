@@ -6,14 +6,14 @@
 #include "../../debug.h"
 #include <thread>
 
-struct mystr : public library::rcu_base {
+struct mystr : public library::rcu_base<> {
 	mystr(void) noexcept
 		: value(new int(10)) {
 	}
 	~mystr(void) noexcept {
 		delete value;
 	}
-	int* value;
+	alignas(64) int* value;
 };
 template<>
 inline constexpr bool library::relocate_safe<library::rcu_pointer<mystr>> = true;

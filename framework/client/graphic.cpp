@@ -61,8 +61,8 @@ namespace framework {
 			_render_target_view = d3d11::render_target_view(nullptr);
 			_swap_chain.resize_buffer(0, width, height, DXGI_FORMAT_UNKNOWN, 0);
 
-			_view_port.Width = width;
-			_view_port.Height = height;
+			_view_port.Width = static_cast<float>(width);
+			_view_port.Height = static_cast<float>(height);
 			auto texture = _swap_chain.get_buffer_texture_2d();
 			_render_target_view = _device.create_render_target_view(texture);
 		}
