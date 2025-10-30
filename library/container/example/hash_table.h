@@ -11,34 +11,38 @@
 
 namespace example {
 	inline void hash_table(void) noexcept {
-		std::unordered_multimap<int, int> std_ummap;
-		for (unsigned int i = 0; i < 100; ++i)
-			std_ummap.emplace(rand() % 10, 100 - i);
-		for (unsigned int i = 0; i < std_ummap.bucket_count(); ++i) {
-			auto std_set_iter = std_ummap.begin(i);
-			printf("bucket : %d\n", i);
-			while (std_set_iter != std_ummap.end(i)) {
-				printf("%d : %d\n", std_set_iter->first, std_set_iter->second);
-				++std_set_iter;
-			}
-		}
-		//library::unorder_multimap<int, int> ummap;
+		//std::unordered_multimap<int, int> std_ummap;
 		//for (unsigned int i = 0; i < 100; ++i)
-		//	ummap.emplace(rand() % 10, 100 - i);
-		////for (unsigned int i = 0; i < 1000; ++i)
-		////	ummap.emplace(rand() % 100, 1000 - i);
-		//for (unsigned int i = 0; i < ummap.bucket_count(); ++i) {
-		//	auto iter = ummap.begin(i);
+		//	std_ummap.emplace(rand() % 10, 100 - i);
+		//for (unsigned int i = 0; i < std_ummap.bucket_count(); ++i) {
+		//	auto std_set_iter = std_ummap.begin(i);
 		//	printf("bucket : %d\n", i);
-		//	while (iter != ummap.end(i)) {
-		//		printf("%d : %d\n", iter->_first, iter->_second);
-		//		++iter;
+		//	while (std_set_iter != std_ummap.end(i)) {
+		//		printf("%d : %d\n", std_set_iter->first, std_set_iter->second);
+		//		++std_set_iter;
 		//	}
 		//}
+		library::unorder_multimap<int, int> ummap;
+		for (unsigned int i = 0; i < 100; ++i)
+			ummap.emplace(rand() % 10, 100 - i);
+		//for (unsigned int i = 0; i < 1000; ++i)
+		//	ummap.emplace(rand() % 100, 1000 - i);
+		for (unsigned int i = 0; i < ummap.bucket_count(); ++i) {
+			auto iter = ummap.begin(i);
+			printf("bucket : %d\n", i);
+			while (iter != ummap.end(i)) {
+				printf("%d : %d\n", iter->_first, iter->_second);
+				++iter;
+			}
+		}
 
+		auto [begin, end] = ummap.equal_range(7);
+		int a = 10;
 
-
-
+		for (auto iter = begin; iter != end; ++iter) {
+			printf("%d : %d\n", iter->_first, iter->_second);
+		}
+		int k = 7;
 		//library::unorder_set<library::string> string_set;
 		//string_set.emplace("hello");
 		//string_set.find("hello");

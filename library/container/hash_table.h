@@ -121,7 +121,6 @@ namespace detail {
 			auto& last = _vector[(index << 1) + 1];
 			erase(iter, first, last);
 		}
-
 		inline auto operator[](key_type const& key) noexcept -> value_type& requires (false == duplicate) {
 			return trait::value_extract(*emplace(key));
 		}
@@ -140,7 +139,6 @@ namespace detail {
 				++iter;
 			return iter;
 		}
-
 		inline auto load_factor(void) const noexcept -> float {
 			return static_cast<float>(_list.size()) / (_vector.size() >> 1);
 		}
@@ -180,12 +178,15 @@ namespace detail {
 			auto last = _vector[(index << 1) + 1];
 			return find(key, first, last);
 		}
-
-		inline auto equal_range(auto const& key) const noexcept {
+		inline auto equal_range(auto const& key) const noexcept -> library::pair<iterator, iterator> requires (true == duplicate) {
 			auto index = bucket(key);
 			auto first = _vector[index << 1];
 			auto last = _vector[(index << 1) + 1];
-			return find(key, first, last);
+
+			auto begin = find(key, first, last);
+			auto end = begin;
+			while (predicate::execute(trait::key_extract(*++end), key)) { }
+			return { begin, end };
 		}
 		inline void clear(void) noexcept {
 			_vector.assign(_vector.size(), _list.end());
