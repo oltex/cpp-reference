@@ -5,9 +5,9 @@
 
 #include "window.h"
 #include "texture.h"
-#include "sound.h"
+//#include "sound.h"
 #include "level.h"
-#include "mesh.h"
+//#include "mesh.h"
 #include "library/imgui/imgui.h"
 #include "library/imgui/imgui_impl_dx11.h"
 #include "library/imgui/imgui_impl_win32.h"
@@ -76,14 +76,12 @@ namespace framework {
 	}
 	resources::~resources(void) noexcept {
 		for (auto& iter : _item) {
-			auto pointer = &(*iter);
-			_pool.find(pointer->type())->_second->deallocate(pointer);
+			pools::instance().deallocate(iter.data());
 		}
 	}
 	void resources::destory(library::rcu_pointer<resource> pointer) noexcept {
 		pointer.invalid([&](resource* pointer) {
-			auto& result = _pool.find(pointer->type())->_second;
-			result->deallocate(pointer);
+			pools::instance().deallocate(pointer);
 			});
 	}
 	void resources::save(void) noexcept {
@@ -114,12 +112,8 @@ namespace framework {
 		ifs >> json;
 
 		for (auto& [key, arr] : json.items()) {
-			auto& pool = _pool.find(key.c_str())->_second;
 			for (auto& meta : arr) {
-				auto pointer = pool->allocate(meta);
-				_guid.emplace(pointer->guid(), pointer);
-				_name.emplace(pointer->name(), pointer);
-				_item.emplace_back(pointer);
+				create(key.c_str(), meta);
 			}
 		}
 	}
@@ -135,6 +129,10 @@ namespace framework {
 			ImGui::PushStyleVar(ImGuiStyleVar_::ImGuiStyleVar_WindowPadding, ImVec2(8.f, 4.f));
 			if (ImGui::BeginTable("File", 2, ImGuiTableFlags_Sortable | ImGuiTableFlags_SortMulti | ImGuiTableFlags_Resizable | ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY | ImGuiTableFlags_BordersOuterH | ImGuiTableFlags_BordersOuterV | ImGuiTableFlags_NoBordersInBody)) {
 				ImGui::TableSetupScrollFreeze(0, 1);
+				enum column {
+					name,
+					type
+				};
 				ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_DefaultSort | ImGuiTableColumnFlags_WidthFixed, 0, column::name);
 				ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed, 0, column::type);
 				ImGui::TableHeadersRow();
@@ -200,7 +198,7 @@ namespace framework {
 				if (-1 != erase) {
 					auto item = _item[erase];
 					_item.erase(_item.begin() + erase);
-					destory(item);
+					item.destory();
 				}
 				ImGui::EndTable();
 			}
@@ -209,8 +207,8 @@ namespace framework {
 		ImGui::End();
 	}
 	void resources::create_level(void) noexcept {
-		auto pointer = create<framework::level>("New Level");
-		_item.emplace_back(pointer);
+		//auto pointer = create<framework::level>("New Level");
+		//_item.emplace_back(pointer);
 	}
 	void resources::import_file(void) noexcept {
 		if (ImGui::Button("Import")) {
@@ -229,8 +227,8 @@ namespace framework {
 					_item.emplace_back(pointer);
 				}
 				else if (".wav" == path.extension().string()) {
-					auto pointer = create<framework::sound>(path.stem().string().c_str(), path.string().c_str());
-					_item.emplace_back(pointer);
+					//auto pointer = create<framework::sound>(path.stem().string().c_str(), path.string().c_str());
+					//_item.emplace_back(pointer);
 				}
 			}
 		}

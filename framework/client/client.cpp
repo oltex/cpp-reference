@@ -1,20 +1,17 @@
 #include "client.h"
 #include "library/container/read_copy_update.h"
 
-#include "sound.h"
-
-#include "pipeline.h"
-#include "behave.h"
-
-#include "transform.h"
-#include "camera.h"
-#include "mesh.h"
-#include "shader.h"
-#include "renderer.h"
-#include "texture.h"
-#include "material.h"
-#include "camera_move.h"
-#include <typeinfo>
+//#include "sound.h"
+//#include "pipeline.h"
+//#include "behave.h"
+//#include "transform.h"
+//#include "camera.h"
+//#include "mesh.h"
+//#include "shader.h"
+//#include "renderer.h"
+//#include "texture.h"
+//#include "material.h"
+//#include "camera_move.h"
 #include <iostream>
 
 #include "inspector.h"

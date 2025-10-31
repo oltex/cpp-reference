@@ -6,9 +6,10 @@
 #include "library/system/guid.h"
 #include "library/container/read_copy_update.h"
 #include "library/json.hpp"
+#include "pool.h"
 
 namespace framework {
-	class resource : public library::rcu_base<> {
+	class resource : public base, public library::rcu_base<> {
 	protected:
 		library::guid _guid;
 		library::string _name;
@@ -20,7 +21,7 @@ namespace framework {
 		explicit resource(resource&&) noexcept = delete;
 		auto operator=(resource const&) noexcept -> resource & = delete;
 		auto operator=(resource&&) noexcept -> resource & = delete;
-		virtual ~resource(void) noexcept = default;
+		virtual ~resource(void) noexcept override = default;
 
 		virtual auto type(void) noexcept -> char const* const = 0;
 		auto name(void) noexcept -> library::string&;
@@ -31,50 +32,10 @@ namespace framework {
 
 	class resources : public library::singleton<resources> {
 		friend class library::singleton<resources>;
-		class pools {
-		public:
-			pools(void) noexcept = default;
-			pools(pools const&) noexcept = delete;
-			pools(pools&&) noexcept = delete;
-			auto operator=(pools const&) noexcept -> pools & = delete;
-			auto operator=(pools&&) noexcept -> pools & = delete;
-			virtual ~pools(void) noexcept = default;
 
-			virtual auto allocate(nlohmann::json& json) noexcept -> framework::resource* = 0;
-			virtual void deallocate(framework::resource* const pointer) noexcept = 0;
-		};
-		template <typename type>
-		class pool : public pools {
-			library::pool<type, true, false> _pool;
-		public:
-			pool(void) noexcept = default;
-			pool(pool const&) noexcept = delete;
-			pool(pool&&) noexcept = delete;
-			auto operator=(pool const&) noexcept -> pool & = delete;
-			auto operator=(pool&&) noexcept -> pool & = delete;
-			virtual ~pool(void) noexcept override = default;
-
-			template<typename... argument>
-			auto allocate(library::string_view name, argument&&... arg) noexcept -> type* {
-				return _pool.allocate(name, std::forward<argument>(arg)...);
-			}
-			virtual auto allocate(nlohmann::json& json) noexcept ->  framework::resource* override {
-				return _pool.allocate(json);
-			}
-			virtual void deallocate(framework::resource* const pointer) noexcept override {
-				_pool.deallocate(static_cast<type*>(pointer));
-			}
-		};
-
-		library::unorder_map<library::string, library::unique_pointer<pools>> _pool;
-		library::unorder_map<library::guid, library::rcu_pointer<resource>> _guid;
-		library::unorder_map<library::string, library::rcu_pointer<resource>> _name;
-
-		enum column {
-			name,
-			type
-		};
-		std::vector<library::rcu_pointer<resource>> _item;
+		library::unorder_map<library::guid, pointer<resource>> _guid;
+		library::unorder_map<library::string, pointer<resource>> _name;
+		std::vector<pointer<resource>> _item;
 
 		explicit resources(void) noexcept;
 		explicit resources(resources const&) noexcept = delete;
@@ -83,16 +44,24 @@ namespace framework {
 		auto operator=(resources&&) noexcept -> resources & = delete;
 		~resources(void) noexcept;
 	public:
-		template<typename type>
-		void regist(void) noexcept {
-			_pool.emplace(type::static_type(), library::make_unique<pool<type>>());
-		}
 		template<typename type, typename... argument>
-		auto create(library::string_view name, argument&&... arg) noexcept -> library::rcu_pointer<type> {
-			auto result = _pool.find(type::static_type());
-			auto pointer = static_cast<pool<type>&>(*result->_second).allocate(name, std::forward<argument>(arg)...);
-			return library::rcu_pointer<type>(pointer);
+		auto create(library::string_view name, argument&&... arg) noexcept -> pointer<type> {
+			auto ptr = pools::instance().allocate<type>(name, std::forward<argument>(arg)...);
+			auto rcu_ptr = pointer<type>(ptr);
+			_guid.emplace(rcu_ptr->guid(), rcu_ptr);
+			_name.emplace(rcu_ptr->name(), rcu_ptr);
+			_item.emplace_back(rcu_ptr);
+			return rcu_ptr;
 		};
+		auto create(library::string_view key, nlohmann::json const& json) noexcept -> pointer<resource> {
+			auto ptr = pools::instance().allocate(key, json);
+			auto rcu_ptr = pointer<resource>(ptr);
+			_guid.emplace(rcu_ptr->guid(), rcu_ptr);
+			_name.emplace(rcu_ptr->name(), rcu_ptr);
+			_item.emplace_back(rcu_ptr);
+			return rcu_ptr;
+		};
+
 		void destory(library::rcu_pointer<resource> pointer) noexcept;
 		template<typename type>
 		auto find(library::guid guid) noexcept -> library::rcu_pointer<type> {
@@ -111,18 +80,5 @@ namespace framework {
 		void create_level(void) noexcept;
 		void import_file(void) noexcept;
 		void search(void) noexcept;
-	};
-
-	template<typename _type, library::string_literal name, typename base = resource>
-	class resourcer : public base {
-		inline static bool _ = (resources::instance().template regist<_type>(), true);
-	public:
-		using base::base;
-		virtual auto type(void) noexcept -> char const* const override {
-			return name._value;
-		}
-		static constexpr auto static_type(void) noexcept -> char const* const {
-			return name._value;
-		}
 	};
 }

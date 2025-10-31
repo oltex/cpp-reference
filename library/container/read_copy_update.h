@@ -15,44 +15,45 @@ namespace library {
 
 	template<typename type, auto deleter = nullptr>
 	class rcu_pointer {
+	public:
 		template <typename other, auto>
 		friend class rcu_pointer;
 		type* _pointer;
 		unsigned long long _generation;
-	public:
 		inline rcu_pointer(void) noexcept
 			: _pointer(nullptr) {
 		};
-		inline rcu_pointer(type* pointer) noexcept
-			: _pointer(pointer), _generation(pointer->generation()) {
+		template<typename other>
+		inline rcu_pointer(other* pointer) noexcept
+			: _pointer(static_cast<type*>(pointer)), _generation(_pointer->generation()) {
 			if constexpr (type::self) {
 				_pointer->pointer() = *this;
 			}
 		};
-		inline rcu_pointer(rcu_pointer const&) noexcept = default;
-		inline rcu_pointer(rcu_pointer&&) noexcept = default;
-		inline auto operator=(rcu_pointer const&) noexcept -> rcu_pointer & = default;
-		inline auto operator=(rcu_pointer&&) noexcept -> rcu_pointer & = default;
+		//inline rcu_pointer(rcu_pointer const&) noexcept = default;
+		//inline rcu_pointer(rcu_pointer&&) noexcept = default;
+		//inline auto operator=(rcu_pointer const&) noexcept -> rcu_pointer & = default;
+		//inline auto operator=(rcu_pointer&&) noexcept -> rcu_pointer & = default;
 		inline ~rcu_pointer(void) noexcept {
 			if constexpr (nullptr != deleter)
 				invalid(deleter);
 		};
-		template<typename other>
-		inline rcu_pointer(rcu_pointer<other> const& rhs) noexcept
+		template<typename other, auto other_deleter>
+		inline rcu_pointer(rcu_pointer<other, other_deleter> & rhs) noexcept
 			: _pointer(static_cast<type*>(rhs._pointer)), _generation(rhs._generation) {
 		};
-		template<typename other>
-		inline rcu_pointer(rcu_pointer<other>&& rhs) noexcept
+		template<typename other, auto other_deleter>
+		inline rcu_pointer(rcu_pointer<other, other_deleter>&& rhs) noexcept
 			: _pointer(static_cast<type*>(library::exchange(rhs._pointer, nullptr))), _generation(rhs._generation) {
 		};
-		template<typename other>
-		inline auto operator=(rcu_pointer<other> const& rhs) noexcept -> rcu_pointer& {
+		template<typename other, auto other_deleter>
+		inline auto operator=(rcu_pointer<other, other_deleter> const& rhs) noexcept -> rcu_pointer& {
 			_pointer = static_cast<type*>(rhs._pointer);
 			_generation = rhs._generation;
 			return *this;
 		}
-		template<typename other>
-		inline auto operator=(rcu_pointer<other>&& rhs) noexcept -> rcu_pointer& {
+		template<typename other, auto other_deleter>
+		inline auto operator=(rcu_pointer<other, other_deleter>&& rhs) noexcept -> rcu_pointer& {
 			_pointer = static_cast<type*>(library::exchange(rhs._pointer, nullptr));
 			_generation = rhs._generation;
 			return *this;
@@ -73,9 +74,17 @@ namespace library {
 		inline bool valid(void) const noexcept {
 			return _pointer->valid(_generation);
 		}
+		inline auto invalid(void) noexcept -> type* {
+			if (_pointer->invalid(_generation))
+				return _pointer;
+			return nullptr;
+		};
 		template<typename function>
 			requires std::invocable<function&, type*>
 		inline void invalid(function&& func) noexcept;
+		inline auto data(void) noexcept ->type* {
+			return _pointer;
+		}
 	};
 	/* generation must not be modified or destroyed */
 	template<typename type = void>
@@ -136,10 +145,8 @@ namespace library {
 		}
 	};
 
-
 	//class rcu_pool {
 	//	struct node : public rcu_base {
-
 	//	};
 	//};
 
@@ -204,7 +211,7 @@ namespace library {
 				unsigned long long minimum = ULLONG_MAX;
 				for (auto& iter : _list)
 					minimum = library::minimum(iter, minimum);
-			
+
 				while (!context._retire.empty()) {
 					if (auto& top = context._retire.top(); top._epoch >= minimum)
 						break;

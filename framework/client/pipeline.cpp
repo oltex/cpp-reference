@@ -1,9 +1,9 @@
 #include "pipeline.h"
 #include "graphic.h"
 
-#include "resource.h"
-#include "shader.h"
-#include "mesh.h"
+//#include "resource.h"
+//#include "shader.h"
+//#include "mesh.h"
 #include "scene.h"
 
 struct VS_CONSTANT_BUFFER {

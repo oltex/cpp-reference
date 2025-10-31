@@ -5,6 +5,8 @@
 #include "../lockfree/queue.h"
 #include "../../debug.h"
 #include <thread>
+#include <variant>
+#include <utility>
 
 struct mystr : public library::rcu_base<> {
 	mystr(void) noexcept
@@ -158,58 +160,75 @@ namespace example {
 	}
 
 
+	struct mystr3 : public library::rcu_base<> {
+		mystr3(void) noexcept
+			: value(10) {
+		}
+		int value;
+	};
+	struct mystr4 : public mystr3 {
+		mystr4(void) noexcept
+			: value(20) {
+		}
+		int value;
+	};
 	inline void read_copy_update(void) noexcept {
-		//scanf_s("%d", &count);
-		//value = new int* [count];
-		//for (auto index = 0; index < count; ++index)
-		//	value[index] = new int(index);
+		library::rcu_pointer<mystr3> c;
+		library::rcu_pointer<mystr4> c2(c);
+		std::variant<int, library::rcu_pointer<mystr3>> v;
+		std::variant<int, library::rcu_pointer<mystr4>> v2{ std::in_place_type<library::rcu_pointer<mystr4>> };
+		v.emplace<library::rcu_pointer<mystr3>>( std::get<library::rcu_pointer<mystr4>>(v2));
+			//scanf_s("%d", &count);
+			//value = new int* [count];
+			//for (auto index = 0; index < count; ++index)
+			//	value[index] = new int(index);
 
-		//HANDLE* thread = new HANDLE[count];
-		//for (auto index = 0; index < count; ++index)
-		//	thread[index] = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, read_copy_update_func, nullptr, 0, 0));
+			//HANDLE* thread = new HANDLE[count];
+			//for (auto index = 0; index < count; ++index)
+			//	thread[index] = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, read_copy_update_func, nullptr, 0, 0));
 
-		//system("pause");
-		//stop = true;
+			//system("pause");
+			//stop = true;
 
-		//WaitForMultipleObjects(count, thread, true, INFINITE);
-		//for (auto index = 0; index < count; ++index)
-		//	CloseHandle(thread[index]);
-		//delete[] thread;
+			//WaitForMultipleObjects(count, thread, true, INFINITE);
+			//for (auto index = 0; index < count; ++index)
+			//	CloseHandle(thread[index]);
+			//delete[] thread;
 
-		//for (auto index = 0; index < count; ++index)
-		//	delete value[index];
-		//delete[] value;
+			//for (auto index = 0; index < count; ++index)
+			//	delete value[index];
+			//delete[] value;
 
-		//================
+			//================
 
-		//scanf_s("%d", &count);
-		//value2 = new my_str[count];
-		//for (auto index = 0; index < count; ++index) {
-		//	value2[index].invalid = false;
-		//	value2[index].finish = false;
-		//	value2[index].value = new int(index);
-		//}
+			//scanf_s("%d", &count);
+			//value2 = new my_str[count];
+			//for (auto index = 0; index < count; ++index) {
+			//	value2[index].invalid = false;
+			//	value2[index].finish = false;
+			//	value2[index].value = new int(index);
+			//}
 
-		//HANDLE* thread = new HANDLE[count];
-		//for (auto index = 0; index < count; ++index)
-		//	thread[index] = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, read_copy_update_func2, nullptr, 0, 0));
+			//HANDLE* thread = new HANDLE[count];
+			//for (auto index = 0; index < count; ++index)
+			//	thread[index] = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, read_copy_update_func2, nullptr, 0, 0));
 
-		//system("pause");
-		//stop = true;
+			//system("pause");
+			//stop = true;
 
-		//WaitForMultipleObjects(count, thread, true, INFINITE);
-		//for (auto index = 0; index < count; ++index)
-		//	CloseHandle(thread[index]);
-		//delete[] thread;
+			//WaitForMultipleObjects(count, thread, true, INFINITE);
+			//for (auto index = 0; index < count; ++index)
+			//	CloseHandle(thread[index]);
+			//delete[] thread;
 
-		//delete[] value2;
+			//delete[] value2;
 
-		//================
+			//================
 
-		//scanf_s("%d", &count);
-		//HANDLE* thread = new HANDLE[count];
-		//for (auto index = 0; index < count; ++index)
-		reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, read_copy_update_make, nullptr, 0, 0));
+			//scanf_s("%d", &count);
+			//HANDLE* thread = new HANDLE[count];
+			//for (auto index = 0; index < count; ++index)
+			reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, read_copy_update_make, nullptr, 0, 0));
 		reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, read_copy_update_read, nullptr, 0, 0));
 		system("pause");
 

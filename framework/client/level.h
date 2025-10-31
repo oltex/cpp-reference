@@ -2,8 +2,8 @@
 #include "resource.h"
 
 namespace framework {
-	class level : public resourcer<level, "level"> {
-		using base = resourcer<level, "level">;
+	class level : public inherit<resource, level, "level"> {
+		using base = inherit<resource, level, "level">;
 		nlohmann::json _data;
 	public:
 		explicit level(library::string_view name) noexcept;

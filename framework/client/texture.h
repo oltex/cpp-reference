@@ -4,8 +4,8 @@
 #include "module/directx/directx.h"
 
 namespace framework {
-	class texture : public resourcer<texture, "texture"> {
-		using base = resourcer<texture, "texture">;
+	class texture : public inherit<resource, texture, "texture"> {
+		using base = inherit<resource, texture, "texture">;
 	public:
 		d3d11::texture_2d _texture;
 		d3d11::render_target_view _rtv;
