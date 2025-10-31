@@ -131,8 +131,8 @@ namespace framework {
 				search();
 				ImGui::EndMenuBar();
 			}
-			ImGui::Separator();
-
+			ImGui::PushStyleVar(ImGuiStyleVar_::ImGuiStyleVar_ItemSpacing, ImVec2(0.f, 4.f));
+			ImGui::PushStyleVar(ImGuiStyleVar_::ImGuiStyleVar_WindowPadding, ImVec2(8.f, 4.f));
 			if (ImGui::BeginTable("File", 2, ImGuiTableFlags_Sortable | ImGuiTableFlags_SortMulti | ImGuiTableFlags_Resizable | ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY | ImGuiTableFlags_BordersOuterH | ImGuiTableFlags_BordersOuterV | ImGuiTableFlags_NoBordersInBody)) {
 				ImGui::TableSetupScrollFreeze(0, 1);
 				ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_DefaultSort | ImGuiTableColumnFlags_WidthFixed, 0, column::name);
@@ -162,7 +162,6 @@ namespace framework {
 				//		});
 				//	sort_specs->SpecsDirty = false;
 				//}
-				ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 4));
 				static ImGuiSelectionBasicStorage selection;
 				auto ms_io = ImGui::BeginMultiSelect(ImGuiMultiSelectFlags_BoxSelect1d, selection.Size, static_cast<int>(_item.size()));
 				selection.ApplyRequests(ms_io);
@@ -197,7 +196,6 @@ namespace framework {
 						ImGui::Text("%s", _item[index]->type());
 					}
 				selection.ApplyRequests(ImGui::EndMultiSelect());
-				ImGui::PopStyleVar();
 
 				if (-1 != erase) {
 					auto item = _item[erase];
@@ -207,6 +205,7 @@ namespace framework {
 				ImGui::EndTable();
 			}
 		}
+		ImGui::PopStyleVar(2);
 		ImGui::End();
 	}
 	void resources::create_level(void) noexcept {

@@ -116,10 +116,13 @@
       <Filter>content\editor</Filter>
     </ClInclude>
     <ClInclude Include="object.h">
-      <Filter>content\scene\object</Filter>
+      <Filter>content\object</Filter>
     </ClInclude>
     <ClInclude Include="level.h">
       <Filter>content\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="pool.h">
+      <Filter>content</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -224,10 +227,13 @@
       <Filter>content\editor</Filter>
     </ClCompile>
     <ClCompile Include="object.cpp">
-      <Filter>content\scene\object</Filter>
+      <Filter>content\object</Filter>
     </ClCompile>
     <ClCompile Include="level.cpp">
       <Filter>content\resource</Filter>
+    </ClCompile>
+    <ClCompile Include="pool.cpp">
+      <Filter>content</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -255,11 +261,11 @@
     <Filter Include="content\scene\system">
       <UniqueIdentifier>{9b6eb6da-e6e7-41ff-b6de-2def6a5c2ff6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="content\scene\object">
-      <UniqueIdentifier>{b895bb90-f978-4b7b-9200-f4efdb0d3ef3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="content\component">
       <UniqueIdentifier>{26fd3a4f-278f-45c1-bfd6-547c8013bd47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="content\object">
+      <UniqueIdentifier>{b895bb90-f978-4b7b-9200-f4efdb0d3ef3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

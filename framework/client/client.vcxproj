@@ -206,6 +206,7 @@ xcopy /y /d /i "$(SolutionDir)module\directx\binary\directx.lib" "$(ProjectDir)\
     <ClInclude Include="menu.h" />
     <ClInclude Include="mesh.h" />
     <ClInclude Include="pipeline.h" />
+    <ClInclude Include="pool.h" />
     <ClInclude Include="renderer.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="sound.h" />
@@ -245,6 +246,7 @@ xcopy /y /d /i "$(SolutionDir)module\directx\binary\directx.lib" "$(ProjectDir)\
     <ClCompile Include="object.cpp" />
     <ClCompile Include="mesh.cpp" />
     <ClCompile Include="pipeline.cpp" />
+    <ClCompile Include="pool.cpp" />
     <ClCompile Include="renderer.cpp" />
     <ClCompile Include="resource.cpp" />
     <ClCompile Include="scene.cpp" />

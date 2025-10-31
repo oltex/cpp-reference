@@ -11,6 +11,13 @@ namespace framework {
 	}
 	object::object(object const& rhs) noexcept {
 	}
+	object::~object(void) noexcept {
+		auto& components = components::instance();
+		for (auto& iter : _component) {
+			components.destory(iter._second);
+		}
+	}
+
 
 	auto object::name(void) noexcept -> library::string& {
 		return _name;
@@ -20,36 +27,42 @@ namespace framework {
 		//if (ImGui::TreeNodeEx("Object",
 		//	ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_Leaf)) {
 
-			static bool mode = false;
+		static bool mode = false;
 
-			if (false == mode) {
-				for (auto& iter : _component) {
-					iter._second->edit();
-				}
-
-				if (ImGui::Button("Add Component")) {
-					mode = true;
+		if (false == mode) {
+			for (auto iter = _component.begin(); iter != _component.end();) {
+				auto pointer = iter->_second;
+				if (!pointer) 
+					iter = _component.erase(iter);
+				else {
+					pointer->edit();
+					iter++;
 				}
 			}
-			else {
-				constexpr float width = 220.f;
-				ImGui::Dummy(ImVec2(library::maximum(0.0f, ImGui::GetContentRegionAvail().x - width), 0));
-				ImGui::SetNextItemWidth(width);
-				static char query[128] = {};
-				ImGui::InputTextWithHint("##", "Search", query, sizeof(query));
-				if (ImGui::Button("X##AddCompClose", ImVec2(10, 10))) {  // ID 충돌 방지용 ##접미사
-					mode = false;                                      // 선택 모드 종료
-				}
-				if (ImGui::Button("Transform")) {
-					add_component<transform>("transform");
-				}
-					
+
+			if (ImGui::Button("Add Component")) {
+				mode = true;
 			}
+		}
+		else {
+			constexpr float width = 220.f;
+			ImGui::Dummy(ImVec2(library::maximum(0.0f, ImGui::GetContentRegionAvail().x - width), 0));
+			ImGui::SetNextItemWidth(width);
+			static char query[128] = {};
+			ImGui::InputTextWithHint("##", "Search", query, sizeof(query));
+			if (ImGui::Button("X##AddCompClose", ImVec2(10, 10))) {  // ID 충돌 방지용 ##접미사
+				mode = false;                                      // 선택 모드 종료
+			}
+			if (ImGui::Button("Transform")) {
+				add_component<transform>("transform");
+			}
+
+		}
 		//}
 	}
 
 
-	void objects::deallocate(library::rcu_pointer<object> pointer) noexcept {
+	void objects::destory(library::rcu_pointer<object> pointer) noexcept {
 		pointer.invalid([&](object* pointer) {
 			_pool.deallocate(pointer);
 			});

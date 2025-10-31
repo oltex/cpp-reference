@@ -9,7 +9,7 @@
 #include "library/system/guid.h"
 
 namespace framework {
-	class component : public library::rcu_base<> {
+	class component : public library::rcu_base<component> {
 	protected:
 		library::guid _guid;
 		using size_type = unsigned int;
@@ -67,14 +67,13 @@ namespace framework {
 		library::unorder_map<library::string, library::unique_pointer<pools>> _pool;
 		library::unorder_map<library::guid, library::rcu_pointer<component>> _guid;
 
-
 		explicit components(void) noexcept = default;
 		explicit components(components const&) noexcept = delete;
 		explicit components(components&&) noexcept = delete;
 		auto operator=(components const&) noexcept -> components & = delete;
 		auto operator=(components&&) noexcept -> components & = delete;
 		~components(void) noexcept = default;
-
+	public:
 		template<typename type>
 		void regist(void) noexcept {
 			_pool.emplace(type::static_type(), library::make_unique<pool<type>>());

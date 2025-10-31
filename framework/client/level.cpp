@@ -17,6 +17,6 @@ namespace framework {
 		json["data"] = _data;
 	}
 	void level::open(void) noexcept {
-		scenes::instance().open(*this);
+		//scenes::instance().open(*this);
 	}
 }

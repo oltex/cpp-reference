@@ -116,14 +116,26 @@ namespace dmath {
 	};
 	struct float3 : public DirectX::XMFLOAT3 {
 		using DirectX::XMFLOAT3::XMFLOAT3;
+		using size_type = unsigned int;
+
+		inline float3(float const(&array)[3]) noexcept
+			: XMFLOAT3(array[0], array[1], array[2]) {
+		}
 		inline float3(fvector vector) noexcept {
 			DirectX::XMStoreFloat3(this, vector);
+		}
+		inline auto operator=(float const(&array)[3]) noexcept -> float3& {
+			x = array[0]; y = array[1]; z = array[2];
+			return *this;
 		}
 		inline auto operator=(fvector vector) noexcept -> float3& {
 			DirectX::XMStoreFloat3(this, vector);
 			return *this;
 		}
 
+		inline auto operator[](size_type index) noexcept -> float& {
+			return (&x)[index];
+		}
 		inline auto load(void) const noexcept -> vector {
 			return DirectX::XMLoadFloat3(this);
 		}

@@ -58,7 +58,7 @@ namespace framework {
 
 		//system
 		//auto behave = _scenes.create_render_system<framework::behave>();
-		auto pipeline = _scenes.create_render_system<framework::pipeline>();
+		//auto pipeline = _scenes.create_render_system<framework::pipeline>();
 		//library::vector<library::intrusive::share_pointer<component, 0>> com{ camera_component, camera_transform };
 		//pipeline->add_component("camera", com);
 		////com.clear();
@@ -70,6 +70,7 @@ namespace framework {
 
 	}
 	client::~client(void) noexcept {
+
 		_resources.save();
 	}
 

@@ -115,11 +115,11 @@ namespace detail {
 			auto& last = _vector[(index << 1) + 1];
 			erase(find(key, first, last), first, last);
 		}
-		inline void erase(iterator iter) noexcept {
+		inline auto erase(iterator iter) noexcept -> iterator {
 			auto index = bucket(trait::key_extract(*iter));
 			auto& first = _vector[index << 1];
 			auto& last = _vector[(index << 1) + 1];
-			erase(iter, first, last);
+			return erase(iter, first, last);
 		}
 		inline auto operator[](key_type const& key) noexcept -> value_type& requires (false == duplicate) {
 			return trait::value_extract(*emplace(key));
@@ -209,14 +209,14 @@ namespace detail {
 			}
 			return end;
 		}
-		inline void erase(iterator iter, iterator& first, iterator& last) noexcept {
+		inline auto erase(iterator iter, iterator& first, iterator& last) noexcept -> iterator {
 			if (first == last)
 				first = last = _list.end();
 			else if (first == iter)
 				++first;
 			else if (last == iter)
 				--last;
-			_list.erase(iter);
+			return _list.erase(iter);
 		}
 	};
 }

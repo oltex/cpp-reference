@@ -19,7 +19,7 @@ namespace framework {
 		explicit object(object&&) noexcept = delete;
 		auto operator=(object const&) noexcept -> object & = delete;
 		auto operator=(object&&) noexcept -> object & = delete;
-		~object(void) noexcept = default;
+		~object(void) noexcept;
 
 		auto name(void) noexcept -> library::string&;
 		void edit(void) noexcept;
@@ -48,10 +48,7 @@ namespace framework {
 
 	class objects final : public library::singleton<objects> {
 		friend class library::singleton<objects>;
-		friend class scenes;
-		friend class object;
-		friend class menu;
-		library::pool<framework::object> _pool;
+		library::pool<framework::object, true, false> _pool;
 		//library::unorder_map<library::string, library::intrusive::share_pointer<object, 0>> _prototype;
 
 		explicit objects(void) noexcept = default;
@@ -60,15 +57,14 @@ namespace framework {
 		auto operator=(objects const&) noexcept -> objects & = delete;
 		auto operator=(objects&&) noexcept -> objects & = delete;
 		~objects(void) noexcept = default;
-
+	public:
 		template<typename... argument>
-		auto allocate(argument&&... arg) noexcept -> library::rcu_pointer<object> {
+		auto create(argument&&... arg) noexcept -> library::rcu_pointer<object> {
 			auto pointer = _pool.allocate(std::forward<argument>(arg)...);
 			auto rcu_pointer = library::rcu_pointer<object>(pointer);
 			return rcu_pointer;
 		}
-		void deallocate(library::rcu_pointer<object> pointer) noexcept;
-	public:
+		void destory(library::rcu_pointer<object> pointer) noexcept;
 		//void regist_prototype(library::string const& name, library::intrusive::share_pointer<object, 0>& object) noexcept;
 		//auto find_prototype(library::string const& name) noexcept -> library::intrusive::share_pointer<object, 0>;
 	};

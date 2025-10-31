@@ -12,7 +12,11 @@
 #include "level.h"
 
 namespace framework {
-	struct scene {
+	struct scene : library::rcu_base<scene> {
+		library::vector<library::rcu_pointer<object>> _object;
+		library::intrusive::pointer_list<system, 0, 0> _system;
+		library::intrusive::pointer_list<system, 0, 0> _render_system;
+
 		using size_type = unsigned int;
 		explicit scene(void) noexcept = default;
 		explicit scene(scene const&) noexcept = delete;
@@ -20,15 +24,16 @@ namespace framework {
 		auto operator=(scene const&) noexcept -> scene & = delete;
 		auto operator=(scene&&) noexcept -> scene & = delete;
 		~scene(void) noexcept;
+
+		void edit(void) noexcept;
+		auto create_object(void) noexcept -> library::rcu_pointer<object>;
 	};
 
 	class scenes : public library::singleton<scenes> {
 		friend class client;
 		friend class library::singleton<scenes>;
-
-		library::vector<library::rcu_pointer<object>> _object;
-		library::intrusive::pointer_list<system, 0, 0> _system;
-		library::intrusive::pointer_list<system, 0, 0> _render_system;
+		library::pool<framework::scene, true, false> _pool;
+		library::list<library::rcu_pointer<scene>> _scene;
 
 		explicit scenes(void) noexcept;
 		explicit scenes(scenes const&) noexcept = delete;
@@ -41,18 +46,19 @@ namespace framework {
 		void render(void) noexcept;
 		void edit(void) noexcept;
 
-		void open(framework::level& level) noexcept;
-		template<typename type>
-		inline void create_update_system(void) noexcept {
-			library::intrusive::share_pointer<system, 0> pointer(new type);
-			_system.push_back(pointer);
-		}
-		template<typename type>
-		inline auto create_render_system(void) noexcept -> library::intrusive::share_pointer<type, 0> {
-			library::intrusive::share_pointer<system, 0> pointer(new type);
-			_render_system.push_back(pointer);
-			return pointer;
-		}
+		void create(framework::level& level) noexcept;
+		void destory(library::rcu_pointer<scene> pointer) noexcept;
+		//template<typename type>
+		//inline void create_update_system(void) noexcept {
+		//	library::intrusive::share_pointer<system, 0> pointer(new type);
+		//	_system.push_back(pointer);
+		//}
+		//template<typename type>
+		//inline auto create_render_system(void) noexcept -> library::intrusive::share_pointer<type, 0> {
+		//	library::intrusive::share_pointer<system, 0> pointer(new type);
+		//	_render_system.push_back(pointer);
+		//	return pointer;
+		//}
 		auto create_object(void) noexcept -> library::rcu_pointer<object>;
 		//auto clone_object(library::intrusive::share_pointer<object, 0>& origin) noexcept -> library::intrusive::share_pointer<object, 0>;
 		void destory_object(library::rcu_pointer<object> pointer) noexcept;

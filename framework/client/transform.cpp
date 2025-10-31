@@ -38,10 +38,11 @@ namespace framework {
 	}
 
 	void transform::edit(void) noexcept {
-		if (ImGui::TreeNodeEx("Transform", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_NoTreePushOnOpen)) {
-			float position[3] { 0.f, 0.f, 0.f };
-			float rotation[3] { 0.f, 0.f, 0.f };
-			float scale[3] { 1.f, 1.f, 1.f };
+		bool open = true;
+		if (ImGui::CollapsingHeader("Transform", &open)) {
+			float position[3]{ 0.f, 0.f, 0.f };
+			float rotation[3]{ 0.f, 0.f, 0.f };
+			dmath::float3 scale = _scale;
 
 			if (ImGui::BeginTable("##transform", 2, ImGuiTableFlags_Borders)) {
 				ImGui::TableSetupColumn("##label", ImGuiTableColumnFlags_WidthStretch, 2.f);
@@ -57,7 +58,19 @@ namespace framework {
 					ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
 					for (auto index = 0; index < 3; ++index) {
 						ImGui::PushID(index);
-						if (ImGui::DragFloat("##float", &position[index], 0.1f, -FLT_MAX, FLT_MAX, "%.3f")) {
+						switch (row) {
+						case 0:
+							if (ImGui::DragFloat("##position", &position[index], 0.1f, -FLT_MAX, FLT_MAX, "%.3f")) {
+							}
+							break;
+						case 1:
+							if (ImGui::DragFloat("##rotation", &rotation[index], 0.1f, -FLT_MAX, FLT_MAX, "%.3f")) {
+							}
+							break;
+						case 2:
+							if (ImGui::DragFloat("##scale", &scale[index], 0.1f, -FLT_MAX, FLT_MAX, "%.3f")) 
+								transform::scale(scale);
+							break;
 						}
 						ImVec2 min = ImGui::GetItemRectMin();
 						ImVec2 max = ImGui::GetItemRectMax();
@@ -74,12 +87,15 @@ namespace framework {
 				ImGui::EndTable();
 			}
 		}
+		if (false == open)
+			components::instance().destory(pointer());
 	}
 	auto transform::buffer(void) noexcept -> d3d11::buffer& {
 		static d3d11::buffer _buffer = graphic::instance()._device.create_buffer(
 			d3d11::buffer_descript(sizeof(dmath::float4x4), D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, D3D11_CPU_ACCESS_WRITE, 0, 0), nullptr);
 		return _buffer;
 	}
+
 	auto transform::matrix(void) noexcept -> dmath::matrix {
 		return _float4x4;
 	}
@@ -123,5 +139,22 @@ namespace framework {
 		matrix = scale * rotation;
 		matrix.r[3] = position;
 		_float4x4 = matrix;
+	}
+
+	void transform::scale(dmath::float3 change) noexcept {
+		using namespace dmath;
+		_scale = change;
+
+		auto matrix = _float4x4.load();
+		auto position = vector(matrix.r[3]);
+		auto rotation = _quaternion.load().matrix_rotate_quaternion();
+		auto scale = _scale.load().matrix_scale();
+		matrix = scale * rotation;
+		matrix.r[3] = position;
+		_float4x4 = matrix;
+	}
+
+	auto transform::scale(void) const noexcept -> dmath::float3 const& {
+		return _scale;
 	}
 }

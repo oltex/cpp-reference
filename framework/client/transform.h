@@ -28,6 +28,8 @@ namespace framework {
 		//void set_parent(library::intrusive::share_pointer<transform, 0>& parent) noexcept;
 		void translate(dmath::float3 move, bool local = true) noexcept;
 		void rotate(dmath::float3 move, bool local = true) noexcept;
+		void scale(dmath::float3 change) noexcept;
+		auto scale(void) const noexcept -> dmath::float3 const&;
 
 	};
 }
