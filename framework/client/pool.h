@@ -6,6 +6,7 @@
 #include "library/container/pointer.h"
 #include "library/container/string.h"
 #include "library/system/guid.h"
+#include "library/container/thread-local/pool.h"
 #include <variant>
 
 namespace framework {
@@ -38,6 +39,7 @@ namespace framework {
 		template <typename type>
 		class pool : public pooli {
 			library::pool<type, true, false> _pool;
+			library::_thread_local::pool<type, 1024, true, false>& _pool2 = library::_thread_local::pool<type, 1024, true, false>::instance();
 		public:
 			pool(void) noexcept = default;
 			pool(pool const&) noexcept = delete;
@@ -48,13 +50,17 @@ namespace framework {
 
 			template<typename... argument>
 			auto allocate(argument&&... arg) noexcept -> type* {
-				return _pool.allocate(std::forward<argument>(arg)...);
+				//return _pool.allocate(std::forward<argument>(arg)...);
+				return _pool2.allocate(std::forward<argument>(arg)...);
 			}
 			virtual auto allocate(nlohmann::json const& json) noexcept ->  base* override {
-				return _pool.allocate(json);
+				//return _pool.allocate(json);
+				return _pool2.allocate(json);
+
 			}
 			virtual void deallocate(base* const pointer) noexcept override {
-				_pool.deallocate(static_cast<type*>(pointer));
+				//_pool.deallocate(static_cast<type*>(pointer));
+				_pool2.deallocate(static_cast<type*>(pointer));
 			}
 		};
 
