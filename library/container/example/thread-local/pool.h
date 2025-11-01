@@ -1,6 +1,6 @@
 #pragma once
 #include "../../thread-local/pool.h"
-//#include "../../my_class.h"
+#include "../my_class.h"
 //#include "../../lockfree/queue/queue.h"
 //#include "../../lockfree/stack/stack.h"
 #include <iostream>
@@ -9,40 +9,38 @@
 
 namespace example::_thread_local {
 #pragma region debug
-	//struct my_struct {
-	//	my_struct(void) = delete;
-	//	~my_struct(void) = delete;
-	//	unsigned long long _value[128];
-	//};
+	struct my_struct {
+		my_struct(void) = delete;
+		~my_struct(void) = delete;
+		unsigned long long _value[128];
+	};
 
-	//library::data_structure::lockfree::queue<int*> _queue;
+	inline static unsigned int __stdcall func_pool(void* arg) noexcept {
+		auto& instance = library::_thread_local::pool<int>::instance();
+		int** _array = (int**)malloc(sizeof(int*) * 1000000);
+	
+		for (int i = 0; i < 1000; ++i) {
+			auto _rdtsc = __rdtsc();
+	
+			for (auto i = 0; i < 2000; ++i) {
+				_array[i] = instance.allocate(10);
+			}
+			for (auto i = 0; i < 2000; ++i)
+				if (11 != ++(*_array[i]))
+					__debugbreak();
+			for (auto i = 0; i < 2000; ++i) {
+				instance.deallocate(_array[i]);
+			}
+	
+			auto result = __rdtsc() - _rdtsc;
+			printf("pool : %llu\n", result);
+		}
+	
+		free(_array);
+		return 0;
+	}
 	//library::data_structure::lockfree::stack<int*> _stack;
 	//volatile unsigned long long _stack_size = 0;
-
-	//inline static unsigned int __stdcall func_pool(void* arg) noexcept {
-	//	auto& instance = library::data_structure::_thread_local::pool<my_struct>::instance();
-	//	my_struct** _array = (my_struct**)malloc(sizeof(my_struct*) * 1000000);
-	//
-	//	for (int i = 0; i < 1000; ++i) {
-	//		auto _rdtsc = __rdtsc();
-	//
-	//		for (auto i = 0; i < 200; ++i) {
-	//			_array[i] = &instance.allocate();
-	//		}
-	//		//for (auto i = 0; i < 1000000; ++i)
-	//		//	if (11 != ++(*_array[i]))
-	//		//		__debugbreak();
-	//		for (auto i = 0; i < 200; ++i) {
-	//			instance.deallocate(*_array[i]);
-	//		}
-	//
-	//		auto result = __rdtsc() - _rdtsc;
-	//		printf("pool : %llu\n", result);
-	//	}
-	//
-	//	free(_array);
-	//	return 0;
-	//}
 	//inline static unsigned int __stdcall func_alloc(void* arg) noexcept {
 	//	auto& instance = library::data_structure::_thread_local::memory_pool<int>::instance();
 	//	for (;;) {
@@ -72,6 +70,7 @@ namespace example::_thread_local {
 	//}
 #pragma endregion
 
+#pragma region performance
 	LARGE_INTEGER _frequency;
 	long long _sum = 0;
 	long long _count = 0;
@@ -120,6 +119,7 @@ namespace example::_thread_local {
 		free(_array);
 		return 0;
 	}
+#pragma endregion
 
 	inline void pool(void) noexcept {
 		QueryPerformanceFrequency(&_frequency);

@@ -22,11 +22,11 @@
 //#include "example/lockfree/stack.h"
 //#include "example/lockfree/pool.h"
 //#include "example/lockfree/queue.h"
-//#include "example/thread-local/pool.h"
-#include "example/hash_table.h"
+#include "example/thread-local/pool.h"
+//#include "example/hash_table.h"
 //#include "example/bit_set.h"
 //#include "example/intrusive/pointer_list.h"
-#include "example/read_copy_update.h"
+//#include "example/read_copy_update.h"
 //#include "example/span.h"
 
 int main(void) noexcept {
@@ -53,12 +53,12 @@ int main(void) noexcept {
 	//example::lockfree::stack();
 	//example::lockfree::pool();
 	//example::lockfree::queue();
-	//example::_thread_local::pool();
-	example::hash_table();
+	example::_thread_local::pool();
+	//example::hash_table();
 	//example::bit_set();
 	//example::intrusive::pointer_list();
 	//example::pointer();
-	example::read_copy_update();
+	//example::read_copy_update();
 	//example::span();
 	return 0;
 }

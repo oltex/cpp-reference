@@ -104,7 +104,7 @@ namespace library {
 		requires (library::any_of_type<type, unsigned short, short, unsigned int, int, unsigned long, long, unsigned long long, long long> || library::pointer_type<type>)
 	inline auto interlock_compare_exhange(type& destine, library::type_identity<type> exchange, library::type_identity<type> compare) noexcept -> type {
 		if constexpr (library::pointer_type<type>)
-			return ::_InterlockedCompareExchangePointer(reinterpret_cast<void* volatile*>(&destine), static_cast<void*>(exchange), static_cast<void*>(compare));
+			return reinterpret_cast<type>(::_InterlockedCompareExchangePointer(reinterpret_cast<void* volatile*>(&destine), reinterpret_cast<void*>(exchange), reinterpret_cast<void*>(compare)));
 		else if constexpr (2 == sizeof(type))
 			return ::_InterlockedCompareExchange16(reinterpret_cast<short volatile*>(&destine), static_cast<short>(exchange), static_cast<short>(compare));
 		else if constexpr (4 == sizeof(type))
